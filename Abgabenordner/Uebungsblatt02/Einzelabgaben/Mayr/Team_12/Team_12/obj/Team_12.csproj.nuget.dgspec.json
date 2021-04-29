@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Tobi\\source\\repos\\tutorium-f-team-12\\Abgabenordner\\Uebungsblatt02\\Einzelabgaben\\Mayr\\Team_12\\Team_12\\Team_12.csproj": {}
+    "C:\\Users\\Tobi\\Source\\Repos\\tutorium-f-team-12\\Abgabenordner\\Uebungsblatt02\\Einzelabgaben\\Mayr\\Team_12\\Team_12\\Team_12.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Tobi\\source\\repos\\tutorium-f-team-12\\Abgabenordner\\Uebungsblatt02\\Einzelabgaben\\Mayr\\Team_12\\Team_12\\Team_12.csproj": {
+    "C:\\Users\\Tobi\\Source\\Repos\\tutorium-f-team-12\\Abgabenordner\\Uebungsblatt02\\Einzelabgaben\\Mayr\\Team_12\\Team_12\\Team_12.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Tobi\\source\\repos\\tutorium-f-team-12\\Abgabenordner\\Uebungsblatt02\\Einzelabgaben\\Mayr\\Team_12\\Team_12\\Team_12.csproj",
+        "projectUniqueName": "C:\\Users\\Tobi\\Source\\Repos\\tutorium-f-team-12\\Abgabenordner\\Uebungsblatt02\\Einzelabgaben\\Mayr\\Team_12\\Team_12\\Team_12.csproj",
         "projectName": "Team_12",
-        "projectPath": "C:\\Users\\Tobi\\source\\repos\\tutorium-f-team-12\\Abgabenordner\\Uebungsblatt02\\Einzelabgaben\\Mayr\\Team_12\\Team_12\\Team_12.csproj",
+        "projectPath": "C:\\Users\\Tobi\\Source\\Repos\\tutorium-f-team-12\\Abgabenordner\\Uebungsblatt02\\Einzelabgaben\\Mayr\\Team_12\\Team_12\\Team_12.csproj",
         "packagesPath": "C:\\Users\\Tobi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Tobi\\source\\repos\\tutorium-f-team-12\\Abgabenordner\\Uebungsblatt02\\Einzelabgaben\\Mayr\\Team_12\\Team_12\\obj\\",
+        "outputPath": "C:\\Users\\Tobi\\Source\\Repos\\tutorium-f-team-12\\Abgabenordner\\Uebungsblatt02\\Einzelabgaben\\Mayr\\Team_12\\Team_12\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
