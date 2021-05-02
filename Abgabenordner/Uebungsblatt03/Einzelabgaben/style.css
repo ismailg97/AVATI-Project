@@ -29,3 +29,38 @@
 body {
     background-color: #d1fccf;
 }
+.my_table {
+    table-layout: fixed;
+    width: 1200px;
+    height: 192px;
+}
+.my_table td {
+    text-align: center;
+    min-width: 200px;
+    max-width: 300px;
+    font-size: 20px;
+    height: 33px;
+    font-family: Arial;
+}
+.my_table th {
+    min-width: 150px;
+    max-width: 300px;
+    background-color: #00d619;
+    font-size: 25px;
+    height: 35px;
+    color: white;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+}
+.tr1 {
+    background-color: #d1fccf;
+}
+.tr2 {
+    background-color: limegreen;
+}
+.tr3 {
+    background-color: #d1fccf;
+}
+.tr4 {
+    background-color: limegreen;
+}
+    
