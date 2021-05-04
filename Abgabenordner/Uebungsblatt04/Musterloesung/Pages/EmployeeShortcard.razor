@@ -1,0 +1,37 @@
+﻿@page "/EmployeeShortcard"
+
+@using Team12.Data
+
+
+
+<h3>EmployeeShortcard</h3>
+
+<p> Hier sind alle Attribute der Employee-Klasse zu sehen</p>
+
+<table>
+    <tr>
+        <th>Vorname</th>
+        <th>Nachname</th>
+        <th>Liste der bisherigen Projekte</th>
+        <th>Geburtstag</th>
+    </tr>
+    <tr>
+        <td>@Employee.Vorname</td>
+        <td>@Employee.Nachname</td>
+        <td>@Employee.PrevProjects</td>
+        <td>@Employee.Geburtstag.ToString("yyyy-mm-dd")</td>
+    </tr>
+
+</table>
+
+
+@code {
+    Employee Employee = new Employee()
+    {
+        Vorname = "Sepp",
+        Nachname = "Müller",
+        PrevProjects = "Project1",
+        Geburtstag = DateTime.Now
+
+    };
+}
