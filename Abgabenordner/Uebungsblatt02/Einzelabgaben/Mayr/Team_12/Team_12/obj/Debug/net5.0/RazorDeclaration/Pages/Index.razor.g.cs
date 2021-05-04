@@ -13,70 +13,70 @@ namespace Team_12.Pages
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "C:\Users\ismai\source\repos\Tutorium12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
+#line 1 "C:\Users\anton\Source\Repos\tutorium-f-team-12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
 using System.Net.Http;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "C:\Users\ismai\source\repos\Tutorium12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
+#line 2 "C:\Users\anton\Source\Repos\tutorium-f-team-12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
 using Microsoft.AspNetCore.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "C:\Users\ismai\source\repos\Tutorium12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
+#line 3 "C:\Users\anton\Source\Repos\tutorium-f-team-12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
 using Microsoft.AspNetCore.Components.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "C:\Users\ismai\source\repos\Tutorium12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
+#line 4 "C:\Users\anton\Source\Repos\tutorium-f-team-12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
 using Microsoft.AspNetCore.Components.Forms;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "C:\Users\ismai\source\repos\Tutorium12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
+#line 5 "C:\Users\anton\Source\Repos\tutorium-f-team-12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
 using Microsoft.AspNetCore.Components.Routing;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "C:\Users\ismai\source\repos\Tutorium12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
+#line 6 "C:\Users\anton\Source\Repos\tutorium-f-team-12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 7 "C:\Users\ismai\source\repos\Tutorium12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
+#line 7 "C:\Users\anton\Source\Repos\tutorium-f-team-12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 8 "C:\Users\ismai\source\repos\Tutorium12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
+#line 8 "C:\Users\anton\Source\Repos\tutorium-f-team-12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
 using Microsoft.JSInterop;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 9 "C:\Users\ismai\source\repos\Tutorium12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
+#line 9 "C:\Users\anton\Source\Repos\tutorium-f-team-12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
 using Team_12;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 10 "C:\Users\ismai\source\repos\Tutorium12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
+#line 10 "C:\Users\anton\Source\Repos\tutorium-f-team-12\Abgabenordner\Uebungsblatt02\Einzelabgaben\Mayr\Team_12\Team_12\_Imports.razor"
 using Team_12.Shared;
 
 #line default
