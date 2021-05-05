@@ -1,7 +1,24 @@
 ﻿@page "/"
 
+@using Team12.Data
+
 <h1>Mitarbeitendenübersicht, Team 12</h1>
 
-<p>Hier werden Seelen draufgehen!</p>
+<p>Das SoPro, wie es leibt und lebt.. und vllt. keimt. Idk denken sie sich was aus.. </p>
 <p>In der Zwischenzeit die <a href="fetchdata">Wettervorhersage</a> anschauen.:</p>
 
+<p>Mitarbeitende am SoPro.:</p>
+
+<div class="card-deck">
+    <EmployeeShortcard Mitarbeiter="@(new Employee(){Firstname="Alexander", Lastname ="Kaistra", Projects = new string[] { "none" }, Day_of_Birth = DateTime.Parse("19.11.1998")})" />
+    <EmployeeShortcard Mitarbeiter="@(new Employee(){Firstname="Anton", Lastname ="Huber", Projects = new string[] { "none" }, Day_of_Birth = DateTime.Parse("28.05.1998")})" />
+    <EmployeeShortcard Mitarbeiter="@(new Employee(){Firstname="Victoria", Lastname ="Kuch", Projects = new string[] { "none" }, Day_of_Birth = DateTime.Parse("16.03.2000")})" />
+    <EmployeeShortcard Mitarbeiter="@(new Employee(){Firstname="Ismail", Lastname ="Gürsöz", Projects = new string[] { "none" }, Day_of_Birth = DateTime.Parse("09.11.1997")})" />
+    <EmployeeShortcard Mitarbeiter="@(new Employee(){Firstname="Tobias", Lastname ="Mayr", Projects = new string[] { "none" }, Day_of_Birth = DateTime.Parse("11.12.1999")})" />
+</div>
+
+
+@code{
+
+}
+                                                                                                                                            
