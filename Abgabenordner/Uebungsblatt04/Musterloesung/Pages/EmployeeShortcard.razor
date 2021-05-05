@@ -3,11 +3,8 @@
 @using Team12.Data
 
 
-
-<h3>EmployeeShortcard</h3>
 <title>EmployeeShortcard.razor</title>
 
-<p> Hier sind alle Attribute der Employee-Klasse zu sehen</p>
 
 <table>
     <tr>
@@ -17,22 +14,20 @@
         <th>Geburtstag</th>
     </tr>
     <tr>
-        <td>@Employee.Vorname</td>
-        <td>@Employee.Nachname</td>
-        <td>@Employee.PrevProjects</td>
-        <td>@Employee.Geburtstag.ToString("yyyy-mm-dd")</td>
+        <td>@Worker.Vorname</td>
+        <td>@Worker.Nachname</td>
+        <td>@Worker.PrevProjects</td>
+        <td>@Worker.Geburtstag.ToString("yyyy-MM-dd")</td>
     </tr>
 
-</table>
+    
+
+</table> 
 
 
 @code {
-    Employee Employee = new Employee()
-    {
-        Vorname = "Sepp",
-        Nachname = "Müller",
-        PrevProjects = "Project1",
-        Geburtstag = DateTime.Now
+    [Parameter]
+    public Employee Worker { get; set; }
 
-    };
+
 }

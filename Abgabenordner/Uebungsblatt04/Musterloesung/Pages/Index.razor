@@ -1,8 +1,20 @@
 ﻿@page "/"
+@using Team12.Data
 
 <h1>Mitarbeitendenübersicht, Team 12</h1>
 
 <p>Hier werden Seelen draufgehen!</p>
 <p>In der Zwischenzeit die <a href="fetchdata">Wettervorhersage</a> anschauen.:</p>
-<p>Alternativ kann man sich auch die <a href=" EmployeeShortCard"> Employees</a> anschauen</p>
 
+<p><b>Hier sind alle am Projekt beteiligten Mitarbeiter zu sehen:</b></p>
+
+<EmployeeShortcard Worker="@(new Employee() {Vorname ="Anton", Nachname = "Huber", PrevProjects="none", Geburtstag=DateTime.Parse("28.05.1998")})"/>
+<EmployeeShortcard Worker="@(new Employee() {Vorname ="Tobias", Nachname = "Mayr", PrevProjects="none", Geburtstag=DateTime.Parse("11.12.1999")})" />
+<EmployeeShortcard Worker="@(new Employee() {Vorname ="Victoria", Nachname = "Kuch", PrevProjects="none", Geburtstag=DateTime.Parse("16.03.2000")})" />
+<EmployeeShortcard Worker="@(new Employee() {Vorname ="Alexander", Nachname = "Kaistra", PrevProjects="none", Geburtstag=DateTime.Parse("19.11.1998")})" />
+<EmployeeShortcard Worker="@(new Employee() {Vorname ="Ismail", Nachname = "Gürsöz", PrevProjects="none", Geburtstag=DateTime.Parse("09.11.1997")})" />
+
+
+@code {
+    
+} 
