@@ -13,7 +13,7 @@ namespace Team12.Data
         public string Nachname { get; set; }
         public DateTime Geburtstag { get; set; }
 
-        public string PrevProjects { get; set; }
+        public string[] PrevProjects { get; set; }
         
 
     }

@@ -6,23 +6,23 @@
 <title>EmployeeShortcard.razor</title>
 
 
-<table>
-    <tr>
-        <th>Vorname</th>
-        <th>Nachname</th>
-        <th>Liste der bisherigen Projekte</th>
-        <th>Geburtstag</th>
-    </tr>
-    <tr>
-        <td>@Worker.Vorname</td>
-        <td>@Worker.Nachname</td>
-        <td>@Worker.PrevProjects</td>
-        <td>@Worker.Geburtstag.ToString("yyyy-MM-dd")</td>
-    </tr>
+<ul class="card text-white bg-dark border-dark mb-3" >
 
-    
+    <li>Vorname: @Worker.Vorname </li>
+    <li>Nachname: @Worker.Nachname </li>
+    <li>
+        Projekte: <br>
+        <ul>
+            @foreach (string project in Worker.PrevProjects)
+            {
+                <li>@project</li>
+            }
+        </ul>
+    </li>
+    <li>Geburtstag: @Worker.Geburtstag.ToString("dd.MM.yyyy")</li>
 
-</table> 
+</ul>
+
 
 
 @code {
