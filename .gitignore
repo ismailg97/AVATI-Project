@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Default ignored files
 /shelf/
 /workspace.xml
@@ -15,3 +16,8 @@
 obj
 bin
 
+=======
+.vs
+bin
+obj
+>>>>>>> Blatt02-Huber
