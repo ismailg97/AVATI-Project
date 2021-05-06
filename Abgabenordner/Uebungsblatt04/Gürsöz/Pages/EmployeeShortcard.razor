@@ -1,0 +1,81 @@
+@page "/EmployeeShortcard"
+
+@using Team12.Data
+
+<h1>Employee Shortcard</h1>
+
+<table class="table">
+        <tr>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Birthday</th>
+            <th>Projects</th>
+        </tr>
+        <tr>
+            <td>@employee.Firstname</td>
+            <td>@employee.Lastname</td>
+            <td>@employee.Day_of_Birth</td>
+            <td>@employee.Fin_Projects</td>
+        </tr>
+        <tr>
+            <td>@employee2.Firstname</td>
+            <td>@employee2.Lastname</td>
+            <td>@employee2.Day_of_Birth</td>
+            <td>@employee2.Fin_Projects</td>
+        </tr>
+        <tr>
+            <td>@employee3.Firstname</td>
+            <td>@employee3.Lastname</td>
+            <td>@employee3.Day_of_Birth</td>
+            <td>@employee3.Fin_Projects</td>
+        </tr>
+         <tr>
+            <td>@employee4.Firstname</td>
+            <td>@employee4.Lastname</td>
+            <td>@employee4.Day_of_Birth</td>
+            <td>@employee4.Fin_Projects</td>
+        </tr>
+         <tr>
+            <td>@employee5.Firstname</td>
+            <td>@employee5.Lastname</td>
+            <td>@employee5.Day_of_Birth</td>
+            <td>@employee5.Fin_Projects</td>
+        </tr>
+</table>
+@code {
+    private Employee employee2 = new Employee()
+    {
+        Firstname = "Tobias",
+        Lastname = "Mayr",
+        Day_of_Birth = DateTime.Parse("11.12.1999"),
+        Fin_Projects = "Projekt Zwei",
+    };
+    private Employee employee = new Employee()
+    {
+        Firstname = "Ismail",
+        Lastname = "Guersoez",
+        Day_of_Birth = DateTime.Parse("09.11.1997"),
+        Fin_Projects = "Projekt Eins",
+    };
+     private Employee employee3 = new Employee()
+    {
+        Firstname = "Victoria",
+        Lastname = "Kuch",
+        Day_of_Birth = DateTime.Parse("16.03.2000"),
+        Fin_Projects = "Projekt Drei",
+    };
+     private Employee employee4 = new Employee()
+    {
+        Firstname = "Alexander",
+        Lastname = "Kaistra",
+        Day_of_Birth = DateTime.Parse("19.11.1998"),
+        Fin_Projects = "Projekt Vier",
+    };
+     private Employee employee5 = new Employee()
+    {
+        Firstname = "Anton",
+        Lastname = "Huber",
+        Day_of_Birth = DateTime.Parse("28.05.1998"),
+        Fin_Projects = "Projekt Sechs",
+    };
+}
