@@ -3,6 +3,7 @@
     padding: 0;
 }
 .topnav {
+    text-align: center;
     background-color: limegreen;
     overflow: hidden;
     padding-bottom: 11px;
@@ -27,6 +28,7 @@
     color: darkred;
 }
 body {
+    text-align: center;
     background-color: #d1fccf;
 }
 .my_table {
