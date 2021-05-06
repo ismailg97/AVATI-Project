@@ -1,0 +1,33 @@
+﻿@page "/EmployeeShortcard"
+
+@using Team12.Data
+
+
+<title>EmployeeShortcard.razor</title>
+
+
+<ul class="card text-white bg-dark border-dark mb-3" >
+
+    <li>Vorname: @Worker.Vorname </li>
+    <li>Nachname: @Worker.Nachname </li>
+    <li>
+        Projekte: <br>
+        <ul>
+            @foreach (string project in Worker.PrevProjects)
+            {
+                <li>@project</li>
+            }
+        </ul>
+    </li>
+    <li>Geburtstag: @Worker.Geburtstag.ToString("dd.MM.yyyy")</li>
+
+</ul>
+
+
+
+@code {
+    [Parameter]
+    public Employee Worker { get; set; }
+
+
+}
