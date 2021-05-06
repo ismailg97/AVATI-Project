@@ -2,7 +2,7 @@
     background-color: limegreen;
     height: 50px;
 }
-nav ul li{  
+nav ul li{
     list-style-type: none;
     width: 100px;
     float: left;
@@ -32,7 +32,7 @@ h1{
 body {
     background-color: whitesmoke;
 }
-tr{
+tr th{
     background-color: limegreen;
 }
 table.center {
@@ -44,9 +44,18 @@ table.center {
 table tr td{
     border: 1px solid black;
     border-collapse: collapse;
-    background-color: whitesmoke;
     padding: 5px;
 }
-h1.HeaderBuchungen {
-    padding: 5px;
+tr:nth-child(odd){
+    background-color: Lightgreen;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+table tr td:hover{
+    color: deepskyblue;
+}
+table th:hover{
+    color: deepskyblue;
 }
