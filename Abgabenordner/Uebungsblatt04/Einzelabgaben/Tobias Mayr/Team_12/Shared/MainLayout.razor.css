@@ -51,11 +51,8 @@
     }
 
     .sidebar {
-<<<<<<< HEAD:Abgabenordner/Uebungsblatt02/Einzelabgaben/Ismail Gürsöz/Team12/Team_12/Shared/MainLayout.razor.css
         width: 250px;
-=======
         width: 300px;
->>>>>>> Mayr:Abgabenordner/Uebungsblatt04/Einzelabgaben/Tobias Mayr/Team_12/Shared/MainLayout.razor.css
         height: 100vh;
         position: sticky;
         top: 0;
