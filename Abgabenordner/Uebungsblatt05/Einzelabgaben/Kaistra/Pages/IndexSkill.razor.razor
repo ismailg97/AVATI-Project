@@ -1,0 +1,41 @@
+﻿@page "/skill/index"
+
+@using Team12.Data
+
+    <h1>Übersicht | Skills</h1>
+
+    <table class="table">
+        <tr>
+            <th>Skillname</th>
+            <th>Skilltype</th>
+            <th>edit/update</th>
+            <th>delete</th>
+            <th>create</th>
+        </tr>
+        
+         @foreach (Skill skill in EverySkill) { 
+             <tr>
+                <td>@skill.ID</td>
+                <td>@skill.Name</td>
+                <td>@skill.type</td>
+                <td><a href="EditSkill" type="button" class="btn btn-dark"></a>edit/Update</td>
+                <td><button type="button" class="btn"></button>delete</td>
+                <td><a href="--------" type="button" class="btn btn-dark"></a>create</td>
+             </tr>
+         }
+
+    </table>
+
+
+
+
+@code{
+    [Parameter]
+    public Skill skills { get; set; }
+
+    List<Skill> EverySkill = new List<Skill>
+    {
+        new Skill {ID = 1, Name = "Teamfähigkeit", type = Skilltype.Hardskill }
+    };
+}
+                                                                                                                                            

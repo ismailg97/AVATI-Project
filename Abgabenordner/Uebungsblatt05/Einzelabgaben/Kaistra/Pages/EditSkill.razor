@@ -1,0 +1,42 @@
+﻿@page "/skill/index/edit/{ID}"
+
+<title>Create Skill</title>
+@using Team12.Data
+
+<link rel="MainLayout.razor" type="text/css" href="stylesheet.css" media="screen"/>
+
+<h3>Creating Skill</h3>
+<form>
+    <div class="form-group row">
+        <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-lg">ID</label>
+        <div class=" col-sm-10">
+            <input type="email" class="form-control form-control-sm" id="colFormLabel-Sim" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="colFormLabel" class="col-sm-2 col-form-label col-form-label-lg">Name</label>
+        <div class="col-sm-10">
+            <input type="email" class="form-control" id="colFormLabel" />
+        </div>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+        <label class="form-check-label" for="inlineCheckbox1">HardSkill</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+        <label class="form-check-label" for="inlineCheckbox2">SoftSkill</label>
+    </div>
+    <a href="skill" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Bestätigen</a>
+
+</form>
+
+
+
+
+@code{
+    
+
+
+}
+                                                                                                                                            
