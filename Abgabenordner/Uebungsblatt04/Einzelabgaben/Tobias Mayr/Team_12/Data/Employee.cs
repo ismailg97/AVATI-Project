@@ -7,7 +7,7 @@ namespace Team_12.Data
     {
         public String Firstname { get; set; }
         public String Lastname { get; set; }
-        public String Fin_Projects { get; set; }
+        public String[] Fin_Projects { get; set; }
         public DateTime Day_of_Birth { get; set; }
     }
 }

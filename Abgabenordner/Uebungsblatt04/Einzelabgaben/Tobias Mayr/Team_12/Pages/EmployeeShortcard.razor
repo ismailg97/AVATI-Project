@@ -1,81 +1,28 @@
-﻿@page "/EmployeeShortcard"
+﻿﻿@page "/EmployeeShortcard"
 
-@using Team_12.Data
 
-<h1>Emplyoee Shortcard</h1>
+@using Team12.Data
+<title>EmployeeShortcard.razor</title>
 
-<table class="table">
-    <tr>
-        <th>Firstname</th>
-        <th>Lastname</th>
-        <th>Birthday</th>
-        <th>Previous Projects</th>
-    </tr>
-    <tr>
-        <td>@employee0.Firstname</td>
-        <td>@employee0.Lastname</td>
-        <td>@employee0.Day_of_Birth.ToString("dd.MM.yyyy")</td>
-        <td>@employee0.Fin_Projects</td>
-    </tr>
-    <tr>
-        <td>@employee1.Firstname</td>
-        <td>@employee1.Lastname</td>
-        <td>@employee1.Day_of_Birth.ToString("dd.MM.yyyy")</td>
-        <td>@employee1.Fin_Projects</td>
-    </tr>
-    <tr>
-        <td>@employee2.Firstname</td>
-        <td>@employee2.Lastname</td>
-        <td>@employee2.Day_of_Birth.ToString("dd.MM.yyyy")</td>
-        <td>@employee2.Fin_Projects</td>
-    </tr>
-    <tr>
-        <td>@employee3.Firstname</td>
-        <td>@employee3.Lastname</td>
-        <td>@employee3.Day_of_Birth.ToString("dd.MM.yyyy")</td>
-        <td>@employee3.Fin_Projects</td>
-    </tr>
-    <tr>
-        <td>@employee4.Firstname</td>
-        <td>@employee4.Lastname</td>
-        <td>@employee4.Day_of_Birth.ToString("dd.MM.yyyy")</td>
-        <td>@employee4.Fin_Projects</td>
-    </tr>
-</table>
-@code { 
-    private Employee employee0 = new Employee()
-    {
-        Firstname = "Tobias",
-        Lastname = "Mayr",
-        Day_of_Birth = DateTime.Parse("11,12,1999"),
-        Fin_Projects = "Projekt1",
-    };
-    private Employee employee1 = new Employee()
-    {
-        Firstname = "Victoria",
-        Lastname = "Kuch",
-        Day_of_Birth = DateTime.Parse("16.03.2000"),
-        Fin_Projects = "Projekt2",
-    };
-    private Employee employee2 = new Employee()
-    {
-        Firstname = "Ismail",
-        Lastname = "Gürsöz",
-        Day_of_Birth = DateTime.Parse("09.11.1997"),
-        Fin_Projects = "Projekt3",
-    };
-    private Employee employee3 = new Employee()
-    {
-        Firstname = "Alexander",
-        Lastname = "Kaistra",
-        Day_of_Birth = DateTime.Parse("19.11.1998"),
-        Fin_Projects = "Projekt4",
-    };
-    private Employee employee4 = new Employee()
-    {
-        Firstname = "Anton",
-        Lastname = "Huber",
-        Day_of_Birth = DateTime.Parse("01.01.1900"),
-        Fin_Projects = "Projekt5",
-    };
+<ul class="card alert-dark">
+    <li>Vorname.: @Mitarbeiter.Firstname</li>
+    <li>Nachname.: @Mitarbeiter.Lastname</li>
+    <li>
+        Projekte.:
+        <ul>
+@foreach (String Projects in Mitarbeiter.Projects)
+            {
+            <li>@Projects</li>
+            }
+        </ul>
+    </li>
+    <li>Birthday.: @Mitarbeiter.Day_of_Birth.ToString("dd.MM.yyyy")</li>
+</ul>
+
+
+@code{
+
+    [Parameter]
+    public Employee Mitarbeiter { get; set; }
+
 }
