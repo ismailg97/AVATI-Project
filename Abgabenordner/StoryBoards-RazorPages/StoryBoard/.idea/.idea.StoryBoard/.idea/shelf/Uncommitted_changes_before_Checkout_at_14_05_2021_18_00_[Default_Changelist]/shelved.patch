@@ -1,0 +1,159 @@
+Index: Data/Employee.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Data/Employee.cs b/Data/Employee.cs
+new file mode 100644
+--- /dev/null	(date 1620992999877)
++++ b/Data/Employee.cs	(date 1620992999877)
+@@ -0,0 +1,12 @@
++using System;
++
++namespace StoryBoard.Data
++{
++    public class Employee
++    {
++        public string Vorname { get; set;  }
++        public string Nachname { get; set; }
++        public DateTime Geburtstag { get; set; }
++        public string[] PrevProjects { get; set; }
++    }
++}
+Index: Pages/Projectservice.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Pages/Projectservice.cs b/Pages/Projectservice.cs
+new file mode 100644
+--- /dev/null	(date 1621007153143)
++++ b/Pages/Projectservice.cs	(date 1621007153143)
+@@ -0,0 +1,23 @@
++using System;
++using System.Collections.Generic;
++using System.Linq;
++using StoryBoard.Data;
++using System.Threading.Tasks;
++using System;
++using Microsoft.Extensions.Caching.Memory;
++
++namespace StoryBoard.Pages
++{
++    public class Projekte
++    { 
++        public string Titel { get; set; }
++        public string Zusammenfassung { get; set; }
++        public string[] Tätigkeiten { get; set; }
++        public string[] Zwecke { get; set; }
++        public string[] Branche { get; set; }
++        public List<Employee> Mitarbeiter { get; set; }
++    }
++   
++    
++    
++}
+\ No newline at end of file
+Index: Pages/_Host.cshtml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@page \"/\"\r\n@namespace StoryBoard.Pages\r\n@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers\r\n@{\r\n    Layout = null;\r\n}\r\n\r\n<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n    <meta charset=\"utf-8\" />\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\r\n    <title>StoryBoard</title>\r\n    <base href=\"~/\" />\r\n    <link rel=\"stylesheet\" href=\"css/bootstrap/bootstrap.min.css\" />\r\n    <link href=\"css/site.css\" rel=\"stylesheet\" />\r\n    <link href=\"StoryBoard.styles.css\" rel=\"stylesheet\" />\r\n</head>\r\n<body>\r\n    <component type=\"typeof(App)\" render-mode=\"ServerPrerendered\" />\r\n\r\n    <div id=\"blazor-error-ui\">\r\n        <environment include=\"Staging,Production\">\r\n            An error has occurred. This application may no longer respond until reloaded.\r\n        </environment>\r\n        <environment include=\"Development\">\r\n            An unhandled exception has occurred. See browser dev tools for details.\r\n        </environment>\r\n        <a href=\"\" class=\"reload\">Reload</a>\r\n        <a class=\"dismiss\">\uD83D\uDDD9</a>\r\n    </div>\r\n\r\n    <script src=\"_framework/blazor.server.js\"></script>\r\n</body>\r\n</html>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Pages/_Host.cshtml b/Pages/_Host.cshtml
+--- a/Pages/_Host.cshtml	(revision 24439ec2ae6c998895516d1fbfccbb2af55b94af)
++++ b/Pages/_Host.cshtml	(date 1620987764255)
+@@ -20,7 +20,7 @@
+     <component type="typeof(App)" render-mode="ServerPrerendered" />
+ 
+     <div id="blazor-error-ui">
+-        <environment include="Staging,Production">
++        <environment include="Staging,Production">s
+             An error has occurred. This application may no longer respond until reloaded.
+         </environment>
+         <environment include="Development">
+Index: Startup.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using System;\r\nusing System.Collections.Generic;\r\nusing System.Linq;\r\nusing System.Threading.Tasks;\r\nusing Microsoft.AspNetCore.Builder;\r\nusing Microsoft.AspNetCore.Components;\r\nusing Microsoft.AspNetCore.Hosting;\r\nusing Microsoft.AspNetCore.HttpsPolicy;\r\nusing Microsoft.Extensions.Configuration;\r\nusing Microsoft.Extensions.DependencyInjection;\r\nusing Microsoft.Extensions.Hosting;\r\nusing StoryBoard.Data;\r\nusing StoryBoard.Pages;\r\n\r\nnamespace StoryBoard\r\n{\r\n    public class Startup\r\n    {\r\n        public Startup(IConfiguration configuration)\r\n        {\r\n            Configuration = configuration;\r\n        }\r\n\r\n        public IConfiguration Configuration { get; }\r\n\r\n        // This method gets called by the runtime. Use this method to add services to the container.\r\n        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940\r\n        public void ConfigureServices(IServiceCollection services)\r\n        {\r\n            services.AddRazorPages();\r\n            services.AddServerSideBlazor();\r\n            services.AddSingleton<WeatherForecastService>();\r\n            services.AddSingleton<TestInject>();\r\n        }\r\n\r\n        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.\r\n        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)\r\n        {\r\n            if (env.IsDevelopment())\r\n            {\r\n                app.UseDeveloperExceptionPage();\r\n            }\r\n            else\r\n            {\r\n                app.UseExceptionHandler(\"/Error\");\r\n                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.\r\n                app.UseHsts();\r\n            }\r\n\r\n            app.UseHttpsRedirection();\r\n            app.UseStaticFiles();\r\n\r\n            app.UseRouting();\r\n\r\n            app.UseEndpoints(endpoints =>\r\n            {\r\n                endpoints.MapBlazorHub();\r\n                endpoints.MapFallbackToPage(\"/_Host\");\r\n            });\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Startup.cs b/Startup.cs
+--- a/Startup.cs	(revision 24439ec2ae6c998895516d1fbfccbb2af55b94af)
++++ b/Startup.cs	(date 1620988037622)
+@@ -31,6 +31,7 @@
+             services.AddServerSideBlazor();
+             services.AddSingleton<WeatherForecastService>();
+             services.AddSingleton<TestInject>();
++            services.AddSingleton<Projectservice>();
+         }
+ 
+         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+Index: Pages/Projektübersicht.razor
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Pages/Projektübersicht.razor b/Pages/Projektübersicht.razor
+new file mode 100644
+--- /dev/null	(date 1621001412368)
++++ b/Pages/Projektübersicht.razor	(date 1621001412368)
+@@ -0,0 +1,40 @@
++@page "/Projektuebersicht"
++@using StoryBoard.Data
++@using System.Reflection.Metadata
++
++<table class="table table-striped">
++    <thead class="thead-dark">
++    <tr>
++        <th scope="col">Titel</th>
++        <th scope="col">Zusammenfassung</th>
++        <th scope="col">Tätigkeiten</th>
++        <th scope="col">Zwecke</th>
++        <th scope="col">Branche</th>
++        <th scope="col">Laufzeit</th>
++        <th scope="col">Mitarbeiter</th>
++    </tr>
++    </thead>
++        
++    <tbody>
++    <tr>
++        <td>Projekt X</td>
++        <td>Ein krasser Dude mit krassen Klauen</td>
++        <td>schlitzen, hauen, stechen</td>
++        <td>Vernichtung böser jungen</td>
++        <td>Militär</td>
++        <td>solang er laufen kann</td>
++        <td>er und nur er selbst</td>
++    </tr>
++    
++
++    </tbody>
++</table>
++
++@code {
++    public Projekte[] projects;
++    
++    protected override void 
++
++
++
++}
+\ No newline at end of file
+Index: Pages/Index.razor
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>@page \"/\"\r\n\r\n<h1>Hello, world!</h1>\r\n\r\nWelcome to your new app.\r\n\r\n<p>Die <a href=\"/search\">Suchmaske</a></p>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Pages/Index.razor b/Pages/Index.razor
+--- a/Pages/Index.razor	(revision 24439ec2ae6c998895516d1fbfccbb2af55b94af)
++++ b/Pages/Index.razor	(date 1620987823027)
+@@ -5,3 +5,4 @@
+ Welcome to your new app.
+ 
+ <p>Die <a href="/search">Suchmaske</a></p>
++<p>Die <a href="/Projektuebersicht">Projektuebersicht</a></p>

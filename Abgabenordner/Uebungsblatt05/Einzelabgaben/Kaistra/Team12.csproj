@@ -6,10 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.90" />
-    <PackageReference Include="Dapper.Microsoft.Sql" Version="0.0.5" />
-    <PackageReference Include="Dapper.SqlBuilder" Version="2.0.78" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.0-preview2.21106.5" />
-    <PackageReference Include="Microsoft.Data.SqlClient.SNI.runtime" Version="3.0.0-preview1.21104.2" />
   </ItemGroup>
 
 </Project>

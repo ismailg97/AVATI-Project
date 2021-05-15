@@ -1,42 +1,58 @@
-﻿@page "/skill/index/edit/{ID}"
+﻿@page "/skill/edit"
+@page "/skill/edit/{ID:int}"
 
-<title>Create Skill</title>
 @using Team12.Data
+@inject SkillServiceSimple _skillServiceSimple
 
-<link rel="MainLayout.razor" type="text/css" href="stylesheet.css" media="screen"/>
+@if (ID == null)
+{
+    <label for="InputSkillname">Skillname</label>
+    <input type="text" class="form-control" id="InputSkillname" aria-describedby="Inputskillname" placeholder="Skillname" @bind-value="Name"/>
+}
+else
+{
+    <label for="InputSkillname">Skillname</label>
+    <input type="text" class="form-control" id="InputSkillname" aria-describedby="Inputskillname" placeholder="@_skillServiceSimple.GetSkill((int) ID).Name"@bind-value="Name"/>
+}
 
-<h3>Creating Skill</h3>
 <form>
-    <div class="form-group row">
-        <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-lg">ID</label>
-        <div class=" col-sm-10">
-            <input type="email" class="form-control form-control-sm" id="colFormLabel-Sim" />
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="colFormLabel" class="col-sm-2 col-form-label col-form-label-lg">Name</label>
-        <div class="col-sm-10">
-            <input type="email" class="form-control" id="colFormLabel" />
-        </div>
-    </div>
-    <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-        <label class="form-check-label" for="inlineCheckbox1">HardSkill</label>
-    </div>
-    <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-        <label class="form-check-label" for="inlineCheckbox2">SoftSkill</label>
-    </div>
-    <a href="skill" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Bestätigen</a>
+    <div class="form-group">
+        <label for="">Skilltyp</label>
+        <select class="form-control" @bind="_skilltype">
+            @foreach (var type in Enum.GetValues(typeof(Skilltype)))
+            {
+                <option value="@type">
+                    @type
+                </option>
+            }
+        </select>
 
+    </div>
 </form>
-
-
+<a href="/skill/index">
+    <button @onclick="() => Submit()">Submit</button>
+</a>
 
 
 @code{
-    
 
+    [Parameter]
+    public int? ID { get; set; }
+
+    string Name { get; set; }
+    Skilltype _skilltype { get; set; }
+
+
+    private void Submit()
+    {
+        if (ID == null)
+        {
+            _skillServiceSimple.GetAllSkills().Add(new Skill(Name, _skilltype));
+        }
+        else
+        {
+            _skillServiceSimple.UpdateSkill(new Skill((int) ID, Name, _skilltype));
+        }
+    }
 
 }
-                                                                                                                                            

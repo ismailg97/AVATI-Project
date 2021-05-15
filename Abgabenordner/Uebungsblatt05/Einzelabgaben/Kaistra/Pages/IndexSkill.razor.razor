@@ -1,41 +1,57 @@
-﻿@page "/skill/index"
+﻿@page "/skill"
+@page "/skill/index"
 
+@inject SkillServiceSimple _skillServiceSimple
 @using Team12.Data
 
-    <h1>Übersicht | Skills</h1>
-
-    <table class="table">
-        <tr>
-            <th>Skillname</th>
-            <th>Skilltype</th>
-            <th>edit/update</th>
-            <th>delete</th>
-            <th>create</th>
-        </tr>
-        
-         @foreach (Skill skill in EverySkill) { 
-             <tr>
-                <td>@skill.ID</td>
+<table class="table align-middle">
+    <thead>
+    <tr>
+        <th scope="col">Skillname</th>
+        <th scope="col">Skilltyp</th>
+        <th scope="col">
+            <a href="/skill/edit">
+                <button type="button" class="btn btn-danger">Add</button>
+            </a>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (_skillServiceSimple.GetAllSkills().Any()) //Fehler rausgehauen -> kein Element in der List | .any() aus der SoPro Übung am Freitag 
+    {
+        foreach (Skill skill in _skillServiceSimple.GetAllSkills())
+        {
+            <tr>
                 <td>@skill.Name</td>
                 <td>@skill.type</td>
-                <td><a href="EditSkill" type="button" class="btn btn-dark"></a>edit/Update</td>
-                <td><button type="button" class="btn"></button>delete</td>
-                <td><a href="--------" type="button" class="btn btn-dark"></a>create</td>
-             </tr>
-         }
-
-    </table>
-
-
-
+                <td>
+                    <a href="/skill/edit/@skill.ID">
+                        <button type="button" class="btn btn-secondary">Edit/Update</button>
+                    </a>
+                </td>
+                <td>
+                    <button @onclick="() => DeleteSkill(skill.ID)" type="button" class="btn btn-danger">Delete</button>
+                </td>
+                <td>
+                    <a href="/skill/edit">
+                        <button type="button" class="btn btn-info">Add</button>
+                    </a>
+                </td>
+            </tr>
+        }
+    } //Layout der Seite aus mdbootstrap.com + button layout aus buttons-bootstrapv5.0 ^^
+    else
+    {
+        <td>(null)</td>
+    }
+    </tbody>
+</table>
 
 @code{
-    [Parameter]
-    public Skill skills { get; set; }
 
-    List<Skill> EverySkill = new List<Skill>
+    private void DeleteSkill(int id)
     {
-        new Skill {ID = 1, Name = "Teamfähigkeit", type = Skilltype.Hardskill }
-    };
+        _skillServiceSimple.DeleteSkill(id);
+    }
+
 }
-                                                                                                                                            
