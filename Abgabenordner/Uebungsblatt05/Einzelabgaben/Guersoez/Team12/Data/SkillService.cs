@@ -43,9 +43,8 @@ namespace Team12.Data{
         public List<Skill> GetAllSkills()
         {
             using DbConnection db = GetDbConnection();
-            db.Open();
-            this.AllSkills = db.Query<Skill>("select * from Skill").ToList();
-            return AllSkills;
+            
+            return this.AllSkills;
         }
 
         public Skill GetSkill(int skillId)

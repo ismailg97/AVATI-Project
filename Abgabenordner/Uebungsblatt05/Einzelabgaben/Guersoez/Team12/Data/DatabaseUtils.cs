@@ -25,15 +25,21 @@ namespace Team12.Data
 
         public DbConnection GetDbConnection()
         {
-            return new SqlConnection("SoPro2021");
+            return new SqlConnection(_configuration.GetConnectionString("SoPro2021"));
         }
 
         public bool ErzeugeTabelle()
         {
             DbConnection db = GetDbConnection();
             db.Open();
-
-            return true;
+            if (db.Query<int>("SELECT CASE WHEN OBJECT_ID('dbo.Skill', 'U') IS NOT NULL THEN 1 ELSE 0 END").First() == 1)
+            {
+                Console.WriteLine("Test");
+                return false;
+            }
+            else { db.Query("create table Skill( Id int not null identity(1, 1) primary key, Name varchar(50) not null, Skilltype bit not null)");
+                return true;
+            }
 
         }
 

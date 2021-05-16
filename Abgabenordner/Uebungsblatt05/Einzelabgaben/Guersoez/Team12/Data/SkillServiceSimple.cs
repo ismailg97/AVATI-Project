@@ -13,7 +13,7 @@ namespace Team12.Data
 
 
 
-    public class SkillServiceSimple : ISkillService
+    public class SkillServiceSimple 
     {
         //private List<Skill> SkillList;
 
