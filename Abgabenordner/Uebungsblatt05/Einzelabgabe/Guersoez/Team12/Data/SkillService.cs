@@ -23,7 +23,7 @@ namespace Team12.Data{
 
         public DbConnection GetDbConnection()
         {
-            return new SqlConnection("SoPro2021");
+            return new SqlConnection(_configuration.GetConnectionString("SoPro2021"));
         }
 
 
@@ -42,7 +42,7 @@ namespace Team12.Data{
 
         public List<Skill> GetAllSkills()
         {
-            DbConnection db = GetDbConnection();
+            using DbConnection db = GetDbConnection();
             db.Open();
             this.AllSkills = db.Query<Skill>("select * from Skill").ToList();
             return AllSkills;
