@@ -1,7 +1,7 @@
 ﻿@page "/skill"
 @page "/skill/index"
 
-@inject SkillService _skillServiceSimple    
+@inject ISkillService _skillServiceSimple    
 @using Team12.Data
 
 <table class="table align-middle">
@@ -49,9 +49,12 @@
 
 @code{
 
+    Skill _skill = new Skill();
+    
     private void DeleteSkill(int id)
     {
         _skillServiceSimple.DeleteSkill(id);
     }
+    
 
 }

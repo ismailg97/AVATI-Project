@@ -2,23 +2,24 @@
 @page "/skill/edit/{ID:int}"
 
 @using Team12.Data
-@inject SkillService _skillServiceSimple
+@using Microsoft.EntityFrameworkCore
+@inject ISkillService _skillService
 
-@if (ID == null)
+@if (_skill.ID == null)
 {
     <label for="InputSkillname">Skillname</label>
-    <input type="text" class="form-control" id="InputSkillname" aria-describedby="Inputskillname" placeholder="Skillname" @bind-value="Name"/>
+    <input type="text" class="form-control" id="InputSkillname" aria-describedby="Inputskillname" placeholder="Skillname"/>
 }
 else
 {
     <label for="InputSkillname">Skillname</label>
-    <input type="text" class="form-control" id="InputSkillname" aria-describedby="Inputskillname" placeholder="@_skillServiceSimple.GetSkill((int) ID).Name"@bind-value="Name"/>
+    <input type="text" class="form-control" id="InputSkillname" aria-describedby="Inputskillname" placeholder="@_skillService.GetSkill((int) _skill.ID)/>
 }
 
-<form>
+<EditForm Model="@_skill" OnValidSubmit="@HandleValidSubmit">
     <div class="form-group">
         <label for="">Skilltyp</label>
-        <select class="form-control" @bind="_skilltype">
+        <select class="form-control" @bind="_skill.type">
             @foreach (var type in Enum.GetValues(typeof(Skilltype)))
             {
                 <option value="@type">
@@ -28,31 +29,18 @@ else
         </select>
 
     </div>
-</form>
-<a href="/skill/index">
-    <button @onclick="() => Submit()">Submit</button>
-</a>
+    <a href="/skill/index">
+        <button type="submit">Submit</button>
+    </a>
+</EditForm>
+
 
 
 @code{
-
-    [Parameter]
-    public int? ID { get; set; }
-
-    string Name { get; set; }
-    Skilltype _skilltype { get; set; }
-
-
-    private void Submit()
+    Skill _skill = new Skill();
+    
+    private void HandleValidSubmit()
     {
-        if (ID == null)
-        {
-            _skillServiceSimple.GetAllSkills().Add(new Skill(Name, _skilltype));
-        }
-        else
-        {
-            _skillServiceSimple.UpdateSkill(new Skill((int) ID, Name, _skilltype));
-        }
+        _skillService.UpdateSkill(_skill);
     }
-
 }
