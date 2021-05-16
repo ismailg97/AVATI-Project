@@ -74,7 +74,7 @@ namespace Team12.Data
         public bool UpdateSkill(Skill skill)
         {
             Skill old = skills.Find(index => index.ID == skill.ID);
-            if (old.ID == null)
+            if (old.ID == 0)
             {
                 return false;
             }
