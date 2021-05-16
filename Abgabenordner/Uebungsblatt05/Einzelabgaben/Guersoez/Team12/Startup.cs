@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Team12.Data;
-using Team12.Entities;
 using Team12.Pages;
 using Team12.Shared;
 
@@ -34,9 +33,9 @@ namespace Team12
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddDbContext<Data.AppContext>(options => options.UseSqlServer
-            (Configuration.GetConnectionString("DefaultConnection")));//Publisher service
-            services.AddScoped<ISkillService, SkillService>();//Register dapper in scope
-            services.AddScoped<IDapperService, DapperService>();
+            (Configuration.GetConnectionString("SoPro2021")));
+            services.AddSingleton<ISkillService, SkillService>();
+            services.AddSingleton<DatabaseUtils>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
