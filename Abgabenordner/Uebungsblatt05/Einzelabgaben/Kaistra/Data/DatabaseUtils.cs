@@ -18,27 +18,24 @@ namespace Team12.Data
         {
             _config = config;
         }
-        
+
         public DbConnection GetConnection()
         {
-            return new SqlConnection(_config.GetConnectionString("SoPro2021Database"));
-        }   //alles notwendige zur Verbindung
+            return new SqlConnection(_config.GetConnectionString("SoPro2021"));
+        } //alles notwendige zur Verbindung
 
-        public void CreatingEmptyTable()    //Micrsoft.docs
+        public void CreatingEmptyTable() //Micrsoft.docs
         {
             using DbConnection db = GetConnection();
-            try
+
+            if (db.State == ConnectionState.Closed)
             {
-                if (db.State == ConnectionState.Closed)
-                {
-                    db.Open();
-                }
-                var erg = db.Query("Create table Skill (id identity(1, 1) primary key, name varchar(50) not null, type bit not null)");
+                db.Open();
             }
-            catch (Exception e)
-            {
-                throw e;
-            }
+
+            var erg = db.Query(
+                "Create table Skill (id identity(1, 1) primary key, name varchar(50) not null, type bit not null)");
+            //same Query as used in ssms to create a table -> not sure bout identity(1, 1) aus autoincrement
         }
     }
 }

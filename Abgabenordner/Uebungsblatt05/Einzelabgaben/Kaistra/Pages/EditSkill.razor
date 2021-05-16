@@ -1,46 +1,79 @@
 ﻿@page "/skill/edit"
 @page "/skill/edit/{ID:int}"
 
+@using Microsoft.Extensions.Logging;
+
 @using Team12.Data
 @using Microsoft.EntityFrameworkCore
 @inject ISkillService _skillService
+@inject ILogger<EditSkill> Logger
 
-@if (_skill.ID == null)
+@if (_skill.ID == null)         //von Anton geschickte Dokumentation zu Blazor-Formularen und -Validierung in ASP.NET CORE | Microsoft Docs
 {
-    <label for="InputSkillname">Skillname</label>
-    <input type="text" class="form-control" id="InputSkillname" aria-describedby="Inputskillname" placeholder="Skillname"/>
+    <EditForm Model="@_skill" OnValidSubmit="@AddSKill">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <div class="form-group">
+            <label for="">Skillname</label>
+            <InputTextArea @bind-value="_skill.Name"></InputTextArea>
+            <label for="">Skilltyp</label>
+        </div>
+        <div>
+            <InputSelectselect class="form-control" @bind="_skill.type">
+                @foreach (var type in Enum.GetValues(typeof(Skilltype)))
+                {
+                    <option value="@type">
+                        @type
+                    </option>
+                }
+            </InputSelectselect>
+        </div>
+        <a href="/skill/index">
+            <button type="submit">Submit</button>
+        </a>
+    </EditForm>
 }
 else
 {
-    <label for="InputSkillname">Skillname</label>
-    <input type="text" class="form-control" id="InputSkillname" aria-describedby="Inputskillname" placeholder="@_skillService.GetSkill((int) _skill.ID)/>
+    <EditForm Model="@_skill" OnValidSubmit="@UpdateSkill">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
+            <div class="form-group">
+                <label for="">Skillname</label>
+                <InputTextArea @bind-value="_skill.Name"></InputTextArea>
+                <label for="">Skilltyp</label>
+            </div>
+            <div>
+                <InputSelectselect class="form-control" @bind="_skill.type">
+                    @foreach (var type in Enum.GetValues(typeof(Skilltype)))
+                    {
+                        <option value="@type">
+                            @type
+                        </option>
+                    }
+                </InputSelectselect>
+            </div>
+            <a href="/skill/index">
+                <button type="submit">Submit</button>
+            </a>
+        </EditForm>
 }
-
-<EditForm Model="@_skill" OnValidSubmit="@HandleValidSubmit">
-    <div class="form-group">
-        <label for="">Skilltyp</label>
-        <select class="form-control" @bind="_skill.type">
-            @foreach (var type in Enum.GetValues(typeof(Skilltype)))
-            {
-                <option value="@type">
-                    @type
-                </option>
-            }
-        </select>
-
-    </div>
-    <a href="/skill/index">
-        <button type="submit">Submit</button>
-    </a>
-</EditForm>
-
-
-
 @code{
+
+    [Parameter] //fehler bei Zugriff auf {id:int} id mus sdeklariert sein
+    public int ID { get; set; }
+
     Skill _skill = new Skill();
-    
-    private void HandleValidSubmit()
+
+    private void UpdateSkill()
     {
+        Logger.LogInformation("HandleValidSubmit called");
+        _skillService.UpdateSkill(_skill);
+    }
+
+    private void AddSKill()
+    {
+        Logger.LogInformation("HandleValidSubmit called");
         _skillService.UpdateSkill(_skill);
     }
 }

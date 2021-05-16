@@ -20,7 +20,7 @@ namespace Team12.Data
     public class SkillService : ISkillService
     {
         private readonly IConfiguration _config;
-    
+
         public SkillService(IConfiguration config)
         {
             _config = config;
@@ -28,39 +28,26 @@ namespace Team12.Data
 
         public DbConnection GetConnection()
         {
-            return new SqlConnection(_config.GetConnectionString("SoPro2021Database"));
+            return new SqlConnection(_config.GetConnectionString("SoPro2021"));
         }
 
         public Skill GetSkill(int skillID) //using public T get() von medium.com #doubleChecking
         {
             Skill result;
             using DbConnection db = GetConnection();
-            try
-            {
-                if (db.State == ConnectionState.Closed)
-                {
-                    DatabaseUtils util = new DatabaseUtils(_config);    //riiiichtig unsicher tho
-                    util.CreatingEmptyTable();
-                    db.Open();
-                }
 
-                var abfrage =
-                    db.Query<Skill>("Select * from Skill where id = @ID", new {ID = skillID})
-                        .ToList(); //zetcode.com/csharp/dapper/ (C# Dapper parameterized query
-                result = abfrage[0]; //list -> array[]
-                return result;
-            }
-            catch (Exception e)
+            if (db.State == ConnectionState.Closed)
             {
-                throw e;
+                DatabaseUtils util = new DatabaseUtils(_config); //riiiichtig unsicher tho
+                util.CreatingEmptyTable();
+                db.Open();
             }
-            finally
-            {
-                if (db.State == ConnectionState.Open)
-                {
-                    db.Close();
-                }
-            }
+
+            var abfrage =
+                db.Query<Skill>("Select * from Skill where id = @ID", new {ID = skillID})
+                    .ToList(); //zetcode.com/csharp/dapper/ (C# Dapper parameterized query
+            result = abfrage[0]; //list -> array[]
+            return result;
         }
 
         public List<Skill> GetAllSkills()
@@ -98,7 +85,6 @@ namespace Team12.Data
 
             if (db.State == ConnectionState.Closed)
             {
-                
                 db.Open();
             }
 
