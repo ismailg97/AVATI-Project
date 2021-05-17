@@ -30,7 +30,6 @@ namespace Team12.Data
                     var result = db.Query<int>("SELECT CASE WHEN OBJECT_ID('dbo.Skill', 'U') IS NOT NULL THEN 1 ELSE 0 END");
                     if (result.First() == 1)
                     {
-                        Console.WriteLine("fehler");
                         return false;
                     }
                     
