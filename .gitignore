@@ -3,6 +3,7 @@
 /shelf/
 /workspace.xml
 # Rider ignored files
+/.idea*
 /modules.xml
 /contentModel.xml
 /.idea.gitexample.iml
