@@ -1,0 +1,71 @@
+﻿@page "/skill/edit"
+@page "/skill/edit/{ID:int}"
+
+@using Team12.Data
+@inject ISkillService _skillService
+
+
+<div class="container-fluid">
+    <a href="/skill/index"><button type="button mb-2" class="btn btn-secondary">Zurück zur Übersicht</button></a>
+
+    <div class="form-group mb-2">
+        <label for="">Skillname</label>
+        <input type="text" @bind-value="name"></input>
+    </div>
+    <div>
+        <label for="">Skilltyp</label>
+        <select class="form-control" @bind="type">
+            @foreach (var blep in Enum.GetValues(typeof(Skilltype)))
+            {
+                <option value="@blep">
+                    @blep
+                </option>
+            }
+        </select>
+    </div>
+    <a href="/skill/index">
+        <button type="submit" class="btn btn-success" @onclick="() => SaveBratan()">Submit</button>
+    </a>
+    @if (_ShowError)
+    {
+        <div class="alert alert-success" role="alert">
+            <h4 class="alert-heading">Fehler!</h4>
+            <p>Error.</p>
+            <hr>
+            <p class="mb-0">Geben Sie eine Variable an..</p>
+        </div>
+    }
+</div>
+
+
+@code{
+
+    [Parameter] //fehler bei Zugriff auf {id:int} id mus sdeklariert sein
+    public int? ID { get; set; }
+
+    public string name { get; set; }
+    public Skilltype type { get; set; }
+
+
+    bool _ShowError = false;
+
+    private void SaveBratan()
+    {
+        if (ID == null)
+        {
+            if (!string.IsNullOrEmpty(name))
+            {
+                _skillService.UpdateSkill(new Skill(name, type));
+            }
+            else
+            {
+                _ShowError = true;
+            }
+        }
+        else
+        {
+            _skillService.UpdateSkill(new Skill((int) ID, name, type));
+        }
+    }
+
+}
