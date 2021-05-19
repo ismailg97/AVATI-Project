@@ -1,7 +1,0 @@
-Aufgabe 4 arbeitet perfectly fine mit ServiceSkillsimple.
-Aufgabe 5 hatte paar Probleme mit try and catch sollte aber im code dokumentiert sein. 
-Das Programm läuft, hat aber mit SkillService keine Funktionalitäten mit der Datenbank. 
-Ich galub nicht, dass der connection string falsch ist, aber die Funktionalität bei den methoden off ist. 
-Warnings in der console.: DatabaseUtils.cs (40, 17) [CA2200] Durch erneutes Auflösen einer abgefangenen Ausnahme werden die Stapelinformationen geändert.
-das gleiche gilt für skillservice(55, 17)
-
