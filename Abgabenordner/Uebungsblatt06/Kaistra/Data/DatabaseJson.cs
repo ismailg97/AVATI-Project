@@ -4,7 +4,7 @@ using System.Collection.Generic;
 using Newtonsoft.Json; 
 using Newtonsoft.Json.Serialization;
 
-
+namespace Team12.Data{
 
 public class DatabaseJson
 {
@@ -12,4 +12,6 @@ public class DatabaseJson
     {
         
     }
+}
+
 }
