@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Team12.Data
 {
@@ -14,29 +15,11 @@ namespace Team12.Data
     {
         private static int identification = 1;
         public int ID { get; set; }
+        [Required]
+        [NotNull]
         public string Name { get; set; }
+        [Required]
         public Skilltype type { get; set; }
-        
-        public Skill(int ID, string Name, Skilltype skill)
-        {
-            this.ID = ID;
-            this.Name = Name;
-            this.type = skill;
-        }
-
-        public Skill(string Name, Skilltype skill)
-        {
-            ID = identification++;
-            this.Name = Name;
-            this.type = skill;
-        }
-
-        public Skill(int id, string name, bool skilltype)
-        {
-            ID = id;
-            Name = name;
-            this.type = skilltype ? Skilltype.Hardskill : Skilltype.Softskill;
-        }
 
         public static void UpdateIdCounter(int isit)
         {

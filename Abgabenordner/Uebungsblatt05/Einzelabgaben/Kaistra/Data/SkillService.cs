@@ -26,10 +26,9 @@ namespace Team12.Data
             catch (Exception e)
             {
             }
-
             _config = config;
         }
-
+        
         public DbConnection GetConnection()
         {
             return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
@@ -42,7 +41,7 @@ namespace Team12.Data
 
             if (db.State == ConnectionState.Closed)
             {
-                DatabaseUtils util = new DatabaseUtils(_config); //riiiichtig unsicher tho
+                DatabaseUtils util = new DatabaseUtils(_config); 
                 util.CreatingEmptyTable();
                 db.Open();
             }
@@ -66,52 +65,46 @@ namespace Team12.Data
             List<Skill> combined = new List<Skill>();
             for (int n = 0; n < HardSkills.Count; ++n)
             {
+                HardSkills[n].type = Skilltype.Hardskill;
                 combined.Add(HardSkills[n]);
             }
 
             for (int n = 0; n < Softskills.Count; ++n)
             {
+                Softskills[n].type = Skilltype.Softskill;
                 combined.Add(Softskills[n]);
             }
-
             return combined;
         }
 
         public bool UpdateSkill(Skill skill)
         {
             using DbConnection db = GetConnection();
-
-            if (db.State == ConnectionState.Closed)
+            int i;
+            db.Open();
+            if (skill.type == Skilltype.Hardskill)
             {
-                db.Open();
+                i = 1;
+            }
+            else
+            {
+                i = 0;
             }
 
-            try
+            if (skill.ID== 0)
             {
-                var name = db.Query<string>("select name from Skill where @skillname = name",
-                    new {skillname = skill.Name});
-                string local = name.ToString();
-                if (local == skill.Name)
-                {
-                }
-                else
-                {
-                    db.QueryFirst<Skill>("select * from skill where id = @oldID", new {oldID = skill.ID});
-
-                    db.Execute("Update Skill set Name = @name, skilltype = @Type where id = @ID",
-                        new {ID = skill.ID, name = skill.Name, Type = skill.type == Skilltype.Hardskill ? 1 : 0});
-                    // Hardskill = 1  |  Softskill = 0
-                }
+                db.Query("insert into Skill values(@name, @bit)",
+                    new {name = skill.Name, bit = i});
             }
-            catch (Exception e)
+            else
             {
-                db.Execute("Insert into Skill values(@name, @skilltype)",
-                    new {name = skill.Name, skilltype = skill.type == Skilltype.Hardskill ? 1 : 0});
-                return true;
+                db.Query("update Skill set Name = @name, Skilltype = @skilltype where Id = @id",
+                    new {name = skill.Name, skilltype = i, id = skill.ID});
             }
 
             return true;
         }
+
 
         public bool DeleteSkill(int skillID)
         {

@@ -3,6 +3,7 @@
 
 @inject ISkillService _skillServiceSimple
 @using Team12.Data
+@using DocumentFormat.OpenXml.Office2010.Excel
 @inject DatabaseUtils _databaseUtils
 
 <h3>Skills und deren Typen</h3>
@@ -52,6 +53,11 @@
 
 @code{
     
+    public int ID { get; set; }
+
+    public string name { get; set; }
+    public Skilltype type { get; set; }
+    
     public DatabaseJson _dbJ { get; set; } = new DatabaseJson();
     
     //laden von jsondateien als skills in die sonst leere tabelle theoretically
@@ -61,13 +67,9 @@
         
         foreach (var element in list)
         {
-            _skillServiceSimple.UpdateSkill(new Skill((string)element, Skilltype.Hardskill)); //ausgabe aller Json dateien regardless of state
-            
+            _skillServiceSimple.UpdateSkill((new Skill() {ID = ID, Name = (string) element, type = Skilltype.Hardskill}));
         }                                                                           
     }                                                                               
-    
-    
-    
     private void DeleteSkill(int id)
     {
         _skillServiceSimple.DeleteSkill(id);

@@ -3,69 +3,39 @@
 
 @using Team12.Data
 @inject ISkillService _skillService
+@inject NavigationManager _navigationManager
 
-
-<div class="container-fluid">
-    <a href="/skill/index"><button type="button mb-2" class="btn btn-secondary">Zurück zur Übersicht</button></a>
-
-    <div class="form-group mb-2">
-        <label for="">Skillname</label>
-        <input type="text" @bind-value="name"></input>
+<EditForm Model="@skill" OnValidSubmit="@SaveBratan">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+    <div class="form-group mb-3">
+        <label class="form-label">Skill-Name: </label>
+        <InputText id="name" @bind-Value="skill.Name"/>
     </div>
-    <div>
-        <label for="">Skilltyp</label>
-        <select class="form-control" @bind="type">
-            @foreach (var blep in Enum.GetValues(typeof(Skilltype)))
-            {
-                <option value="@blep">
-                    @blep
-                </option>
-            }
-        </select>
+    <div class="form-group mb-3">
+        <label class="form-label">Art des Skills: </label>
+        <InputSelect @bind-Value="skill.type">
+            <option value="Hardskill">Hard-Skill</option>
+            <option value="Softskill">Soft-Skill</option>
+        </InputSelect>
     </div>
-    <a href="/skill/index">
-        <button type="submit" class="btn btn-success" @onclick="() => SaveBratan()">Submit</button>
-    </a>
-    @if (_ShowError)
-    {
-        <div class="alert alert-success" role="alert">
-            <h4 class="alert-heading">Fehler!</h4>
-            <p>Error.</p>
-            <hr>
-            <p class="mb-0">Geben Sie eine Variable an..</p>
-        </div>
-    }
-</div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-outline-secondary">Submit</button>
+    </div>
+</EditForm>
 
 
 @code{
 
-    [Parameter] //fehler bei Zugriff auf {id:int} id mus sdeklariert sein
-    public int? ID { get; set; }
-
-    public string name { get; set; }
-    public Skilltype type { get; set; }
-
-
+    private Skill skill { get; set; } = new Skill();
+    [Parameter]
+    public int ID { get; set; }
     bool _ShowError = false;
 
     private void SaveBratan()
     {
-        if (ID == null)
-        {
-            if (!string.IsNullOrEmpty(name))
-            {
-                _skillService.UpdateSkill(new Skill(name, type));
-            }
-            else
-            {
-                _ShowError = true;
-            }
-        }
-        else
-        {
-            _skillService.UpdateSkill(new Skill((int) ID, name, type));
-        }
+        _skillService.UpdateSkill(skill);
+        _navigationManager.NavigateTo(("/skill/index"));
     }
 
 }
