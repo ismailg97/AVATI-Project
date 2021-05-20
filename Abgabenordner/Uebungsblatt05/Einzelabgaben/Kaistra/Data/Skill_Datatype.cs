@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Team12.Data
 {
@@ -8,7 +9,7 @@ namespace Team12.Data
         Hardskill,
         Softskill
     }
-
+    [SkillNameConventionAttribut]
     public class Skill
     {
         private static int identification = 1;
@@ -36,7 +37,6 @@ namespace Team12.Data
             Name = name;
             this.type = skilltype ? Skilltype.Hardskill : Skilltype.Softskill;
         }
-        
 
         public static void UpdateIdCounter(int isit)
         {

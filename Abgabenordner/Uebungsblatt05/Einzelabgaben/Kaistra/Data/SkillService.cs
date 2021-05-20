@@ -9,12 +9,6 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 
-//es kein sein,dass der Code ähnlich dem von Anton ausschaut -> Er hat eine Dokumentation gefunden, die er uns allen geteilt hat. 
-//um drüberzugehem und zu beweisen, dass der Code eigenhändig geschrieben ist.: https://medium.com/informatics/blazor-server-project-1-d77b0c3926d4
-//dort ist der Code in der Dokumentation gleich although man den Stoff ja selber durchgeganen ist und somit (hoffentlich) dann auch verstanden hat
-//aber nach der Ansprache am Freitag hat wohl keiner Bock auf Plagiate #woBleibtVonUndZuGutenberg xD
-//habs mit try and catch versucht, hat aber nicht so ganz gefunzt.. sollte man damit arbeiten? oder erledigt dapper das für einen?
-
 namespace Team12.Data
 {
     public class SkillService : ISkillService
@@ -94,15 +88,26 @@ namespace Team12.Data
 
             try
             {
-                db.QueryFirst<Skill>("select * from skill where id = @oldID", new {oldID = skill.ID});
-                db.Execute("Update Skill set Name = @name, skilltype = @type where id = @ID",
-                    new {ID = skill.ID, name = skill.Name, type = skill.type == Skilltype.Hardskill ? 1 : 0});
-                // Hardskill = 1  |  Softskill = 0
+                var name = db.Query<string>("select name from Skill where @skillname = name",
+                    new {skillname = skill.Name});
+                string local = name.ToString();
+                if (local == skill.Name)
+                {
+                }
+                else
+                {
+                    db.QueryFirst<Skill>("select * from skill where id = @oldID", new {oldID = skill.ID});
+
+                    db.Execute("Update Skill set Name = @name, skilltype = @Type where id = @ID",
+                        new {ID = skill.ID, name = skill.Name, Type = skill.type == Skilltype.Hardskill ? 1 : 0});
+                    // Hardskill = 1  |  Softskill = 0
+                }
             }
             catch (Exception e)
             {
-                db.Execute("Insert into Skill values(@name, @type)",
-                    new {name = skill.Name, type = skill.type == Skilltype.Hardskill ? 1 : 0});
+                db.Execute("Insert into Skill values(@name, @skilltype)",
+                    new {name = skill.Name, skilltype = skill.type == Skilltype.Hardskill ? 1 : 0});
+                return true;
             }
 
             return true;

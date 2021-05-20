@@ -3,6 +3,14 @@
 
 @inject ISkillService _skillServiceSimple
 @using Team12.Data
+@inject DatabaseUtils _databaseUtils
+
+<h3>Skills und deren Typen</h3>
+
+@{      //zum Überprüfen, ob Tabelle in DB vorhanden. Oben angelegt, da nach dem code durchlaufen es keinen sinn mehr machen würde.
+        
+    _databaseUtils.CreatingEmptyTable();
+}   
 
 <table class="table align-middle">
     <thead>
@@ -37,19 +45,33 @@
     } //Layout der Seite aus mdbootstrap.com + button layout aus buttons-bootstrapv5.0 ^^
     else
     {
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        LoadJson();
     }
     </tbody>
 </table>
 
 @code{
-
+    
+    public DatabaseJson _dbJ { get; set; } = new DatabaseJson();
+    
+    //laden von jsondateien als skills in die sonst leere tabelle theoretically
+    public void LoadJson()
+    {
+        List<string> list = _dbJ.LoadJsonSkills();
+        
+        foreach (var element in list)
+        {
+            _skillServiceSimple.UpdateSkill(new Skill((string)element, Skilltype.Hardskill)); //ausgabe aller Json dateien regardless of state
+            
+        }                                                                           
+    }                                                                               
+    
+    
+    
     private void DeleteSkill(int id)
     {
         _skillServiceSimple.DeleteSkill(id);
     }
+    
 
 }

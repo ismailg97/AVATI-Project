@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BlazorDownloadFile;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -31,6 +32,7 @@ namespace Team12
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<ISkillService, SkillService>();
             services.AddSingleton<DatabaseUtils>();
+            services.AddBlazorDownloadFile();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
