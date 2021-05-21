@@ -21,7 +21,6 @@ namespace Team12.Data
             try
             {
                 int id = db.QueryFirst<int>("select max(id) from skill");
-                Skill.UpdateIdCounter(id);
             }
             catch (Exception e)
             {

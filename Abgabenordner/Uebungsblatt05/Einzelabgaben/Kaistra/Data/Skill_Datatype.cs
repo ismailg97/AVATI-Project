@@ -5,26 +5,20 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Team12.Data
 {
-    public enum Skilltype
+    public enum Skilltype               
     {
         Hardskill,
         Softskill
     }
     [SkillNameConventionAttribut]
-    public class Skill
+    public class Skill                                      //removing constructors cause the class had some problems with it -> soft and hardskill error
     {
-        private static int identification = 1;
         public int ID { get; set; }
         [Required]
-        [NotNull]
         public string Name { get; set; }
         [Required]
         public Skilltype type { get; set; }
-
-        public static void UpdateIdCounter(int isit)
-        {
-            identification = ++isit;
-        }
+        
     }
 
     interface ISkillService //interface erstellung
