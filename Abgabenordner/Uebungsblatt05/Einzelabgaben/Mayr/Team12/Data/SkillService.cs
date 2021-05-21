@@ -36,6 +36,8 @@ namespace Team12.Data {
                     "UPDATE Skill SET Name = @namme, Skilltyp = @typ WHERE id = @id",
                     new {namme = skill.Name, typ = skill.SkillCategory, id = skill.Id});
                 return true;//editne
+                
+                //Execute statt Query wenn man nichts returned 
             } 
         }
         public bool DeleteSkill(int skillId)
