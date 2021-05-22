@@ -1,0 +1,46 @@
+﻿@page "/skill"
+@page "/skill/index"
+
+@using Team12.Data
+@inject ISkillService skillService
+@inject IJsonImport jsonImport
+
+<h3>IndexSkill</h3>
+
+@if (!skillService.GetAllSkills().Any())
+{
+    AddJson();
+}
+
+    <table class="table">
+        <tr>
+            <th>Skillname</th>
+            <th>Skilltyp</th>
+            <th>Skill bearbeiten</th>
+            <th>Skill löschen</th>
+        </tr>
+        @foreach (Skill skill in skillService.GetAllSkills())
+        {
+            <tr>
+                <td>@skill.Name</td>
+                <td>@skill.Skilltype</td>
+                <td><a class="btn btn-primary" href="/skill/edit/@skill.Id">Update</a></td>
+                <td><button type="button" class="btn btn-primary" @onclick="(() => skillService.DeleteSkill(skill.Id))">Delete</button></td>
+            </tr>
+        }
+        <tr>Skill erzeugen: <a class="btn btn-primary" href="/skill/edit">Create</a></tr>
+
+    </table>
+
+
+
+@code {
+    public void AddJson()
+    {
+        foreach (Skill skill in jsonImport.GetSkills())
+        {
+            skillService.UpdateSkill(skill);
+        }
+    }
+}
+

@@ -1,0 +1,35 @@
+﻿@page "/skill/edit"
+@page "/skill/edit/{Id:int}"
+
+@using Team12.Data;
+@inject ISkillService _skillService;
+@inject NavigationManager _manager;
+
+<h2>Edit or create Skill</h2>
+
+@if (Id.HasValue) {
+    s = _skillService.GetSkill(Id.Value);
+}
+<EditForm Model="@s" OnSubmit="@HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <label>Name</label>
+    <InputText id="name" @bind-Value="s.Name"></InputText>
+    <label>Kategorie</label>
+    <InputSelect id="category" @bind-Value="s.SkillCategory">
+        <option value="@Skill.Category.Hardskill">Hardskill</option>
+        <option value="@Skill.Category.Softskill">Softskill</option>
+    </InputSelect>
+    <button type="submit">Submit</button>
+</EditForm>
+@code {
+    [Parameter]
+    public int? Id {get; set;}
+    private Skill s = new Skill();
+
+    private void HandleSubmit()
+    {
+        _skillService.UpdateSkill(s);
+        _manager.NavigateTo("/skill/index");
+    }
+}
