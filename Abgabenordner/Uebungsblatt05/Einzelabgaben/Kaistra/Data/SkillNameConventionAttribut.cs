@@ -21,7 +21,7 @@ namespace Team12.Data   // source.: https://www.youtube.com/watch?v=o_AH2MGti0A
             {
                 if (caster.Name.Contains('ä') || caster.Name.Contains('ö') || caster.Name.Contains('!') ||
                     caster.Name.Contains('ö') || caster.Name.Contains(')') || caster.Name.Contains('§') ||
-                    caster.Name.Contains('&') || caster.Name.Contains('(') || caster.Name.Contains(' ') ||
+                    caster.Name.Contains('&') || caster.Name.Contains('(') || caster.Name.Contains('-') ||
                     caster.Name.Contains('%') || caster.Name.Contains('/') || caster.Name.Contains('=') ||
                     caster.Name.Contains('`') || caster.Name.Contains('´') || caster.Name.Contains('^'))        //gibts safe ne andere einfachere möglichkeit
                 {
