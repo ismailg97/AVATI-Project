@@ -1,0 +1,78 @@
+﻿@page "/skill/edit"
+@page "/skill/edit/{id:int}"
+@using Team12.Data
+@using Microsoft.Extensions.Logging
+@inject NavigationManager NavManager
+@inject ILogger<EditSkill> Logger
+@inject ISkillService _skillService
+
+@if (Id == 0)
+{
+  <h3>Neuen Skill anlegen</h3> 
+
+  <EditForm Model="@skill" OnValidSubmit="@NeuenSkillAnlegen">
+    <DataAnnotationsValidator/>
+            <ValidationSummary />
+    <div class="form-group mb-3">
+      <label class="form-label">Skill-Name: </label>
+      <InputText id="skillName" @bind-Value="skill.Name"/>
+    </div>
+    <div class="form-group mb-3">
+      <label class="form-label">Art des Skills: </label>
+      <InputSelect @bind-Value="skill.SkillType">
+        <option value="Hardskill">Hard-Skill</option>
+        <option value="Softskill">Soft-Skill</option>
+      </InputSelect>
+    </div>
+    <div class="form-group">
+      <button id="submit" type="submit" class="btn btn-outline-secondary">Submit</button>
+    </div>
+  </EditForm>
+}
+else 
+{
+  <h3>Bereits vorhandenen Skill editieren</h3> 
+
+  <EditForm Model="@skill" OnValidSubmit="@SkillBearbeiten">
+    <DataAnnotationsValidator/>
+                <ValidationSummary />
+    <div class="form-group mb-3">
+      <label class="form-label">Skill-Name: </label>
+      <InputText id="skillName" @bind-Value="skill.Name"/>
+    </div>
+    <div class="form-group mb-3">
+      <label class="form-label">Art des Skills: </label>
+      <InputSelect @bind-Value="skill.SkillType">
+        <option value="Hardskill">Hard-Skill</option>
+        <option value="Softskill">Soft-Skill</option>
+      </InputSelect>
+    </div>
+    <div class="form-group">
+      <button id="submit" type="submit" class="btn btn-outline-secondary">Submit</button>
+    </div>
+  </EditForm>
+}
+
+
+
+
+@code {
+  [Parameter] public int Id { get; set; }
+  
+  private Skill skill = new Skill();
+  
+  private void NeuenSkillAnlegen()
+  {
+    Logger.LogInformation("NeuenSkillAnlegen called");
+    _skillService.UpdateSkill(skill);
+    NavManager.NavigateTo("/Skill");
+  }
+
+  private void SkillBearbeiten()
+  {
+    Logger.LogInformation("SkillBearbeiten called");
+    skill.Id = Id;
+    _skillService.UpdateSkill(skill);
+    NavManager.NavigateTo("/Skill");
+  }
+}
