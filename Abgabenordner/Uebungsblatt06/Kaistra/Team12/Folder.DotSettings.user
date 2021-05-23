@@ -1,0 +1,7 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=F026BCF3_002D4136_002D4EDA_002D1795_002D2A534581396E_002Fd_003AData_002Ff_003ASkillService_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b7a7a242_002Da90e_002D4774_002Dbf6d_002D41575d9ff33c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="UnitTest1ReturnsTrueHARDSKILLALWAYSTRUE" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F026BCF3-4136-4EDA-1795-2A534581396E::net5.0::Team12.Data.ComponententestsValidation.UnitTest1ReturnsTrueHARDSKILLALWAYSTRUE&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

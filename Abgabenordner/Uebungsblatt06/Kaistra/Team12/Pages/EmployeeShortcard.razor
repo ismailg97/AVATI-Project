@@ -1,0 +1,99 @@
+﻿@page "/EmployeeShortcard"
+@using BlazorDownloadFile
+@using DocumentFormat.OpenXml
+@using DocumentFormat.OpenXml.Packaging
+@using DocumentFormat.OpenXml.Wordprocessing
+@using System.IO
+@inject IBlazorDownloadFileService _blazorDownload
+
+<title>EmployeeShortcard.razor</title>
+
+<ul class="card alert-dark">
+    <li>Vorname.: @Mitarbeiter.Firstname</li>
+    <li>Nachname.: @Mitarbeiter.Lastname</li>
+    <li>
+        Projekte.:
+        <ul>
+            @foreach (var Projects in Mitarbeiter.Projects)
+            {
+                <li>@Projects</li>
+            }
+        </ul>
+    </li>
+    <li>Birthday.: @Mitarbeiter.Day_of_Birth.ToString("dd.MM.yyyy")</li>
+    <li>
+        <button type="button" id="download @Mitarbeiter.Lastname" class="btn btn-group-lg" @onclick="OnclickDownload">Generiere Word DOC @Mitarbeiter.Lastname</button>
+    </li>
+</ul>
+
+@code{
+
+    [Parameter]
+    public Employee Mitarbeiter { get; set; }
+
+    public async Task OnclickDownload()
+    {
+        using (var mem = new MemoryStream())
+        {
+    // Create Document
+            using (var wordDocument =
+                WordprocessingDocument.Create(mem, WordprocessingDocumentType.Document))
+            {
+                var mainPart = wordDocument.AddMainDocumentPart();
+                var dc = new Document();
+    // Create the document structure and add some text.
+                mainPart.Document = new Document();
+
+                var body = new Body();
+
+
+                var run1 = new Run();
+                var text1 = new Text {Space = SpaceProcessingModeValues.Preserve};
+                text1.Text = "Name.: " + Mitarbeiter.Firstname;
+                var p1 = new Paragraph {RsidParagraphAddition = "00C30E0F", RsidRunAdditionDefault = "001E539C", ParagraphId = "5D1254EE", TextId = "03275C9B"};
+                run1.Append(text1);
+                p1.Append(run1);
+
+                var run2 = new Run();
+                var text2 = new Text {Space = SpaceProcessingModeValues.Preserve};
+                text2.Text = "Lastname.: " + Mitarbeiter.Lastname;
+                var p2 = new Paragraph {RsidParagraphAddition = "001E539C", RsidRunAdditionDefault = "001E539C", ParagraphId = "18186194", TextId = "02567032"};
+                run2.Append(text2);
+                p2.Append(run2);
+
+                var run3 = new Run();
+                var text3 = new Text {Space = SpaceProcessingModeValues.Preserve};
+                text2.Text = "Day of Birth.: " + Mitarbeiter.Day_of_Birth;
+                var p3 = new Paragraph {RsidParagraphAddition = "001E539C", RsidRunAdditionDefault = "001E539C", ParagraphId = "6D47687E", TextId = "2E11F935"};
+                run3.Append(text3);
+                p3.Append(run3);
+
+
+                var run4 = new Run();
+                var text4 = new Text {Space = SpaceProcessingModeValues.Preserve};
+                foreach (var projekte in  Mitarbeiter.Projects)
+                {
+                    var b = new Break();
+                    text4.Text = "\n- " + projekte;
+                }
+                var p4 = new Paragraph {RsidParagraphAddition = "001E539C", RsidRunAdditionDefault = "001E539C", ParagraphId = "0292402C", TextId = "201A6119"};
+                run4.Append(text4);
+                p4.Append(run4);
+
+                body.Append(p1);
+                body.Append(p2);
+                body.Append(p3);
+                body.Append(p4);
+
+                dc.AppendChild(body);
+                mainPart.Document = dc;
+            }
+
+    // Download File
+    //Blazordownload wird hier nur als interface angegeben -> gotta inject
+            var task = await _blazorDownload.DownloadFile("textdownload.docx", mem, "application/octet-stream");
+        }
+    }
+
+
+}
