@@ -24,11 +24,11 @@
             <tr>
                 <td>@skill.Name</td>
                 <td>@skill.Skilltype</td>
-                <td><a class="btn btn-primary" href="/skill/edit/@skill.Id">Update</a></td>
-                <td><button type="button" class="btn btn-primary" @onclick="(() => skillService.DeleteSkill(skill.Id))">Delete</button></td>
+                <td><a class="btn btn-primary" href="/skill/edit/@skill.Id" id="Update-@skill.Name">Update</a></td>
+                <td><button type="button" class="btn btn-primary" @onclick="(() => skillService.DeleteSkill(skill.Id))" id="Delete-@skill.Name">Delete</button></td>
             </tr>
         }
-        <tr>Skill erzeugen: <a class="btn btn-primary" href="/skill/edit">Create</a></tr>
+        <tr>Skill erzeugen: <a class="btn btn-primary" href="/skill/edit" id="Create">Create</a></tr>
 
     </table>
 

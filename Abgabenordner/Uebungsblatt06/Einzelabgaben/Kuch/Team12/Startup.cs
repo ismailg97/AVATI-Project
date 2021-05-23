@@ -31,6 +31,7 @@ namespace Team12
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<ISkillService, SkillService>();
+            services.AddSingleton<IJsonImport, JsonImport>();
             services.AddBlazorDownloadFile();
         }
 
