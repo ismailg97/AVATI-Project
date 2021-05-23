@@ -1,39 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Team12.Data
 {
-    public enum Skilltype
+    public enum Skilltype               
     {
         Hardskill,
         Softskill
     }
-
-    public struct Skill
+    [SkillNameConventionAttribut]
+    public class Skill                                      //removing constructors cause the class had some problems with it -> soft and hardskill error
     {
-        private static int identification = 0;
         public int ID { get; set; }
+        [Required]
         public string Name { get; set; }
+        [Required]
         public Skilltype type { get; set; }
-
-        public Skill(int ID, string Name, Skilltype skill)
-        {
-            this.ID = ID;
-            this.Name = Name;
-            this.type = skill;
-        }
-
-        public Skill(string Name, Skilltype skill)
-        {
-            ID = getID();
-            this.Name = Name;
-            this.type = skill;
-        }
-
-        public static int getID()
-        {
-            return identification++;
-        }
+        
     }
 
     interface ISkillService //interface erstellung
@@ -74,7 +59,7 @@ namespace Team12.Data
         public bool UpdateSkill(Skill skill)
         {
             Skill old = skills.Find(index => index.ID == skill.ID);
-            if (old.ID == 0)
+            if (old.ID == 1)
             {
                 return false;
             }

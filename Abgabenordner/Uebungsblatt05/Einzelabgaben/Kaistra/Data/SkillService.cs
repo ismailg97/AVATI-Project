@@ -9,12 +9,6 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 
-//es kein sein,dass der Code ähnlich dem von Anton ausschaut -> Er hat eine Dokumentation gefunden, die er uns allen geteilt hat. 
-//um drüberzugehem und zu beweisen, dass der Code eigenhändig geschrieben ist.: https://medium.com/informatics/blazor-server-project-1-d77b0c3926d4
-//dort ist der Code in der Dokumentation gleich although man den Stoff ja selber durchgeganen ist und somit (hoffentlich) dann auch verstanden hat
-//aber nach der Ansprache am Freitag hat wohl keiner Bock auf Plagiate #woBleibtVonUndZuGutenberg xD
-//habs mit try and catch versucht, hat aber nicht so ganz gefunzt.. sollte man damit arbeiten? oder erledigt dapper das für einen?
-
 namespace Team12.Data
 {
     public class SkillService : ISkillService
@@ -23,12 +17,20 @@ namespace Team12.Data
 
         public SkillService(IConfiguration config)
         {
+            using DbConnection db = GetConnection();
+            try
+            {
+                int id = db.QueryFirst<int>("select max(id) from skill");
+            }
+            catch (Exception e)
+            {
+            }
             _config = config;
         }
-
+        
         public DbConnection GetConnection()
         {
-            return new SqlConnection(_config.GetConnectionString("SoPro2021"));
+            return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
         }
 
         public Skill GetSkill(int skillID) //using public T get() von medium.com #doubleChecking
@@ -38,7 +40,7 @@ namespace Team12.Data
 
             if (db.State == ConnectionState.Closed)
             {
-                DatabaseUtils util = new DatabaseUtils(_config); //riiiichtig unsicher tho
+                DatabaseUtils util = new DatabaseUtils(_config); 
                 util.CreatingEmptyTable();
                 db.Open();
             }
@@ -52,59 +54,56 @@ namespace Team12.Data
 
         public List<Skill> GetAllSkills()
         {
-            List<Skill> Allskills = new List<Skill>();
+            List<Skill> HardSkills = new List<Skill>();
+            List<Skill> Softskills = new List<Skill>();
+
             using DbConnection db = GetConnection();
-            try
-            {
-                if (db.State == ConnectionState.Closed)
-                {
-                    db.Open();
-                }
+            HardSkills = db.Query<Skill>("Select * from Skill where skilltype = 1").ToList();
+            Softskills = db.Query<Skill>("Select * from Skill where skilltype = 0").ToList();
 
-                var abfrage =
-                    db.Query<Skill>("select * from Skill")
-                        .ToList(); //wieso muss hier ein var sein? ist das C# spezifisch?
-                int n = abfrage.Count;
-                int i = 0;
-                while (i != n)
-                {
-                    Allskills.Add(abfrage[i]);
-                    ++i;
-                }
-            }
-            catch (Exception e)
+            List<Skill> combined = new List<Skill>();
+            for (int n = 0; n < HardSkills.Count; ++n)
             {
+                HardSkills[n].type = Skilltype.Hardskill;
+                combined.Add(HardSkills[n]);
             }
 
-            return Allskills;
+            for (int n = 0; n < Softskills.Count; ++n)
+            {
+                Softskills[n].type = Skilltype.Softskill;
+                combined.Add(Softskills[n]);
+            }
+            return combined;
         }
 
         public bool UpdateSkill(Skill skill)
         {
             using DbConnection db = GetConnection();
-
-            if (db.State == ConnectionState.Closed)
+            int i;
+            db.Open();
+            if (skill.type == Skilltype.Hardskill)
             {
-                db.Open();
-            }
-
-            Skill old = new Skill();
-            var asdf = db.Query<Skill>("select * from Skill where id = @oldID", new {id = skill.ID}).ToList();
-            old = asdf[0];
-            //umschreiben Code Skill_datatype
-            if (old.ID == 0)
-            {
-                db.Query<Skill>("Insert Into SKill values(@name, @type)", new {name = skill.Name, type = skill.type});
-                return false;
+                i = 1;
             }
             else
             {
-                db.Query<Skill>("Update Skill set name = @Name, type = @Type where id = @ID",
-                    new {Name = skill.Name, Type = skill.type, ID = skill.ID});
+                i = 0;
+            }
+
+            if (skill.ID== 0)
+            {
+                db.Query("insert into Skill values(@name, @bit)",
+                    new {name = skill.Name, bit = i});
+            }
+            else
+            {
+                db.Query("update Skill set Name = @name, Skilltype = @skilltype where Id = @id",
+                    new {name = skill.Name, skilltype = i, id = skill.ID});
             }
 
             return true;
         }
+
 
         public bool DeleteSkill(int skillID)
         {

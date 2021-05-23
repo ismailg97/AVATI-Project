@@ -1,79 +1,43 @@
 ﻿@page "/skill/edit"
 @page "/skill/edit/{ID:int}"
 
-@using Microsoft.Extensions.Logging;
-
 @using Team12.Data
-@using Microsoft.EntityFrameworkCore
 @inject ISkillService _skillService
-@inject ILogger<EditSkill> Logger
+@inject NavigationManager _navigationManager                
 
-@if (_skill.ID == null)         //von Anton geschickte Dokumentation zu Blazor-Formularen und -Validierung in ASP.NET CORE | Microsoft Docs
-{
-    <EditForm Model="@_skill" OnValidSubmit="@AddSKill">
-        <DataAnnotationsValidator/>
-        <ValidationSummary/>
-        <div class="form-group">
-            <label for="">Skillname</label>
-            <InputTextArea @bind-value="_skill.Name"></InputTextArea>
-            <label for="">Skilltyp</label>
-        </div>
-        <div>
-            <InputSelectselect class="form-control" @bind="_skill.type">
-                @foreach (var type in Enum.GetValues(typeof(Skilltype)))
-                {
-                    <option value="@type">
-                        @type
-                    </option>
-                }
-            </InputSelectselect>
-        </div>
-        <a href="/skill/index">
-            <button type="submit">Submit</button>
-        </a>
-    </EditForm>
-}
-else
-{
-    <EditForm Model="@_skill" OnValidSubmit="@UpdateSkill">
-            <DataAnnotationsValidator/>
-            <ValidationSummary/>
-            <div class="form-group">
-                <label for="">Skillname</label>
-                <InputTextArea @bind-value="_skill.Name"></InputTextArea>
-                <label for="">Skilltyp</label>
-            </div>
-            <div>
-                <InputSelectselect class="form-control" @bind="_skill.type">
-                    @foreach (var type in Enum.GetValues(typeof(Skilltype)))
-                    {
-                        <option value="@type">
-                            @type
-                        </option>
-                    }
-                </InputSelectselect>
-            </div>
-            <a href="/skill/index">
-                <button type="submit">Submit</button>
-            </a>
-        </EditForm>
-}
+<EditForm Model="@skill" OnValidSubmit="@SaveBratan">       
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+    
+    <div class="form-group mb-1">
+        <label class="form-label">Skillname.: </label>
+        <InputText id="name" @bind-Value="skill.Name"/>
+    </div>
+    <div class="form-group mb-3">
+        <label class="form-label">Skilltype.: </label>
+        <InputSelect @bind-Value="skill.type">
+            <option value="Hardskill">Hardskill</option>
+            <option value="Softskill">Softskill</option>
+        </InputSelect>
+    </div>
+    
+    <div class="form-group">
+        <button type="submit" class="btn btn-outline-secondary">Submit</button>
+    </div>
+</EditForm>
+
+
 @code{
 
-    [Parameter] //fehler bei Zugriff auf {id:int} id mus sdeklariert sein
-    public int ID { get; set; }
+    private Skill skill { get; set; } = new Skill();                    //microsoft.docs for the editform and nav manager
+    [Parameter]                                                         //the nav manager makes the whole thing easier to navigate duh^^
+    public int ID { get; set; }                                         //Editform auf Empfehlung von Anton von microsoft umgeschrieben um Einfachheitheit zu erhöhen
+    bool _ShowError = false;
 
-    Skill _skill = new Skill();
-
-    private void UpdateSkill()
+    private void SaveBratan()
     {
-        Logger.LogInformation("HandleValidSubmit called");
-        _skillService.UpdateSkill(_skill);
+        _skillService.UpdateSkill(skill);
+        _navigationManager.NavigateTo(("/skill/index"));
     }
 
-    private void AddSKill()
-    {
-        Logger.LogInformation("HandleValidSubmit called");
-        _skillService.UpdateSkill(_skill);
-    }
 }

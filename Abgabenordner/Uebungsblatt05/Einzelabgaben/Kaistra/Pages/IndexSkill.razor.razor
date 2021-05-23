@@ -1,8 +1,17 @@
 ﻿@page "/skill"
 @page "/skill/index"
 
-@inject ISkillService _skillServiceSimple    
+@inject ISkillService _skillServiceSimple
 @using Team12.Data
+@using DocumentFormat.OpenXml.Office2010.Excel
+@inject DatabaseUtils _databaseUtils
+
+<h3>Skills und deren Typen</h3>
+
+@{      //zum Überprüfen, ob Tabelle in DB vorhanden. Oben angelegt, da nach dem code durchlaufen es keinen sinn mehr machen würde.
+        
+    _databaseUtils.CreatingEmptyTable();
+}   
 
 <table class="table align-middle">
     <thead>
@@ -11,7 +20,7 @@
         <th scope="col">Skilltyp</th>
         <th scope="col">
             <a href="/skill/edit">
-                <button type="button" class="btn btn-danger">Add</button>
+                <button type="button" class="btn btn-primary">Add</button>
             </a>
         </th>
     </tr>
@@ -32,25 +41,35 @@
                 <td>
                     <button @onclick="() => DeleteSkill(skill.ID)" type="button" class="btn btn-danger">Delete</button>
                 </td>
-                <td>
-                    <a href="/skill/edit">
-                        <button type="button" class="btn btn-info">Add</button>
-                    </a>
-                </td>
             </tr>
         }
     } //Layout der Seite aus mdbootstrap.com + button layout aus buttons-bootstrapv5.0 ^^
     else
     {
-        <td>(null)</td>
+        LoadJson();
     }
     </tbody>
 </table>
 
 @code{
-
-    Skill _skill = new Skill();
     
+    public int ID { get; set; }
+
+    public string name { get; set; }
+    public Skilltype type { get; set; }
+    
+    public DatabaseJson _dbJ { get; set; } = new DatabaseJson();
+    
+    //laden von jsondateien als skills in die sonst leere tabelle theoretically
+    public void LoadJson()
+    {
+        List<string> list = _dbJ.LoadJsonSkills();
+        
+        foreach (var element in list)
+        {
+            _skillServiceSimple.UpdateSkill((new Skill() {ID = ID, Name = (string) element, type = Skilltype.Hardskill}));
+        }                                                                           
+    }                                                                               
     private void DeleteSkill(int id)
     {
         _skillServiceSimple.DeleteSkill(id);

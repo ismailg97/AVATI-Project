@@ -5,3 +5,8 @@ Ich galub nicht, dass der connection string falsch ist, aber die Funktionalität
 Warnings in der console.: DatabaseUtils.cs (40, 17) [CA2200] Durch erneutes Auflösen einer abgefangenen Ausnahme werden die Stapelinformationen geändert.
 das gleiche gilt für skillservice(55, 17)
 
+update.: sachen umgeändert
+-> interfaces umgeändert 
+-> services angemeldet 
+-> still not runnabe code when clicking on add
+-> nullpointer object exception when clicked on add

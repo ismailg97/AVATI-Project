@@ -21,10 +21,10 @@ namespace Team12.Data
 
         public DbConnection GetConnection()
         {
-            return new SqlConnection(_config.GetConnectionString("SoPro2021"));
+            return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
         } //alles notwendige zur Verbindung
 
-        public void CreatingEmptyTable() //Micrsoft.docs
+        public void CreatingEmptyTable() //
         {
             using DbConnection db = GetConnection();
 
@@ -33,9 +33,13 @@ namespace Team12.Data
                 db.Open();
             }
 
-            var erg = db.Query(
-                "Create table Skill (id identity(1, 1) primary key, name varchar(50) not null, type bit not null)");
-            //same Query as used in ssms to create a table -> not sure bout identity(1, 1) aus autoincrement
+            var result = db.Query<int>("SELECT CASE WHEN OBJECT_ID('dbo.skill', 'U') IS NOT NULL THEN 1 ELSE 0 END");
+            if (result.First() == 0)
+            {
+                var erg = db.Query(
+                    "Create table Skill (id int identity(1, 1) primary key not null, name varchar(50) not null, skilltype bit not null)");
+                //same Query as used in ssms to create a table -> not sure bout identity(1, 1) aus autoincrement
+            }
         }
     }
 }

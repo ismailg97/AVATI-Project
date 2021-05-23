@@ -1,13 +1,27 @@
 ﻿@page "/EmployeeShortcard"
 
 @using Team12.Data
+@using DocumentFormat.OpenXml
+@using DocumentFormat.OpenXml.Drawing
+@using DocumentFormat.OpenXml.Packaging
+@using DocumentFormat.OpenXml.Wordprocessing
+@using Microsoft.AspNetCore.CookiePolicy
+@using Paragraph = DocumentFormat.OpenXml.Wordprocessing.Paragraph
+@using Run = DocumentFormat.OpenXml.Wordprocessing.Run
+@using Text = DocumentFormat.OpenXml.Wordprocessing.Text
+@using System.IO
+@using DocumentFormat.OpenXml.InkML
+@using BlazorDownloadFile
+@using Break = DocumentFormat.OpenXml.Wordprocessing.Break
+@inject IBlazorDownloadFileService _blazorDownload
+
 <title>EmployeeShortcard.razor</title>
 
 <ul class="card alert-dark">
     <li>Vorname.: @Mitarbeiter.Firstname</li>
     <li>Nachname.: @Mitarbeiter.Lastname</li>
     <li>
-        Projekte.: 
+        Projekte.:
         <ul>
             @foreach (String Projects in Mitarbeiter.Projects)
             {
@@ -16,11 +30,79 @@
         </ul>
     </li>
     <li>Birthday.: @Mitarbeiter.Day_of_Birth.ToString("dd.MM.yyyy")</li>
+    <li>
+        <button type="button" class="btn btn-group-lg" @onclick="OnclickDownload"/>docX
+    </li>
 </ul>
 
 @code{
 
     [Parameter]
     public Employee Mitarbeiter { get; set; }
+
+    public async Task OnclickDownload()
+    {
+        using (MemoryStream mem = new MemoryStream())
+        {
+    // Create Document
+            using (WordprocessingDocument wordDocument =
+                WordprocessingDocument.Create(mem, WordprocessingDocumentType.Document))
+            {
+                MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
+                Document dc = new Document();
+    // Create the document structure and add some text.
+                mainPart.Document = new Document();
+
+                Body body = new Body();
+
+
+                Run run1 = new Run();
+                Text text1 = new Text() {Space = SpaceProcessingModeValues.Preserve};
+                text1.Text = "Name.: " + Mitarbeiter.Firstname;
+                Paragraph p1 = new Paragraph() {RsidParagraphAddition = "00C30E0F", RsidRunAdditionDefault = "001E539C", ParagraphId = "5D1254EE", TextId = "03275C9B"};
+                run1.Append(text1);
+                p1.Append(run1);
+
+                Run run2 = new Run();
+                Text text2 = new Text() {Space = SpaceProcessingModeValues.Preserve};
+                text2.Text = "Lastname.: " + Mitarbeiter.Lastname;
+                Paragraph p2 = new Paragraph() {RsidParagraphAddition = "001E539C", RsidRunAdditionDefault = "001E539C", ParagraphId = "18186194", TextId = "02567032"};
+                run2.Append(text2);
+                p2.Append(run2);
+
+                Run run3 = new Run();
+                Text text3 = new Text() {Space = SpaceProcessingModeValues.Preserve};
+                text2.Text = "Day of Birth.: " + Mitarbeiter.Day_of_Birth;
+                Paragraph p3 = new Paragraph() {RsidParagraphAddition = "001E539C", RsidRunAdditionDefault = "001E539C", ParagraphId = "6D47687E", TextId = "2E11F935"};
+                run3.Append(text3);
+                p3.Append(run3);
+
+
+                Run run4 = new Run();
+                Text text4 = new Text() {Space = SpaceProcessingModeValues.Preserve};
+                foreach (var projekte in  Mitarbeiter.Projects)
+                {
+                    Break b = new Break();
+                    text4.Text = "\n- " + projekte;
+                }
+                Paragraph p4 = new Paragraph() {RsidParagraphAddition = "001E539C", RsidRunAdditionDefault = "001E539C", ParagraphId = "0292402C", TextId = "201A6119"};
+                run4.Append(text4);
+                p4.Append(run4);
+
+                body.Append(p1);
+                body.Append(p2);
+                body.Append(p3);
+                body.Append(p4);
+
+                dc.AppendChild(body);
+                mainPart.Document = dc;
+            }
+
+    // Download File
+    //Blazordownload wird hier nur als interface angegeben -> gotta inject
+            var task = await _blazorDownload.DownloadFile("textdownload.docx", mem, "application/octet-stream");
+        }
+    }
+
 
 }
