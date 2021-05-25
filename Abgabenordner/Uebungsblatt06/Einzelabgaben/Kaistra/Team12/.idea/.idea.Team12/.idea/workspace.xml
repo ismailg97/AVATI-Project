@@ -11,7 +11,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../../.." />
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/Desktop/TestingProgram/TestingProgram/Program.cs" root0="SKIP_HIGHLIGHTING" />
@@ -88,6 +88,7 @@
       <workItem from="1621778901438" duration="1412000" />
       <workItem from="1621780662834" duration="262000" />
       <workItem from="1621781179719" duration="92000" />
+      <workItem from="1621946973549" duration="105000" />
     </task>
     <servers />
   </component>
