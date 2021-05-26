@@ -1,0 +1,75 @@
+﻿@page "/EmployeeShortcard"
+
+@using Team12.Data
+@using BlazorDownloadFile
+@using DocumentFormat.OpenXml
+@using DocumentFormat.OpenXml.Wordprocessing
+@using DocumentFormat.OpenXml.Packaging
+@using System.IO
+@using DocumentFormat.OpenXml.Drawing
+@using DocumentFormat.OpenXml.Drawing.Diagrams
+@using Paragraph = DocumentFormat.OpenXml.Wordprocessing.Paragraph
+@using Run = DocumentFormat.OpenXml.Wordprocessing.Run
+@using Text = DocumentFormat.OpenXml.Wordprocessing.Text
+
+<title>EmployeeShortcard.razor</title>
+
+
+<ul class="card text-black bg-white border-dark mb-3" >
+
+    <li>Vorname: @Worker.Vorname </li>
+    <li>Nachname: @Worker.Nachname </li>
+    <li>
+        Projekte: <br>
+        <ul>
+            @foreach (string project in Worker.PrevProjects)
+            {
+                <li>@project</li>
+            }
+        </ul>
+    </li>
+    <li>Geburtstag: @Worker.Geburtstag.ToString("dd.MM.yyyy")</li>
+    <li><button type="button" class="btn btn-light" @onclick="() => CreateDoc()">Generiere Dokument</button></li>
+</ul>
+
+@code {
+    [Parameter]
+    public Employee Worker { get; set; }
+    
+    [Inject]
+    public BlazorDownloadFile.IBlazorDownloadFileService DownloadFileService { get; set; }
+    
+    private MemoryStream _stream = new MemoryStream();
+    private void CreateDoc()
+    {
+        using (var wdDoc = WordprocessingDocument.Create(_stream, WordprocessingDocumentType.Document))
+        {
+            var doc = new Document(); 
+            var body = new Body();
+            wdDoc.AddMainDocumentPart();
+            wdDoc.MainDocumentPart.Document = doc;
+            wdDoc.MainDocumentPart.Document.Body = body;
+
+            var par1 = body.AppendChild<Paragraph>(new Paragraph());
+            var run1 = par1.AppendChild<Run>(new Run());
+            run1.AppendChild<Text>(new Text("Name: " + Worker.Vorname + " " + Worker.Nachname + '\n'));
+
+            var par2 = body.AppendChild<Paragraph>(new Paragraph());
+            var run2 = par2.AppendChild<Run>(new Run());
+            run2.AppendChild<Text>(new Text("Day of Birth: " + Worker.Geburtstag.ToString("dd.MM.yyyy") + '\n'));
+
+            var par3 = body.AppendChild<Paragraph>(new Paragraph());
+            var run3 = par3.AppendChild<Run>(new Run());
+            run3.AppendChild<Text>(new Text("Previous Projects:" + " " + '\n'));
+            foreach (var project in Worker.PrevProjects)
+            {
+                var par = body.AppendChild(new Paragraph());
+                var run = par.AppendChild(new Run());
+                run.AppendChild(new Text("-" + " " + project + '\n'));
+            };
+            
+            wdDoc.Close();
+        }
+        DownloadFileService.DownloadFile(Worker.Vorname + "_" + Worker.Nachname + ".docx", _stream, "application/octet-stream");
+    }
+}
