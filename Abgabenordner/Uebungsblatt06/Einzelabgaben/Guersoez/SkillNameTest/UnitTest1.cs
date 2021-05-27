@@ -17,7 +17,7 @@ namespace SkillNameTest
         public void SkillNameTest2()
         {
             Skill skill = new Skill();
-            skill.Name = "gültig";
+            skill.Name = "test";
             skill.SkillType = Skill.Category.Softskill;
 
             Assert.DoesNotThrow(delegate
