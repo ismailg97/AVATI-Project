@@ -1,0 +1,23 @@
+﻿@page "/"
+@using PersonalBlazor.Data
+
+<h1>Mitarbeitendenübersicht, Team12</h1>
+
+<p>Hier wird in Kürze das Softwareprojekt von Team12 entstehen.<br /></p>
+<p>Waehrenddessen können Sie sich <a href="fetchdata">hier</a> die Wettervorhersage anschauen.</p>
+<p><a href="shortcard">Employee Shortcard</a></p>
+<p><a href="skill">Skills</a></p>
+<div class="row">
+    <EmployeeShortcard employee="@(new Employee() { Vorname = "Ismail",Nachname = "Gürsöz", Projekte = new List<string> {"none"}, dateTime = DateTime.Now })"></EmployeeShortcard>
+    <EmployeeShortcard employee="@(new Employee() { Vorname = "Beispiel 2",Nachname = "Gürsöz", Projekte = new List<string> {"none"}, dateTime = DateTime.Now })"></EmployeeShortcard>
+</div>
+@code{
+
+
+
+
+
+
+
+
+}

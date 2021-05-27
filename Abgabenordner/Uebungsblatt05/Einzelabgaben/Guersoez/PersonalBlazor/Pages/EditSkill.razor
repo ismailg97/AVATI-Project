@@ -1,0 +1,71 @@
+﻿@page "/skill/edit"
+@page "/skill/edit/{Id:int}"
+@using PersonalBlazor.Data
+@inject NavigationManager NavManager
+@inject ISkillService _skillService
+
+@if (Id == 0)
+{
+    <h3>Neuen Skill anlegen</h3>
+
+    <EditForm Model="@skill" OnValidSubmit="@NeuenSkillAnlegen">
+       
+        <div class="form-group mb-3">
+            <label class="form-label">Skill-Name: </label>
+            <InputText id="name" @bind-Value="skill.Name" />
+        </div>
+        <div class="form-group mb-3">
+            <label class="form-label">Art des Skills: </label>
+            <InputSelect @bind-Value="skill.Skilltyp">
+                <option value="Hardskill">Hard-Skill</option>
+                <option value="Softskill">Soft-Skill</option>
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-outline-secondary">Submit</button>
+        </div>
+    </EditForm>
+}
+else
+{
+    <h3>Bereits vorhandenen Skill editieren</h3>
+
+    <EditForm Model="@skill" OnValidSubmit="@SkillBearbeiten">
+     
+        <div class="form-group mb-3">
+            <label class="form-label">Skill-Name: </label>
+            <InputText id="name" @bind-Value="skill.Name" />
+        </div>
+        <div class="form-group mb-3">
+            <label class="form-label">Art des Skills: </label>
+            <InputSelect @bind-Value="skill.Skilltyp">
+                <option value="Hardskill">Hard-Skill</option>
+                <option value="Softskill">Soft-Skill</option>
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-outline-secondary">Submit</button>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    Skill skill = new Skill();
+
+    public void NeuenSkillAnlegen()
+    {
+        _skillService.UpdateSkill(skill);
+        NavManager.NavigateTo("/Skill");
+    }
+
+    public void SkillBearbeiten()
+    {
+        skill.Id = Id;
+        _skillService.UpdateSkill(skill);
+        NavManager.NavigateTo("/Skill");
+
+    }
+}
