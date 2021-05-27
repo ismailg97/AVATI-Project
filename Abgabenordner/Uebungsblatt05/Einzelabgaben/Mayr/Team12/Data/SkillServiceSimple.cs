@@ -2,8 +2,7 @@
 namespace Team12.Data {
     public class SkillServiceSimple : ISkillService
     {
-        private List<Skill> SkillList = new List<Skill> 
-            {new Skill(1, Skill.Category.Softskill, "Digge"), new Skill(2, Skill.Category.Hardskill, "Wingel")};
+        private List<Skill> SkillList = new List<Skill>();
         public Skill GetSkill(int skillId) {
             foreach (var s in SkillList) {
                 if (s.Id == skillId)
