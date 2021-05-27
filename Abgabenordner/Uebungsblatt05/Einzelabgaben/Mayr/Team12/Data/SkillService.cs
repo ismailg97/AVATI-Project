@@ -4,7 +4,6 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using Microsoft.Extensions.Configuration;
-
 namespace Team12.Data {
     public class SkillService : ISkillService {
         private static IConfiguration _configuration;
