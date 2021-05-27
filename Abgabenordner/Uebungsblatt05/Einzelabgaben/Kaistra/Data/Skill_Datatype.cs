@@ -10,13 +10,10 @@ namespace Team12.Data
         Hardskill,
         Softskill
     }
-    [SkillNameConventionAttribut]
     public class Skill                                      //removing constructors cause the class had some problems with it -> soft and hardskill error
     {
         public int ID { get; set; }
-        [Required]
         public string Name { get; set; }
-        [Required]
         public Skilltype type { get; set; }
         
     }
@@ -31,6 +28,7 @@ namespace Team12.Data
 
     public class SkillServiceSimple : ISkillService //implementiert Interface SkillService
     {
+        private int identification = 0;
         private List<Skill> skills = new List<Skill>();
 
         public bool DeleteSkill(int skillID)

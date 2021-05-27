@@ -31,7 +31,7 @@
     </li>
     <li>Birthday.: @Mitarbeiter.Day_of_Birth.ToString("dd.MM.yyyy")</li>
     <li>
-        <button type="button" class="btn btn-group-lg" @onclick="OnclickDownload"/>docX
+        <button type="button" class="btn btn-group-lg" @onclick="OnclickDownload">docX @Mitarbeiter.Lastname</button>
     </li>
 </ul>
 
@@ -58,21 +58,14 @@
 
                 Run run1 = new Run();
                 Text text1 = new Text() {Space = SpaceProcessingModeValues.Preserve};
-                text1.Text = "Name.: " + Mitarbeiter.Firstname;
+                text1.Text = "Name.: " + Mitarbeiter.Firstname + " " + Mitarbeiter.Lastname;
                 Paragraph p1 = new Paragraph() {RsidParagraphAddition = "00C30E0F", RsidRunAdditionDefault = "001E539C", ParagraphId = "5D1254EE", TextId = "03275C9B"};
                 run1.Append(text1);
                 p1.Append(run1);
-
-                Run run2 = new Run();
-                Text text2 = new Text() {Space = SpaceProcessingModeValues.Preserve};
-                text2.Text = "Lastname.: " + Mitarbeiter.Lastname;
-                Paragraph p2 = new Paragraph() {RsidParagraphAddition = "001E539C", RsidRunAdditionDefault = "001E539C", ParagraphId = "18186194", TextId = "02567032"};
-                run2.Append(text2);
-                p2.Append(run2);
-
+                
                 Run run3 = new Run();
                 Text text3 = new Text() {Space = SpaceProcessingModeValues.Preserve};
-                text2.Text = "Day of Birth.: " + Mitarbeiter.Day_of_Birth;
+                text3.Text = "Day of Birth.: " + Mitarbeiter.Day_of_Birth.Date;
                 Paragraph p3 = new Paragraph() {RsidParagraphAddition = "001E539C", RsidRunAdditionDefault = "001E539C", ParagraphId = "6D47687E", TextId = "2E11F935"};
                 run3.Append(text3);
                 p3.Append(run3);
@@ -90,7 +83,6 @@
                 p4.Append(run4);
 
                 body.Append(p1);
-                body.Append(p2);
                 body.Append(p3);
                 body.Append(p4);
 

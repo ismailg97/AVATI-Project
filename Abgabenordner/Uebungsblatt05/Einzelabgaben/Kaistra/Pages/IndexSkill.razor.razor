@@ -43,11 +43,8 @@
                 </td>
             </tr>
         }
-    } //Layout der Seite aus mdbootstrap.com + button layout aus buttons-bootstrapv5.0 ^^
-    else
-    {
-        LoadJson();
-    }
+    } 
+    
     </tbody>
 </table>
 
@@ -58,18 +55,6 @@
     public string name { get; set; }
     public Skilltype type { get; set; }
     
-    public DatabaseJson _dbJ { get; set; } = new DatabaseJson();
-    
-    //laden von jsondateien als skills in die sonst leere tabelle theoretically
-    public void LoadJson()
-    {
-        List<string> list = _dbJ.LoadJsonSkills();
-        
-        foreach (var element in list)
-        {
-            _skillServiceSimple.UpdateSkill((new Skill() {ID = ID, Name = (string) element, type = Skilltype.Hardskill}));
-        }                                                                           
-    }                                                                               
     private void DeleteSkill(int id)
     {
         _skillServiceSimple.DeleteSkill(id);
