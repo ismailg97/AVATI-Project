@@ -1,0 +1,35 @@
+﻿@page "/skill"
+@page "/skill/index"
+@using PersonalBlazor.Data
+@inject ISkillService _skillService
+@inject IDatenbasis _datenbasis
+<h3>IndexSkill</h3>
+
+<table class="table-striped">
+    <tr>
+        <th>Skillname</th>
+        <th>Skilltyp</th>
+        <th>Bearbeiten</th>
+        <th>Loeschen</th>
+        <th><a href="skill/edit" class="btn btn-primary" role="button" onsubmit="">Erzeugen</a></th>
+    </tr>
+    
+        @foreach (var skill in _skillService.GetAllSkills())
+        {
+            <tr>
+                <td>@skill.Name</td>
+                <td>@skill.Skilltyp</td>
+                <td><a href="skill/edit/@skill.Id" class="btn btn-primary" role="button">Bearbeiten</a></td>
+                <td><a @onclick="@(() => _skillService.DeleteSkill(skill.Id))" class="btn btn-primary" role="button">Loeschen</a></td>
+
+            </tr>
+        }
+    
+
+</table>
+
+@code {
+
+
+
+}
