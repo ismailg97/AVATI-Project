@@ -1,6 +1,6 @@
 ﻿@page "/fetchdata"
 
-@using Team12.Data
+@using PersonalBlazor.Data
 @inject WeatherForecastService ForecastService
 
 <h1>Weather forecast</h1>
@@ -35,6 +35,9 @@ else
         </tbody>
     </table>
 }
+
+<EmployeeShortcard employee="@(new Employee() { Vorname = "Ismail",Nachname = "Gürsöz", Projekte = new List<string> {"none"}, dateTime = DateTime.Now })"></EmployeeShortcard>
+
 
 @code {
     private WeatherForecast[] forecasts;

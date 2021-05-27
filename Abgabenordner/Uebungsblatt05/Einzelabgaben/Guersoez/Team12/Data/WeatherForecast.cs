@@ -1,6 +1,6 @@
 using System;
 
-namespace Team12.Data
+namespace PersonalBlazor.Data
 {
     public class WeatherForecast
     {
