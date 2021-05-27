@@ -14,7 +14,8 @@ namespace Team12.Data
                 Skill test = (Skill)validationContext.ObjectInstance;
                 if (test.SkillType == Skill.Category.Softskill)
                 {
-                    if (test.Name.Any(j => (Char.IsLetter(j) || j == 'ö' || j == 'ü' || j == 'ä' || j == 'Ä' || j == 'Ö' || j == 'Ü')))
+                    var regexItem = new Regex("^[a-zA-Z]*$");
+                    if(!regexItem.IsMatch(test.Name))
                     {
                         return new ValidationResult("Hardskill hat falsche Bezeichnung.");
                     }

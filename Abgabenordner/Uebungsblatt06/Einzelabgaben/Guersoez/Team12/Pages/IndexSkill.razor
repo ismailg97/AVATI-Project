@@ -30,13 +30,8 @@
     {
         foreach (var skill in _datenbasis.LoadJson())
         {
-            <tr>
-                <td>@skill.Name</td>
-                <td>@skill.SkillType</td>
-                <td><a href="skill/edit/@skill.Id" class="btn btn-primary" role="button">Bearbeiten</a></td>
-                <td><a @onclick="@(() => _skillService.DeleteSkill(skill.Id))" class="btn btn-primary" role="button">Loeschen</a></td>
-
-            </tr>
+             _skillService.UpdateSkill(new Skill() {Id = 0, Name = skill.Name, SkillType = Skill.Category.Hardskill});
+            
         }
     }
 
