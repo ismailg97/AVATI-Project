@@ -1,5 +1,4 @@
 ﻿@page "/EmployeeShortcard"
-
 @using Team12.Data
 @using BlazorDownloadFile
 @using DocumentFormat.OpenXml
@@ -13,7 +12,6 @@
 @using Text = DocumentFormat.OpenXml.Wordprocessing.Text
 
 <title>EmployeeShortcard.razor</title>
-
 
 <ul class="card text-black bg-white border-dark mb-3" >
 
@@ -35,10 +33,8 @@
 @code {
     [Parameter]
     public Employee Worker { get; set; }
-    
     [Inject]
     public BlazorDownloadFile.IBlazorDownloadFileService DownloadFileService { get; set; }
-    
     private MemoryStream _stream = new MemoryStream();
     private void CreateDoc()
     {
@@ -67,7 +63,6 @@
                 var run = par.AppendChild(new Run());
                 run.AppendChild(new Text("-" + " " + project + '\n'));
             };
-            
             wdDoc.Close();
         }
         DownloadFileService.DownloadFile(Worker.Vorname + "_" + Worker.Nachname + ".docx", _stream, "application/octet-stream");

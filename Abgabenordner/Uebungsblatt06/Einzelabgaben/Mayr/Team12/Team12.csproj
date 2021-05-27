@@ -13,4 +13,18 @@
     <PackageReference Include="OpenXmlPowerTools" Version="4.5.3.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="TestProjekt\Views\Home\About.cshtml" />
+    <_ContentIncludedByDefault Remove="TestProjekt\Views\Home\Contact.cshtml" />
+    <_ContentIncludedByDefault Remove="TestProjekt\Views\Home\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="TestProjekt\Views\Shared\Error.cshtml" />
+    <_ContentIncludedByDefault Remove="TestProjekt\Views\Shared\_Layout.cshtml" />
+    <_ContentIncludedByDefault Remove="TestProjekt\Views\_ViewStart.cshtml" />
+    <_ContentIncludedByDefault Remove="TestProjekt\packages.config" />
+    <_ContentIncludedByDefault Remove="TestProjekt\Views\Web.config" />
+    <_ContentIncludedByDefault Remove="TestProjekt\Web.config" />
+    <_ContentIncludedByDefault Remove="TestProjekt\Web.Debug.config" />
+    <_ContentIncludedByDefault Remove="TestProjekt\Web.Release.config" />
+  </ItemGroup>
+
 </Project>
