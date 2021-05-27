@@ -1,48 +1,52 @@
-using System;
-using System.Collections.Generic;
-using System.Collections;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-
 
 namespace Team12.Data
 {
-
-
-
-
-
-    public class SkillServiceSimple 
+    public class SkillServiceSimple :ISkillService
     {
-        //private List<Skill> SkillList;
+        private List<Skill> _skills = new List<Skill>();
 
-        public List<Skill> AllSkills = new List<Skill>();
-        public bool DeleteSkill(int skillId)
+        public Skill GetSkill(int id)
         {
-            int ausgabe = AllSkills.RemoveAll(x => x.Id == skillId);
-            if (ausgabe == 1) return true;
-            else return false;
+            return _skills.Find(x => x.Id.Equals(id));
         }
 
         public List<Skill> GetAllSkills()
         {
-            return AllSkills;
-        }
-
-        public Skill GetSkill(int skillId)
-        {
-            return AllSkills.Find(x => x.Id == skillId);
+            return _skills;
         }
 
         public bool UpdateSkill(Skill skill)
         {
-            Skill oldskill = AllSkills.Find(x => x.Id == skill.Id);
-            if (oldskill.Equals(null)) return false;
-            oldskill = skill;
+            if (!_skills.Any())
+            {
+                skill.Id = 1;
+                _skills.Add(skill);
+                return true;
+            } else if (skill.Id != 0)
+            {
+                foreach (var listSkill in _skills)
+                {
+                    if (listSkill.Id == skill.Id)
+                    {
+                        listSkill.Name = skill.Name;
+                        listSkill.SkillType = skill.SkillType;
+                        return true;
+                    }
+                }
+            }
+
+            skill.Id = _skills.Count + 1;
+            _skills.Add(skill);
             return true;
         }
 
+        public bool DeleteSkill(int id)
+        {
+            var tempSkill = _skills.Find(x => x.Id.Equals(id));
 
+            return _skills.Remove(tempSkill);
+        }
     }
 }

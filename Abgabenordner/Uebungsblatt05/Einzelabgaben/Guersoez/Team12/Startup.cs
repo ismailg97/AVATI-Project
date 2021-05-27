@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using BlazorDownloadFile;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -9,12 +6,14 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
+using PersonalBlazor.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Team12.Data;
-using Team12.Pages;
-using Team12.Shared;
 
-namespace Team12
+namespace PersonalBlazor
 {
     public class Startup
     {
@@ -32,10 +31,10 @@ namespace Team12
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
-            services.AddDbContext<Data.AppContext>(options => options.UseSqlServer
-            (Configuration.GetConnectionString("SoPro2021")));
             services.AddSingleton<ISkillService, SkillService>();
             services.AddSingleton<DatabaseUtils>();
+            services.AddBlazorDownloadFile();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Team12.Data
+namespace PersonalBlazor.Data
 {
     public class WeatherForecastService
     {

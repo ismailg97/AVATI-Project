@@ -1,78 +1,101 @@
-using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.Linq;
 using System.Data.Common;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
 using Dapper;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
-using Team12.Data;
+using Newtonsoft.Json;
+using System.IO;
+using static PersonalBlazor.Data.Skill;
 
-namespace Team12.Data{
-    public class SkillService:ISkillService
+namespace PersonalBlazor.Data
+{
+    public class SkillService : ISkillService
     {
-        private readonly IConfiguration _configuration;
+        IConfiguration config;
+        public List<Skill> SkillList = new List<Skill>();
 
-        public SkillService(IConfiguration configuration)
+        public SkillService(IConfiguration _config)
         {
-            _configuration = configuration;
+            config = _config;
         }
 
-        public DbConnection GetDbConnection()
+        public DbConnection GetConnection()
         {
-            return new SqlConnection(_configuration.GetConnectionString("SoPro2021"));
+            return new SqlConnection("data source=DESKTOP-15GNDRC\\SQLEXPRESS;initial catalog=SoPro2021;trusted_connection=true");
         }
 
 
-        [Key]
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Skilltyp { get; set; }
 
-        public List<Skill> AllSkills = new List<Skill>();
-        public bool DeleteSkill(int skillId)
-        {
-            DbConnection db = GetDbConnection();
-            db.Open();
-            return db.Query<bool>("delete from Skill where Id = @skillId").First();
-        }
-
-        public List<Skill> GetAllSkills()
-        {
-            using DbConnection db = GetDbConnection();
-            
-            return this.AllSkills;
-        }
 
         public Skill GetSkill(int skillId)
         {
-            DbConnection db = GetDbConnection();
+            DbConnection db = GetConnection();
             db.Open();
-            List<Skill> skill = db.Query<Skill>("select * from Skill where Id == @skillId").ToList();
-            Skill _skill = skill.First();
-            return AllSkills.Find(x => x.Id == skillId);
+            var result = db.Query<Skill>("select * from Skill where Id =@id", new { id = skillId }).ToList();
+            if (!result.Any()) return null;
+            Skill skill = result[0];
+            return skill;
+
+        }
+        public List<Skill> GetAllSkills()
+        {
+            DbConnection db = GetConnection();
+            db.Open();
+            var result = db.Query<Skill>("select * from Skill").ToList();
+            var categoryResult = db.Query<int>("select Skilltype from Skill").ToList();
+            for (int i = 0; i < result.Count; ++i)
+            {
+                if (categoryResult[i] == 0)
+                {
+                    result[i].Skilltyp= Skill.Category.Hardskill;
+                }
+                else
+                {
+                    result[i].Skilltyp = Skill.Category.Softskill;
+                }
+            }
+
+            return result;
+
         }
 
         public bool UpdateSkill(Skill skill)
         {
-            DbConnection db = GetDbConnection();
+            DbConnection db = GetConnection();
             db.Open();
-            if(db.Query<Skill>("select * from Skill where Id == @skill.Id").Any())
+            int i;
+            if (skill.Skilltyp == Skill.Category.Hardskill)
             {
-                db.Query<Skill>("update Skill set Id=@skill.Id, Name=@skill.Name, Skilltyp=@skill.SkillTyp where Id==@skill.Id");
+                i = 0;
             }
-            else { 
-                db.Query<Skill>("insert int Skill values (@skill.Name, @skill.Id, @skill.Skilltyp)");
+            else
+            {
+                i = 1;
+            }
 
+            if (skill.Id == 0)
+            {
+                db.Query("insert into Skill values(@name, @bit)",
+                    new { name = skill.Name, bit = i });
             }
+            else
+            {
+                db.Query("update Skill set Name = @name, Skilltype = @skilltype where Id = @id",
+                    new { name = skill.Name, skilltype = i, id = skill.Id });
+            }
+
             return true;
         }
 
+        public bool DeleteSkill(int skillId)
+        {
+            DbConnection db = GetConnection();
+            db.Open();
+            db.Query<bool>("delete from Skill where Id =@id", new { id = skillId });
+            return true;
+        }
     }
-
-
-
 }

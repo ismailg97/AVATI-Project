@@ -1,39 +1,35 @@
 ﻿@page "/skill"
 @page "/skill/index"
-@using Team12.Data
-@using System.Linq
+@using PersonalBlazor.Data
 @inject ISkillService _skillService
-@inject DatabaseUtils _database
+@inject IDatenbasis _datenbasis
+<h3>IndexSkill</h3>
 
-@{_database.ErzeugeTabelle(); }
+<table class="table-striped">
+    <tr>
+        <th>Skillname</th>
+        <th>Skilltyp</th>
+        <th>Bearbeiten</th>
+        <th>Loeschen</th>
+        <th><a href="skill/edit" class="btn btn-primary" role="button" onsubmit="">Erzeugen</a></th>
+    </tr>
+    
+        @foreach (var skill in _skillService.GetAllSkills())
+        {
+            <tr>
+                <td>@skill.Name</td>
+                <td>@skill.Skilltyp</td>
+                <td><a href="skill/edit/@skill.Id" class="btn btn-primary" role="button">Bearbeiten</a></td>
+                <td><a @onclick="@(() => _skillService.DeleteSkill(skill.Id))" class="btn btn-primary" role="button">Loeschen</a></td>
 
-<h3>Skills</h3>
+            </tr>
+        }
+    
 
-<table class="table">
-    <thead>
-        <tr>
-            <td>Skillname</td>
-            <td>Skilltyp</td>
-            <td><a role="button" href="skill/edit/{Id:int}" class="btn btn-warning">Bearbeiten</a></td>
-            <td><a role="button" href="" class="btn btn-warning">Loeschen</a></td>
-            <td><a role="button" href="" class="btn btn-warning">Erzeugen</a></td>
-        </tr>
-    </thead>
-    <tbody>
-        @if (_skillService.GetAllSkills().Any())
-        {@foreach (var skill in _skillService.GetAllSkills())
-            {
-                <tr>
-                    <td>@skill.Name</td>
-                    <td>@skill.SkillType</td>
-                    <td><a role="button" href="skill/edit/{Id}" class="btn btn-warning">Bearbeiten</a></td>
-                    <td><a role="button" href="" class="btn btn-warning">Loeschen</a></td>
-                    <td><a role="button" href="skill/edit" class="btn btn-warning">Erzeugen</a></td>
-                </tr>
-            }
-    }
-    </tbody>
 </table>
+
 @code {
+
+
 
 }
