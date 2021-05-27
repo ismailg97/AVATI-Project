@@ -5,31 +5,54 @@
 @inject ISkillService _skillService;
 @inject NavigationManager _manager;
 
-<h2>Edit or create Skill</h2>
-
-@if (Id.HasValue) {
-    s = _skillService.GetSkill(Id.Value);
+@if (Id == 0)
+{
+    <h2>Edit Skill</h2>
+    <EditForm Model="@_s" OnSubmit="@HandleSubmit">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <label>Name</label>
+        <InputText id="name" @bind-Value="_s.Name"/>
+        <label>Kategorie</label>
+        <InputSelect id="category" @bind-Value="_s.SkillCategory">
+            <option value="Hardskill">Hardskill</option>
+            <option value="Softskill">Softskill</option>
+        </InputSelect>
+        <button type="submit">Submit</button>
+    </EditForm>
 }
-<EditForm Model="@s" OnSubmit="@HandleSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <label>Name</label>
-    <InputText id="name" @bind-Value="s.Name"></InputText>
-    <label>Kategorie</label>
-    <InputSelect id="category" @bind-Value="s.SkillCategory">
-        <option value="@Skill.Category.Hardskill">Hardskill</option>
-        <option value="@Skill.Category.Softskill">Softskill</option>
-    </InputSelect>
-    <button type="submit">Submit</button>
-</EditForm>
+else
+{
+    <h2>Create Skill</h2>
+    <EditForm Model="@_s" OnSubmit="@HandleEdit">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <label>Name</label>
+        <InputText id="name" @bind-Value="_s.Name"/>
+        <label>Kategorie</label>
+        <InputSelect id="category" @bind-Value="_s.SkillCategory">
+            <option value="Hardskill">Hardskill</option>
+            <option value="Softskill">Softskill</option>
+        </InputSelect>
+        <button type="submit">Submit</button>
+    </EditForm>
+}
+
 @code {
     [Parameter]
-    public int? Id {get; set;}
-    private Skill s = new Skill();
+    public int Id {get; set;}
+    private Skill _s = new Skill();
 
     private void HandleSubmit()
     {
-        _skillService.UpdateSkill(s);
+        _skillService.UpdateSkill(_s);
+        _manager.NavigateTo("/skill/index");
+    }
+
+    private void HandleEdit()
+    {
+        _s.Id = Id;
+        _skillService.UpdateSkill(_s);
         _manager.NavigateTo("/skill/index");
     }
 }

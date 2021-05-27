@@ -3,6 +3,7 @@
 @using Team12.Data
 @inject ISkillService _skillService;
 @inject NavigationManager _manager;
+
 <div class="table-bordered">
     <table>
         <thead>
@@ -27,6 +28,10 @@
         </tbody>
     </table>
 </div>
+<div>
+    <button class="btn btn-success" @onclick="() => btn_add()">Anlegen</button>
+</div>
+
 @code {
     private void btn_edit(int id) {
         _manager.NavigateTo("/skill/edit/" + id);
@@ -35,6 +40,7 @@
         _skillService.DeleteSkill(id);
     }
     private void btn_add() {
-        _manager.NavigateTo("/skill/edit");
+        _manager.NavigateTo("/skill/edit" + 0);
     }
+    //href einfacher 
 }

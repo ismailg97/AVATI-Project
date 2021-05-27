@@ -1,11 +1,7 @@
 ﻿@page "/EmployeeShortcard"
-
 @using Team12.Data
 
-
 <title>EmployeeShortcard.razor</title>
-
-
 <ul class="card text-black bg-white border-dark mb-3" >
 
     <li>Vorname: @Worker.Vorname </li>
@@ -23,11 +19,7 @@
 
 </ul>
 
-
-
 @code {
     [Parameter]
     public Employee Worker { get; set; }
-
-
 }

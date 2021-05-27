@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BlazorDownloadFile" Version="2.1.6" />
+    <PackageReference Include="Dapper" Version="2.0.90" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.13.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.0-preview2.21106.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="OpenXmlPowerTools" Version="4.5.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="TestProjekt\Views\Home\About.cshtml" />
+    <_ContentIncludedByDefault Remove="TestProjekt\Views\Home\Contact.cshtml" />
+    <_ContentIncludedByDefault Remove="TestProjekt\Views\Home\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="TestProjekt\Views\Shared\Error.cshtml" />
+    <_ContentIncludedByDefault Remove="TestProjekt\Views\Shared\_Layout.cshtml" />
+    <_ContentIncludedByDefault Remove="TestProjekt\Views\_ViewStart.cshtml" />
+    <_ContentIncludedByDefault Remove="TestProjekt\packages.config" />
+    <_ContentIncludedByDefault Remove="TestProjekt\Views\Web.config" />
+    <_ContentIncludedByDefault Remove="TestProjekt\Web.config" />
+    <_ContentIncludedByDefault Remove="TestProjekt\Web.Debug.config" />
+    <_ContentIncludedByDefault Remove="TestProjekt\Web.Release.config" />
+  </ItemGroup>
+
+</Project>
