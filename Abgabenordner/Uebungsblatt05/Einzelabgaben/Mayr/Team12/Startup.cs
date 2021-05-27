@@ -30,6 +30,7 @@ namespace Team12
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<ISkillService, SkillService>();
+            services.AddSingleton<DatabaseUtils>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

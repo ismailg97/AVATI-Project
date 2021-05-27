@@ -39,7 +39,7 @@ namespace Team12.Data
             using DbConnection db = GetConnection();
             db.Open();
             var result = db.Query<Skill>("select * from Skill").ToList();
-            var categoryResult = db.Query<int>("select Skilltyp from Skill").ToList();
+            var categoryResult = db.Query<int>("select Skilltype from Skill").ToList();
             for (int i = 0; i < result.Count; ++i)
             {
                 if (categoryResult[i] == 0)
@@ -60,14 +60,7 @@ namespace Team12.Data
             using DbConnection db = GetConnection();
             int i;
             db.Open();
-            if (skill.SkillType == Skill.Category.Hardskill)
-            {
-                i = 0;
-            }
-            else
-            {
-                i = 1;
-            }
+            i = skill.SkillType == Skill.Category.Hardskill ? 0 : 1;
 
             if (skill.Id == 0)
             {
@@ -76,7 +69,7 @@ namespace Team12.Data
             }
             else
             {
-                db.Query("update Skill set Name = @name, Skilltyp = @skilltype where Id = @id",
+                db.Query("update Skill set Name = @name, Skilltype = @skilltype where Id = @id",
                     new {name = skill.Name, skilltype = i, id = skill.Id});
             }
 

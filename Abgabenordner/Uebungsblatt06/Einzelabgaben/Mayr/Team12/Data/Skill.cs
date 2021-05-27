@@ -19,7 +19,5 @@ namespace Team12.Data
             Hardskill,
             Softskill
         }
-
-        
     }
 }
