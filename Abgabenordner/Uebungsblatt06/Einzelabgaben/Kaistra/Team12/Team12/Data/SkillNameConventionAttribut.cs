@@ -18,7 +18,7 @@ namespace Team12.Data // source.: https://www.youtube.com/watch?v=o_AH2MGti0A
                     caster.Name.Contains('&') || caster.Name.Contains('(') || caster.Name.Contains('-') ||
                     caster.Name.Contains('%') || caster.Name.Contains('/') || caster.Name.Contains('=') ||
                     caster.Name.Contains('`') || caster.Name.Contains('´') ||
-                    caster.Name.Contains('^')) //gibts safe ne andere einfachere möglichkeit
+                    caster.Name.Contains('^')) 
                 
                     return new ValidationResult("Error.: Fehler bei der Eingabe");
             return ValidationResult.Success;

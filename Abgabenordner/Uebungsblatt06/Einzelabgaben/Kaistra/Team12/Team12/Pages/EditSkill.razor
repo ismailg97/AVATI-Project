@@ -4,7 +4,7 @@
 @inject ISkillService _skillService
 @inject NavigationManager _navigationManager
 
-<EditForm Model="@skill" OnValidSubmit="@SaveBratan">
+<EditForm Model="@skill" OnValidSubmit="@Save">
     <DataAnnotationsValidator/>
     <ValidationSummary/>
 
@@ -28,14 +28,14 @@
 
 @code{
 
-    private Skill skill { get; } = new(); //microsoft.docs for the editform and nav manager
+    private Skill skill { get; } = new(); 
 
-    [Parameter] //the nav manager makes the whole thing easier to navigate duh^^
-    public int ID { get; set; } //Editform auf Empfehlung von Anton von microsoft umgeschrieben um Einfachheitheit zu erhöhen
+    [Parameter] 
+    public int ID { get; set; } 
 
     bool _ShowError = false;
 
-    private void SaveBratan()
+    private void Save()
     {
         _skillService.UpdateSkill(skill);
         _navigationManager.NavigateTo("/skill/index");

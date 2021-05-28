@@ -19,7 +19,7 @@ namespace Team12.Data
         public DbConnection GetConnection()
         {
             return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-        } //alles notwendige zur Verbindung
+        } 
 
         public void CreatingEmptyTable() //
         {
@@ -32,7 +32,6 @@ namespace Team12.Data
             {
                 var erg = db.Query(
                     "Create table Skill (id int identity(1, 1) primary key not null, name varchar(50) not null, skilltype bit not null)");
-                //same Query as used in ssms to create a table -> not sure bout identity(1, 1) aus autoincrement
             }
         }
     }

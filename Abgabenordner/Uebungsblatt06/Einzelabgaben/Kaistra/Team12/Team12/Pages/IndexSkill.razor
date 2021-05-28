@@ -24,7 +24,7 @@
     </tr>
     </thead>
     <tbody>
-    @if (_skillServiceSimple.GetAllSkills().Any()) //Fehler rausgehauen -> kein Element in der List | .any() aus der SoPro Übung am Freitag 
+    @if (_skillServiceSimple.GetAllSkills().Any())
     {
         foreach (var skill in _skillServiceSimple.GetAllSkills())
         {
@@ -41,7 +41,7 @@
                 </td>
             </tr>
         }
-    } //Layout der Seite aus mdbootstrap.com + button layout aus buttons-bootstrapv5.0 ^^
+    }
     else
     {
         LoadJson();
@@ -58,7 +58,7 @@
 
     public DatabaseJson _dbJ { get; set; } = new();
 
-    //laden von jsondateien als skills in die sonst leere tabelle theoretically
+
     public void LoadJson()
     {
         var list = _dbJ.LoadJsonSkills();

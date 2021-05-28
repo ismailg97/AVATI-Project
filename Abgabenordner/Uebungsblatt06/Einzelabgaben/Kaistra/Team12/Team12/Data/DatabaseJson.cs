@@ -8,7 +8,7 @@ namespace Team12.Data
     {
         private readonly List<string> skill = new();
 
-        public List<string> LoadJsonSkills() //json datei aus datenbasis 'rausladen'
+        public List<string> LoadJsonSkills() 
         {
             using (var r = new StreamReader("data\\datenbasis.json"))
             {
@@ -20,7 +20,7 @@ namespace Team12.Data
                 //Quelle.: https://stackoverflow.com/questions/13297563/read-and-parse-a-json-file-in-c-sharp
 
                 foreach (string item in
-                    array.skills.SprachenundFrameworks.Sprachen) //-> gleiche schreibweise wie in javasrcipt
+                    array.skills.SprachenundFrameworks.Sprachen) 
                     skill.Add(item);
             }
 

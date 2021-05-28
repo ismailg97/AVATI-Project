@@ -19,7 +19,7 @@ namespace Team12.Data
             _config = config;
         }
 
-        public Skill GetSkill(int skillID) //using public T get() von medium.com #doubleChecking
+        public Skill GetSkill(int skillID) 
         {
             Skill result;
             using var db = GetConnection();
@@ -34,7 +34,7 @@ namespace Team12.Data
             var abfrage =
                 db.Query<Skill>("Select * from Skill where id = @ID", new {ID = skillID})
                     .ToList(); //zetcode.com/csharp/dapper/ (C# Dapper parameterized query
-            result = abfrage[0]; //list -> array[]
+            result = abfrage[0]; 
             return result;
         }
 
