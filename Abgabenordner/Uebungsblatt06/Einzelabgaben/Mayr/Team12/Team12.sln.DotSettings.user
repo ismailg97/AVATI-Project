@@ -1,0 +1,29 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=0836ae99_002D4c5c_002D4323_002Daef7_002De80ebe9cc9ef/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from &amp;lt;TestProject1&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Project Location="C:\Users\Tobi\RiderProjects\tutorium-f-team-12\Abgabenordner\Uebungsblatt06\Einzelabgaben\Mayr\Team12\TestProject1" Presentation="&amp;lt;TestProject1&amp;gt;" /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=189beba6_002D5fdb_002D417c_002Daf3c_002Df0469de8f0f4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestEditSkill" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::EEF85140-520D-453C-AB7E-EE2BD12DB0CA::net5.0::TestProject1.End2EndTest.TestEditSkill&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	
+	
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=943c03ff_002D0456_002D4f39_002D908f_002Dfd4dc38c81a1/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestEditSkill #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::EEF85140-520D-453C-AB7E-EE2BD12DB0CA::net5.0::TestProject1.End2EndTest.TestEditSkill&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=9fa8542a_002Deffe_002D41d4_002Db1fb_002D98255c868909/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestEditSkill #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::EEF85140-520D-453C-AB7E-EE2BD12DB0CA::net5.0::TestProject1.End2EndTest.TestEditSkill&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a112c710_002D9416_002D4f10_002D993a_002D7522a350dab1/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;And&gt;&#xD;
+    &lt;Project Location="C:\Users\Tobi\RiderProjects\tutorium-f-team-12\Abgabenordner\Uebungsblatt06\Einzelabgaben\Mayr\Team12\TestProject1" Presentation="&amp;lt;TestProject1&amp;gt;" /&gt;&#xD;
+    &lt;Namespace&gt;TestProject1&lt;/Namespace&gt;&#xD;
+  &lt;/And&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	</wpf:ResourceDictionary>
