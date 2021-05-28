@@ -21,7 +21,7 @@ namespace Team12.Data {
             using IDbConnection connection = new SqlConnection(_configuration.GetConnectionString("SkillConnectionString"));
             var result = connection.Query<Skill>("SELECT * FROM Skill").ToList();
            
-            var categoryResult = connection.Query<int>("select Skilltyp from Skill").ToList();
+            var categoryResult = connection.Query<int>("select Skilltype from Skill").ToList();
             for (int i = 0; i < result.Count; ++i)
             {
                 if (categoryResult[i] == 0)
@@ -41,12 +41,12 @@ namespace Team12.Data {
             var i = skill.SkillCategory == Skill.Category.Hardskill ? 0 : 1;
             if (GetSkill(skill.Id) == null) {
                 connection.Execute(
-                    "INSERT INTO Skill (Name, Skilltyp) VALUES (@namme, @bit)",
+                    "INSERT INTO Skill (Name, Skilltype) VALUES (@namme, @bit)",
                     new {namme = skill.Name, bit = i});
                 return false; //anlegne
             }
             connection.Execute(
-                "UPDATE Skill SET Name = @namme, Skilltyp = @typ WHERE id = @id",
+                "UPDATE Skill SET Name = @namme, Skilltype = @typ WHERE id = @id",
                 new {namme = skill.Name, typ = i, id = skill.Id});
             return true;//editne
                 

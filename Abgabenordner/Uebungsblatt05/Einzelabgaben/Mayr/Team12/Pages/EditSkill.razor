@@ -7,7 +7,7 @@
 
 @if (Id == 0)
 {
-    <h2>Edit Skill</h2>
+    <h2>Create Skill</h2>
     <EditForm Model="@_s" OnSubmit="@HandleSubmit">
         <DataAnnotationsValidator/>
         <ValidationSummary/>
@@ -23,7 +23,7 @@
 }
 else
 {
-    <h2>Create Skill</h2>
+    <h2>Edit Skill</h2>
     <EditForm Model="@_s" OnSubmit="@HandleEdit">
         <DataAnnotationsValidator/>
         <ValidationSummary/>
