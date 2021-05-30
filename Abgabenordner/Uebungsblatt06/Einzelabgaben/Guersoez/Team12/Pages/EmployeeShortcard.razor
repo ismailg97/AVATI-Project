@@ -26,7 +26,7 @@
         </ul>
     </li>
     <li>Geburtstag: @Worker.Geburtstag.ToString("dd.MM.yyyy")</li>
-    <li><button @onclick="() => CreateDoc(Worker)">Test</button></li>
+    <li><button @onclick="() => CreateDoc(Worker)">Dokument generieren</button></li>
 
 </ul>
 
@@ -86,7 +86,7 @@
                 mainPart.Document = doc;
 
             }
-            await _blazor.DownloadFile("Test.docx", memo, "application/octet-stream");
+            await _blazor.DownloadFile(emp.Nachname + ".docx", memo, "application/octet-stream");
         }
 
     }
