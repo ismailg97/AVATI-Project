@@ -2,7 +2,7 @@
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Users\Alexander\Desktop\Studium Informatik\Informatik 1\projekt\Team12\packages\NUnit.3.5.0\lib\net45\nunit.framework.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=0047a227_002D6f00_002D4f7a_002D8619_002De5e6157790b0/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Test2Creation #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=0047a227_002D6f00_002D4f7a_002D8619_002De5e6157790b0/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Test2Creation #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::BBEAF945-EA55-4557-B921-690837BABDDA::net5.0::TestProject1.Program.Test2Creation&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
@@ -13,7 +13,7 @@
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b1de72b2_002D115b_002D46e7_002D85b6_002De1856237e484/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Test2Creation" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b1de72b2_002D115b_002D46e7_002D85b6_002De1856237e484/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Test2Creation" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::BBEAF945-EA55-4557-B921-690837BABDDA::net5.0::TestProject1.Program.Test2Creation&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::BBEAF945-EA55-4557-B921-690837BABDDA::net5.0::TestProject1.Program.GeneriereDokument&lt;/TestId&gt;&#xD;
