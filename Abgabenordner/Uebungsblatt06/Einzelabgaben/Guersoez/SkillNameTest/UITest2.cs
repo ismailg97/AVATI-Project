@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 using System.Threading;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -13,6 +8,8 @@ using OpenQA.Selenium.Firefox;
 
 namespace SkillNameTest
 {
+    
+    
     [TestFixture]
     class UiTest
     {
@@ -32,22 +29,21 @@ namespace SkillNameTest
             IWebDriver _web = new FirefoxDriver(options);
             _web.Navigate().GoToUrl("https://localhost:5001");
             Thread.Sleep(1000);
-            IWebElement el = _web.FindElement(By.LinkText("Skills"));
-            el.Click();
+            IWebElement el2 = _web.FindElement(By.LinkText("Skills"));
+            el2.Click();
             Thread.Sleep(1000);
             
-            el = _web.FindElement(By.Id("bearbeiten"));
-            el.Click();
+            el2 = _web.FindElement(By.Id("bearbeiten"));
+            el2.Click();
             Thread.Sleep(1000);
             
-            el = _web.FindElement(By.Id("name"));
-            el.SendKeys("test");
+            el2 = _web.FindElement(By.Id("name"));
+            el2.SendKeys("test");
             Thread.Sleep(1000);
-            el = _web.FindElement(By.Id("submit"));
-            el.Click();
+            el2 = _web.FindElement(By.Id("absenden"));
+            el2.Click();
             Thread.Sleep(1000);
-            
-            el = _web.FindElement(By.Name("test"));
+           
 
             _web.Close();
 
@@ -63,13 +59,12 @@ namespace SkillNameTest
             Thread.Sleep(1000);
             
             el = _web.FindElement(By.Id("name"));
-            el.SendKeys("test");
+            el.SendKeys("test2");
             Thread.Sleep(1000);
-            el = _web.FindElement(By.Id("submit"));
+            el = _web.FindElement(By.Id("absenden"));
             el.Click();
             Thread.Sleep(1000);
             
-            el = _web.FindElement(By.Name("test"));
             _web.Close();
 
         }
@@ -84,13 +79,14 @@ namespace SkillNameTest
             IWebDriver _web = new FirefoxDriver(options);
             _web.Navigate().GoToUrl("https://localhost:5001");
             Thread.Sleep(1000);
-            IWebElement el = _web.FindElement(By.LinkText("Skills"));
-            el.Click();
+            IWebElement el4 = _web.FindElement(By.LinkText("Skills"));
+            el4.Click();
             Thread.Sleep(1000);
             
-            el = _web.FindElement(By.LinkText("Löschen"));
-            el.Click();
+            el4 = _web.FindElement(By.Id("loeschen"));
+            el4.Click();
             Thread.Sleep(1000);
+            
             
             _web.Close();
 
@@ -101,10 +97,10 @@ namespace SkillNameTest
             el.Click();
             Thread.Sleep(1000);
             
-            el = _web.FindElement(By.LinkText("Löschen"));
-            el.Click();
+            el4 = _web.FindElement(By.Id("loeschen"));
+            el4.Click();
             Thread.Sleep(1000);
-           
+            _web.Close();
         }
 
     }
