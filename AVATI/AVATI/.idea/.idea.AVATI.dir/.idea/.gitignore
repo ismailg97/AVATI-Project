@@ -3,8 +3,8 @@
 /workspace.xml
 # Rider ignored files
 /modules.xml
-/.idea.AVATI.iml
 /contentModel.xml
+/.idea.AVATI.iml
 /projectSettingsUpdater.xml
 # Datasource local storage ignored files
 /dataSources/
