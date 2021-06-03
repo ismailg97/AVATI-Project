@@ -4,4 +4,9 @@
         <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Blazorise.Sidebar" Version="0.9.3.7" />
+      <PackageReference Include="bootstrap" Version="5.0.1" />
+    </ItemGroup>
+
 </Project>
