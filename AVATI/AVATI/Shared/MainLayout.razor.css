@@ -56,6 +56,16 @@
     font-size: 1.5rem;
     margin-left: 30px;
 }
+.aboutOpen {
+    color: white;
+    font-size: 1.3rem;
+    margin-left: 570px;
+}
+.aboutCollapsed {
+    color: white;
+    font-size: 1.3rem;
+    margin-left: 680px;
+}
 .nav-item ::deep a.active {
     background-color: rgba(255,255,255,0.2);
     color: white;
@@ -73,7 +83,7 @@
     display: block;
     transition: 0.3s;
 }
-.sidebar .closebtn {
+.sidebar .closeButton {
     position: absolute;
     top: 0;
     width: 60px;
@@ -84,18 +94,19 @@
     background-color: #7a212e;
     border: none;
 }
-.openbtn {
+.openButton {
     font-size: 20px;
     cursor: pointer;
     background-color: #7a212e;
-    border-color: #7a212e;
     color: white;
-    padding: 10px 15px;
-    border-radius: 4px;
+    padding: 10px 10px;
+    border: none;
+    margin-left: 0;
 }
-
-.openbtn :hover {
-    background-color: rgba(255,255,255,0.1);
+.logo {
+    width: 277px;
+    height: 70px;
+    margin-left: 535px;
 }
 /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
 @media screen and (max-height: 450px) {
