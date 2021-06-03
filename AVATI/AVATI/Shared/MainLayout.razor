@@ -1,17 +1,50 @@
 ﻿@inherits LayoutComponentBase
-
 <div class="page">
-    <div class="sidebar">
-        <NavMenu/>
+    <div style="@SidebarWidth" class="sidebar">
+        <button class="closebtn" @onclick="CloseNav">
+            <span class="oi oi-menu"></span>
+        </button>
+        <ul class="nav flex-column">
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="oi oi-person" aria-hidden="true"></span> Profil
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="dummy">
+                    <span class="oi oi-clipboard" aria-hidden="true"></span> Projektübersicht
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="dummy">
+                    <span class="oi oi-spreadsheet" aria-hidden="true"></span> Angebotsübersicht
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="dummy">
+                    <span class="oi oi-magnifying-glass" aria-hidden="true"></span> Mitarbeitersuche
+                </NavLink>
+            </li>
+        </ul>
     </div>
-
-    <div class="main">
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <div class="content px-4">
-            @Body
-        </div>
+    <div class="top-row px-4" style="@MainMargin">
+        @if (_width == 0)
+        {
+            <button class="openbtn" @onclick="OpenNav"><span class="oi oi-menu"></span>Open Sidebar</button>
+        }
+        <a class="brand" href="">AVATI</a>
+    </div>
+    <div class="content px-4" style="@MainMargin">
+        <p>@Body</p>
     </div>
 </div>
+
+
+
+@code {
+    private int _width = 300;
+    private string SidebarWidth => $"width: {_width}px;";
+    private string MainMargin => $"margin-left: {_width}px;";
+    void OpenNav() => _width = 300;
+    void CloseNav() => _width = 0;
+}
