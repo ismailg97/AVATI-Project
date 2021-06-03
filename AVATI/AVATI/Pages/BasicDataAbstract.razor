@@ -1,0 +1,56 @@
+﻿@page "/BasicDataAbstract"
+@using AVATI.Data
+
+@inject IBasicDataService _basicDataService
+@inject IHardskillService _hardskillService
+
+<h1><b>Basisdaten</b> <small>Hier können Sie Basisdaten hinzugefügen, editieren und löschen</small></h1>
+    <hr />
+
+<h3 class="cap"><b>Skills</b></h3>
+<table class="table table-striped">
+    <caption><h5><b>Softskills</b></h5></caption>
+    <tr>
+        <th>Bezeichnung</th>
+        <th>Bearbeiten</th>
+        <th>Löschen</th>
+    </tr>
+    @foreach (string softskill in _basicDataService.GetAllSoftSkills())
+    {
+        <tr>
+            <td>@softskill</td>
+            <td class="smalltd"><button class="btn btn-secondary">Edit</button></td>
+            <td class="smalltd"><button class="btn btn-dark">Delete</button></td>
+        </tr>
+    }
+</table>
+<CreateSoftSkill @ref="_createSoftSkill"/>
+<div> <button class="btn btn-info" @onclick="PopCreateSoftSkill">Create</button> </div>
+
+<table class="table table-striped">
+    <caption><h5><b>Hardskills</b></h5></caption>
+    <tr>
+        <th>Bezeichnung</th>
+        <th>Bearbeiten</th>
+        <th>Löschen</th>
+    </tr>
+        
+    @foreach (Hardskill hardskill in _hardskillService.GetAllHardskills())
+    {
+        <tr>
+            <td>@hardskill.Description</td>
+            <td class="smalltd"><button class="btn btn-secondary">Edit</button></td>
+            <td class="smalltd"><button class="btn btn-dark">Delete</button></td>
+        </tr>
+    }
+</table>
+<div> <button class="btn btn-info">Create</button> </div>
+
+@code {
+    CreateSoftSkill _createSoftSkill;
+
+    void PopCreateSoftSkill()
+    {
+        _createSoftSkill.Showing();
+    }
+}
