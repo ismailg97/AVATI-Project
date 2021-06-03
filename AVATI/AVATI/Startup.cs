@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AVATI.Data;
+using AVATI.Pages;
 
 namespace AVATI
 {
@@ -33,6 +34,10 @@ namespace AVATI
             services.AddSingleton<SearchService>();
             services.AddSingleton<IHardskillService, HardskillServiceSimple>();
             services.AddSingleton<IBasicDataService, BasicDataServiceSimple>();
+            services.AddSingleton<ProjectServiceSimple>();
+            services.AddSingleton<IProjektService, ProjectServiceSimple>();
+            services.AddSingleton<AddFieldsToProjectUpdate>();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
