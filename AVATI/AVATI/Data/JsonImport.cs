@@ -13,7 +13,7 @@ namespace AVATI.Data
                 JsonSerializer.Deserialize<JSonStructure.Rootclass>(File.ReadAllText("Data\\datenbasis.json"));
 
 
-            foreach (var skillString in jSonContainer.skills.Expertise)
+            foreach (var skillString in jSonContainer.skills.MethodenundProzesse.Modellierung)
             {
                 Console.WriteLine(skillString);
             }

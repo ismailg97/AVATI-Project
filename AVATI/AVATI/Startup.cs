@@ -15,9 +15,11 @@ namespace AVATI
 {
     public class Startup
     {
+        private JsonImport _import = new JsonImport();
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            _import.ImportJsonFile();
         }
 
         public IConfiguration Configuration { get; }

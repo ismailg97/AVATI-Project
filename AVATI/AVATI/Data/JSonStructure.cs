@@ -102,6 +102,9 @@ namespace AVATI.Data
             public List<string> languages { get; set; }
             public Skills skills { get; set; }
             public List<string> Softskills { get; set; }
+
+            
+            
         }
     }
 }
