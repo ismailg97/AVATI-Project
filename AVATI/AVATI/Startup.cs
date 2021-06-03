@@ -28,6 +28,8 @@ namespace AVATI
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddSingleton<IHardskillService, HardskillServiceSimple>();
+            services.AddSingleton<IBasicDataService, BasicDataServiceSimple>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
