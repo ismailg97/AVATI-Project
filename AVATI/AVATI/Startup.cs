@@ -10,14 +10,17 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AVATI.Data;
+using AVATI.Pages;
 
 namespace AVATI
 {
     public class Startup
     {
+        private JsonImport _jsonImport = new JsonImport();    
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            _jsonImport.ImportJsonFile();  //Upon Startup imports files from JSon
         }
 
         public IConfiguration Configuration { get; }
@@ -28,6 +31,7 @@ namespace AVATI
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddSingleton<SearchService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
