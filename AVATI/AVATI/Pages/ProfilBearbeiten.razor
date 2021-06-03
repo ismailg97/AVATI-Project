@@ -1,0 +1,186 @@
+﻿@page "/profile/update"
+@using AVATI.Data
+@inject IEmployeeService _employee
+
+<link rel="stylesheet" href="Login.razor.css">
+<h3>Profil</h3>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<!------ Include the above in your HEAD tag ---------->
+<div></div>
+<EditForm Model="Emp" OnValidSubmit="@EditProfile">
+    <div class="container emp-profile">
+        <div class="row">
+            <div class="col-md-4">
+                <!------ Profile Image ---------->
+                <div class="profile-img">
+                    <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" style="margin-left: -45px" width="300" height="200" alt=""/>
+                    <div class="file btn btn-lg btn-primary" style="margin-top: 100px; margin-left: -30px">
+                        Change Photo
+                        <input type="file" name="file"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="profile-head">
+                    <!------ Employee Name ---------->
+                    <div class="form-group">
+                        <div class="col-md-6">
+                            <input type="text"  class="form-control" id="formGroupExampleInput" placeholder="Max">
+                            <input type="text"  class="form-control" id="formGroupExampleInput" placeholder="Mustermann">
+                        </div>
+                    </div>
+                    <!------ Job ---------->
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Programmierer">
+                    </div>
+                    <!------ Rate Card Level ---------->
+                    <div class="row">
+                        <div class="col">
+                            <p class="proile-rating">RateCard </p>
+                            <select  class="form-control">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                                <option>6</option>
+                                <option>7</option>
+                            </select>
+                        </div>
+                    </div>
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">About</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!------ Confirm Button ---------->
+            <div class="col-md-2">
+                <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Bestätigen" />
+            </div>
+        </div>
+        <!------ Skills ---------->
+        <div class="row">
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col">
+                        <label>Hard Skills</label>
+                        <select  class="form-control">
+                              <option>Java</option>
+                            <option>C#</option>
+                            <option>Python</option>
+                        </select>
+                    </div>
+                <div class="col">
+                    
+                    <label>Skill Level</label>
+                    <select  class="form-control">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                    </select>
+                </div>
+               
+                </div>
+                <div class="row">
+                <input type="submit" class="profile-edit-btn" name="btnAddMore" value="+" />
+            <label style="margin-top: 20px">Soft Skills</label>
+                    <select class="form-control">
+                        <option>Teamleitung</option>
+                        <option>Sonstiges</option>
+                    </select>
+                    <input type="submit" class="profile-edit-btn" name="btnAddMore" value="+" />
+                </div>
+
+            </div>
+            <div class="col-md-8">
+                <div class="tab-content profile-tab" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label style="font-weight:bold">Nutzer ID</label>
+                            </div>
+                            <div class="col-md-6">
+                                <p style="color:black">Beispiel123</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label style="margin-top: 20px">Branchenwissen</label>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-control">
+                                    <option>Automobil</option>
+                                    <option>Bildung</option>
+                                    <option>...</option>
+                                </select>
+                                <input type="submit" class="profile-edit-btn" style="width: 50%"  name="btnAddMore" value="+"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label style="font-weight:bold">Email</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="formGroupExampleInput" placeholder="max.mustermann@mail.com">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label style="font-weight:bold">Telefonnummer</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="formGroupExampleInput" placeholder="1234567890">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label style="margin-top: 20px">Relevante Berufserfahrung</label>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-control">
+                                    <option>Webdesign</option>
+                                    <option>Programming</option>
+                                    <option>...</option>
+                                </select>
+                                <input type="submit" class="profile-edit-btn" name="btnAddMore" style="width: 50%" value="+"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>Projekt</th>
+                                    <th>Projekttätigkeit</th>
+                                    <th><button class="btn btn-secondary">Bearbeiten</button></th>
+                                </tr>
+                                <tr>
+                                    <td>Acquiring a new or modified data system</td>
+                                    <td>Design</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Xitaso Seite</td>
+                                    <td>Programming</td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+
+@code {
+    public Employee Emp = new Employee();
+
+    public void EditProfile()
+    {
+        _employee.EditEmployeeProfile(Emp);
+    }
+}
+

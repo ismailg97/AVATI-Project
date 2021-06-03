@@ -1,0 +1,49 @@
+﻿@page "/login"
+@using AVATI.Data;
+@inject ILoginService _login;
+
+<link href="//maxed.bootstrap.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<img src="https://xitaso.com/wp-content/uploads/Office_Austrasse.jpg" alt="" />
+<!------ SideBar ---------->
+<div style="text-align:left">
+    <div class="sidenav">
+        <div class="login-main-text">
+            <h3>Login</h3>
+            <p>Melde dich von hier aus an, um dein Mitarbeiterprofil zu sehen</p>
+        </div>     
+    </div>
+    <!------ Binds inputted Username and Password to log and calls "LoginCheck" on Valid Submit ---------->
+    <EditForm Model="log" OnValidSubmit="LoginCheck">
+        <div class="main">
+            <div class="col-md-6 col-sm-12">
+                <div class="login-form">
+                    <p  class="@(_boolean ? "" : "collapse")" style="margin-top:200px; color: #ff0000">Falscher Benutzername oder falsches Passwort eingegeben.<br /> Bitte versuchen Sie erneut.</p>
+                    <div class="form-group">
+                        <label>Benutzername</label>
+                        <InputText @bind-value="log.Username" id="username" class="form-control"  placeholder="Max Mustermann"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Passwort</label>
+                        <InputText @bind-value="log.Password" id="password" class="form-control" placeholder="Beispiel1234"/>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Login</button>
+                </div>
+            </div>
+        </div>
+     </EditForm>
+</div>
+@code {
+    private bool _boolean;
+    LoginClass log = new LoginClass(); 
+
+    //Checks with LoginServiceSimple, if username and password is correct
+    private void LoginCheck()
+    {
+        if (_login.LogIn(log.Username, log.Password))
+        {
+           
+        }
+        _boolean = true;
+    }
+
+}
