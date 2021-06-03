@@ -1,0 +1,52 @@
+﻿@page "/ProposalOverview"
+
+<button class="btn btn-success float-left">Neues Angebot</button>
+
+<div class="container col-9">
+    <div class="row row-cols-1 row-cols-md-1 g-4">
+        <div class="col-4 mb-4">
+            <div class="card border-dark">
+                <div class="card-header text-center">
+                    <p class="font-weight-bolder">Angebot 1</p>
+                    <p>
+                        <button class="btn btn-outline-dark btn-sm">Dokument <br> erzeugen</button><button class="btn btn-outline-success btn-sm ml-2">Projekt <br> erzeugen</button>
+                    </p>
+                    <button class="btn btn-outline-secondary btn-sm">Editieren</button>
+                    <button class="btn btn-outline-info btn-sm">Kopieren</button>
+                    <button class="btn btn-outline-danger btn-sm">Löschen</button>
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title text-center">Überschrift</h5>
+                    <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => {ChangeVisible(0);})">
+                        Mitarbeiterprofile
+                    </button>
+                    <p class=@(collapseList[0] ? "" : "collapse")>Mitarbeiterprofile</p>
+                    <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => {ChangeVisible(1);})">
+                        Hard- und Softskills
+                    </button>
+                    <p class=@(collapseList[1] ? "" : "collapse")>The content within the Hard and Softskills</p>
+                    <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => {ChangeVisible(2);})">
+                        Zusatzinformationen
+                    </button>
+                    <p class=@(collapseList[2] ? "" : "collapse")>The content within the Zusatzinformationen</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@code {
+    List<bool> collapseList = new List<bool>();
+    protected override void OnInitialized()
+    {
+        collapseList.Add(true);
+        collapseList.Add(true);
+        collapseList.Add(true);
+    }
+    public void ChangeVisible(int index)
+    {
+        collapseList[index] = !collapseList[index];
+    }
+}

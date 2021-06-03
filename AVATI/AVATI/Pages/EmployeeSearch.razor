@@ -1,0 +1,99 @@
+﻿@page "/SearchEmployee"
+@using AVATI.Data
+@using Microsoft.AspNetCore.Components
+
+@inject SearchService _searchService
+
+<div class="container h-100">
+    <div class="row h-100 justify-content-center align-items-center">
+        <div class="col-12">
+            <EditForm Model="_searchService">
+                <h1 class="mb-4">Mitarbeitersuche</h1>
+                <div class="form-group">
+                    <label class="font-weight-bold">Mitarbeitername <small class="text-muted">(Optional)</small> </label>
+                    <InputText type="text" class="form-control col-8" placeholder="Vor- und Nachname" @bind-Value="_searchService.EmployeeName"/>
+                </div>
+                <div class="form-group">
+                    <label class="font-weight-bold">Hardskills</label>
+                    <div class="form-group row col">
+                        <input type="text" class="form-control col-10 mr-2" value="@String.Join(" | ", _searchService.GetHardskillName().ToArray())" placeholder="Hardskill(s)" readonly>
+                        <button class="btn btn btn-danger " @onclick=@(() => { _searchService.EmptyHardSearch(); })>Löschen</button>
+                    </div>
+                </div>
+                <div class="form-group row col-10">
+                    @foreach (var hardskill in _searchService.HardskillsToDisplay)
+                    {
+                        <button class="btn btn btn-info mb-1 mr-1" @onclick=@(() => { _searchService.AddHardSearch(hardskill); })>@hardskill.Description</button>
+                    }
+                </div>
+                <div class="form-group">
+                    <label class="font-weight-bold">Softskills</label>
+                    <div class="form-group row col">
+                        <input type="text" class="form-control col-10 mr-2" value="@String.Join(" | ", _searchService.SoftskillsToSearch.ToArray())" placeholder="Softskill(s)" readonly>
+                        <button class="btn btn btn-danger " @onclick=@(() => { _searchService.EmptySoftSearch(); })>Löschen</button>
+                    </div>
+                </div>
+                <div class="form-group row col-10">
+                    @foreach (var softskill in _searchService.SoftskillsToDisplay)
+                    {
+                        <button class="btn btn btn-info mb-1 mr-1" @onclick=@(() => { _searchService.AddSoftSearch(softskill); })>@softskill</button>
+                    }
+                </div>
+                <div class="form-group">
+                    <label class="font-weight-bold">Rolle(n)</label>
+                    <div class="form-group row col">
+                        <input type="text" class="form-control col-10 mr-2" value="@String.Join(" | ", _searchService.RolesToSearch.ToArray())" placeholder="Rolle(n)" readonly>
+                        <button class="btn btn btn-danger " @onclick=@(() => { _searchService.EmptyRoleSearch(); })>Löschen</button>
+                    </div>
+                </div>
+                <div class="form-group row col-10 mb-4">
+                    @foreach (var role in _searchService.RolesToDisplay)
+                    {
+                        <button class="btn btn btn-info mb-1 mr-1" @onclick=@(() => { _searchService.AddRoleSearch(role); })>@role</button>
+                    }
+                </div>
+                <button type="submit" @onclick=@(() => {CallSearch(); _searchService.TableIsVisible = true;}) class="btn btn-success col-2 text-center mb-5">Suchen</button>
+            </EditForm>
+            @if (_searchService.TableIsVisible)
+            {
+                //<div class="alert alert-danger">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die alle Kriterien erfüllt!</div>
+
+                <h4 class="mb-3 font-weight-bold">Gefundene Mitarbeiter:</h4>
+                <table class="table table-bordered table-striped mb-5">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>RC</th>
+                        <th>Hardskills</th>
+                        <th>Softskills</th>
+                        <th>Rolle(n)</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr>Where are the Employees??????</tr>
+                    </tbody>
+                </table>
+            }
+
+        </div>
+    </div>
+</div>
+
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        _searchService.InitAttributes
+            (new List<string>() {"test1", "test2"}, new List<string>() {"testrole2", "testrole3"},
+                new List<Hardskill>() {new Hardskill() {Description = "testskill1"}, new Hardskill() {Description = "testskill2"}});
+    }
+
+    public void CallSearch()
+    {
+        _searchService.SearchEmployee();
+        _searchService.EmptyQuery();
+    }
+
+}
