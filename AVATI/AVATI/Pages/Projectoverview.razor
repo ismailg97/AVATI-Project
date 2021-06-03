@@ -1,0 +1,46 @@
+﻿@page "/Projektübersicht"
+
+@using AVATI.Data
+@inject IProjektService _projektService
+
+<h3>Projektübersicht</h3>
+
+<table class="table align-middle">
+    <thead>
+    <tr>
+        <th scope="col">Projekttitel</th>
+        <th scope="col">Projektbeschreibung</th>
+        <th scope="col">Branchen</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (_projektService.GetAllProjects().Any())
+    {
+        foreach (var project in _projektService.GetAllProjects())
+        {
+            <tr>
+                <td>@project.Projecttitel</td>
+                <td>@project.Projectdescription</td>
+                <td>@project.fields</td>
+                <td>
+                    <a href="/Projektübersicht/Projektedit/@project.ProjectID">
+                        <button type="button" class="btn btn-secondary">Edit/Update</button>
+                    </a>
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    }
+    </tbody>
+</table>
+<a href="/Projektübersicht/Projektedit">
+    <button type="button" class="btn btn-secondary">Edit/Update</button>
+</a>

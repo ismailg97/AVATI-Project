@@ -36,7 +36,7 @@ namespace TestProject1
 
             IWebDriver webDriver = new FirefoxDriver(firefoxOptions);
             webDriver.Navigate().GoToUrl("https://localhost:5001");
-
+            
             Thread.Sleep(2000);
             var linkTuEtwas = webDriver.FindElement(By.Id("blep"));
             linkTuEtwas.Click();

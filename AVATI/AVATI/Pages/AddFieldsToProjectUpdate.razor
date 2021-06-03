@@ -1,0 +1,49 @@
+﻿@page "/AddFieldsToProjectUpdate/{ID:int}"
+@using AVATI.Data
+
+@inject ProjectServiceSimple _projectServiceSimple
+
+<div class="modal @(_show ? "fade show" : "")" id="myModal" style=" display: @(_show ? "block" : "none");">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Geben Sie eine zugehörige Branche an.</h4>
+                <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="field" @bind="fields"/> @fields
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" @onclick="WriteIntoFieldsLabel">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Showing">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@if (_show)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+@code {
+    
+    
+    private string fields { get; set; }
+    private Boolean _show = false;
+
+    [Parameter]
+    public int ID { get; set; }
+    
+    public void Showing()
+    {
+        _show = !_show;
+        StateHasChanged();
+    }
+
+    public void WriteIntoFieldsLabel()
+    {
+        _projectServiceSimple.AddFieldstoProject(ID, fields);
+    }
+
+}
