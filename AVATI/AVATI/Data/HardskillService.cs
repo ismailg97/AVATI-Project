@@ -56,7 +56,7 @@ namespace AVATI.Data
         public bool DeleteHardskill(string description)
         {
             int output = _allHardskills.RemoveAll(x => x.Description == description);
-            return output == 1 ? true : false;
+            return output == 1;
         }
 
         public Hardskill GetHardskill(string description)
@@ -85,7 +85,7 @@ namespace AVATI.Data
         public bool DeleteHardskillCategory(string description)
         {
             int output = _allHardskillCat.RemoveAll(x => x.Description == description);
-            return output == 1 ? true : false;
+            return output == 1;
         }
 
         public Hardskill GetHardskillCategory(string description)
