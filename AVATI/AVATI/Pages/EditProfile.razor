@@ -1,13 +1,14 @@
 ﻿@page "/profile/update"
+@page "/profile/update/{id:int}"
 @using AVATI.Data
 @inject IEmployeeService _employee
 
-<link rel="stylesheet" href="Login.razor.css">
+<link href="css/EditProfile.razor.css" rel="stylesheet" />
 <h3>Profil</h3>
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <!------ Include the above in your HEAD tag ---------->
 <div></div>
-<EditForm Model="Emp" OnValidSubmit="@EditProfile">
+<EditForm Model="Emp" OnValidSubmit="@EditProfiles">
     <div class="container emp-profile">
         <div class="row">
             <div class="col-md-4">
@@ -25,13 +26,13 @@
                     <!------ Employee Name ---------->
                     <div class="form-group">
                         <div class="col-md-6">
-                            <input type="text"  class="form-control" id="formGroupExampleInput" placeholder="Max">
-                            <input type="text"  class="form-control" id="formGroupExampleInput" placeholder="Mustermann">
+                            <input type="text"  class="form-control"  placeholder="@Emp.FirstName">
+                            <input type="text"  class="form-control"  placeholder="@Emp.LastName">
                         </div>
                     </div>
                     <!------ Job ---------->
                     <div class="form-group">
-                        <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Programmierer">
+                        <input type="text" class="form-control" placeholder="Programmierer">
                     </div>
                     <!------ Rate Card Level ---------->
                     <div class="row">
@@ -103,7 +104,7 @@
                                 <label style="font-weight:bold">Nutzer ID</label>
                             </div>
                             <div class="col-md-6">
-                                <p style="color:black">Beispiel123</p>
+                                <p style="color:black">@Emp.EmployeeId</p>
                             </div>
                         </div>
                         <div class="row">
@@ -112,8 +113,9 @@
                             </div>
                             <div class="col-md-6">
                                 <select class="form-control">
-                                    <option>Automobil</option>
-                                    <option>Bildung</option>
+                                    
+                                    <option>field1</option>
+                                    <option>field2</option>
                                     <option>...</option>
                                 </select>
                                 <input type="submit" class="profile-edit-btn" style="width: 50%"  name="btnAddMore" value="+"/>
@@ -124,7 +126,7 @@
                                 <label style="font-weight:bold">Email</label>
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control" id="formGroupExampleInput" placeholder="max.mustermann@mail.com">
+                                <input type="text" class="form-control" placeholder="max.mustermann@mail.com">
                             </div>
                         </div>
                         <div class="row">
@@ -132,7 +134,7 @@
                                 <label style="font-weight:bold">Telefonnummer</label>
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control" id="formGroupExampleInput" placeholder="1234567890">
+                                <input type="text" class="form-control"  placeholder="1234567890">
                             </div>
                         </div>
                         <div class="row">
@@ -176,10 +178,19 @@
 
 
 @code {
-    public Employee Emp = new Employee();
-
-    public void EditProfile()
+    [Parameter] public int Id { get; set; }
+    
+    public Employee Emp = new Employee() { FirstName = "Ismail", LastName = "Gürsöz", Role = new List<string>(){"Programming"} , HardSkills = new List<Hardskill>()
     {
+        new Hardskill {Description = "JavaScript", Subcat = null, Uppercat = null, Height = 0},
+        new Hardskill {Description = "CSS", Subcat = null, Uppercat = null, Height = 0}
+    },
+        SoftSkills = new List<string>(){"Teamleading"}
+    };
+
+    public void EditProfiles()
+    {
+        Emp.EmployeeId = Id;
         _employee.EditEmployeeProfile(Emp);
     }
 }

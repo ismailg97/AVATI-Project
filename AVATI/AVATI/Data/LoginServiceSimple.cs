@@ -1,6 +1,6 @@
 ﻿namespace AVATI.Data
 {
-    public class LoginService : ILoginService
+    public class LoginServiceSimple : ILoginService
     {
         public bool LogIn(string username, string password)
         {

@@ -30,6 +30,10 @@ namespace AVATI
             services.AddServerSideBlazor();
             services.AddSingleton<IHardskillService, HardskillServiceSimple>();
             services.AddSingleton<IBasicDataService, BasicDataServiceSimple>();
+            services.AddSingleton<IEmployeeService, EmployeeServiceSimple>();
+            services.AddSingleton<ILoginService, LoginServiceSimple>();
+            services.AddSingleton<IProjektService,ProjectServiceSimple>();
+            services.AddSingleton<IProposalService, ProposalService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

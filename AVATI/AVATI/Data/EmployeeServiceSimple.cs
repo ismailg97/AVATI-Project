@@ -48,28 +48,82 @@ namespace AVATI.Data
         
         public bool CreateEmployeeProfile(Employee emp)
         {
-            throw new System.NotImplementedException();
+            Employee employee = new Employee();
+            employee.Field = emp.Field;
+            employee.FirstName = employee.LastName;
+            employee.LastName = emp.LastName;
+            employee.Language = emp.Language;
+            employee.Role = emp.Role;
+            employee.EmploymentTime = emp.EmploymentTime;
+            employee.EmpType = emp.EmpType;
+            employee.HardSkills = emp.HardSkills;
+            employee.SoftSkills = emp.SoftSkills;
+            employee.RcLevel = emp.RcLevel;
+            employee.RelevantWorkExperience = emp.RelevantWorkExperience;
+            EmpList.Add(employee);
+            return true;
         }
 
         public bool EditEmployeeProfile(Employee emp)
         {
-            throw new System.NotImplementedException();
+            foreach (Employee employee in EmpList)
+            {
+                if (emp.EmployeeId == employee.EmployeeId)
+                {
+                    employee.Field = emp.Field;
+                    employee.FirstName = employee.LastName;
+                    employee.LastName = emp.LastName;
+                    employee.Language = emp.Language;
+                    employee.Role = emp.Role;
+                    employee.EmploymentTime = emp.EmploymentTime;
+                    employee.EmpType = emp.EmpType;
+                    employee.HardSkills = emp.HardSkills;
+                    employee.SoftSkills = emp.SoftSkills;
+                    employee.RcLevel = emp.RcLevel;
+                    employee.RelevantWorkExperience = emp.RelevantWorkExperience;
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public Employee GetEmployeeProfile(int employeeId)
         {
-            throw new System.NotImplementedException();
+            foreach (Employee emp in EmpList)
+            {
+                if (emp.EmployeeId == employeeId)
+                {
+                    return emp;
+                }
+            }
+
+            return null;
         }
 
-        public bool EditStatus(int employeeId,int status)
+        public bool EditStatus(int employeeId,bool status)
         {
-            throw new System.NotImplementedException();
-
+            foreach (Employee emp in EmpList)
+            {
+                if (emp.EmployeeId == employeeId)
+                {
+                    emp.IsActive = status;
+                    return true;
+                }
+            }
+            return false;
         }
 
-        public int GetSatus(int employeeId)
+        public bool? GetSatus(int employeeId)
         {
-            throw new System.NotImplementedException();
+            foreach (Employee emp in EmpList)
+            {
+                if (emp.EmployeeId == employeeId)
+                {
+                    return emp.IsActive;
+                }
+            }
+            return null;
         }
     }
 }
