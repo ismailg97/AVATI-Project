@@ -14,7 +14,7 @@
                     <InputText type="text" class="form-control col-8" placeholder="Vor- und Nachname" @bind-Value="_searchService.EmployeeName"/>
                 </div>
                 <div class="form-group">
-                    <label class="font-weight-bold">Hardskills</label>
+                    <label class="font-weight-bold text-left">Hardskills</label>
                     <div class="form-group row col">
                         <input type="text" class="form-control col-10 mr-2" value="@String.Join(" | ", _searchService.GetHardskillName().ToArray())" placeholder="Hardskill(s)" readonly>
                         <button class="btn btn btn-danger " @onclick=@(() => { _searchService.EmptyHardSearch(); })>Löschen</button>
@@ -25,6 +25,16 @@
                     {
                         <button class="btn btn btn-info mb-1 mr-1" @onclick=@(() => { _searchService.AddHardSearch(hardskill); })>@hardskill.Description</button>
                     }
+                    <div class="dropdown">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                          Dropdown button
+                        </button>
+                        <div class="dropdown-menu">
+                          <a class="dropdown-item" href="#">Link 1</a>
+                          <a class="dropdown-item" href="#">Link 2</a>
+                          <a class="dropdown-item" href="#">Link 3</a>
+                        </div>
+                      </div>
                 </div>
                 <div class="form-group">
                     <label class="font-weight-bold">Softskills</label>
