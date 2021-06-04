@@ -39,9 +39,13 @@
     public int ID { get; set; }
 
     bool _ShowError = false;
-
+    
     private void Save()
     {
+        if (_ShowError)
+        {
+            //Do absolutely nothing
+        }
         _projektService.UpdateProject(_project);
         _navigationManager.NavigateTo("/Projektübersicht");
     }

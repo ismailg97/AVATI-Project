@@ -1,13 +1,15 @@
 ﻿@page "/ProposalOverview"
+@using System.ComponentModel.DataAnnotations
+@using System.Diagnostics.CodeAnalysis
 
 <button class="btn btn-success float-left">Neues Angebot</button>
 
 <div class="container col-9">
     <div class="row row-cols-1 row-cols-md-1 g-4">
-        <div class="col-4 mb-4">
+        <div class="col-5 mb-4">
             <div class="card border-dark">
                 <div class="card-header text-center">
-                    <p class="font-weight-bolder">Angebot 1</p>
+                    <p class="font-weight-bolder">Angebot: 1</p>
                     <p>
                         <button class="btn btn-outline-dark btn-sm">Dokument <br> erzeugen</button><button class="btn btn-outline-success btn-sm ml-2">Projekt <br> erzeugen</button>
                     </p>
@@ -16,19 +18,46 @@
                     <button class="btn btn-outline-danger btn-sm">Löschen</button>
                 </div>
                 <div class="card-body text-center">
-                    <h5 class="card-title text-center">Überschrift</h5>
-                    <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => {ChangeVisible(0);})">
+                    <h5 class="card-title text-center">Machine Learning with HTML</h5>
+                    <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(0); })">
                         Mitarbeiterprofile
                     </button>
-                    <p class=@(collapseList[0] ? "" : "collapse")>Mitarbeiterprofile</p>
-                    <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => {ChangeVisible(1);})">
+                    <div class="card-text @(collapseList[0] ? "collapse" : "")">
+                        <button class="btn btn-outline-success btn-sm mr-3 mb-3">Hinzufügen</button>
+                        <button class="btn btn-outline-danger btn-sm mb-3">Entfernen</button>
+                        <ul class="list-group mb-3 text-left">
+                            <!-- Implement foreach Employee -->
+                            <li class="list-group-item border-dark bg-light text-left font-weight-bold text-black mb-1">
+                                Gardner Ann
+                                <button class="btn float-right btn-info btn-sm">Details</button>
+                                <button class="btn btn-primary float-right btn-sm mr-3" @onclick=@Show>RCL: @EmployeeRc</button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(1); })">
                         Hard- und Softskills
                     </button>
-                    <p class=@(collapseList[1] ? "" : "collapse")>The content within the Hard and Softskills</p>
-                    <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => {ChangeVisible(2);})">
+                    <div class=@(collapseList[1] ? "collapse" : "")>
+                        <ul class="list-group mb-3 text-left">
+                            <!-- Implement foreach Employee -->
+                            <li class="list-group-item border-dark bg-light text-left font-weight-bold text-black mb-1">
+                                Hardskills:
+                            </li>
+                            <li class="list-group-item border-dark bg-light text-left font-weight-bold text-black mb-1">
+                                Softskills:
+                            </li>
+                            <li class="list-group-item border-dark bg-light text-left font-weight-bold text-black mb-1">
+                                Branchen:
+                            </li>
+                        </ul>
+                    </div>
+                    <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(2); })">
                         Zusatzinformationen
                     </button>
-                    <p class=@(collapseList[2] ? "" : "collapse")>The content within the Zusatzinformationen</p>
+                    <li class="list-group-item border-dark bg-light text-left text-black mb-1 @(collapseList[2] ? "collapse" : "")">
+                        Hier könnten interessante Dinge zum aktuellen Angebot stehen
+                    </li>
                 </div>
             </div>
         </div>
@@ -36,17 +65,56 @@
 
 </div>
 
+@if (ShowPop)
+{
+    <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">RC - Level anpassen</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row col align-content-center">
+                        <label for="example-number-input"  class="col-form-label mr-4">Level:</label>
+
+                        <input class="form-control col-4"  min="1" max="12" type="number" @bind=@RcToEdit id="example-number-input"/>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => {Show(); EmployeeRc = RcToEdit;})">Speichern</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
 
 @code {
     List<bool> collapseList = new List<bool>();
+
+    public bool ShowPop { get; set; }
+
+    public string RcToEdit { get; set; } = "1";
+    public string EmployeeRc { get; set; } = "1";
+
     protected override void OnInitialized()
     {
         collapseList.Add(true);
         collapseList.Add(true);
         collapseList.Add(true);
     }
+
     public void ChangeVisible(int index)
     {
         collapseList[index] = !collapseList[index];
     }
+
+    public void Show() //Pass EmployeRC to edit
+    {
+    //RC should be overwritten by CurrentEmployee - RC
+        ShowPop = !ShowPop;
+    }
+
 }
+
