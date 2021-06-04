@@ -5,7 +5,7 @@ namespace AVATI.Data
 {
     public class ProjectServiceSimple : IProjektService
     {
-        private readonly List<Project> _projects = new List<Project>();
+        private List<Project> _projects = new List<Project>();
         
         public bool CreateProject(Project project)
         {
@@ -19,7 +19,8 @@ namespace AVATI.Data
             {
                 project.ProjectID = 1;
                 _projects.Add(project);
-            }else if (project.ProjectID != 0)
+            }
+            else if (project.ProjectID != 0)
             {
                 foreach (var pro in _projects)
                 {
@@ -51,11 +52,26 @@ namespace AVATI.Data
             return _projects;
         }
 
-        public void AddFieldstoProject(int projectID, string field)
+        public List<string> GetAllFieldsFromOneProject(int ProjectID)
+        {
+            
+            List<string> temp = new List<string>();
+            temp.Add("iwas");
+            foreach (var field in _projects)
+            {
+                if (field.ProjectID == ProjectID)
+                {
+                    temp = field.fields;
+                }
+            }
+            return temp;
+        }
+
+        public void AddFieldstoProject(int projectid, string field)
         {
             foreach (var project in _projects)
             {
-                if (projectID == project.ProjectID)
+                if (projectid == project.ProjectID)
                 {
                     project.fields.Add(field);
                 }

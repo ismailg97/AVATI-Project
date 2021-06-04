@@ -7,6 +7,7 @@
     <ItemGroup>
       <PackageReference Include="Blazorise.Sidebar" Version="0.9.3.7" />
       <PackageReference Include="bootstrap" Version="5.0.1" />
+      <PackageReference Include="jQuery-datetimepicker" Version="2.4.5" />
     </ItemGroup>
 
 </Project>

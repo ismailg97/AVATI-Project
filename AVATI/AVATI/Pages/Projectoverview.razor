@@ -2,8 +2,15 @@
 
 @using AVATI.Data
 @inject IProjektService _projektService
+@inject JsonImport _jsonImport
 
 <h3>Projektübersicht</h3>
+
+<div class="form-group">
+    <input class="form-control" type="text" placeholder="Suche Projekt..."
+           @bind="Filter"
+           @bind:event="oninput"/>
+</div>
 
 <table class="table align-middle">
     <thead>
@@ -18,6 +25,10 @@
     {
         foreach (var project in _projektService.GetAllProjects())
         {
+            if (!IsVisible(project))
+            {
+                continue;
+            }
             <tr>
                 <td>@project.Projecttitel</td>
                 <td>@project.Projectdescription</td>
@@ -33,14 +44,37 @@
     else
     {
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>Mad Max - Fury Road</td>
+            <td>Regisseur George Miller, der Gründer des postapokalyptischen Genres und der kreative Kopf hinter der legendären "Max Max" Franchise..</td>
+            <td>Film</td>
+            <td>
+                <a href="/Projektübersicht/Projektedit">
+                    <button type="button" class="btn btn-secondary">Edit/Update</button>
+                </a>
+            </td>
         </tr>
+        
     }
     </tbody>
 </table>
-<a href="/Projektübersicht/Projektedit">
-    <button type="button" class="btn btn-secondary">Edit/Update</button>
-</a>
+
+@code{
+
+    public bool IsVisible(Project projects)
+    {
+        if (string.IsNullOrEmpty(Filter))
+        {
+            return true;
+        }
+        if (projects.ToString().StartsWith(Filter))
+        {
+            return true;
+        }
+        return false;
+    }
+    
+    public string Filter { get; set; }
+
+    
+
+}

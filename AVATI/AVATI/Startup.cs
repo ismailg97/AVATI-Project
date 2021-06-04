@@ -36,7 +36,7 @@ namespace AVATI
             services.AddSingleton<IBasicDataService, BasicDataServiceSimple>();
             services.AddSingleton<ProjectServiceSimple>();
             services.AddSingleton<IProjektService, ProjectServiceSimple>();
-            services.AddSingleton<AddFieldsToProjectUpdate>();
+            
             
         }
 
