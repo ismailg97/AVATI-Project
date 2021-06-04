@@ -1,17 +1,16 @@
 ﻿@page "/SearchEmployee"
 @using AVATI.Data
 @using Microsoft.AspNetCore.Components
-
 @inject SearchService _searchService
 
 <div class="container h-100">
     <div class="row h-100 justify-content-center align-items-center">
-        <div class="col-12">
+        <div class="col-12 text-left">
             <EditForm Model="_searchService">
                 <h1 class="mb-4">Mitarbeitersuche</h1>
                 <div class="form-group">
                     <label class="font-weight-bold">Mitarbeitername <small class="text-muted">(Optional)</small> </label>
-                    <InputText type="text" class="form-control col-8" placeholder="Vor- und Nachname" @bind-Value="_searchService.EmployeeName"/>
+                    <InputText type="text" class="form-control col-9" placeholder="Vor- und Nachname" @bind-Value="_searchService.EmployeeName"/>
                 </div>
                 <div class="form-group">
                     <label class="font-weight-bold text-left">Hardskills</label>
@@ -21,20 +20,21 @@
                     </div>
                 </div>
                 <div class="form-group row col-10">
-                    @foreach (var hardskill in _searchService.HardskillsToDisplay)
+                    
+                    @foreach (var hardskill in _searchService.Hardskills)
                     {
-                        <button class="btn btn btn-info mb-1 mr-1" @onclick=@(() => { _searchService.AddHardSearch(hardskill); })>@hardskill.Description</button>
-                    }
-                    <div class="dropdown">
-                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                          Dropdown button
-                        </button>
-                        <div class="dropdown-menu">
-                          <a class="dropdown-item" href="#">Link 1</a>
-                          <a class="dropdown-item" href="#">Link 2</a>
-                          <a class="dropdown-item" href="#">Link 3</a>
+                        <div class="card" style="width: 8rem;">
+                            <div class="card-header">
+                                Featured
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">juh</li>
+                                <li class="list-group-item">juh</li>
+                                <li class="list-group-item">juh</li>
+                            </ul>
                         </div>
-                      </div>
+                    }
+
                 </div>
                 <div class="form-group">
                     <label class="font-weight-bold">Softskills</label>
@@ -81,7 +81,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                        <tr>Where are the Employees??????</tr>
+                    <tr>Where are the Employees??????</tr>
                     </tbody>
                 </table>
             }
