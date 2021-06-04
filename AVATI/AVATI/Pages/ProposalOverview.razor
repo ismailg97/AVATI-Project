@@ -26,11 +26,10 @@
                         <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(1, proposal.ProposalId); })">
                             Mitarbeiterprofile
                         </button>
-                        <div class="card-text @(showEmployee[proposal.ProposalId] ? "collapse" : "")">
+                        <div class="card-text @(_showEmployee[proposal.ProposalId] ? "collapse" : "")">
                             <button class="btn btn-outline-success btn-sm mr-3 mb-3">Hinzufügen</button>
                             <button class="btn btn-outline-danger btn-sm mb-3">Entfernen</button>
                             <ul class="list-group mb-3 text-left">
-                                <!-- Implement foreach Employee -->
                                 @foreach (var employee in proposal.EmployeeTemps)
                                 {
                                     <li class="list-group-item border-dark bg-light text-left font-weight-bold text-black mb-1">
@@ -45,7 +44,7 @@
                         <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(2,proposal.ProposalId); })">
                             Hard- und Softskills
                         </button>
-                        <div class=@(showAttributes[proposal.ProposalId] ? "collapse" : "")>
+                        <div class=@(_showAttributes[proposal.ProposalId] ? "collapse" : "")>
                             <ul class="list-group mb-3 text-left">
                                 <li class="list-group-item border-dark bg-light text-left text-black mb-1">
                                     <b>Hardskills:</b> @string.Join(", ", proposal.Hardskills.Select(e => e.Description))
@@ -61,13 +60,12 @@
                         <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(3,proposal.ProposalId); })">
                             Zusatzinformationen
                         </button>
-                        <li class="list-group-item border-dark bg-light text-left text-black mb-1 @(showAdditionalInfo[proposal.ProposalId] ? "collapse" : "")">
+                        <li class="list-group-item border-dark bg-light text-left text-black mb-1 @(_showAdditionalInfo[proposal.ProposalId] ? "collapse" : "")">
                             @proposal.AdditionalInfo
                         </li>
                     </div>
                 </div>
             </div>
-            index += 3;
         }
 
     </div>
@@ -86,7 +84,7 @@
                     <div class="form-group row col align-content-center">
                         <label for="example-number-input" class="col-form-label mr-4">Level:</label>
 
-                        <input class="form-control col-4" min="1" max="12" type="number" @bind=@changeValue id="example-number-input"/>
+                        <input class="form-control col-4" min="1" max="12" type="number" @bind=@_changeValue id="example-number-input"/>
 
                     </div>
                 </div>
@@ -102,29 +100,28 @@
 
 @code {
 
-    int index;
-    Dictionary<int, bool> showEmployee;
-    Dictionary<int, bool> showAttributes;
-    Dictionary<int, bool> showAdditionalInfo;
+
+    Dictionary<int, bool> _showEmployee;
+    Dictionary<int, bool> _showAttributes;
+    Dictionary<int, bool> _showAdditionalInfo;
 
     public bool ShowPop { get; set; }
 
     public EmployeeTemp RcToEdit { get; set; }
 
-    private static int restoreValue;
-    private static int changeValue;
+    private static int _restoreValue;
+    private static int _changeValue;
     protected override void OnInitialized()
     {
-        index = 0;
         _proposal.CreateDummyProjects();
-        showEmployee = new Dictionary<int, bool>();
-        showAttributes = new Dictionary<int, bool>();
-        showAdditionalInfo = new Dictionary<int, bool>();
+        _showEmployee = new Dictionary<int, bool>();
+        _showAttributes = new Dictionary<int, bool>();
+        _showAdditionalInfo = new Dictionary<int, bool>();
         foreach (var proposal in _proposal.Proposals)
         {
-            showEmployee.Add(proposal.ProposalId, true);
-            showAttributes.Add(proposal.ProposalId, true);
-            showAdditionalInfo.Add(proposal.ProposalId, true);
+            _showEmployee.Add(proposal.ProposalId, true);
+            _showAttributes.Add(proposal.ProposalId, true);
+            _showAdditionalInfo.Add(proposal.ProposalId, true);
         }
     }
 
@@ -132,14 +129,14 @@
     {
         if (typeOfInfo == 1)
         {
-            showEmployee[identifier] = !showEmployee[identifier];
+            _showEmployee[identifier] = !_showEmployee[identifier];
         } else if (typeOfInfo == 2)
         {
-            showAttributes[identifier] = !showAttributes[identifier];
+            _showAttributes[identifier] = !_showAttributes[identifier];
         }
         else
         {
-            showAdditionalInfo[identifier] = !showAdditionalInfo[identifier];
+            _showAdditionalInfo[identifier] = !_showAdditionalInfo[identifier];
         }
     }
 
@@ -149,18 +146,18 @@
         if (!ShowPop)
         {
             RcToEdit = emp;
-            restoreValue = emp.RC;
-            changeValue = emp.RC;
+            _restoreValue = emp.RC;
+            _changeValue = emp.RC;
         }
         else
         {
             if (response == 0)
             {
-                RcToEdit.RC = changeValue;
+                RcToEdit.RC = _changeValue;
             }
             if (response == 1)
             {
-                RcToEdit.RC = restoreValue;
+                RcToEdit.RC = _restoreValue;
             }
         }
         
