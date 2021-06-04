@@ -1,0 +1,194 @@
+﻿@page "/profile"
+@using AVATI.Data
+@inject NavigationManager _navManager
+@inject IEmployeeService _employee
+
+<link href="css/Profile.razor.css" rel="stylesheet" />
+<h3>Profil</h3>
+<!------ Include the above in your HEAD tag ---------->
+<!------ Gets Employee with the same Id as the Router Parameter ---------->
+@(Emp = _employee.GetEmployeeProfile(Id))
+<div class="container emp-profile">
+    <form  >
+        <div class="row">
+            <div class="col-md-4">
+                <div class="profile-img">
+                    <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" style="margin-left: -45px" width="300" height="200" alt="" />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="profile-head">
+                    <!------ Name ---------->
+                    <h5>
+                        @Emp.FirstName @Emp.LastName
+                    </h5>
+                    <!------ Job ---------->
+                    <h6 style="color:#818181">
+                        Programmierer
+                    </h6>
+                    <!------ RC-Level ---------->
+                    <p class="proile-rating">RateCard : <span>@Emp.RcLevel</span></p>
+                </div>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">About</a>
+                    </li>
+                                                
+                </ul>
+            </div>
+            <!------ Edit Profile Button ---------->
+            <div class="col-md-2">
+                <EditForm Model="Emp" OnValidSubmit="@RedirectToEditProfile">
+                    <input type="submit" onsubmit="" class="profile-edit-btn" name="btnAddMore" value="Profil bearbeiten"/>
+                    </EditForm>
+            </div>
+        </div>
+        <!------ Skills ---------->
+        <div class="row">
+            <div class="col-md-4">
+                <!------ Hard Skills ---------->
+                <table class="table table-striped">
+                    <tr>
+                        <th>Hard Skills</th>
+                    </tr>
+                    @foreach(var hardskill in Emp.HardSkills){
+                        <tr>
+                            <td>@hardskill</td>
+                        </tr>
+                        
+                    }
+                </table>
+
+                <!------ Soft Skills ---------->
+                <table class="table table-striped">
+                    <tr>
+                        <th>Soft Skills</th>
+                    </tr>
+                    @foreach (var softskill in Emp.SoftSkills)
+                    {
+                       <tr>
+                           <td>@softskill</td>
+                       </tr>     
+                    }
+                    
+                </table>
+
+            </div>
+            <div class="col-md-8">
+                <div class="tab-content profile-tab" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <!------ User ID ---------->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label style="font-weight:bold; color:black">Nutzer ID</label>
+                            </div>
+                            <div class="col-md-6">
+                                <p style="color:#818181">@Emp.EmployeeId</p>
+                            </div>
+                        </div>
+                        <!------ Fields ---------->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label style="font-weight: bold; color: black">Branchenwissen</label>
+                            </div>
+                            <div class="col-md-6">
+                                <p style="color:#818181">Emp.Fields</p>
+                            </div>
+                        </div>
+                        <!------ E-Mail ---------->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label style="font-weight: bold;color: black">Email</label>
+                            </div>
+                            <div class="col-md-6">
+                                <p style="color:#818181">max.mustermann@mail.com</p>
+                            </div>
+                        </div>
+                    <!------ Phone Number ---------->    
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label style="font-weight: bold;color: black">Telefonnummer</label>
+                            </div>
+                            <div class="col-md-6">
+                                <p style="color:#818181">1234567890</p>
+                            </div>
+                        </div>
+                        <!------ Relevant Work Experience ---------->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label style="font-weight:bold; color:black">Relevante Berufserfahrung</label>
+                            </div>
+                            <div class="col-md-6">
+                                <p style="color:#818181">@Emp.RelevantWorkExperience</p>
+                            </div>
+                        </div>
+                        <!------ Languages ---------->
+                        <div class="row">
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>Sprache</th>
+                                    <th style="margin-left: 200px">Sprachniveau</th>
+                                </tr>
+                                <tr>
+                                    <td>English</td>
+                                    <td>B2</td>
+                                </tr>
+                            </table>
+                            </div>
+                    <!------ Projects ---------->    
+                    <div class="row">
+                        <table class="table table-striped">
+                            <tr>
+                                <th>Projekt</th>
+                                <th style="margin-left: 200px">Projekttätigkeit</th>
+                            </tr>
+                            <tr>
+                                <td>Auto3.0</td>
+                                <td>Design</td>
+                            </tr>
+                            <tr>
+                                <td>E-Bildung</td>
+                                <td>Programmierer</td>
+                            </tr>
+                            <tr>
+                                <td>Acquiring a new or modified data system</td>
+                                <td>Design</td>
+                            </tr>
+                            <tr>
+                                <td>Xitaso Seite</td>
+                                <td>Programming</td>
+                                </tr>
+                        </table>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        </div>
+    </form>
+</div>
+
+
+
+@code {
+    
+    [Parameter] public int Id { get; set; }
+
+
+
+    Employee Emp = new Employee() { FirstName = "Ismail", LastName = "Gürsöz", Role = new List<string>(){"Programming"} , HardSkills = new List<Hardskill>()
+                                                                {
+                                                                    new Hardskill {Description = "JavaScript", Subcat = null, Uppercat = null, Height = 0},
+                                                                    new Hardskill {Description = "CSS", Subcat = null, Uppercat = null, Height = 0}
+                                                                },
+                                                                    SoftSkills = new List<string>(){"Teamleading"}
+                                                                };
+    
+    
+
+    public void RedirectToEditProfile()
+    {
+        _navManager.NavigateTo("/profile/update");
+    }
+
+}
