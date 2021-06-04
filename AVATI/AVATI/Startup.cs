@@ -16,6 +16,7 @@ namespace AVATI
 {
     public class Startup
     {
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -38,6 +39,7 @@ namespace AVATI
             services.AddSingleton<IProposalService, ProposalService>();
             services.AddSingleton<ProposalService>();
             services.AddSingleton<ProjectServiceSimple>();
+            services.AddSingleton<JsonImport>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
