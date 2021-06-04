@@ -46,10 +46,11 @@ namespace AVATI.Data
             return true;
         }
 
-        public bool UpdateHardskill(Hardskill hardskill)
+        public bool UpdateHardskill(Hardskill newHardskill, Hardskill oldHardskill)
         {
-            if (!_allHardskills.Remove(hardskill)) return false;
-            _allHardskills.Add(hardskill);
+            int index = _allHardskills.IndexOf(oldHardskill);
+            if (index == -1) return false;
+            _allHardskills[index] = newHardskill;
             return true;
         }
 
@@ -75,10 +76,11 @@ namespace AVATI.Data
             return true;
         }
 
-        public bool UpdateHardskillCategory(Hardskill hardskillcat)
+        public bool UpdateHardskillCategory(Hardskill newHardskillcat, Hardskill oldHardskillcat)
         {
-            if (!_allHardskillCat.Remove(hardskillcat)) return false;
-            _allHardskillCat.Add(hardskillcat);
+            int index = _allHardskills.IndexOf(oldHardskillcat);
+            if (index == -1) return false;
+            _allHardskillCat[index] = newHardskillcat;
             return true;
         }
 

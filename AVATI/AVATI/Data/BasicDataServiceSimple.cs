@@ -70,8 +70,9 @@ namespace AVATI.Data
 
         public bool UpdateSoftSkill(string newDescription, string oldDescription)
         {
-            if (!_allSoftSkills.Remove(oldDescription)) return false;
-            _allSoftSkills.Add(newDescription);
+            int index = _allSoftSkills.IndexOf(oldDescription);
+            if (index == -1) return false;
+            _allSoftSkills[index] = newDescription;
             return true;
         }
 
@@ -93,8 +94,9 @@ namespace AVATI.Data
 
         public bool UpdateRole(string newDescription, string oldDescription)
         {
-            if (_allRoles.Remove(oldDescription)) return false;
-            _allRoles.Add(newDescription);
+            int index = _allRoles.IndexOf(oldDescription);
+            if (index == -1) return false;
+            _allRoles[index] = newDescription;
             return true;
         }
 
@@ -116,8 +118,9 @@ namespace AVATI.Data
 
         public bool UpdateField(string newDescription, string oldDescription)
         {
-            if (!_allFields.Remove(oldDescription)) return false;
-            _allFields.Add(newDescription);
+            int index = _allFields.IndexOf(oldDescription);
+            if (index == -1) return false;
+            _allFields[index] = newDescription;
             return true;
         }
 

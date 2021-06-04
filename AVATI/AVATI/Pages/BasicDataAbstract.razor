@@ -5,7 +5,7 @@
 @inject IHardskillService _hardskillService
 
 <h1><b>Basisdaten</b> <small>Hier können Sie Basisdaten hinzugefügen, editieren und löschen</small></h1>
-    <hr />
+<hr />
 
 <h3 class="cap"><b>Skills</b></h3>
 <table class="table table-striped">
@@ -19,11 +19,13 @@
     {
         <tr>
             <td>@softskill</td>
-            <td class="smalltd"><button class="btn btn-secondary">Edit</button></td>
-            <td class="smalltd"><button class="btn btn-dark">Delete</button></td>
+            <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditSoftSkill(softskill)">Edit</button></td>
+            <td class="smalltd"><button class="btn btn-dark" @onclick="() => PopDelete(softskill)">Delete</button></td>
         </tr>
     }
 </table>
+<EditSoftSkill @ref="_editSoftSkill" OldSoftSkill="@Description"/>
+<DeleteConfirmation @ref="_deleteConfirmation" SoftSkill="@Description"/>
 <CreateSoftSkill @ref="_createSoftSkill"/>
 <div> <button class="btn btn-info" @onclick="PopCreateSoftSkill">Create</button> </div>
 
@@ -48,9 +50,26 @@
 
 @code {
     CreateSoftSkill _createSoftSkill;
+    EditSoftSkill _editSoftSkill;
+    DeleteConfirmation _deleteConfirmation;
+    
+    string Description { get; set; }
 
     void PopCreateSoftSkill()
     {
         _createSoftSkill.Showing();
     }
+
+    void PopEditSoftSkill(string name)
+    {
+        Description = name;
+        _editSoftSkill.Showing();
+    }
+
+    void PopDelete(string name)
+    {
+        Description = name;
+        _deleteConfirmation.Showing();
+    }
+
 }
