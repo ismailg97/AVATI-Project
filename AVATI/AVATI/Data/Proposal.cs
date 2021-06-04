@@ -4,6 +4,8 @@ namespace AVATI.Data
 {
     public class Proposal
     {
+        public string ProposalTitle { get; set; }
+        
         public int ProposalId { get; set; }
         public List<string> Softskills { get; set; }
         public List<string> Fields { get; set; }
