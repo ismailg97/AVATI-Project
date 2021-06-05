@@ -12,28 +12,28 @@ namespace AVATI.Data
          public List<Employee> EmpList = new List<Employee>() {
         
                         new Employee()
-                            {FirstName = "Ismail", LastName = "Gürsöz", Role = new List<string>(){"Programming"} , HardSkills = new List<Hardskill>()
+                            {FirstName = "Ismail", LastName = "Gürsöz", Role = new List<string>(){"Programming"} , Hardskills = new List<Hardskill>()
                             {
                                 new Hardskill {Description = "JavaScript", Subcat = null, Uppercat = null, Height = 0},
                                 new Hardskill {Description = "CSS", Subcat = null, Uppercat = null, Height = 0}
                             },
-                                SoftSkills = new List<string>(){"Teamleading"}
+                                Softskills = new List<string>(){"Teamleading"}
                             },
                         
                         new Employee()
-                        {FirstName = "Anton", LastName = "Huber", Role = new List<string>(){"Programming"} , HardSkills = new List<Hardskill>()
+                        {FirstName = "Anton", LastName = "Huber", Role = new List<string>(){"Programming"} , Hardskills = new List<Hardskill>()
                         {
                             new Hardskill {Description = "Python", Subcat = null, Uppercat = null, Height = 0},
                         },
-                        SoftSkills = new List<string>(){"Teamleading"}
+                        Softskills = new List<string>(){"Teamleading"}
                         },
                         
                         new Employee()
-                        {FirstName = "Victoria", LastName = "Kuch", Role = new List<string>(){"Programming"} , HardSkills = new List<Hardskill>()
+                        {FirstName = "Victoria", LastName = "Kuch", Role = new List<string>(){"Programming"} , Hardskills = new List<Hardskill>()
                         {
                             new Hardskill {Description = "Java", Subcat = null, Uppercat = null, Height = 0},
                         },
-                        SoftSkills = new List<string>(){"none"}
+                        Softskills = new List<string>(){"none"}
                         }
         
                 };
@@ -56,9 +56,9 @@ namespace AVATI.Data
             employee.Role = emp.Role;
             employee.EmploymentTime = emp.EmploymentTime;
             employee.EmpType = emp.EmpType;
-            employee.HardSkills = emp.HardSkills;
-            employee.SoftSkills = emp.SoftSkills;
-            employee.RcLevel = emp.RcLevel;
+            employee.Hardskills = emp.Hardskills;
+            employee.Softskills = emp.Softskills;
+            employee.Rc = emp.Rc;
             employee.RelevantWorkExperience = emp.RelevantWorkExperience;
             EmpList.Add(employee);
             return true;
@@ -77,9 +77,9 @@ namespace AVATI.Data
                     employee.Role = emp.Role;
                     employee.EmploymentTime = emp.EmploymentTime;
                     employee.EmpType = emp.EmpType;
-                    employee.HardSkills = emp.HardSkills;
-                    employee.SoftSkills = emp.SoftSkills;
-                    employee.RcLevel = emp.RcLevel;
+                    employee.Hardskills = emp.Hardskills;
+                    employee.Softskills = emp.Softskills;
+                    employee.Rc = emp.Rc;
                     employee.RelevantWorkExperience = emp.RelevantWorkExperience;
                     return true;
                 }

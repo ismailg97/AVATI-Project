@@ -5,6 +5,7 @@
 @inject SearchService _searchService
 @inject IHardskillService _hard
 @inject JsonImport _import
+
 <div class="container h-100">
     <div class="row h-100 justify-content-center align-items-center">
         <div class="col-12 text-left">
@@ -18,13 +19,13 @@
                     <label class="font-weight-bold text-left">Hardskills</label>
                     <div class="form-group row col">
                         <input type="text" class="form-control col-10 mr-2" value="@String.Join(" | ", _searchService.HardskillsToSearch.Select(e => e.Description).ToArray())" placeholder="Hardskill(s)" readonly>
-                        <button class="btn btn-danger " @onclick=@(() => { _searchService.EmptyHardSearch(); })>Löschen</button>
+                        <button class="btn btn-danger " type="button" @onclick=@_searchService.EmptyHardSearch>Löschen</button>
                     </div>
                 </div>
                 <label for="suche">Suche <small class="text-muted">TODO: Nach Kategorien suchen</small></label>
                 <div class="form-group row col">
                     <div class="form-group row col">
-                        <input type="search" class="col-7 form-control mr-2" id="suche" @bind="TempHardskill" placeholder="C++, Javascript etc."/>
+                        <input type="search" class="col-7 form-control mr-2" id="suche" @bind-value="TempHardskill" @bind-value:event="oninput" placeholder="C++, Javascript etc."/>
                         <button class="btn btn-success">Suchen</button>
                     </div>
                 </div>

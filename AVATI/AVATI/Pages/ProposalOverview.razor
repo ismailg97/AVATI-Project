@@ -30,12 +30,12 @@
                             <button class="btn btn-outline-success btn-sm mr-3 mb-3">Hinzufügen</button>
                             <button class="btn btn-outline-danger btn-sm mb-3">Entfernen</button>
                             <ul class="list-group mb-3 text-left">
-                                @foreach (var employee in proposal.EmployeeTemps)
+                                @foreach (var employee in proposal.Employees)
                                 {
                                     <li class="list-group-item border-dark bg-light text-left font-weight-bold text-black mb-1">
-                                        @employee.Name
+                                        @employee.FirstName + @employee.LastName
                                         <button class="btn float-right btn-info btn-sm">Details</button>
-                                        <button class="btn btn-primary float-right btn-sm mr-3" @onclick=@(() => { Show(employee, 0);})>RC: @employee.RC </button>
+                                        <button class="btn btn-primary float-right btn-sm mr-3" @onclick=@(() => { Show(employee, 0);})>RC: @employee.Rc </button>
                                     </li>
                                 }
                             </ul>
@@ -107,7 +107,7 @@
 
     public bool ShowPop { get; set; }
 
-    public EmployeeTemp RcToEdit { get; set; }
+    public Employee RcToEdit { get; set; }
 
     private static int _restoreValue;
     private static int _changeValue;
@@ -140,24 +140,24 @@
         }
     }
 
-    public void Show(EmployeeTemp emp, int response) 
+    public void Show(Employee emp, int response) 
     {
 
         if (!ShowPop)
         {
             RcToEdit = emp;
-            _restoreValue = emp.RC;
-            _changeValue = emp.RC;
+            _restoreValue = emp.Rc;
+            _changeValue = emp.Rc;
         }
         else
         {
             if (response == 0)
             {
-                RcToEdit.RC = _changeValue;
+                RcToEdit.Rc = _changeValue;
             }
             if (response == 1)
             {
-                RcToEdit.RC = _restoreValue;
+                RcToEdit.Rc = _restoreValue;
             }
         }
         

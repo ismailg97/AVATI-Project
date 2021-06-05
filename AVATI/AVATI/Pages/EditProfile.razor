@@ -180,12 +180,12 @@
 @code {
     [Parameter] public int Id { get; set; }
     
-    public Employee Emp = new Employee() { FirstName = "Ismail", LastName = "Gürsöz", Role = new List<string>(){"Programming"} , HardSkills = new List<Hardskill>()
+    public Employee Emp = new Employee() { FirstName = "Ismail", LastName = "Gürsöz", Role = new List<string>(){"Programming"} , Hardskills = new List<Hardskill>()
     {
         new Hardskill {Description = "JavaScript", Subcat = null, Uppercat = null, Height = 0},
         new Hardskill {Description = "CSS", Subcat = null, Uppercat = null, Height = 0}
     },
-        SoftSkills = new List<string>(){"Teamleading"}
+        Softskills = new List<string>(){"Teamleading"}
     };
 
     public void EditProfiles()
