@@ -4,9 +4,9 @@ namespace AVATI.Data
 {
     public interface IProposalService
     {
-        public bool CreateProposal(string title, List<string> Softskills, List<string> Fields, List<Hardskill> Hardskills, List<EmployeeTemp> Employees);
+        public bool CreateProposal(string title, List<string> Softskills, List<string> Fields, List<Hardskill> Hardskills, List<Employee> Employees);
 
-        public bool UpdateProposal(string title, List<string> Softskills, List<string> Fields, List<Hardskill> Hardskills, List<EmployeeTemp> Employees);
+        public bool UpdateProposal(string title, List<string> Softskills, List<string> Fields, List<Hardskill> Hardskills, List<Employee> Employees);
 
         public bool DeleteProposal(int proposalId);
 

@@ -27,7 +27,7 @@
                         Programmierer
                     </h6>
                     <!------ RC-Level ---------->
-                    <p class="proile-rating">RateCard : <span>@Emp.RcLevel</span></p>
+                    <p class="proile-rating">RateCard : <span>@Emp.Rc</span></p>
                 </div>
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
@@ -51,7 +51,7 @@
                     <tr>
                         <th>Hard Skills</th>
                     </tr>
-                    @foreach(var hardskill in Emp.HardSkills){
+                    @foreach(var hardskill in Emp.Hardskills){
                         <tr>
                             <td>@hardskill</td>
                         </tr>
@@ -64,7 +64,7 @@
                     <tr>
                         <th>Soft Skills</th>
                     </tr>
-                    @foreach (var softskill in Emp.SoftSkills)
+                    @foreach (var softskill in Emp.Softskills)
                     {
                        <tr>
                            <td>@softskill</td>
@@ -176,12 +176,12 @@
 
 
 
-    Employee Emp = new Employee() { FirstName = "Ismail", LastName = "Gürsöz", Role = new List<string>(){"Programming"} , HardSkills = new List<Hardskill>()
+    Employee Emp = new Employee() { FirstName = "Ismail", LastName = "Gürsöz", Role = new List<string>(){"Programming"} , Hardskills = new List<Hardskill>()
                                                                 {
                                                                     new Hardskill {Description = "JavaScript", Subcat = null, Uppercat = null, Height = 0},
                                                                     new Hardskill {Description = "CSS", Subcat = null, Uppercat = null, Height = 0}
                                                                 },
-                                                                    SoftSkills = new List<string>(){"Teamleading"}
+                                                                    Softskills = new List<string>(){"Teamleading"}
                                                                 };
     
     

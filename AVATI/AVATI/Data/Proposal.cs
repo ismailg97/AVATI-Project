@@ -11,6 +11,6 @@ namespace AVATI.Data
         public List<string> Fields { get; set; }
         public List<Hardskill> Hardskills { get; set; }
         public string AdditionalInfo { get; set; }
-        public List<EmployeeTemp> EmployeeTemps { get; set; }
+        public List<Employee> Employees { get; set; }
     }
 }
