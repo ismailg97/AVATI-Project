@@ -1,10 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AVATI.Data
 {
     //This class serves as a temporary storage of all Search-Related attributes
     public class SearchService
     {
+        //This list will recieve all Employes from the Database
+        public List<Employee> EmployeeList { get; set; }
+        public IEmployeeService EmployeeService { get; set; }
+
+        public Employee Employee { get; set; }
+        public int  Priority { get; set; }
+
+        public bool PerfectMatch { get; set;}
+
         public bool TableIsVisible = false;
         //These are the attributes the user can choose from in the Search-Mask
         public List<string> SoftskillsToDisplay { get; set; } = new List<string>();
@@ -23,6 +34,14 @@ namespace AVATI.Data
         public List<string> Roles { get; set; }
         public List<Hardskill> Hardskills { get; set; } 
 
+        //In order to only display the relevant Attributes
+        
+        public string EmployeeNameTemp { get; set; }
+        public List<string> SoftskillsToSearchTemp { get; set; } = new List<string>();
+        public List<string> RolesToSearchTemp { get; set; } = new List<string>();
+        public List<Hardskill> HardskillsToSearchTemp { get; set; } = new List<Hardskill>();
+        
+        
         
         //All Functions
         
@@ -60,7 +79,7 @@ namespace AVATI.Data
             SoftskillsToDisplay = new List<string>(Softskills);
             HardskillsToDisplay = new List<Hardskill>(Hardskills);
             RolesToDisplay = new List<string>(Roles);
-
+            
         }
 
         public void EmptySoftSearch()
@@ -83,18 +102,84 @@ namespace AVATI.Data
 
         public void InitAttributes(List<string> softskills, List<string> roles, List<Hardskill> hardskills)
         {
+            EmployeeService = new EmployeeServiceSimple();
+            EmployeeList = EmployeeService.GetAllEmployees();
             Hardskills = new List<Hardskill>(hardskills);
             Softskills = new List<string>(softskills);
             Roles = new List<string>(roles);
             SoftskillsToDisplay = new List<string>(Softskills);
+            SoftskillsToDisplay.Sort();
             HardskillsToDisplay = new List<Hardskill>(Hardskills);
             RolesToDisplay = new List<string>(Roles);
         }
         
 
-        public void SearchEmployee()
+        public List<Employee> SearchEmployee(string name, List<string> Softskill, List<Hardskill> Hardskill,
+            List<string> Rolle
+        )
         {
-            //TODO
+            PerfectMatch = false;
+            SoftskillsToSearchTemp = new List<string>(Softskill);
+            HardskillsToSearchTemp = new List<Hardskill>(Hardskill);
+            RolesToSearchTemp = new List<string>(Rolle);
+            EmployeeNameTemp = name;
+            List<SearchService> TempEmployee = new List<SearchService>();
+            List<Employee> EmployeeListToReturn = new List<Employee>();
+            foreach (var employee in EmployeeList)
+            {
+                int numberOfMatches = 0;
+                if (name != null && name == String.Concat(employee.FirstName, " " + employee.LastName))
+                {
+                    ++numberOfMatches;
+                }
+
+                foreach (var soft in Softskill)
+                {
+                    if (employee.Softskills.Contains(soft))
+                    {
+
+                        ++numberOfMatches;
+                    }
+                }
+
+                foreach (var hard in Hardskill)
+                {
+                    if (employee.Hardskills.Exists(e => e.Description.Equals(hard.Description)))
+                    {
+                        ++numberOfMatches;
+                    }
+                }
+
+                foreach (var role in Rolle)
+                {
+                    if (employee.Roles.Contains(role))
+                    {
+                        ++numberOfMatches;
+                    }
+                }
+
+                if (numberOfMatches != 0)
+                {
+                    TempEmployee.Add(new SearchService() {Employee = employee, Priority = numberOfMatches});
+                }
+
+                if (numberOfMatches == Hardskill.Count + Softskill.Count + Rolle.Count + ((name == null) ? 0 : 1))
+                {
+                    PerfectMatch = true;
+                }
+            }
+
+            TempEmployee = TempEmployee.OrderBy(e => e.Priority).ToList();
+            TempEmployee.Reverse();
+
+            foreach(var service in TempEmployee)
+            {
+                EmployeeListToReturn.Add(service.Employee);
+            }
+
+            
+            return EmployeeListToReturn;
         }
+
     }
 }

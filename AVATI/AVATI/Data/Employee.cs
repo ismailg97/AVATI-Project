@@ -16,7 +16,7 @@ namespace AVATI.Data
         public List<string> Softskills { get; set; }
         public List<Hardskill> Hardskills { get; set; }
         public List<string> Field { get; set; }
-        public List<string> Role { get; set; }
+        public List<string> Roles { get; set; }
         public List<Tuple<string,LanguageLevel>> Language { get; set; }
         public EmployeeType EmpType { get; set; }
         public bool IsActive  { get; set; } = true;
