@@ -1,12 +1,13 @@
 ﻿@page "/SearchEmployee"
 @using AVATI.Data
 @using Microsoft.AspNetCore.Components
-
+@using System.Linq
 @inject SearchService _searchService
-
+@inject IHardskillService _hard
+@inject JsonImport _import
 <div class="container h-100">
     <div class="row h-100 justify-content-center align-items-center">
-        <div class="col-12">
+        <div class="col-12 text-left">
             <EditForm Model="_searchService">
                 <h1 class="mb-4">Mitarbeitersuche</h1>
                 <div class="form-group">
@@ -14,17 +15,29 @@
                     <InputText type="text" class="form-control col-8" placeholder="Vor- und Nachname" @bind-Value="_searchService.EmployeeName"/>
                 </div>
                 <div class="form-group">
-                    <label class="font-weight-bold">Hardskills</label>
+                    <label class="font-weight-bold text-left">Hardskills</label>
                     <div class="form-group row col">
-                        <input type="text" class="form-control col-10 mr-2" value="@String.Join(" | ", _searchService.GetHardskillName().ToArray())" placeholder="Hardskill(s)" readonly>
-                        <button class="btn btn btn-danger " @onclick=@(() => { _searchService.EmptyHardSearch(); })>Löschen</button>
+                        <input type="text" class="form-control col-10 mr-2" value="@String.Join(" | ", _searchService.HardskillsToSearch.Select(e => e.Description).ToArray())" placeholder="Hardskill(s)" readonly>
+                        <button class="btn btn-danger " @onclick=@(() => { _searchService.EmptyHardSearch(); })>Löschen</button>
+                    </div>
+                </div>
+                <label for="suche">Suche <small class="text-muted">TODO: Nach Kategorien suchen</small></label>
+                <div class="form-group row col">
+                    <div class="form-group row col">
+                        <input type="search" class="col-7 form-control mr-2" id="suche" @bind="TempHardskill" placeholder="C++, Javascript etc."/>
+                        <button class="btn btn-success">Suchen</button>
                     </div>
                 </div>
                 <div class="form-group row col-10">
-                    @foreach (var hardskill in _searchService.HardskillsToDisplay)
-                    {
-                        <button class="btn btn btn-info mb-1 mr-1" @onclick=@(() => { _searchService.AddHardSearch(hardskill); })>@hardskill.Description</button>
-                    }
+                    <div class="list-group border-dark overflow-auto mr-3 col-9" style="height: 200px">
+                        @foreach (var hardskill in _searchService.HardskillsToDisplay)
+                        {
+                            @if (TempHardskill == null || hardskill.Description.Contains(TempHardskill))
+                            {
+                                <button class="btn btn-outline-dark"@onclick=@(() => { _searchService.AddHardSearch(hardskill); })>@hardskill.Description</button>
+                            }
+                        }
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="font-weight-bold">Softskills</label>
@@ -71,7 +84,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                        <tr>Where are the Employees??????</tr>
+                    <tr>Where are the Employees??????</tr>
                     </tbody>
                 </table>
             }
@@ -83,11 +96,21 @@
 
 @code {
 
+    public string TempHardskill { get; set; }
+
+    public List<Hardskill> PseudoHardskills { get; set; }
+
     protected override void OnInitialized()
     {
+        JSonStructure.Rootclass _root = _import.ImportJsonFile();
+        PseudoHardskills = new List<Hardskill>();
+        foreach (var skill in _root.Softskills)
+        {
+            PseudoHardskills.Add(new Hardskill() {Description = skill});
+        }
         _searchService.InitAttributes
             (new List<string>() {"test1", "test2"}, new List<string>() {"testrole2", "testrole3"},
-                new List<Hardskill>() {new Hardskill() {Description = "testskill1"}, new Hardskill() {Description = "testskill2"}});
+                new List<Hardskill>(PseudoHardskills));
     }
 
     public void CallSearch()

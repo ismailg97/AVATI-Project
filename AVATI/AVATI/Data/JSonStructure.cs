@@ -5,6 +5,7 @@ namespace AVATI.Data
 {
     public class JSonStructure
     {
+        
         public class SprachenundFrameworks
         {
             public List<string> Sprachen { get; set; }

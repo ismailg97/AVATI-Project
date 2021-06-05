@@ -30,7 +30,7 @@ namespace AVATI.Data
         {
             if (!SoftskillsToSearch.Contains(softskill))
             {
-                SoftskillsToSearch.Add(softskill);
+                SoftskillsToSearch.Insert(0, softskill);
                 SoftskillsToDisplay.Remove(softskill);
             }
         }
@@ -38,7 +38,7 @@ namespace AVATI.Data
         {
             if (!HardskillsToSearch.Contains(hardskill))
             {
-                HardskillsToSearch.Add(hardskill);
+                HardskillsToSearch.Insert(0, hardskill);
                 HardskillsToDisplay.Remove(hardskill);
             }
         }
@@ -46,7 +46,7 @@ namespace AVATI.Data
         {
             if (!RolesToSearch.Contains(role))
             { 
-                RolesToSearch.Add(role);
+                RolesToSearch.Insert(0, role);
                 RolesToDisplay.Remove(role);
             }
         }
@@ -90,17 +90,7 @@ namespace AVATI.Data
             HardskillsToDisplay = new List<Hardskill>(Hardskills);
             RolesToDisplay = new List<string>(Roles);
         }
-
-        public List<string> GetHardskillName()
-        {
-            List<string> NameList = new List<string>();
-            foreach (var hardskill in HardskillsToSearch)
-            {
-                NameList.Add(hardskill.Description);
-            }
-
-            return NameList;
-        }
+        
 
         public void SearchEmployee()
         {
