@@ -8,38 +8,46 @@ namespace AVATI.Data
 {
     public class ProjectServiceSimple : IProjektService
     {
-        public readonly List<Project> _projects;
-        private static int identification = 0;
+        public List<Project> _projects;
+        public List<Project> Searching;
+        private static int identification = 1;
         
         public bool CreateProject(Project project)
         {
             _projects.Add(project);
             return true;
         }
-        
+
+        public void AddProject(Project project)
+        {
+            project.ProjectID = identification++;
+            _projects.Add(project);
+        }
 
         public bool UpdateProject(Project project)
         {
-            if (_projects.Any() == false)
+           if (_projects.Any() == false)
             {
                 project.ProjectID = 0;
-                _projects.Add(project);
+                AddProject(project);
             }
-            else 
-            {
-                foreach (var proj in _projects)
-                {
-                    if (project.ProjectID.Equals(proj.ProjectID))
-                    {
-                        proj.Projecttitel = project.Projecttitel;
-                        proj.Projectdescription = project.Projectdescription;
-                        proj.fields = project.fields;
-                        proj.Projectpurpose = project.Projectpurpose;
-                        proj.Runtime = project.Runtime;
-                    }
-                }
-            }
-            return true;
+            else if (project.ProjectID != 0)
+           {
+               foreach (var proj in _projects)
+               {
+                   if (project.ProjectID.Equals(proj.ProjectID))
+                   {
+                       proj.Projecttitel = project.Projecttitel;
+                       proj.Projectdescription = project.Projectdescription;
+                       proj.fields = project.fields;
+                       proj.Projectpurpose = project.Projectpurpose;
+                       proj.Runtime = project.Runtime;
+                       
+                   }
+               }
+               
+           }
+           return true;
         }                           //probleme mit updating 
         public bool DeleteProject(int projectID)
         {
@@ -87,19 +95,42 @@ namespace AVATI.Data
             Project eins = new Project
             {
                 fields = new List<string>(), Projectdescription = "iwasyallah", Projectpurpose = new List<string>(), Projecttitel = "goodbye",
-                Runtime = DateTime.Today, ProjectID = identification++
+                Runtime = DateTime.Today
             };
             Project zwei = new Project
             {
                 fields = new List<string>(), Projectdescription = "zelda", Projectpurpose = new List<string>(), Projecttitel = "link",
-                Runtime = DateTime.Today, ProjectID = identification++
+                Runtime = DateTime.Today
             };
             Project drei = new Project
             {
                 fields = new List<string>(), Projectdescription = "bladerunner", Projectpurpose = new List<string>(), Projecttitel = "better than star wars",
-                Runtime = DateTime.Today, ProjectID = identification++
+                Runtime = DateTime.Today
             };
-            _projects = new List<Project>() {eins, zwei, drei};
+            _projects = new List<Project>();
+            AddProject(eins);
+            AddProject(zwei);
+            AddProject(drei);
+        }
+        public List<Project> SearchProject(List<Project> projects, string input)
+        {
+            Searching = new List<Project>();
+            if (input == null)
+            {
+                return null;
+            }
+            foreach (var project in projects)
+            {
+                
+                if (project.Projecttitel.Contains(input))
+                {
+                    Searching.Add(project);
+                }
+
+                Searching = Searching.OrderBy(x => x.Projecttitel).ToList();
+            }
+            Console.WriteLine("did it");
+            return Searching;
         }
     }
 }
