@@ -56,8 +56,15 @@ namespace AVATI.Data
 
         public bool DeleteHardskill(string description)
         {
-            int output = _allHardskills.RemoveAll(x => x.Description == description);
-            return output == 1;
+            var hardskill = _allHardskills.Find(x => x.Description == description);
+
+            if (hardskill == null) return false;
+            if (hardskill.Uppercat != null && hardskill.Uppercat.Subcat.Count != 1)
+            {
+                hardskill.Uppercat.Subcat.Remove(hardskill);
+            }
+
+            return _allHardskills.Remove(hardskill);
         }
 
         public Hardskill GetHardskill(string description)
@@ -86,8 +93,18 @@ namespace AVATI.Data
 
         public bool DeleteHardskillCategory(string description)
         {
-            int output = _allHardskillCat.RemoveAll(x => x.Description == description);
-            return output == 1;
+            var hardskillcat = _allHardskillCat.Find(x => x.Description == description);
+
+            if (hardskillcat == null) return false;
+            if (hardskillcat.Uppercat == null) return _allHardskillCat.Remove(hardskillcat);
+            if (!hardskillcat.Uppercat.Subcat.Remove(hardskillcat)) return false;
+            foreach (var cat in hardskillcat.Subcat)
+            {
+                hardskillcat.Uppercat.Subcat.Add(cat);
+                cat.Uppercat = hardskillcat.Uppercat;
+            }
+
+            return _allHardskillCat.Remove(hardskillcat);
         }
 
         public Hardskill GetHardskillCategory(string description)
