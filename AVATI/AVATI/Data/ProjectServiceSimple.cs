@@ -25,21 +25,7 @@ namespace AVATI.Data
                 project.ProjectID = 0;
                 _projects.Add(project);
             }
-            
-            else if (project.ProjectID == 0)
-            {
-                foreach (var proj in _projects)
-                {
-                    if (project.ProjectID.Equals(proj.ProjectID))
-                    {
-                        proj.Projecttitel = project.Projecttitel;
-                        proj.Projectdescription = project.Projectdescription;
-                        proj.fields = project.fields;
-                        proj.Projectpurpose = project.Projectpurpose;
-                        proj.Runtime = project.Runtime;
-                    }
-                }
-            }else if (project.ProjectID != 0)
+            else 
             {
                 foreach (var proj in _projects)
                 {
@@ -54,21 +40,7 @@ namespace AVATI.Data
                 }
             }
             return true;
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        }                           //probleme mit updating 
         public bool DeleteProject(int projectID)
         {
             Project temp = _projects.Find(x => x.ProjectID.Equals(projectID));
