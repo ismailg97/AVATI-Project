@@ -1,40 +1,73 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 
 namespace AVATI.Data
 {
     public class ProjectServiceSimple : IProjektService
     {
-        private List<Project> _projects = new List<Project>();
+        public readonly List<Project> _projects;
+        private static int identification = 0;
         
         public bool CreateProject(Project project)
         {
             _projects.Add(project);
             return true;
         }
+        
 
         public bool UpdateProject(Project project)
         {
-            if (!_projects.Any())
+            if (_projects.Any() == false)
             {
-                project.ProjectID = 1;
+                project.ProjectID = 0;
                 _projects.Add(project);
             }
-            else if (project.ProjectID != 0)
+            
+            else if (project.ProjectID == 0)
             {
-                foreach (var pro in _projects)
+                foreach (var proj in _projects)
                 {
-                    if (pro.ProjectID == project.ProjectID)
+                    if (project.ProjectID.Equals(proj.ProjectID))
                     {
-                        pro.Projecttitel = project.Projecttitel;
-                        pro.Projectdescription = project.Projectdescription;
-                        pro.Projectpurpose = project.Projectpurpose;
+                        proj.Projecttitel = project.Projecttitel;
+                        proj.Projectdescription = project.Projectdescription;
+                        proj.fields = project.fields;
+                        proj.Projectpurpose = project.Projectpurpose;
+                        proj.Runtime = project.Runtime;
+                    }
+                }
+            }else if (project.ProjectID != 0)
+            {
+                foreach (var proj in _projects)
+                {
+                    if (project.ProjectID.Equals(proj.ProjectID))
+                    {
+                        proj.Projecttitel = project.Projecttitel;
+                        proj.Projectdescription = project.Projectdescription;
+                        proj.fields = project.fields;
+                        proj.Projectpurpose = project.Projectpurpose;
+                        proj.Runtime = project.Runtime;
                     }
                 }
             }
-
             return true;
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         public bool DeleteProject(int projectID)
         {
@@ -54,9 +87,7 @@ namespace AVATI.Data
 
         public List<string> GetAllFieldsFromOneProject(int ProjectID)
         {
-            
             List<string> temp = new List<string>();
-            temp.Add("iwas");
             foreach (var field in _projects)
             {
                 if (field.ProjectID == ProjectID)
@@ -64,6 +95,7 @@ namespace AVATI.Data
                     temp = field.fields;
                 }
             }
+
             return temp;
         }
 
@@ -76,6 +108,26 @@ namespace AVATI.Data
                     project.fields.Add(field);
                 }
             }
+        }
+
+        public ProjectServiceSimple()
+        {
+            Project eins = new Project
+            {
+                fields = new List<string>(), Projectdescription = "iwasyallah", Projectpurpose = new List<string>(), Projecttitel = "goodbye",
+                Runtime = DateTime.Today, ProjectID = identification++
+            };
+            Project zwei = new Project
+            {
+                fields = new List<string>(), Projectdescription = "zelda", Projectpurpose = new List<string>(), Projecttitel = "link",
+                Runtime = DateTime.Today, ProjectID = identification++
+            };
+            Project drei = new Project
+            {
+                fields = new List<string>(), Projectdescription = "bladerunner", Projectpurpose = new List<string>(), Projecttitel = "better than star wars",
+                Runtime = DateTime.Today, ProjectID = identification++
+            };
+            _projects = new List<Project>() {eins, zwei, drei};
         }
     }
 }

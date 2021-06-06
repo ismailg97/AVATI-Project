@@ -1,0 +1,113 @@
+﻿@page "/Projektübersicht/Projektedit/AddFieldToProject"
+@page "/Projektübersicht/Projektedit/AddFieldToProject/{ID:int}"
+@page "/AddFieldToProject"
+
+@using AVATI.Data
+@using System.Net
+
+@inject Projectedit _projectedit
+@inject JsonImport _jsonImport
+@inject ProjectServiceSimple _projectServiceSimple
+@inject NavigationManager _navigationManager
+
+
+
+<h3>Auswahl der hinzufügbaren Branchen..</h3>
+<label class="col-sm-2 col-form-label">Ausgewählte Branchen.:</label>
+<div class="container">
+    <input type="text" class="form-control" placeholder="Branche.." @bind="@temp"/>
+    <button type="button" class="btn btn-success col-sm-3" @onclick="(() => { AddField(temp); })">Branche hinzufügen</button>
+</div>
+
+<div class="container">
+    <div class="form-group col row">
+        @foreach (var field in AttributestoSearch)
+        {
+            <div class="mb-3 col-sm">
+                <button type="button" class="btn btn-primary btn-block" @onclick=@(() => { UpdateContains(field); })>@field</button>
+            </div>
+        }
+    </div>
+</div>
+<label class="col-sm-2 col-form-label">Wählen Sie passende Branchen für ihr Projekt aus.:</label>
+<div class="d-inline"></div>
+<div class="container">
+    <div class="form-group col row">
+        @foreach (var field in AttributestoDisplay)
+        {
+            <div class="mb-3 col-sm">
+                <button type="button" class="btn btn-primary btn-lg btn-block" @onclick=@(() => { UpdateSearch(field); })>@field</button>
+            </div>
+        }
+    </div>
+</div>
+
+<button type="submit" class="btn btn-success col-sm-3" @onclick="(() => { Submit(ID);})">Submit</button>
+
+@code {
+
+    [Parameter]
+    public int ID { get; set; }
+
+    public string temp { get; set; }
+    Project currentProject = new Project();
+
+    public List<string> AttributestoDisplay { get; set; } = new List<string>();
+    public List<string> AttributestoSearch { get; set; } = new List<string>();
+
+    JSonStructure.Rootclass jsonFields;
+
+
+    protected override void OnInitialized()
+    {
+        jsonFields = _jsonImport.ImportJsonFile();
+        AttributestoDisplay = new List<string>(jsonFields.fields);
+        
+        
+    }
+
+    public void UpdateSearch(string field)
+    {
+        if (AttributestoDisplay.Contains(field))
+        {
+            AttributestoDisplay.Remove(field);
+            AttributestoSearch.Add(field);
+        }
+    }
+
+    public void UpdateContains(string field)
+    {
+        if (AttributestoSearch.Contains(field))
+        {
+            AttributestoSearch.Remove(field);
+            AttributestoDisplay.Add(field);
+        }
+    }
+
+    public void AddField(string field)
+    {
+        if (field == null)
+        {
+        }
+        else
+        {
+            AttributestoDisplay.Add(field);
+        }
+    }
+
+    public void Submit(int ID)
+    {
+        foreach (var project in _projectServiceSimple._projects)
+        {
+            if (ID == project.ProjectID)
+            {
+                currentProject = project;
+            }
+        }
+        currentProject.fields = AttributestoSearch;
+        _projectServiceSimple.DeleteProject(ID);
+        _projectServiceSimple._projects.Add(currentProject);
+        _navigationManager.NavigateTo("/Projektübersicht/Projektedit");
+    }
+
+}

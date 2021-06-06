@@ -3,16 +3,15 @@
 @using AVATI.Data
 @inject IProjektService _projektService
 @inject JsonImport _jsonImport
+@inject ProjectServiceSimple _projectServiceSimple
+
+
 
 <h3>Projektübersicht</h3>
 
-<div class="form-group">
-    <input class="form-control" type="text" placeholder="Suche Projekt..."
-           @bind="Filter"
-           @bind:event="oninput"/>
-</div>
+<input type="search" class="col-form-label mb-3" id="search"  placeholder="Suche..."/>
 
-<table class="table align-middle">
+<table class="table align-middle mb-3">
     <thead>
     <tr>
         <th scope="col">Projekttitel</th>
@@ -21,18 +20,15 @@
     </tr>
     </thead>
     <tbody>
-    @if (_projektService.GetAllProjects().Any())
+    @if (_projectServiceSimple._projects.Any())
     {
-        foreach (var project in _projektService.GetAllProjects())
+        foreach (var project in _projectServiceSimple._projects)
         {
-            if (!IsVisible(project))
-            {
-                continue;
-            }
             <tr>
+                <td>@project.ProjectID</td>
                 <td>@project.Projecttitel</td>
                 <td>@project.Projectdescription</td>
-                <td>@project.fields</td>
+                <td>@String.Join(" | ", project.fields)</td>
                 <td>
                     <a href="/Projektübersicht/Projektedit/@project.ProjectID">
                         <button type="button" class="btn btn-secondary">Edit/Update</button>
@@ -41,40 +37,12 @@
             </tr>
         }
     }
-    else
-    {
-        <tr>
-            <td>Mad Max - Fury Road</td>
-            <td>Regisseur George Miller, der Gründer des postapokalyptischen Genres und der kreative Kopf hinter der legendären "Max Max" Franchise..</td>
-            <td>Film</td>
-            <td>
-                <a href="/Projektübersicht/Projektedit">
-                    <button type="button" class="btn btn-secondary">Edit/Update</button>
-                </a>
-            </td>
-        </tr>
-        
-    }
+    
     </tbody>
 </table>
 
+
 @code{
-
-    public bool IsVisible(Project projects)
-    {
-        if (string.IsNullOrEmpty(Filter))
-        {
-            return true;
-        }
-        if (projects.ToString().StartsWith(Filter))
-        {
-            return true;
-        }
-        return false;
-    }
     
-    public string Filter { get; set; }
-
     
-
 }
