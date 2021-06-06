@@ -1,14 +1,15 @@
 ﻿@page "/ProposalOverview"
 @using System.ComponentModel.DataAnnotations
 @using System.Diagnostics.CodeAnalysis
+@using System.Linq
 @using AVATI.Data
-@inject ProposalService _proposal
-
+@inject IProposalService _proposal
+@inject NavigationManager _navManager
+<EditProposal @ref="_editProposal"></EditProposal>
 <button class="btn btn-success float-left">Neues Angebot</button>
-
 <div class="container col-10">
     <div class="row row-cols-1 row-cols-md-1 g-4">
-        @foreach (var proposal in _proposal.Proposals)
+        @foreach (var proposal in _proposal.GetAllProposal())
         {
             <div class="col-4 mb-4">
                 <div class="card border-dark h-100">
@@ -17,9 +18,9 @@
                         <p>
                             <button class="btn btn-outline-dark btn-sm">Dokument erzeugen</button><button class="btn btn-outline-success btn-sm ml-2">Projekt erzeugen</button>
                         </p>
-                        <button class="btn btn-outline-secondary btn-sm">Editieren</button>
-                        <button class="btn btn-outline-info btn-sm">Kopieren</button>
-                        <button class="btn btn-outline-danger btn-sm">Löschen</button>
+                        <button class="btn btn-outline-secondary btn-sm" @onclick=@(() => { ShowEdit(proposal.ProposalId);})> Editieren</button>
+                        <button class="btn btn-outline-info btn-sm" @onclick=@(() => { CallCopy(proposal.ProposalId);})>Kopieren</button>
+                        <button class="btn btn-outline-danger btn-sm" @onclick=@(() => { CallDelete(proposal.ProposalId);})>Löschen</button>
                     </div>
                     <div class="card-body text-center">
                         <h5 class="card-title text-center">@proposal.ProposalTitle</h5>
@@ -27,7 +28,7 @@
                             Mitarbeiterprofile
                         </button>
                         <div class="card-text @(_showEmployee[proposal.ProposalId] ? "collapse" : "")">
-                            <button class="btn btn-outline-success btn-sm mr-3 mb-3">Hinzufügen</button>
+                            <button class="btn btn-outline-success btn-sm mr-3 mb-3" @onclick=@(() => { CallSearch();})>Hinzufügen</button>
                             <button class="btn btn-outline-danger btn-sm mb-3">Entfernen</button>
                             <ul class="list-group mb-3 text-left">
                                 @foreach (var employee in proposal.Employees)
@@ -35,13 +36,13 @@
                                     <li class="list-group-item border-dark bg-light text-left font-weight-bold text-black mb-1">
                                         @employee.FirstName + @employee.LastName
                                         <button class="btn float-right btn-info btn-sm">Details</button>
-                                        <button class="btn btn-primary float-right btn-sm mr-3" @onclick=@(() => { Show(employee, 0);})>RC: @employee.Rc </button>
+                                        <button class="btn btn-primary float-right btn-sm mr-3" @onclick=@(() => { ShowRcEdit(employee, 0); })>RC: @employee.Rc </button>
                                     </li>
                                 }
                             </ul>
                         </div>
 
-                        <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(2,proposal.ProposalId); })">
+                        <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(2, proposal.ProposalId); })">
                             Hard- und Softskills
                         </button>
                         <div class=@(_showAttributes[proposal.ProposalId] ? "collapse" : "")>
@@ -57,7 +58,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(3,proposal.ProposalId); })">
+                        <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(3, proposal.ProposalId); })">
                             Zusatzinformationen
                         </button>
                         <li class="list-group-item border-dark bg-light text-left text-black mb-1 @(_showAdditionalInfo[proposal.ProposalId] ? "collapse" : "")">
@@ -89,8 +90,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => {Show(null, 1);})">Abbrechen</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { Show(null, 0); })">Speichern</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { ShowRcEdit(null, 1); })">Abbrechen</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { ShowRcEdit(null, 0); })">Speichern</button>
                 </div>
             </div>
         </div>
@@ -98,26 +99,26 @@
     <div class="modal-backdrop fade show"></div>
 }
 
+
+
 @code {
 
-
+    EditProposal _editProposal;
     Dictionary<int, bool> _showEmployee;
     Dictionary<int, bool> _showAttributes;
     Dictionary<int, bool> _showAdditionalInfo;
-
     public bool ShowPop { get; set; }
-
     public Employee RcToEdit { get; set; }
 
     private static int _restoreValue;
     private static int _changeValue;
+
     protected override void OnInitialized()
     {
-        _proposal.CreateDummyProjects();
         _showEmployee = new Dictionary<int, bool>();
         _showAttributes = new Dictionary<int, bool>();
         _showAdditionalInfo = new Dictionary<int, bool>();
-        foreach (var proposal in _proposal.Proposals)
+        foreach (var proposal in _proposal.GetAllProposal())
         {
             _showEmployee.Add(proposal.ProposalId, true);
             _showAttributes.Add(proposal.ProposalId, true);
@@ -130,7 +131,8 @@
         if (typeOfInfo == 1)
         {
             _showEmployee[identifier] = !_showEmployee[identifier];
-        } else if (typeOfInfo == 2)
+        }
+        else if (typeOfInfo == 2)
         {
             _showAttributes[identifier] = !_showAttributes[identifier];
         }
@@ -140,9 +142,14 @@
         }
     }
 
-    public void Show(Employee emp, int response) 
+    public void ShowEdit(int propId)
     {
+        Console.WriteLine("this function is being called");
+        _editProposal.Show(propId);
+    }
 
+    public void ShowRcEdit(Employee emp, int response)
+    {
         if (!ShowPop)
         {
             RcToEdit = emp;
@@ -160,8 +167,40 @@
                 RcToEdit.Rc = _restoreValue;
             }
         }
-        
+
         ShowPop = !ShowPop;
+    }
+
+    public void CallCopy(int id)
+    {
+        int temp;
+        if ((temp = _proposal.CopyProposal(id)) != 0)
+        {
+            _showEmployee.Add(temp, true);
+            _showAttributes.Add(temp, true);
+            _showAdditionalInfo.Add(temp, true);
+        }
+        else
+        {
+            Console.WriteLine("fehler");
+        }
+    }
+
+    public void CallDelete(int id)
+    {
+
+        if (_proposal.GetProposal(id) != null)
+        {
+            _proposal.DeleteProposal(id);
+            _showEmployee.Remove(id);
+            _showAttributes.Remove(id);
+            _showAdditionalInfo.Remove(id);
+        }
+    }
+
+    public void CallSearch()
+    {
+        _navManager.NavigateTo("/SearchEmployee");
     }
 
 }

@@ -4,13 +4,18 @@ namespace AVATI.Data
 {
     public interface IProposalService
     {
+        public List<Proposal> Proposals { get; set; }
+        
+        
+        
+                
         public bool CreateProposal(string title, List<string> Softskills, List<string> Fields, List<Hardskill> Hardskills, List<Employee> Employees);
 
-        public bool UpdateProposal(string title, List<string> Softskills, List<string> Fields, List<Hardskill> Hardskills, List<Employee> Employees);
+        public bool UpdateProposal(int Id, Proposal proposal);
 
         public bool DeleteProposal(int proposalId);
 
-        public bool CopyProposal(int proposalId);
+        public int CopyProposal(int proposalId);
 
         public bool GenerateDocument(int proposalId);
 
