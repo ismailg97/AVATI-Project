@@ -1,0 +1,82 @@
+@using AVATI.Data
+@using Microsoft.AspNetCore.Components
+@inject IProposalService _proposal
+@inject NavigationManager _navigationManager
+
+@if (ShowEdit)
+{
+    <div class="modal fade show d-block" id="exampleModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="titleLabel">Angebot editieren</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body text-left">
+                    <EditForm Model="@Proposal" OnValidSubmit="@HandleValidSubmit">
+                        <DataAnnotationsValidator/>
+                        <ValidationSummary/>
+                        <div class="form-group">
+                            <label for="title">Angebotstitel </label>
+                            <InputText id="title" class="form-control" @bind-Value="@Proposal.ProposalTitle" placeholder=" "></InputText>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="title">Zusätzliche Informationen </label>
+                            <InputText id="title" class="form-control" @bind-Value="@Proposal.AdditionalInfo" placeholder=" "></InputText>
+
+
+                        </div>
+                        <button type="submit" class="btn btn-success">Änderungen speichern</button>
+                        <a class="btn btn-danger" @onclick="@Close">Abbrechen</a>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; } = 1;
+
+
+    public Proposal Proposal;
+
+    public bool ShowEdit = false;
+
+    public void Close()
+    {
+        ShowEdit = !ShowEdit;
+        StateHasChanged();
+    }
+
+    public void Show(int propId)
+    {
+        Id = propId;
+        if (_proposal.GetAllProposal().Find(e => e.ProposalId == propId) != null)
+        {
+            Proposal = new Proposal() {AdditionalInfo = _proposal.GetAllProposal().Find(e => e.ProposalId == Id).AdditionalInfo, ProposalTitle = _proposal.GetAllProposal().Find(e => e.ProposalId == Id).ProposalTitle};
+            Console.WriteLine("2nd function was called aswell");
+            ShowEdit = !ShowEdit;
+            StateHasChanged();
+        }
+   
+    }
+
+    public void HandleValidSubmit()
+    {
+        _proposal.GetAllProposal().Find(e => e.ProposalId == Id).AdditionalInfo = Proposal.AdditionalInfo;
+        _proposal.GetAllProposal().Find(e => e.ProposalId == Id).ProposalTitle = Proposal.ProposalTitle;
+        _proposal.UpdateProposal(Id, _proposal.GetAllProposal().Find(e => e.ProposalId == Id));
+        Console.WriteLine("The submit was handeled");
+        _navigationManager.NavigateTo(_navigationManager.Uri, true);
+        Close();
+    }
+
+}
