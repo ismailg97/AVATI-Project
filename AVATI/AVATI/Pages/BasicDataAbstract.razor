@@ -8,6 +8,11 @@
 <hr />
 
 <h3 class="cap"><b>Skills</b></h3>
+<div class="form-group">
+    <input class="form-control" type="text" placeholder="Filter..."
+           @bind="Filter"
+           @bind:event="oninput">
+</div>
 <table class="table table-striped">
     <caption><h5><b>Softskills</b></h5></caption>
     <tr>
@@ -17,6 +22,8 @@
     </tr>
     @foreach (string softskill in _basicDataService.GetAllSoftSkills())
     {
+        @if (!IsVisible(softskill))
+            continue;
         <tr>
             <td>@softskill</td>
             <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditSoftSkill(softskill)">Edit</button></td>
@@ -39,21 +46,38 @@
         
     @foreach (Hardskill hardskill in _hardskillService.GetAllHardskills())
     {
-        <tr>
+        <tr class="show">
             <td>@hardskill.Description</td>
             <td class="smalltd"><button class="btn btn-secondary">Edit</button></td>
             <td class="smalltd"><button class="btn btn-dark">Delete</button></td>
         </tr>
+        
+        <div class="hide"><ShowUpperCat Hardskill="@hardskill"/><a>@hardskill.Description</a></div>
     }
 </table>
 <div> <button class="btn btn-info">Create</button> </div>
+
 
 @code {
     CreateSoftSkill _createSoftSkill;
     EditSoftSkill _editSoftSkill;
     DeleteConfirmation _deleteConfirmation;
+
+    private string Filter { get; set; }
     
     string Description { get; set; }
+    
+
+    private bool IsVisible(string description)
+    {
+        if (string.IsNullOrEmpty(Filter))
+            return true;
+
+        if (description.Contains(Filter, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
+    }
 
     void PopCreateSoftSkill()
     {
