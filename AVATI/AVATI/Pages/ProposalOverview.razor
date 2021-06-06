@@ -5,6 +5,7 @@
 @using AVATI.Data
 @inject IProposalService _proposal
 @inject NavigationManager _navManager
+@inject SearchService _search
 <EditProposal @ref="_editProposal"></EditProposal>
 <button class="btn btn-success float-left">Neues Angebot</button>
 <div class="container col-10">
@@ -28,7 +29,7 @@
                             Mitarbeiterprofile
                         </button>
                         <div class="card-text @(_showEmployee[proposal.ProposalId] ? "collapse" : "")">
-                            <button class="btn btn-outline-success btn-sm mr-3 mb-3" @onclick=@(() => { CallSearch();})>Hinzufügen</button>
+                            <button class="btn btn-outline-success btn-sm mr-3 mb-3" @onclick=@(() => { CallSearch(proposal.ProposalId);})>Hinzufügen</button>
                             <button class="btn btn-outline-danger btn-sm mb-3">Entfernen</button>
                             <ul class="list-group mb-3 text-left">
                                 @foreach (var employee in proposal.Employees)
@@ -109,12 +110,14 @@
     Dictionary<int, bool> _showAdditionalInfo;
     public bool ShowPop { get; set; }
     public Employee RcToEdit { get; set; }
-
+    
+    
     private static int _restoreValue;
     private static int _changeValue;
 
     protected override void OnInitialized()
     {
+        
         _showEmployee = new Dictionary<int, bool>();
         _showAttributes = new Dictionary<int, bool>();
         _showAdditionalInfo = new Dictionary<int, bool>();
@@ -198,9 +201,10 @@
         }
     }
 
-    public void CallSearch()
+    public void CallSearch(int Id)
     {
-        _navManager.NavigateTo("/SearchEmployee");
+       
+        _navManager.NavigateTo("/SearchEmployee/" + Id.ToString());
     }
 
 }

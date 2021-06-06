@@ -41,8 +41,10 @@ namespace AVATI.Data
         public List<string> RolesToSearchTemp { get; set; } = new List<string>();
         public List<Hardskill> HardskillsToSearchTemp { get; set; } = new List<Hardskill>();
         
-        
-        
+        // List to Compare with current Proposal
+
+        public List<Employee> AlreadyAddedEmployees { get; set; } = new List<Employee>();
+
         //All Functions
         
         public void AddSoftSearch(string softskill)
@@ -111,6 +113,7 @@ namespace AVATI.Data
             SoftskillsToDisplay.Sort();
             HardskillsToDisplay = new List<Hardskill>(Hardskills);
             RolesToDisplay = new List<string>(Roles);
+            TableIsVisible = false;
         }
         
 
