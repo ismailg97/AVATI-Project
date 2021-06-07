@@ -21,7 +21,7 @@
                         <ValidationSummary/>
                         <div class="form-group">
                             <label for="title">Angebotstitel </label>
-                            <InputText id="title" class="form-control" @bind-Value="@Proposal.ProposalTitle" placeholder=" "></InputText>
+                            <InputText id="title" class="form-control" @bind-Value="@Proposal.ProposalTitle" placeholder="Titel"></InputText>
 
                         </div>
                         <div class="form-group">
@@ -106,7 +106,7 @@
 @code {
 
     [Parameter]
-    public int Id { get; set; } = 1;
+    public int Id { get; set; }
 
     public string TempHardskill { get; set; }
     public bool ShowBackdrop { get; set; }
@@ -134,18 +134,29 @@
                 Softskills = TempProp.Softskills,
                 Fields = TempProp.Fields
             };
-            Console.WriteLine("2nd function was called aswell");
-            ShowEdit = !ShowEdit;
-            ShowBackdrop = !ShowBackdrop;
-            StateHasChanged();
         }
+        else
+        {
+            Proposal = new Proposal();
+        }
+        Console.WriteLine("2nd function was called aswell");
+        ShowEdit = !ShowEdit;
+        ShowBackdrop = !ShowBackdrop;
+        StateHasChanged();
     }
 
     public void HandleValidSubmit()
     {
-        _proposal.GetAllProposal().Find(e => e.ProposalId == Id).AdditionalInfo = Proposal.AdditionalInfo;
-        _proposal.GetAllProposal().Find(e => e.ProposalId == Id).ProposalTitle = Proposal.ProposalTitle;
-        _proposal.UpdateProposal(Id, _proposal.GetAllProposal().Find(e => e.ProposalId == Id));
+        if (Id != 0)
+        {
+            _proposal.GetAllProposal().Find(e => e.ProposalId == Id).AdditionalInfo = Proposal.AdditionalInfo;
+            _proposal.GetAllProposal().Find(e => e.ProposalId == Id).ProposalTitle = Proposal.ProposalTitle;
+            _proposal.UpdateProposal(Id, _proposal.GetAllProposal().Find(e => e.ProposalId == Id));
+        }
+        else
+        {
+            _proposal.UpdateProposal(0, Proposal);
+        }
         Console.WriteLine("The submit was handeled");
         _navigationManager.NavigateTo(_navigationManager.Uri, true);
         Close();

@@ -7,10 +7,10 @@ namespace AVATI.Data
         public string ProposalTitle { get; set; }
         
         public int ProposalId { get; set; }
-        public List<string> Softskills { get; set; }
-        public List<string> Fields { get; set; }
-        public List<Hardskill> Hardskills { get; set; }
+        public List<string> Softskills { get; set; } = new List<string>();
+        public List<string> Fields { get; set; } = new List<string>();
+        public List<Hardskill> Hardskills { get; set; } = new List<Hardskill>();
         public string AdditionalInfo { get; set; }
-        public List<Employee> Employees { get; set; }
+        public List<Employee> Employees { get; set; } = new List<Employee>();
     }
 }

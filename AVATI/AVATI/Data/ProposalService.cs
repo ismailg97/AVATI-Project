@@ -139,6 +139,11 @@ namespace AVATI.Data
                 temp = proposal;
                 return true;
             }
+            else
+            {
+                proposal.ProposalId = Proposals.Max(e => e.ProposalId) + 1;
+                Proposals.Add(proposal);
+            }
 
             return false;
         }
