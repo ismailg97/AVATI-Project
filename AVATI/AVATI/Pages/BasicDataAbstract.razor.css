@@ -72,7 +72,7 @@ hr {
     font-size: 12px;
 }
 
-.hide {
+.hideskill {
     visibility: hidden;
     font-size: 0px;
     height: 0;
@@ -82,7 +82,35 @@ hr {
     transition: visibility 0s, opacity 0.5s linear;
 }
 
-.show:hover + .hide {
+.showskill:hover + .hideskill {
+    visibility: visible;
+    color: #818181;
+    font-size: 15px;
+    height: auto;
+    width: auto;
+    opacity: 1;
+}
+
+.hidecat {
+    visibility: hidden;
+    font-size: 0px;
+    height: 0;
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: visibility 0s, opacity 0.5s linear;
+}
+
+.showcat:hover + .hidecat {
+    visibility: visible;
+    color: #818181;
+    font-size: 15px;
+    height: auto;
+    width: auto;
+    opacity: 1;
+}
+
+.hidecat:hover {
     visibility: visible;
     color: #818181;
     font-size: 15px;

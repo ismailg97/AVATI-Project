@@ -1,4 +1,5 @@
 ﻿@using AVATI.Data
+@using AVATI.Pages
 
 @inject IBasicDataService _basicDataService
 @inject NavigationManager _navigationManager
@@ -8,14 +9,20 @@
                <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h4 class="modal-title">Verändere ein Softskill</h4>
+                      @if (Type == BasicDataType.SoftSkill){
+                        <h4 class="modal-title">Erstelle ein Softskill</h4>
+                      } else if (Type == BasicDataType.Field) {
+                        <h4 class="modal-title">Erstelle eine Branche</h4>
+                      } else {
+                        <h4 class="modal-title">Erstelle eine Rolle</h4>
+                      }
                       <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
                     </div>
                     <div class="modal-body">
-                      <input type="text" id="softskill" @bind="NewSoftskill" />
+                      <input type="text" id="softskill" @bind="Description"/>
                       </div>
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-primary" @onclick="Update">Save</button>
+                      <button type="button" class="btn btn-primary" @onclick="Create">Save</button>
                       <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Showing">Close</button>
                       </div>
                   </div>
@@ -28,17 +35,27 @@
 
 
 @code {
-
   [Parameter]
-  public string OldSoftSkill { get; set; }
-
+  public BasicDataType Type { get; set; } 
+  
   private bool _show = false;
 
-  private string NewSoftskill { get; set; } 
+  private string Description { get; set; } 
 
-  private void Update()
+  private void Create()
   {
-    _basicDataService.UpdateSoftSkill(NewSoftskill, OldSoftSkill);
+    switch (Type)
+    {
+      case BasicDataType.SoftSkill:
+        _basicDataService.CreateSoftSkill(Description);
+        break;
+      case BasicDataType.Field:
+        _basicDataService.CreateField(Description);
+        break;
+      default:
+        _basicDataService.CreateRole(Description);
+        break;
+    }
     Showing();
     _navigationManager.NavigateTo(_navigationManager.Uri, true);
   }
