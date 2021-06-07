@@ -39,6 +39,9 @@ namespace AVATI
             services.AddSingleton<JsonImport>();
             services.AddSingleton<Projectedit>();
             services.AddSingleton<LoginServiceSimple>();
+            services.AddSingleton<IProposalService, ProposalService>();
+            services.AddSingleton<SearchService>();
+            services.AddSingleton<IEmployeeService, EmployeeServiceSimple>();
 
         }
 
