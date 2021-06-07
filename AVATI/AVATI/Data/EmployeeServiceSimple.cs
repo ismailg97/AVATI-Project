@@ -13,6 +13,7 @@ namespace AVATI.Data
             {
                 new Employee()
                 {
+                    EmployeeId = 1,
                     FirstName = "Ismail", LastName = "Gürsöz", Roles = new List<string>()
                     {
                         "Software Developer",
@@ -35,6 +36,7 @@ namespace AVATI.Data
 
                 new Employee()
                 {
+                    EmployeeId = 2,
                     FirstName = "Anton", LastName = "Huber", Roles = new List<string>()
                     {
                         "Agile Coach",
@@ -57,6 +59,7 @@ namespace AVATI.Data
 
                 new Employee()
                 {
+                    EmployeeId = 3,
                     FirstName = "Victoria", LastName = "Kuch", Roles = new List<string>()
                     {
                         "Software Developer",
@@ -77,6 +80,7 @@ namespace AVATI.Data
                 },
                 new Employee()
                 {
+                    EmployeeId = 4,
                     FirstName = "Alex", LastName = "Xela", Roles = new List<string>() {"Product Owner"}, Hardskills =
                         new List<Hardskill>()
                         {
@@ -87,6 +91,7 @@ namespace AVATI.Data
                 },
                 new Employee()
                 {
+                    EmployeeId = 5,
                     FirstName = "Victoria", LastName = "Airotciv", Roles = new List<string>() {"Product Owner"},
                     Hardskills = new List<Hardskill>()
                     {
@@ -102,6 +107,7 @@ namespace AVATI.Data
                 },
                 new Employee()
                 {
+                    EmployeeId = 6,
                     FirstName = "Tobi", LastName = "Ibot", Roles = new List<string>() {"UI/UX-Designer"}, Hardskills =
                         new List<Hardskill>()
                         {

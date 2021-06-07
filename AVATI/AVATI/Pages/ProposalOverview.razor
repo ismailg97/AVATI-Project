@@ -17,11 +17,12 @@
                     <div class="card-header text-center">
                         <p class="font-weight-bolder">Angebot: @proposal.ProposalId.ToString()</p>
                         <p>
-                            <button class="btn btn-outline-dark btn-sm">Dokument erzeugen</button><button class="btn btn-outline-success btn-sm ml-2">Projekt erzeugen</button>
+                            <button class="btn btn-outline-dark btn-sm">Dokument erzeugen</button>
+                            <button class="btn btn-outline-success btn-sm ml-2">Projekt erzeugen</button>
                         </p>
-                        <button class="btn btn-outline-secondary btn-sm" @onclick=@(() => { ShowEdit(proposal.ProposalId);})> Editieren</button>
-                        <button class="btn btn-outline-info btn-sm" @onclick=@(() => { CallCopy(proposal.ProposalId);})>Kopieren</button>
-                        <button class="btn btn-outline-danger btn-sm" @onclick=@(() => { CallDelete(proposal.ProposalId);})>Löschen</button>
+                        <button class="btn btn-outline-secondary btn-sm" @onclick=@(() => { ShowEdit(proposal.ProposalId); })> Editieren</button>
+                        <button class="btn btn-outline-info btn-sm" @onclick=@(() => { CallCopy(proposal.ProposalId); })>Kopieren</button>
+                        <button class="btn btn-outline-danger btn-sm" @onclick=@(() => { CallDelete(proposal.ProposalId); })>Löschen</button>
                     </div>
                     <div class="card-body text-center">
                         <h5 class="card-title text-center">@proposal.ProposalTitle</h5>
@@ -29,16 +30,40 @@
                             Mitarbeiterprofile
                         </button>
                         <div class="card-text @(_showEmployee[proposal.ProposalId] ? "collapse" : "")">
-                            <button class="btn btn-outline-success btn-sm mr-3 mb-3" @onclick=@(() => { CallSearch(proposal.ProposalId);})>Hinzufügen</button>
-                            <button class="btn btn-outline-danger btn-sm mb-3">Entfernen</button>
+                            @if (_promptDelete[proposal.ProposalId])
+                            {
+                                <button class="btn btn-danger btn-sm mr-3 mb-3" @onclick=@(() => { OpenDeletePrompt(proposal.ProposalId); })>Entfernen</button>
+                                <button class="btn btn-success btn-sm  mb-3" @onclick=@(() => { CallSearch(proposal.ProposalId); })>Hinzufügen</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-outline-danger btn-sm mb-3" @onclick=@(() => { OpenDeletePrompt(proposal.ProposalId); })>Abbrechen</button>
+                            }
                             <ul class="list-group mb-3 text-left">
                                 @foreach (var employee in proposal.Employees)
                                 {
-                                    <li class="list-group-item border-dark bg-light text-left font-weight-bold text-black mb-1">
-                                        @employee.FirstName + @employee.LastName
-                                        <button class="btn float-right btn-info btn-sm">Details</button>
-                                        <button class="btn btn-primary float-right btn-sm mr-3" @onclick=@(() => { ShowRcEdit(employee, 0); })>RC: @employee.Rc </button>
-                                    </li>
+                                    @if (_promptDelete[proposal.ProposalId])
+                                    {
+                                        <li class="list-group-item border-dark bg-light font-weight-bold text-black">
+                                            <span>@employee.FirstName @employee.LastName</span>
+                                            <div class="btn-group float-right">
+                                            <button class="btn btn-info btn-sm mr-2">Details</button>
+                                            <button class="btn btn-primary btn-sm " @onclick=@(() => { ShowRcEdit(employee, 0); })>RC: @employee.Rc </button>
+                                            </div>
+                                            
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="list-group-item border-danger bg-light text-left font-weight-bold text-black">
+                                            <span class="align-middle d-inline-block">@employee.FirstName @employee.LastName</span>
+                                            <button type="button" class="btn float-right btn-sm" @onclick=@(() => { RemoveEmployee(proposal.ProposalId, employee.EmployeeId);})>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                                </svg>
+                                            </button>
+                                        </li>
+                                    }
                                 }
                             </ul>
                         </div>
@@ -108,21 +133,23 @@
     Dictionary<int, bool> _showEmployee;
     Dictionary<int, bool> _showAttributes;
     Dictionary<int, bool> _showAdditionalInfo;
+    Dictionary<int, bool> _promptDelete;
     public bool ShowPop { get; set; }
     public Employee RcToEdit { get; set; }
-    
-    
+
+
     private static int _restoreValue;
     private static int _changeValue;
 
     protected override void OnInitialized()
     {
-        
+        _promptDelete = new Dictionary<int, bool>();
         _showEmployee = new Dictionary<int, bool>();
         _showAttributes = new Dictionary<int, bool>();
         _showAdditionalInfo = new Dictionary<int, bool>();
         foreach (var proposal in _proposal.GetAllProposal())
         {
+            _promptDelete.Add(proposal.ProposalId, true);
             _showEmployee.Add(proposal.ProposalId, true);
             _showAttributes.Add(proposal.ProposalId, true);
             _showAdditionalInfo.Add(proposal.ProposalId, true);
@@ -179,9 +206,7 @@
         int temp;
         if ((temp = _proposal.CopyProposal(id)) != 0)
         {
-            _showEmployee.Add(temp, true);
-            _showAttributes.Add(temp, true);
-            _showAdditionalInfo.Add(temp, true);
+            OnInitialized();
         }
         else
         {
@@ -191,20 +216,35 @@
 
     public void CallDelete(int id)
     {
-
         if (_proposal.GetProposal(id) != null)
         {
             _proposal.DeleteProposal(id);
-            _showEmployee.Remove(id);
-            _showAttributes.Remove(id);
-            _showAdditionalInfo.Remove(id);
+            OnInitialized();
         }
     }
 
     public void CallSearch(int Id)
     {
-       
         _navManager.NavigateTo("/SearchEmployee/" + Id.ToString());
     }
 
+    public void OpenDeletePrompt(int Id)
+    {
+        Console.WriteLine("this function is being called");
+        _promptDelete[Id] = !_promptDelete[Id];
+    }
+
+    private void RemoveEmployee(int proposalId, int employeeId)
+    {
+        Proposal tempProposal;
+        Employee tempEmployee;
+        if ((tempProposal = _proposal.GetProposal(proposalId)) != null)
+        {
+            if ((tempEmployee = tempProposal.Employees.Find(e => e.EmployeeId == employeeId)) != null)
+            {
+                tempProposal.Employees.Remove(tempEmployee);
+            }
+        }
+    }
+    
 }

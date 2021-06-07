@@ -80,7 +80,9 @@ namespace AVATI.Data
             EmployeeName = null;
             SoftskillsToDisplay = new List<string>(Softskills);
             HardskillsToDisplay = new List<Hardskill>(Hardskills);
+            HardskillsToDisplay = HardskillsToDisplay.OrderBy(e => e.Description).ToList();
             RolesToDisplay = new List<string>(Roles);
+
             
         }
 
@@ -110,7 +112,6 @@ namespace AVATI.Data
             Softskills = new List<string>(softskills);
             Roles = new List<string>(roles);
             SoftskillsToDisplay = new List<string>(Softskills);
-            SoftskillsToDisplay.Sort();
             HardskillsToDisplay = new List<Hardskill>(Hardskills);
             RolesToDisplay = new List<string>(Roles);
             TableIsVisible = false;
