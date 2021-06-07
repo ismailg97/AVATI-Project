@@ -6,12 +6,14 @@
 @inject ProjectServiceSimple _projectServiceSimple
 
 <h3>Projektübersicht</h3>
-<div class="container">
-    <input type="search" class="form-label mb-3" id="search"  placeholder="Suche..." @bind="input"/>
-    <button type="submit" id="search" class="btn btn-success" @onclick="(() => ProjectSuche())">Suche starten</button>
-</div>
-<table class="table align-middle mb-3">
+
+<table class="table align-middle mb-3 table-striped">
     <thead>
+    <div class="form-group">
+        <input class="form-control" type="text" placeholder="filter..."
+               @bind="Filter"
+               @bind:event="oninput">
+    </div>
     <tr>
         <th scope="col">Projekttitel</th>
         <th scope="col">Projektbeschreibung</th>
@@ -23,8 +25,9 @@
     {
         foreach (var project in _projectServiceSimple._projects)
         {
+            @if (!isVisible(project.Projecttitel))
+                continue;
             <tr>
-                <td>@project.ProjectID</td>
                 <td>@project.Projecttitel</td>
                 <td>@project.Projectdescription</td>
                 <td>@String.Join(" | ", project.fields)</td>
@@ -36,24 +39,7 @@
             </tr>
         }
     }
-    else if (clicked == true)
-    {
-        foreach (var project in _projectServiceSimple.Searching)
-        {
-            <tr>
-                <td>@project.ProjectID</td>
-                <td>@project.Projecttitel</td>
-                <td>@project.Projectdescription</td>
-                <td>@String.Join(" | ", project.fields)</td>
-                <td>
-                    <a href="/Projektübersicht/Projektedit/@project.ProjectID">
-                        <button type="button" class="btn btn-secondary">Edit/Update</button>
-                    </a>
-                </td>
-            </tr>
-        }
-    }
-    
+
 
     </tbody>
 </table>
@@ -61,6 +47,17 @@
 @code{
     public string input { get; set; }
     public bool clicked { get; set; } = false;
+
+    private string Filter { get; set; }
+
+    public bool isVisible(string titel)
+    {
+        if (string.IsNullOrEmpty(Filter))
+        {
+            return true;
+        }
+        return titel.Contains(Filter, StringComparison.OrdinalIgnoreCase);
+    }
 
     public void ProjectSuche()
     {

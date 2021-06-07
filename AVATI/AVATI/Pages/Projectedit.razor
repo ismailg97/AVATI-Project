@@ -7,6 +7,8 @@
 @inject NavigationManager _navigationManager
 @inject ProjectServiceSimple _projectServiceSimple
 
+<AddFieldToProject @ref="_addFieldToProject"/>
+
 <h3>Edit Projekt</h3>
 
 <EditForm Model="@_project" OnInvalidSubmit="@Save">
@@ -32,20 +34,19 @@
         <div class="form-group row">
             <label class="col-sm-2 col-form-label">Branchen</label>
             <div class="col-sm-8 col-form-label">
-                <input class="form-control" type="text" value="@String.Join(" | ", _projectServiceSimple.GetAllFieldsFromOneProject(ID).ToArray())" placeholder="" readonly/>
-                <a href="/Projektübersicht/Projektedit/AddFieldToProject" class="col-sm-8 col-form-label">
-                    <button type="button" class="btn btn-success" @onclick="SaveFieldsInProjectSimple">Edit Branchen</button>
-                </a>
+                <input class="form-control" type="text" value="@String.Join(" | ", 
+                   _projectServiceSimple.GetAllFieldsFromOneProject(ID).ToArray())" placeholder="" readonly/>
+                <div><button class="btn btn-info" @onclick="() => PopAddFieldToProject()">Add Branchen</button> </div>
             </div>
         </div>
 
         <div class="form-group row">
             <label class="col-sm-2 col-form-label">Projektanfang</label>
             <div class="col-sm-2 col-form-label">
-                <input type="date" id="datetimepicker" @bind="_project.Runtime" />
+                <input type="date" id="datetimepicker" @bind="_project.Runtime"/>
             </div>
         </div>
-        
+
         <div class="form-group row">
             <label class="col-sm-2 col-form-label">Projekttätigkeiten</label>
             <div class="col-sm-2 col-form-label">
@@ -55,35 +56,34 @@
     </div>
     <div class="container">
         <a href="/Projektübersicht" class="col-sm-8 col-form-label">
-            <button type="button" class="btn btn-success" @onclick="(() => {Save();})">Submit</button>
+            <button type="button" class="btn btn-success" @onclick="(() => { Save(); })">Submit</button>
         </a>
         <a href="/Projektübersicht" class="col-sm-8 col-form-label">
-                    <button type="button" class="btn btn-danger">Cancel</button>
-                </a>
+            <button type="button" class="btn btn-danger">Cancel</button>
+        </a>
     </div>
 </EditForm>
 
 
 @code {
     private Project _project { get; set; } = new Project();
+    AddFieldToProject _addFieldToProject;
 
     [Parameter]
     public int ID { get; set; }
 
     public DateTime time { get; set; }
     public string field { get; set; }
-
-
-    public void SaveFieldsInProjectSimple()
-    {
-        _projectServiceSimple.AddFieldstoProject(ID, field);
-    }
     
+
     private void Save()
     {
         _projectServiceSimple.UpdateProject(_project);
         _navigationManager.NavigateTo("/Projektübersicht");
     }
+    public void PopAddFieldToProject()
+    {   
+        _addFieldToProject.Showing();
+    }
 
-    
 }
