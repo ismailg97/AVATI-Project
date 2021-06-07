@@ -25,8 +25,8 @@ namespace AVATI.Data
                     Employees = new List<Employee>()
                     {
                         new Employee() {FirstName = "Watson", LastName = "Smith", Rc = 6},
-                        new Employee() {FirstName = "Watson", LastName = "Smith", Rc = 3},
-                        new Employee() {FirstName = "Watson", LastName = "Smith", Rc = 1}
+                        new Employee() {FirstName = "Sotaw", LastName = "Smith", Rc = 3},
+                        new Employee() {FirstName = "Norman", LastName = "Smith", Rc = 1}
                     }
                 },
                 new Proposal()

@@ -99,7 +99,14 @@
                             <th>Hardskills</th>
                             <th>Softskills</th>
                             <th>Rolle(n)</th>
+                            @if (Id == 0)
+                            {
                             <th>Status</th>
+                            }
+                            else
+                            {
+                                <th>Hinzufügen</th>
+                            }
                         </tr>
                         </thead>
                         <tbody>
@@ -152,10 +159,14 @@
                                             <button class="btn btn-sm btn-outline-success" @onclick=@(() => { AddToProposal(employee); })>Hinzufügen</button>
                                         } else if (Id != 0 && _proposal.GetProposal(Id).Employees.Contains(employee))
                                         {
-                                            <button class="btn btn-sm btn-outline-info" disabled>Bereits vorhanden</button>
-                                        } else
+                                            <button class="btn btn-sm btn-outline-danger" disabled>Löschen</button>
+                                        } else if(employee.IsActive)
                                         {
-                                            <button class="btn btn-sm btn-outline-danger ">Status anpassen</button>
+                                            <button class="btn btn-sm btn-success" @onclick=@(() => { employee.IsActive = !employee.IsActive;})>Aktiv</button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-sm btn-danger" @onclick=@(() => { employee.IsActive = !employee.IsActive;}) >Inaktiv</button>
                                         }
                                     </div>
                                 </td>

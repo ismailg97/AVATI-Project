@@ -69,18 +69,18 @@
                         </div>
 
                         <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(2, proposal.ProposalId); })">
-                            Hard- und Softskills
+                            Branchen, Hard- und Softskills
                         </button>
                         <div class=@(_showAttributes[proposal.ProposalId] ? "collapse" : "")>
                             <ul class="list-group mb-3 text-left">
                                 <li class="list-group-item border-dark bg-light text-left text-black mb-1">
-                                    <b>Hardskills:</b> @string.Join(", ", proposal.Hardskills.Select(e => e.Description))
+                                    <b>Hardskills:</b> @string.Join(" | ", proposal.Hardskills.Select(e => e.Description))
                                 </li>
                                 <li class="list-group-item border-dark bg-light text-left text-black mb-1">
-                                    <b>Softskills:</b> @string.Join(", ", proposal.Softskills)
+                                    <b>Softskills:</b> @string.Join(" | ", proposal.Softskills)
                                 </li>
                                 <li class="list-group-item border-dark bg-light text-left text-black mb-1">
-                                    <b>Branchen:</b> @string.Join(", ", proposal.Fields)
+                                    <b>Branchen:</b> @string.Join(" | ", proposal.Fields)
                                 </li>
                             </ul>
                         </div>
