@@ -9,7 +9,7 @@
 @inject IEmployeeService _employee
 @inject IProposalService _proposal
 
-<div class="container h-100">
+<div class="container h-100" style="padding-bottom: 7000px">
     <div class="row h-100 justify-content-center align-items-center">
         <div class="col-12 text-left">
             <EditForm Model="_searchService">
@@ -44,7 +44,7 @@
                         {
                             @if (TempHardskill == null || hardskill.Description.Contains(TempHardskill))
                             {
-                                <button class="btn btn-outline-dark"@onclick=@(() => { _searchService.AddHardSearch(hardskill); })>@hardskill.Description</button>
+                                <button class="btn btn-outline-dark" @onclick=@(() => { _searchService.AddHardSearch(hardskill); })>@hardskill.Description</button>
                             }
                         }
                     </div>
@@ -59,7 +59,7 @@
                 <div class="form-group row col-10">
                     @foreach (var softskill in _searchService.SoftskillsToDisplay)
                     {
-                        <button class="btn btn-sm btn-secondary mb-1 mr-1" @onclick=@(() => { _searchService.AddSoftSearch(softskill); })>@softskill</button>
+                        <button class="btn btn-sm btn-outline-info mb-1 mr-1" @onclick=@(() => { _searchService.AddSoftSearch(softskill); })>@softskill</button>
                     }
                 </div>
                 <div class="form-group">
@@ -72,7 +72,7 @@
                 <div class="form-group row col-10 mb-4">
                     @foreach (var role in _searchService.RolesToDisplay)
                     {
-                        <button class="btn btn-sm btn-info  mb-1 mr-1" @onclick=@(() => { _searchService.AddRoleSearch(role); })>@role</button>
+                        <button class="btn btn-sm btn-outline-info  mb-1 mr-1" @onclick=@(() => { _searchService.AddRoleSearch(role); })>@role</button>
                     }
                 </div>
                 <button type="submit" @onclick=@(() => {CallSearch(); _searchService.TableIsVisible = true;}) class="btn btn-success col-2 text-center mb-5">Suchen</button>
@@ -166,23 +166,7 @@
                     </table>
                     
                 }
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
+                
             }
 
         </div>
