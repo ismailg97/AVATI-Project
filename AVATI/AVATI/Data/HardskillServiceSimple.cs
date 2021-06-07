@@ -43,13 +43,17 @@ namespace AVATI.Data
         public bool CreateHardskill(Hardskill hardskill)
         {
             _allHardskills.Add(hardskill);
+            hardskill.Uppercat?.Subcat.Add(hardskill);
             return true;
         }
 
         public bool UpdateHardskill(Hardskill newHardskill, Hardskill oldHardskill)
         {
-            int index = _allHardskills.IndexOf(oldHardskill);
+            var index = _allHardskills.IndexOf(oldHardskill);
             if (index == -1) return false;
+            oldHardskill.Uppercat?.Subcat.Remove(oldHardskill);
+            newHardskill.Uppercat?.Subcat.Add(newHardskill);
+
             _allHardskills[index] = newHardskill;
             return true;
         }
@@ -59,11 +63,8 @@ namespace AVATI.Data
             var hardskill = _allHardskills.Find(x => x.Description == description);
 
             if (hardskill == null) return false;
-            if (hardskill.Uppercat != null && hardskill.Uppercat.Subcat.Count != 1)
-            {
-                hardskill.Uppercat.Subcat.Remove(hardskill);
-            }
-
+            hardskill.Uppercat?.Subcat.Remove(hardskill);
+            
             return _allHardskills.Remove(hardskill);
         }
 
@@ -79,15 +80,32 @@ namespace AVATI.Data
 
         public bool CreateHardskillCategory(Hardskill hardskillcat)
         {
+            
+            hardskillcat.Uppercat?.Subcat.Add(hardskillcat);
+            foreach (var skill in hardskillcat.Subcat)
+            {
+                skill.Uppercat = hardskillcat;
+                hardskillcat.Uppercat?.Subcat.Remove(skill);
+            }
+
+            if (hardskillcat.Uppercat != null)
+            {
+                foreach (var skill in hardskillcat.Uppercat.Subcat)
+                {
+                    hardskillcat.Uppercat.Subcat.Remove(skill);
+                    skill.Uppercat = null;
+                }
+            }
+
             _allHardskillCat.Add(hardskillcat);
             return true;
         }
 
-        public bool UpdateHardskillCategory(Hardskill newHardskillcat, Hardskill oldHardskillcat)
+        public bool UpdateHardskillCategory(string oldDescription, string newDescription)
         {
-            int index = _allHardskills.IndexOf(oldHardskillcat);
-            if (index == -1) return false;
-            _allHardskillCat[index] = newHardskillcat;
+            var hardskillcat = _allHardskillCat.Find(x => x.Description == oldDescription);
+            if (hardskillcat == null) return false;
+            hardskillcat.Description = newDescription;
             return true;
         }
 
@@ -96,13 +114,14 @@ namespace AVATI.Data
             var hardskillcat = _allHardskillCat.Find(x => x.Description == description);
 
             if (hardskillcat == null) return false;
-            if (hardskillcat.Uppercat == null) return _allHardskillCat.Remove(hardskillcat);
-            if (!hardskillcat.Uppercat.Subcat.Remove(hardskillcat)) return false;
+            
             foreach (var cat in hardskillcat.Subcat)
             {
-                hardskillcat.Uppercat.Subcat.Add(cat);
+                hardskillcat.Uppercat?.Subcat.Add(cat);
                 cat.Uppercat = hardskillcat.Uppercat;
             }
+                
+            hardskillcat.Uppercat?.Subcat.Remove(hardskillcat);
 
             return _allHardskillCat.Remove(hardskillcat);
         }

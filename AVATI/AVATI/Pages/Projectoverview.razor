@@ -2,10 +2,15 @@
 
 @using AVATI.Data
 @inject IProjektService _projektService
+@inject JsonImport _jsonImport
+@inject ProjectServiceSimple _projectServiceSimple
 
 <h3>Projektübersicht</h3>
-
-<table class="table align-middle">
+<div class="container">
+    <input type="search" class="form-label mb-3" id="search"  placeholder="Suche..." @bind="input"/>
+    <button type="submit" id="search" class="btn btn-success" @onclick="(() => ProjectSuche())">Suche starten</button>
+</div>
+<table class="table align-middle mb-3">
     <thead>
     <tr>
         <th scope="col">Projekttitel</th>
@@ -14,14 +19,15 @@
     </tr>
     </thead>
     <tbody>
-    @if (_projektService.GetAllProjects().Any())
+    @if (_projectServiceSimple._projects.Any())
     {
-        foreach (var project in _projektService.GetAllProjects())
+        foreach (var project in _projectServiceSimple._projects)
         {
             <tr>
+                <td>@project.ProjectID</td>
                 <td>@project.Projecttitel</td>
                 <td>@project.Projectdescription</td>
-                <td>@project.fields</td>
+                <td>@String.Join(" | ", project.fields)</td>
                 <td>
                     <a href="/Projektübersicht/Projektedit/@project.ProjectID">
                         <button type="button" class="btn btn-secondary">Edit/Update</button>
@@ -30,17 +36,38 @@
             </tr>
         }
     }
-    else
+    else if (clicked == true)
     {
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
+        foreach (var project in _projectServiceSimple.Searching)
+        {
+            <tr>
+                <td>@project.ProjectID</td>
+                <td>@project.Projecttitel</td>
+                <td>@project.Projectdescription</td>
+                <td>@String.Join(" | ", project.fields)</td>
+                <td>
+                    <a href="/Projektübersicht/Projektedit/@project.ProjectID">
+                        <button type="button" class="btn btn-secondary">Edit/Update</button>
+                    </a>
+                </td>
+            </tr>
+        }
     }
+    
+
     </tbody>
 </table>
-<a href="/Projektübersicht/Projektedit">
-    <button type="button" class="btn btn-secondary">Edit/Update</button>
-</a>
+
+@code{
+    public string input { get; set; }
+    public bool clicked { get; set; } = false;
+
+    public void ProjectSuche()
+    {
+        clicked = true;
+        List<Project> projects = _projectServiceSimple.GetAllProjects();
+        _projectServiceSimple.SearchProject(projects, input);
+        Console.Out.WriteLine("bi ba bap badam bum");
+    }
+
+}

@@ -12,7 +12,7 @@ namespace AVATI.Data
         public List<Hardskill> GetAllHardskills();
         
         public bool CreateHardskillCategory( Hardskill hardskillcat );
-        public bool UpdateHardskillCategory( Hardskill newHardskillcat, Hardskill oldHardskillcat );
+        public bool UpdateHardskillCategory(string oldDescription, string newDescription);
         public bool DeleteHardskillCategory( string description );
         
         public Hardskill GetHardskillCategory( string description );

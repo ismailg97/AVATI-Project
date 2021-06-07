@@ -1,0 +1,55 @@
+﻿@page "/TreeElement"
+@using AVATI.Data
+
+@if (Hardskills[0].IsRoot())
+{
+    <div>
+        <ul class="tree">
+            @foreach (var hardskillcat in Hardskills) {
+                
+                if (hardskillcat.Height == 1) {
+                    <li><a class="show">@hardskillcat.Description</a>
+                        <ul class="hide">
+                            @foreach (var hardskill in hardskillcat.Subcat)
+                            {
+                                <li><a>@hardskill.Description</a></li>
+                            }
+                        </ul>
+                    </li>
+                } else {
+                    <li><a>@hardskillcat.Description</a>
+                        <TreeElement Hardskills = "@hardskillcat.Subcat" />
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+}
+else
+{
+    <ul class="tree">
+        @foreach (var hardskillcat in Hardskills) {
+                        
+            if (hardskillcat.Height == 1) {
+                <li><a class="show">@hardskillcat.Description</a>
+                    <ul class="hide">
+                        @foreach (var hardskill in hardskillcat.Subcat)
+                        {
+                            <li><a>@hardskill.Description</a></li>
+                        }
+                    </ul>
+                </li>
+            } else {
+                <li><a>@hardskillcat.Description</a>
+                    <TreeElement Hardskills = "@hardskillcat.Subcat" />
+                </li>
+            }
+        }
+    </ul>
+}
+
+@code {
+    [Parameter]
+    public List<Hardskill> Hardskills { get; set; }
+
+}
