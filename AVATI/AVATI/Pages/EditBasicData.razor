@@ -1,0 +1,71 @@
+﻿@using AVATI.Data
+
+@inject IBasicDataService _basicDataService
+@inject NavigationManager _navigationManager
+
+
+<div class="modal @(_show ? "fade show" : "" )" id="myModal" style=" display: @(_show ? "block" : "none");">
+               <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      @if (Type == BasicDataType.SoftSkill){
+                        <h4 class="modal-title">Ändere den Softskill</h4>
+                      } else if (Type == BasicDataType.Field) {
+                        <h4 class="modal-title">Ändere die Branche</h4>
+                      } else {
+                        <h4 class="modal-title">Ändere die Rolle</h4>
+                      }
+                      <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                      <input type="text" id="softskill" @bind="NewDescription" />
+                      </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-primary" @onclick="Update">Save</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Showing">Close</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+@if (_show)
+{
+  <div class="modal-backdrop fade show"></div>
+}
+
+
+@code {
+
+  [Parameter]
+  public string OldDescription { get; set; }
+
+  [Parameter]
+  public BasicDataType Type { get; set; }
+
+  private bool _show = false;
+
+  private string NewDescription { get; set; } 
+
+  private void Update()
+  {
+    switch (Type)
+    {
+      case BasicDataType.SoftSkill:
+        _basicDataService.UpdateSoftSkill(NewDescription, OldDescription);
+        break;
+      case BasicDataType.Field:
+        _basicDataService.UpdateField(NewDescription, OldDescription);
+        break;
+      default:
+        _basicDataService.UpdateRole(NewDescription, OldDescription);
+        break;
+    }
+    Showing();
+    _navigationManager.NavigateTo(_navigationManager.Uri, true);
+  }
+
+  public void Showing()
+  {
+    _show = !_show;
+    StateHasChanged();
+  }
+}

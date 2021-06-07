@@ -1,51 +1,135 @@
 ﻿using System.Collections.Generic;
 
 
-
-
 namespace AVATI.Data
 {
     public class EmployeeServiceSimple : IEmployeeService
     {
-        
-        
-         public List<Employee> EmpList = new List<Employee>() {
-        
-                        new Employee()
-                            {FirstName = "Ismail", LastName = "Gürsöz", Role = new List<string>(){"Programming"} , HardSkills = new List<Hardskill>()
-                            {
-                                new Hardskill {Description = "JavaScript", Subcat = null, Uppercat = null, Height = 0},
-                                new Hardskill {Description = "CSS", Subcat = null, Uppercat = null, Height = 0}
-                            },
-                                SoftSkills = new List<string>(){"Teamleading"}
-                            },
-                        
-                        new Employee()
-                        {FirstName = "Anton", LastName = "Huber", Role = new List<string>(){"Programming"} , HardSkills = new List<Hardskill>()
-                        {
-                            new Hardskill {Description = "Python", Subcat = null, Uppercat = null, Height = 0},
-                        },
-                        SoftSkills = new List<string>(){"Teamleading"}
-                        },
-                        
-                        new Employee()
-                        {FirstName = "Victoria", LastName = "Kuch", Role = new List<string>(){"Programming"} , HardSkills = new List<Hardskill>()
-                        {
-                            new Hardskill {Description = "Java", Subcat = null, Uppercat = null, Height = 0},
-                        },
-                        SoftSkills = new List<string>(){"none"}
-                        }
-        
-                };
-        
-        
-        
+        public List<Employee> Employees { get; set; }
 
-       
-        
-        
-        
-        
+        public EmployeeServiceSimple()
+        {
+            Employees = new List<Employee>()
+            {
+                new Employee()
+                {
+                    EmployeeId = 1,
+                    FirstName = "Ismail", LastName = "Gürsöz", Roles = new List<string>()
+                    {
+                        "Software Developer",
+                        "Agile Coach",
+                        "UI/UX-Designer",
+                        "Product Owner"
+                    },
+                    Hardskills = new List<Hardskill>()
+                    {
+                        new Hardskill {Description = "C++"}, new Hardskill() {Description = "C"},
+                        new Hardskill() {Description = "JavaScript"}, new Hardskill() {Description = "C#"}
+                    },
+                    Softskills = new List<string>()
+                    {
+                        "Konzeptionsstärke",
+                        "Organisationsfähigkeit",
+                        "Lehrfähigkeit",
+                    }
+                },
+
+                new Employee()
+                {
+                    EmployeeId = 2,
+                    FirstName = "Anton", LastName = "Huber", Roles = new List<string>()
+                    {
+                        "Agile Coach",
+                        "UI/UX-Designer",
+                        "Product Owner"
+                    },
+                    Hardskills =
+                        new List<Hardskill>()
+                        {
+                            new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
+                            new Hardskill() {Description = "Python"}, new Hardskill() {Description = "C#"}
+                        },
+                    Softskills = new List<string>()
+                    {
+                        "Beratungsfähigkeit",
+                        "Rhetorik",
+                        "Analytische Fähigkeiten",
+                    }
+                },
+
+                new Employee()
+                {
+                    EmployeeId = 3,
+                    FirstName = "Victoria", LastName = "Kuch", Roles = new List<string>()
+                    {
+                        "Software Developer",
+                        "Agile Coach",
+                    },
+                    Hardskills =
+                        new List<Hardskill>()
+                        {
+                            new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
+                            new Hardskill() {Description = "Python"}, new Hardskill() {Description = "C#"}
+                        },
+                    Softskills = new List<string>()
+                    {
+                        "Interdisziplinärer Sachverstand",
+                        "Kommunikationsfähigkeit",
+                        "Problemlösungsfähigkeit"
+                    }
+                },
+                new Employee()
+                {
+                    EmployeeId = 4,
+                    FirstName = "Alex", LastName = "Xela", Roles = new List<string>() {"Product Owner"}, Hardskills =
+                        new List<Hardskill>()
+                        {
+                            new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
+                            new Hardskill() {Description = "Python"}, new Hardskill() {Description = "C#"}
+                        },
+                    Softskills = new List<string>() {"none"}
+                },
+                new Employee()
+                {
+                    EmployeeId = 5,
+                    FirstName = "Victoria", LastName = "Airotciv", Roles = new List<string>() {"Product Owner"},
+                    Hardskills = new List<Hardskill>()
+                    {
+                        new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
+                        new Hardskill() {Description = "Python"}, new Hardskill() {Description = "C#"}
+                    },
+                    Softskills = new List<string>()
+                    {
+                        "Innovationsfreudigkeit",
+                        "Soziales Engagement",
+                        "Impulsgeben"
+                    }
+                },
+                new Employee()
+                {
+                    EmployeeId = 6,
+                    FirstName = "Tobi", LastName = "Ibot", Roles = new List<string>() {"UI/UX-Designer"}, Hardskills =
+                        new List<Hardskill>()
+                        {
+                            new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
+                            new Hardskill() {Description = "Python"}, new Hardskill() {Description = "C#"}
+                        },
+                    Softskills = new List<string>()
+                    {
+                        "Akquisitionsstärke",
+                        "Beratungsfähigkeit",
+                        "Rhetorik"
+                    }
+                }
+            };
+        }
+
+
+        public List<Employee> GetAllEmployees()
+        {
+            return Employees;
+        }
+
         public bool CreateEmployeeProfile(Employee emp)
         {
             Employee employee = new Employee();
@@ -53,20 +137,20 @@ namespace AVATI.Data
             employee.FirstName = employee.LastName;
             employee.LastName = emp.LastName;
             employee.Language = emp.Language;
-            employee.Role = emp.Role;
+            employee.Roles = emp.Roles;
             employee.EmploymentTime = emp.EmploymentTime;
             employee.EmpType = emp.EmpType;
-            employee.HardSkills = emp.HardSkills;
-            employee.SoftSkills = emp.SoftSkills;
-            employee.RcLevel = emp.RcLevel;
+            employee.Hardskills = emp.Hardskills;
+            employee.Softskills = emp.Softskills;
+            employee.Rc = emp.Rc;
             employee.RelevantWorkExperience = emp.RelevantWorkExperience;
-            EmpList.Add(employee);
+            Employees.Add(employee);
             return true;
         }
 
         public bool EditEmployeeProfile(Employee emp)
         {
-            foreach (Employee employee in EmpList)
+            foreach (Employee employee in Employees)
             {
                 if (emp.EmployeeId == employee.EmployeeId)
                 {
@@ -74,12 +158,12 @@ namespace AVATI.Data
                     employee.FirstName = employee.LastName;
                     employee.LastName = emp.LastName;
                     employee.Language = emp.Language;
-                    employee.Role = emp.Role;
+                    employee.Roles = emp.Roles;
                     employee.EmploymentTime = emp.EmploymentTime;
                     employee.EmpType = emp.EmpType;
-                    employee.HardSkills = emp.HardSkills;
-                    employee.SoftSkills = emp.SoftSkills;
-                    employee.RcLevel = emp.RcLevel;
+                    employee.Hardskills = emp.Hardskills;
+                    employee.Softskills = emp.Softskills;
+                    employee.Rc = emp.Rc;
                     employee.RelevantWorkExperience = emp.RelevantWorkExperience;
                     return true;
                 }
@@ -90,7 +174,7 @@ namespace AVATI.Data
 
         public Employee GetEmployeeProfile(int employeeId)
         {
-            foreach (Employee emp in EmpList)
+            foreach (Employee emp in Employees)
             {
                 if (emp.EmployeeId == employeeId)
                 {
@@ -101,9 +185,9 @@ namespace AVATI.Data
             return null;
         }
 
-        public bool EditStatus(int employeeId,bool status)
+        public bool EditStatus(int employeeId, bool status)
         {
-            foreach (Employee emp in EmpList)
+            foreach (Employee emp in Employees)
             {
                 if (emp.EmployeeId == employeeId)
                 {
@@ -111,18 +195,20 @@ namespace AVATI.Data
                     return true;
                 }
             }
+
             return false;
         }
 
         public bool? GetSatus(int employeeId)
         {
-            foreach (Employee emp in EmpList)
+            foreach (Employee emp in Employees)
             {
                 if (emp.EmployeeId == employeeId)
                 {
                     return emp.IsActive;
                 }
             }
+
             return null;
         }
     }

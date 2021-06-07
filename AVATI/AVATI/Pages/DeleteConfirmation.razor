@@ -11,9 +11,19 @@
                 <h4 class="modal-title">Löschvorgang bestätigen</h4>
                 <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
             </div>
-            <div class="modal-body">
-                Sind Sie sicher, dass der Soft Skill @SoftSkill gelöscht werden soll?
-            </div>
+            @if (Type == BasicDataType.SoftSkill){
+                <div class="modal-body">
+                    Sind Sie sicher, dass der Soft Skill "<b>@Description</b>" gelöscht werden soll?
+                </div>
+            } else if (Type == BasicDataType.Field) {
+                <div class="modal-body">
+                    Sind Sie sicher, dass die Branche "<b>@Description</b>" gelöscht werden soll?
+                </div>
+            } else {
+                <div class="modal-body">
+                    Sind Sie sicher, dass die Rolle "<b>@Description</b>" gelöscht werden soll?
+                </div>
+            }
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" @onclick="Delete">Ok</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Showing">Close</button>
@@ -30,13 +40,27 @@
 @code {
 
     [Parameter]
-    public string SoftSkill { get; set; }
+    public string Description { get; set; }
+
+    [Parameter]
+    public BasicDataType Type { get; set; }
 
     private bool _show = false;
 
     private void Delete()
     {
-        _basicDataService.DeleteSoftSkill(SoftSkill);
+        switch (Type)
+        {
+            case BasicDataType.SoftSkill:
+                _basicDataService.DeleteSoftSkill(Description);
+                break;
+            case BasicDataType.Field:
+                _basicDataService.DeleteField(Description);
+                break;
+            default:
+                _basicDataService.DeleteRole(Description);
+                break;
+        }
         Showing();
         _navigationManager.NavigateTo(_navigationManager.Uri, true);
     }

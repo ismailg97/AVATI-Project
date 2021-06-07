@@ -1,0 +1,16 @@
+﻿@page "/TreeDiagramm"
+
+@using AVATI.Data
+@inject IHardskillService _hardskillService
+<h3>TreeDiagramm</h3>
+
+@foreach (Hardskill hardskillcat in _hardskillService.GetAllHardskillCategorys())
+{
+    @if (hardskillcat.IsRoot())
+    {
+        <TreeElement Hardskills ="@(new List<Hardskill>(){ hardskillcat })"/>
+    }
+}
+
+@code {
+}

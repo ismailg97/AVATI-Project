@@ -1,15 +1,26 @@
 ﻿@page "/SearchEmployee"
+@page "/SearchEmployee/{Id:int}"
 @using AVATI.Data
 @using Microsoft.AspNetCore.Components
 @using System.Linq
 @inject SearchService _searchService
 @inject IHardskillService _hard
 @inject JsonImport _import
-<div class="container h-100">
+@inject IEmployeeService _employee
+@inject IProposalService _proposal
+
+<div class="container h-100" style="padding-bottom: 7000px">
     <div class="row h-100 justify-content-center align-items-center">
         <div class="col-12 text-left">
             <EditForm Model="_searchService">
-                <h1 class="mb-4">Mitarbeitersuche</h1>
+                @if (Id != 0 && _proposal.GetProposal(Id) != null)
+                {
+                    <h1 class="mb-4">Mitarbeiter für das Angebot <br>"@_proposal.GetProposal(Id).ProposalTitle" suchen:</h1>
+                }
+                else
+                {
+                    <h1 class="mb-4">Mitarbeitersuche</h1>
+                }
                 <div class="form-group">
                     <label class="font-weight-bold">Mitarbeitername <small class="text-muted">(Optional)</small> </label>
                     <InputText type="text" class="form-control col-8" placeholder="Vor- und Nachname" @bind-Value="_searchService.EmployeeName"/>
@@ -18,14 +29,13 @@
                     <label class="font-weight-bold text-left">Hardskills</label>
                     <div class="form-group row col">
                         <input type="text" class="form-control col-10 mr-2" value="@String.Join(" | ", _searchService.HardskillsToSearch.Select(e => e.Description).ToArray())" placeholder="Hardskill(s)" readonly>
-                        <button class="btn btn-danger " @onclick=@(() => { _searchService.EmptyHardSearch(); })>Löschen</button>
+                        <button class="btn btn-danger " type="button" @onclick=@_searchService.EmptyHardSearch>Löschen</button>
                     </div>
                 </div>
                 <label for="suche">Suche <small class="text-muted">TODO: Nach Kategorien suchen</small></label>
                 <div class="form-group row col">
                     <div class="form-group row col">
-                        <input type="search" class="col-7 form-control mr-2" id="suche" @bind="TempHardskill" placeholder="C++, Javascript etc."/>
-                        <button class="btn btn-success">Suchen</button>
+                        <input type="search" class="col-7 form-control mr-2" id="suche" @bind-value="TempHardskill" @bind-value:event="oninput" placeholder="C++, Javascript etc."/>
                     </div>
                 </div>
                 <div class="form-group row col-10">
@@ -34,7 +44,7 @@
                         {
                             @if (TempHardskill == null || hardskill.Description.Contains(TempHardskill))
                             {
-                                <button class="btn btn-outline-dark"@onclick=@(() => { _searchService.AddHardSearch(hardskill); })>@hardskill.Description</button>
+                                <button class="btn btn-outline-dark" @onclick=@(() => { _searchService.AddHardSearch(hardskill); })>@hardskill.Description</button>
                             }
                         }
                     </div>
@@ -49,7 +59,7 @@
                 <div class="form-group row col-10">
                     @foreach (var softskill in _searchService.SoftskillsToDisplay)
                     {
-                        <button class="btn btn btn-info mb-1 mr-1" @onclick=@(() => { _searchService.AddSoftSearch(softskill); })>@softskill</button>
+                        <button class="btn btn-sm btn-outline-info mb-1 mr-1" @onclick=@(() => { _searchService.AddSoftSearch(softskill); })>@softskill</button>
                     }
                 </div>
                 <div class="form-group">
@@ -62,31 +72,101 @@
                 <div class="form-group row col-10 mb-4">
                     @foreach (var role in _searchService.RolesToDisplay)
                     {
-                        <button class="btn btn btn-info mb-1 mr-1" @onclick=@(() => { _searchService.AddRoleSearch(role); })>@role</button>
+                        <button class="btn btn-sm btn-outline-info  mb-1 mr-1" @onclick=@(() => { _searchService.AddRoleSearch(role); })>@role</button>
                     }
                 </div>
                 <button type="submit" @onclick=@(() => {CallSearch(); _searchService.TableIsVisible = true;}) class="btn btn-success col-2 text-center mb-5">Suchen</button>
             </EditForm>
             @if (_searchService.TableIsVisible)
             {
-                //<div class="alert alert-danger">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die alle Kriterien erfüllt!</div>
-
-                <h4 class="mb-3 font-weight-bold">Gefundene Mitarbeiter:</h4>
-                <table class="table table-bordered table-striped mb-5">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>RC</th>
-                        <th>Hardskills</th>
-                        <th>Softskills</th>
-                        <th>Rolle(n)</th>
-                        <th>Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>Where are the Employees??????</tr>
-                    </tbody>
-                </table>
+                if (!_searchService.PerfectMatch && SelectEmployees.Any())
+                {
+                    <div class="alert alert-danger">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die alle Kriterien erfüllt!</div>
+                }
+                
+                @if (!SelectEmployees.Any())
+                {
+                    <div class="alert alert-danger">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die mindestens eines der Kriterien erfüllt!</div>
+                }
+                else
+                {
+                    <h4 class="mb-3 font-weight-bold">Gefundene Mitarbeiter:</h4>
+                    <table class="table table-bordered table-striped mb-5">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>RC</th>
+                            <th>Hardskills</th>
+                            <th>Softskills</th>
+                            <th>Rolle(n)</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var employee in SelectEmployees)
+                        {
+                            <tr>
+                                <td style="width: 10%">@employee.FirstName @employee.LastName</td>
+                                <td style="width: 10%">
+                                    <div class="form-group text-center">
+                                        <button class="btn btn-primary btn-sm mr-1 mb-1">@employee.Rc</button>
+                                    </div>
+                                </td>
+                                <td style="width:20%">
+                                    <div class="form-group row col">
+                                        @foreach (var hardskill in employee.Hardskills)
+                                        {
+                                            if (_searchService.HardskillsToSearchTemp.Exists(e => e.Description.Equals(hardskill.Description)))
+                                            {
+                                                <button class="btn btn-primary btn-sm mr-1 mb-1">@hardskill.Description</button>
+                                            }
+                                        }
+                                    </div>
+                                </td>
+                                <td style="width:20%">
+                                    <div class="form-group row col">
+                                        @foreach (var softskill in employee.Softskills)
+                                        {
+                                            if (_searchService.SoftskillsToSearchTemp.Contains(softskill))
+                                            {
+                                                <button class="btn btn-secondary btn-sm mr-1 mb-1">@softskill</button>
+                                            }
+                                        }
+                                    </div>
+                                </td>
+                                <td style="width: 20%">
+                                    <div class="form-group row col">
+                                        @foreach (var role in employee.Roles)
+                                        {
+                                            if (_searchService.RolesToSearchTemp.Contains(role))
+                                            {
+                                                <button class="btn btn-secondary btn-sm mr-1 mb-1">@role</button>
+                                            }
+                                        }
+                                    </div>
+                                </td>
+                                <td style="width: 10%">
+                                    <div class="form-group row col">
+                                        @if (Id != 0 && !_proposal.GetProposal(Id).Employees.Contains(employee))
+                                        {
+                                            <button class="btn btn-sm btn-outline-success" @onclick=@(() => { AddToProposal(employee); })>Hinzufügen</button>
+                                        } else if (Id != 0 && _proposal.GetProposal(Id).Employees.Contains(employee))
+                                        {
+                                            <button class="btn btn-sm btn-outline-info" disabled>Bereits vorhanden</button>
+                                        } else
+                                        {
+                                            <button class="btn btn-sm btn-outline-danger ">Status anpassen</button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                        }
+                        </tbody>
+                    </table>
+                    
+                }
+                
             }
 
         </div>
@@ -96,27 +176,55 @@
 
 @code {
 
+    [Parameter]
+    public int Id { get; set; }
+    
     public string TempHardskill { get; set; }
 
     public List<Hardskill> PseudoHardskills { get; set; }
 
+    public List<Employee> AllEmployees { get; set; }
+
+    public List<Employee> SelectEmployees { get; set; }
+
+
     protected override void OnInitialized()
     {
-        JSonStructure.Rootclass _root = _import.ImportJsonFile();
+        
+        _employee = new EmployeeServiceSimple();
+        AllEmployees = _employee.GetAllEmployees();
+        JSonStructure.Rootclass root = _import.ImportJsonFile();
         PseudoHardskills = new List<Hardskill>();
-        foreach (var skill in _root.Softskills)
+        foreach (var skill in root.skills.Datenbanken)
         {
             PseudoHardskills.Add(new Hardskill() {Description = skill});
         }
+        foreach (var skills2 in root.skills.SchnittstellenundProtokolle)
+        {
+            PseudoHardskills.Add(new Hardskill() {Description = skills2});
+        }
+        foreach (var skills3 in root.skills.SprachenundFrameworks.Sprachen)
+        {
+            PseudoHardskills.Add(new Hardskill() {Description = skills3});
+        }
+        root.Softskills.Sort();
+        root.roles.Sort();
+        PseudoHardskills = PseudoHardskills.OrderBy(e => e.Description).ToList();
         _searchService.InitAttributes
-            (new List<string>() {"test1", "test2"}, new List<string>() {"testrole2", "testrole3"},
-                new List<Hardskill>(PseudoHardskills));
+            (root.Softskills, root.roles,
+                PseudoHardskills);
     }
 
     public void CallSearch()
     {
-        _searchService.SearchEmployee();
+        SelectEmployees = _searchService.SearchEmployee(_searchService.EmployeeName, _searchService.SoftskillsToSearch, _searchService.HardskillsToSearch, _searchService.RolesToSearch);
         _searchService.EmptyQuery();
+
     }
 
+    public void AddToProposal(Employee emp)
+    {
+        _proposal.GetProposal(Id).Employees.Add(emp);
+    }
+    
 }
