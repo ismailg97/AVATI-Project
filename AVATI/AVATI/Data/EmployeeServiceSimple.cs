@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 
 namespace AVATI.Data
@@ -13,8 +14,8 @@ namespace AVATI.Data
             {
                 new Employee()
                 {
-                    EmployeeId = 1,
-                    FirstName = "Ismail", LastName = "Gürsöz", Roles = new List<string>()
+                    
+                    EmployeeId = 0,FirstName = "Ismail", LastName = "Gürsöz", Roles = new List<string>()
                     {
                         "Software Developer",
                         "Agile Coach",
@@ -31,13 +32,23 @@ namespace AVATI.Data
                         "Konzeptionsstärke",
                         "Organisationsfähigkeit",
                         "Lehrfähigkeit",
+                    },
+                    Field = new List<string>()
+                    {
+                        "Automobil",
+                        "Bildung"
+                    },
+                    RelevantWorkExperience = new List<string>()
+                    {
+                        "Design",
+                        "Test"
                     }
                 },
 
                 new Employee()
                 {
-                    EmployeeId = 2,
-                    FirstName = "Anton", LastName = "Huber", Roles = new List<string>()
+                    
+                    EmployeeId = 1,FirstName = "Anton", LastName = "Huber", Roles = new List<string>()
                     {
                         "Agile Coach",
                         "UI/UX-Designer",
@@ -59,8 +70,8 @@ namespace AVATI.Data
 
                 new Employee()
                 {
-                    EmployeeId = 3,
-                    FirstName = "Victoria", LastName = "Kuch", Roles = new List<string>()
+                    
+                    EmployeeId = 2,FirstName = "Victoria", LastName = "Kuch", Roles = new List<string>()
                     {
                         "Software Developer",
                         "Agile Coach",
@@ -80,8 +91,8 @@ namespace AVATI.Data
                 },
                 new Employee()
                 {
-                    EmployeeId = 4,
-                    FirstName = "Alex", LastName = "Xela", Roles = new List<string>() {"Product Owner"}, Hardskills =
+                    
+                    EmployeeId = 3,FirstName = "Alex", LastName = "Xela", Roles = new List<string>() {"Product Owner"}, Hardskills =
                         new List<Hardskill>()
                         {
                             new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
@@ -91,8 +102,8 @@ namespace AVATI.Data
                 },
                 new Employee()
                 {
-                    EmployeeId = 5,
-                    FirstName = "Victoria", LastName = "Airotciv", Roles = new List<string>() {"Product Owner"},
+                    
+                    EmployeeId = 4,FirstName = "Victoria", LastName = "Airotciv", Roles = new List<string>() {"Product Owner"},
                     Hardskills = new List<Hardskill>()
                     {
                         new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
@@ -103,12 +114,27 @@ namespace AVATI.Data
                         "Innovationsfreudigkeit",
                         "Soziales Engagement",
                         "Impulsgeben"
+                    },
+                    Field = new List<string>()
+                    {
+                        "Automobil",
+                        "Bildung"
+                    },
+                    RelevantWorkExperience = new List<string>()
+                    {
+                        "Design",
+                        "Test"
+                    },
+                    Projects = new List<Project>()
+                    {
+                        new Project() {Projecttitel = "Auto 3.0",Projectdescription = "Irgendwas mit Autos", ProjectID = 3, fields = new List<string>() {"Automobil","Smtn"}},
+                        new Project() {Projecttitel = "BuildBsp",Projectdescription = "Was weiss ich", ProjectID = 4, fields = new List<string>(){"Bildung"}}
                     }
                 },
                 new Employee()
                 {
-                    EmployeeId = 6,
-                    FirstName = "Tobi", LastName = "Ibot", Roles = new List<string>() {"UI/UX-Designer"}, Hardskills =
+                    
+                    EmployeeId = 5,FirstName = "Tobi", LastName = "Ibot", Roles = new List<string>() {"UI/UX-Designer"}, Hardskills =
                         new List<Hardskill>()
                         {
                             new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},

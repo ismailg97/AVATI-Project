@@ -1,0 +1,52 @@
+﻿@page "/employeeProject"
+@page "/employeeProject/{Id:int}"
+
+@using AVATI.Data
+@using Dapper
+@inject IProjektService _projektService
+@inject IEmployeeService _employeeService
+
+<h3>Projektübersicht /  </h3>
+
+<table class="table align-middle">
+    
+    <tr>
+        <th scope="col">Projekttitel</th>
+        <th scope="col">Projektbeschreibung</th>
+        <th scope="col">Branchen</th>
+        <th scope="col"><button class="btn btn-danger">Hinzufügen</button></th>
+    </tr>
+    @foreach (var project in _employeeService.GetEmployeeProfile(Id).Projects)
+    {
+        <tr>
+            <td>@project.Projecttitel</td>
+            <td>@project.Projectdescription</td>
+            
+            <td>
+                
+                @foreach (var field in project.fields)
+                {
+                    <text> @field |</text>
+                }
+            </td>
+            <td>
+                <a href="/Projektübersicht/Projektedit/@project.ProjectID">
+                    <button type="button" class="btn btn-secondary">Edit/Update</button>
+                </a>
+            </td>
+        </tr>
+    }
+    
+</table>
+<a href="/Projektübersicht/Projektedit">
+    <button type="button" class="btn btn-secondary">Edit/Update</button>
+</a>
+
+@code
+{
+    [Parameter]
+    public int Id { get; set; }
+    
+    public Employee Emp { get; set; }
+     
+}

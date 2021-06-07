@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Components;
+
 
 
 namespace AVATI.Data
@@ -10,7 +12,7 @@ namespace AVATI.Data
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Image;
-        public float RelevantWorkExperience { get; set; }
+        public List<string> RelevantWorkExperience { get; set; }
         public DateTime EmploymentTime { get; set; }
         public int Rc { get; set; }
         public List<string> Softskills { get; set; }
@@ -20,5 +22,6 @@ namespace AVATI.Data
         public List<Tuple<string,LanguageLevel>> Language { get; set; }
         public EmployeeType EmpType { get; set; }
         public bool IsActive  { get; set; } = true;
+        public List<Project> Projects { get; set; }
     }
 }
