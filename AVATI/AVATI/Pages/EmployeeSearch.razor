@@ -159,7 +159,7 @@
                                             <button class="btn btn-sm btn-outline-success" @onclick=@(() => { AddToProposal(employee); })>Hinzufügen</button>
                                         } else if (Id != 0 && _proposal.GetProposal(Id).Employees.Contains(employee))
                                         {
-                                            <button class="btn btn-sm btn-outline-danger" disabled>Löschen</button>
+                                            <button class="btn btn-sm btn-outline-danger" @onclick=@(() => { RemoveFromProposal(employee); })>Löschen</button>
                                         } else if(employee.IsActive)
                                         {
                                             <button class="btn btn-sm btn-success" @onclick=@(() => { employee.IsActive = !employee.IsActive;})>Aktiv</button>
@@ -236,6 +236,11 @@
     public void AddToProposal(Employee emp)
     {
         _proposal.GetProposal(Id).Employees.Add(emp);
+    }
+
+    public void RemoveFromProposal(Employee emp)
+    {
+        _proposal.GetProposal(Id).Employees.Remove(emp);
     }
     
 }
