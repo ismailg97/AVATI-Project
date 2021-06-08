@@ -6,33 +6,78 @@
     if (TempEmp != null)
     {
         <div class="modal fade show d-block" data-bs-backdrop="static" id="exampleModal" role="dialog">
-            <div class="modal-dialog modal-lg"  role="document">
-                <div class="modal-content bg-light  font-weight-bold text-black" style="height: 600px; width: 800px">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content bg-light  font-weight-bold text-black">
                     <div class="modal-header">
                         <h5 class="modal-title font-weight-bolder text-center" id="titleLabel">Detailansicht</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick=@Close>
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <div class="container-fluid">
-                            <div class="row col-3">
-                                <button class="btn btn-secondary">test</button>
-                                <button class="btn btn-secondary">test</button>
-                                <button class="btn btn-secondary">test</button>
-                                <button class="btn btn-secondary">test</button>
-                                <button class="btn btn-secondary">test</button>
+                    <div class="modal-body text-center">
+                        <div class="container">
+                            <div class="row g-4 justify-content-md-center mb-4">
+                                <div class="card border-secondary col mr-4">
+                                    <div class="card-header text-left bg-transparent border-secondary">Hardskills</div>
+                                    <div class="card-body text-left">
+                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                    </div>
+                                </div>
+                                <div class="card text-black border-dark col">
+                                    <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" class="card-img-top" alt=""/>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Max Mustermann</h5>
+                                        <p class="card-text text-left">Eventuell das RC</p>
+                                    </div>
+                                </div>
+                                <div class="card border-secondary col ml-4">
+                                    <div class="card-header text-left bg-transparent border-secondary">Softskills</div>
+                                    <div class="card-body text-left">
+                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col d-flex align-items-center justify-content-center">
-                                <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" width="300" height="200" alt=""/>
-                            </div>
-                            <div class="row row-cols-1">
-                                <button class="btn btn-secondary">tes2t</button>
-                                <button class="btn btn-secondary">tes2t</button>
-                                <button class="btn btn-secondary">te2st</button>
-                                <button class="btn btn-secondary">te2st</button>
+                            <div class="row justify-content-md-center">
+                                <div class="card border-secondary text-center col">
+                                    <div class="card-header text-left bg-transparent border-secondary">Branche(n)</div>
+                                    <div class="card-body">
+                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+
+                                    </div>
+                                </div>
+                                <div class="card border-secondary col mr-4 ml-4">
+                                    <div class="card-header text-left bg-transparent border-secondary">Rolle(n)</div>
+                                    <div class="card-body text-left">
+                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                    </div>
+                                </div>
+                                <div class="card border-secondary col ">
+                                    <div class="card-header text-left bg-transparent border-secondary">Sprache(n)</div>
+                                    <div class="card-body text-left">
+                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
+                        <div class="row float-right mt-5">
+                            <button class="btn btn-danger mr-2">Abbrechen</button>
+                            <button class="btn btn-success mr-2">Änderungen speichern</button>
+                        </div>
+
                     </div>
                 </div>
             </div>
