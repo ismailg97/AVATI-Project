@@ -6,8 +6,11 @@
 @inject IProposalService _proposal
 @inject NavigationManager _navManager
 @inject SearchService _search
+<EmployeeDetail @ref="_employeeDetail"></EmployeeDetail>
 <EditProposal @ref="_editProposal"></EditProposal>
-<button class="btn btn-success float-left">Neues Angebot</button>
+
+
+<button class="btn btn-success float-left" @onclick=@(() => { ShowEdit(0); })>Neues Angebot</button>
 <div class="container col-10">
     <div class="row row-cols-1 row-cols-md-1 g-4">
         @foreach (var proposal in _proposal.GetAllProposal())
@@ -47,7 +50,7 @@
                                         <li class="list-group-item border-dark bg-light font-weight-bold text-black">
                                             <span>@employee.FirstName @employee.LastName</span>
                                             <div class="btn-group float-right">
-                                            <button class="btn btn-info btn-sm mr-2">Details</button>
+                                            <button class="btn btn-info btn-sm mr-2" @onclick=@(() => { ShowDetail(employee.EmployeeId, proposal.ProposalId); })>Details</button>
                                             <button class="btn btn-primary btn-sm " @onclick=@(() => { ShowRcEdit(employee, 0); })>RC: @employee.Rc </button>
                                             </div>
                                             
@@ -69,18 +72,18 @@
                         </div>
 
                         <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(2, proposal.ProposalId); })">
-                            Hard- und Softskills
+                            Branchen, Hard- und Softskills
                         </button>
                         <div class=@(_showAttributes[proposal.ProposalId] ? "collapse" : "")>
                             <ul class="list-group mb-3 text-left">
                                 <li class="list-group-item border-dark bg-light text-left text-black mb-1">
-                                    <b>Hardskills:</b> @string.Join(", ", proposal.Hardskills.Select(e => e.Description))
+                                    <b>Hardskills:</b> @string.Join(" | ", proposal.Hardskills.Select(e => e.Description))
                                 </li>
                                 <li class="list-group-item border-dark bg-light text-left text-black mb-1">
-                                    <b>Softskills:</b> @string.Join(", ", proposal.Softskills)
+                                    <b>Softskills:</b> @string.Join(" | ", proposal.Softskills)
                                 </li>
                                 <li class="list-group-item border-dark bg-light text-left text-black mb-1">
-                                    <b>Branchen:</b> @string.Join(", ", proposal.Fields)
+                                    <b>Branchen:</b> @string.Join(" | ", proposal.Fields)
                                 </li>
                             </ul>
                         </div>
@@ -130,6 +133,7 @@
 @code {
 
     EditProposal _editProposal;
+    EmployeeDetail _employeeDetail;
     Dictionary<int, bool> _showEmployee;
     Dictionary<int, bool> _showAttributes;
     Dictionary<int, bool> _showAdditionalInfo;
@@ -172,13 +176,17 @@
         }
     }
 
-    public void ShowEdit(int propId)
+    private void ShowEdit(int propId)
     {
         Console.WriteLine("this function is being called");
         _editProposal.Show(propId);
     }
 
-    public void ShowRcEdit(Employee emp, int response)
+    private void ShowDetail(int employeeId, int proposalId)
+    {
+        _employeeDetail.Show(employeeId, proposalId);
+    }
+    private void ShowRcEdit(Employee emp, int response)
     {
         if (!ShowPop)
         {
@@ -201,7 +209,7 @@
         ShowPop = !ShowPop;
     }
 
-    public void CallCopy(int id)
+    private void CallCopy(int id)
     {
         int temp;
         if ((temp = _proposal.CopyProposal(id)) != 0)
@@ -214,7 +222,7 @@
         }
     }
 
-    public void CallDelete(int id)
+    private void CallDelete(int id)
     {
         if (_proposal.GetProposal(id) != null)
         {
@@ -223,7 +231,7 @@
         }
     }
 
-    public void CallSearch(int Id)
+    private void CallSearch(int Id)
     {
         _navManager.NavigateTo("/SearchEmployee/" + Id.ToString());
     }

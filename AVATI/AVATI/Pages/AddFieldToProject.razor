@@ -1,0 +1,132 @@
+﻿@page "/Projektübersicht/Projektedit/AddFieldToProject"
+@page "/Projektübersicht/Projektedit/AddFieldToProject/{ID:int}"
+@page "/AddFieldToProject"
+
+@using AVATI.Data
+@using System.Net
+@using System.Threading
+@using Microsoft.AspNetCore.Http.Extensions
+
+@inject Projectedit _projectedit
+@inject JsonImport _jsonImport
+@inject ProjectServiceSimple _projectServiceSimple
+@inject NavigationManager _navigationManager
+
+<div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
+    <div class="modal-dialog modal-dialog-scrollable ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="body header">
+                    <h3>Auswahl der hinzufügbaren Branchen</h3>
+                    <div class="modal-body overflow-auto">
+                        <div class="form-group col row overflow-auto mr-3 col-9" style="height: 250px">
+                            @foreach (var field in AttributestoSearch)
+                            {
+                                <div class="mb-3 col-sm">
+                                    <button type="button" class="btn btn-primary btn-block" @onclick=@(() => { UpdateContains(field); })>@field</button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="d-inline"></div>
+                    <div class="container">
+                        <div class="form-group col row overflow-auto mr-3 col-9" style="height: 250px">
+                            @foreach (var field in AttributestoDisplay)
+                            {
+                                <div class="mb-3 col-sm">
+                                    <button type="button" class="btn btn-primary btn-lg btn-block" @onclick=@(() => { UpdateSearch(field); })>@field</button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="container">
+                        <input type="text" class="form-control" placeholder="Branche.." @bind="@temp"/>
+                        <button type="button" class="btn btn-success col-sm-3" @onclick="(() => { AddField(temp); })">Branche hinzufügen</button>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-success " @onclick="(() => { Showing(); Submit(ID); })">Save</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">Cancel</button>
+        </div>
+    </div>
+</div>
+
+@if (_show)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+
+    [Parameter]
+    public int ID { get; set; }
+
+    private bool _show = false;
+
+    public string temp { get; set; }
+    Project currentProject = new Project();
+
+    public List<string> AttributestoDisplay { get; set; } = new List<string>();
+    public List<string> AttributestoSearch { get; set; } = new List<string>();
+
+    JSonStructure.Rootclass jsonFields;
+
+    public void Showing()
+    {
+        _show = !_show;
+        StateHasChanged();
+    }
+
+
+    protected override void OnInitialized()
+    {
+        jsonFields = _jsonImport.ImportJsonFile();
+        AttributestoDisplay = new List<string>(jsonFields.fields);
+    }
+
+    public void UpdateSearch(string field)
+    {
+        if (AttributestoDisplay.Contains(field))
+        {
+            AttributestoDisplay.Remove(field);
+            AttributestoSearch.Add(field);
+        }
+    }
+
+    public void UpdateContains(string field)
+    {
+        if (AttributestoSearch.Contains(field))
+        {
+            AttributestoSearch.Remove(field);
+            AttributestoDisplay.Add(field);
+        }
+    }
+
+    public void AddField(string field)
+    {
+        if (field == null)
+        {
+        }
+        else
+        {
+            AttributestoDisplay.Add(field);
+        }
+    }
+
+    public void Submit(int ID)
+    {
+        Project temp = currentProject;
+        foreach (var project in _projectServiceSimple._projects)
+        {
+            if (ID == project.ProjectID)
+            {
+                currentProject = project;
+            }
+        }
+        currentProject.fields = AttributestoSearch;
+        _projectServiceSimple.DeleteProject(ID);
+        _projectServiceSimple._projects.Add(currentProject);
+        _navigationManager.NavigateTo("/Projektübersicht/Projektedit/" + currentProject.ProjectID);
+    }
+
+}

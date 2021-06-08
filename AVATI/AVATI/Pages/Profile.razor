@@ -4,17 +4,17 @@
 @inject NavigationManager _navManager
 @inject IEmployeeService _employee
 
-<link href="css/Profile.razor.css" rel="stylesheet" />
+<link href="css/Profile.razor.css" rel="stylesheet"/>
 <h3>Profil</h3>
 <!------ Include the above in your HEAD tag ---------->
 <!------ Gets Employee with the same Id as the Router Parameter ---------->
 @(Emp = _employee.GetEmployeeProfile(Id))
 <div class="container emp-profile">
-    <form  >
+    <form>
         <div class="row">
             <div class="col-md-4">
                 <div style="margin-top: -25%" class="profile-img">
-                    <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" style="margin-left: -45px" width="300" height="200" alt="" />
+                    <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" style="margin-left: -45px" width="300" height="200" alt=""/>
                 </div>
             </div>
             <div class="col-md-6">
@@ -34,31 +34,33 @@
                     <li class="nav-item">
                         <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">About</a>
                     </li>
-                                                
+
                 </ul>
             </div>
             <!------ Edit Profile Button ---------->
             <div class="col-md-2">
-                <EditForm Model="Emp" OnValidSubmit="@RedirectToEditProfile">
+                <a href="/profile/update/@Emp.EmployeeId">
                     <input type="submit" onsubmit="" class="profile-edit-btn" name="btnAddMore" value="Profil bearbeiten"/>
-                    </EditForm>
+                </a>    
             </div>
         </div>
         <!------ Skills ---------->
         <div class="row">
             <div class="col-md-4">
                 <!------ Hard Skills ---------->
+
                 <table class="table table-striped">
                     <tr>
                         <th>Hard Skills</th>
                     </tr>
-                    @foreach(var hardskill in Emp.Hardskills){
+                    @foreach (var hardskill in Emp.Hardskills)
+                    {
                         <tr>
                             <td>@hardskill.Description</td>
                         </tr>
-                        
                     }
                 </table>
+
 
                 <!------ Soft Skills ---------->
                 <table class="table table-striped">
@@ -67,133 +69,160 @@
                     </tr>
                     @foreach (var softskill in Emp.Softskills)
                     {
-                       <tr>
-                           <td>@softskill</td>
-                       </tr>     
+                        <tr>
+                            <td>@softskill</td>
+                        </tr>
                     }
-                    
                 </table>
+
+                <!------ Rollen ---------->
                 <table class="table table-striped">
-                     <tr>
-                         <th>Roles</th>
-                     </tr>        
-                    @foreach(var roles in Emp.Roles){
+                    <tr>
+                        <th>Roles</th>
+                    </tr>
+                    @foreach (var roles in Emp.Roles)
+                    {
                         <tr>
                             <td>@roles</td>
-                        </tr>    
-                    }                       
-                </table>       
+                        </tr>
+                    }
+                </table>
             </div>
-            <div class="col-md-8">
+            <div class="form-group col-md-8">
                 <div class="tab-content profile-tab" id="myTabContent">
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                         <!------ User ID ---------->
-                        <div class="row">
+                        <div class="form-row">
                             <div style="text-align: left" class="col-md-6">
                                 <label style="font-weight:bold; color:black">Nutzer ID</label>
                             </div>
-                            <div class="col-md-6">
+                            <div class="form-col">
                                 <p style="color:#818181">@Emp.EmployeeId</p>
                             </div>
                         </div>
                         <!------ Fields ---------->
-                        <div class="row">
+                        <div class="form-row">
                             <div style="text-align: left" class="col-md-6">
                                 <label style="font-weight: bold; color: black">Branchenwissen</label>
                             </div>
-                            <div class="col-md-6">
-                                <p style="color:#818181">fields</p>
+                            <div class="form-col">
+                                @foreach (var field in Emp.Field)
+                                {
+                                    <text> @field | </text>
+                                }
                             </div>
                         </div>
                         <!------ E-Mail ---------->
-                        <div class="row">
+                        <div class="form-row">
                             <div style="text-align: left" class="col-md-6">
                                 <label style="font-weight: bold;color: black">Email</label>
                             </div>
-                            <div class="col-md-6">
-                                <p style="color:#818181">max.mustermann@mail.com</p>
+                            <div class="form-col">
+                                <p style="color: #000">max.mustermann@mail.com</p>
                             </div>
                         </div>
-                    <!------ Phone Number ---------->    
-                        <div class="row">
+                        <!------ Phone Number ---------->
+                        <div class="form-row">
                             <div style="text-align: left" class="col-md-6">
                                 <label style="font-weight: bold;color: black">Telefonnummer</label>
                             </div>
-                            <div class="col-md-6">
-                                <p style="color:#818181">1234567890</p>
+                            <div class="form-col">
+                                <p style="color: #000">1234567890</p>
                             </div>
                         </div>
                         <!------ Relevant Work Experience ---------->
-                        <div class="row">
+                        <div class="form-row">
                             <div style="text-align: left" class="col-md-6">
                                 <label style="font-weight:bold; color:black">Relevante Berufserfahrung</label>
                             </div>
-                            <div class="col-md-6">
-                                <p style="color:#818181">@Emp.RelevantWorkExperience</p>
+                            <div class="form-col">
+                                @foreach (var work in Emp.RelevantWorkExperience)
+                                {
+                                    <text> @work |</text>
+                                }
                             </div>
                         </div>
                         <!------ Languages ---------->
-                        <div class="row">
-                            <table align="left" style="text-align: left" class="table table-striped">
-                                <tr>
-                                    <th>Sprache</th>
-                                    <th align="right">Sprachniveau</th>
-                                </tr>
-                                <tr>
-                                    <td>English</td>
-                                    <td>B2</td>
-                                </tr>
-                            </table>
+                        <div class="form-row">
+                            <button class="btn btn-secondary btn-lg btn-block" @onclick="@(CollLang)">Sprachen </button>
+                            <div class="@(_booleanLang ? "" : "collapse") ">
+                                <table align="left" style="text-align: left" class="table">
+                                    <tr>
+                                        <th>Sprache</th>
+                                        <th style="text-align: left">Sprachniveau</th>
+                                    </tr>
+                                    <tr>
+                                        <td>English</td>
+                                        <td>B2</td>
+                                    </tr>
+                                </table>
                             </div>
-                    <!------ Projects ---------->    
-                        <div class="row">
-                            <table align="left" style="text-align: left" class="table table-striped">
-                                <tr>
-                                    <th>Projekt</th>
-                                    <th style="text-align: left">Projekttätigkeit</th>
-                                </tr>
-                                <tr>
-                                    <td>Auto3.0</td>
-                                    <td>Design</td>
-                                </tr>
-                                <tr>
-                                    <td>E-Bildung</td>
-                                    <td>Programmierer</td>
-                                </tr>
-                                <tr>
-                                    <td>Acquiring a new or modified data system</td>
-                                    <td>Design</td>
-                                </tr>
-                                <tr>
-                                    <td>Xitaso Seite</td>
-                                    <td>Programming</td>
-                                </tr>
-                            </table>
+                        </div>
+                        <!------ Projects ---------->
+                        <div class="form-row">
+                            <button class="btn btn-secondary btn-lg dropdown-toggle" style="" @onclick="@CollProj">Projekte </button>
+                            <div class="@(_booleanProj ? "" : "collapse") ">
+                                <table align="left" style="text-align: left" class="table table-striped">
+                                    <tr>
+                                        <th>Projekt</th>
+                                        <th style="text-align: left">Projekttätigkeit</th>
+                                    </tr>
+                                    <tr>
+                                        <td>Auto3.0</td>
+                                        <td>Design</td>
+                                    </tr>
+                                    <tr>
+                                        <td>E-Bildung</td>
+                                        <td>Programmierer</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Acquiring a new or modified data system</td>
+                                        <td>Design</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Xitaso Seite</td>
+                                        <td>Programming</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
                     </div>
+                </div>
             </div>
-        </div>
         </div>
     </form>
 </div>
 
 
-
 @code {
-    
-    [Parameter] public int Id { get; set; }
+
+    private bool _booleanLang = false;
+    private bool _booleanProj = false;
+
+    [Parameter]
+    public int Id { get; set; }
 
 
+    Employee Emp = new Employee()
+    {
+        FirstName = "Ismail", LastName = "Gürsöz", Roles = new List<string>() {"Programming"}, Hardskills = new List<Hardskill>()
+        {
+            new Hardskill {Description = "JavaScript", Subcat = null, Uppercat = null, Height = 0},
+            new Hardskill {Description = "CSS", Subcat = null, Uppercat = null, Height = 0}
+        },
+        Softskills = new List<string>() {"Teamleading"}
+    };
 
-    Employee Emp = new Employee() { FirstName = "Ismail", LastName = "Gürsöz", Roles = new List<string>(){"Programming"} , Hardskills = new List<Hardskill>()
-                                                                {
-                                                                    new Hardskill {Description = "JavaScript", Subcat = null, Uppercat = null, Height = 0},
-                                                                    new Hardskill {Description = "CSS", Subcat = null, Uppercat = null, Height = 0}
-                                                                },
-                                                                    Softskills = new List<string>(){"Teamleading"}
-                                                                };
-    
-    
+    public void CollLang()
+    {
+        _booleanLang = !_booleanLang;
+    }
+
+    public void CollProj()
+    {
+        _booleanProj = !_booleanProj;
+    }
+
 
     public void RedirectToEditProfile()
     {

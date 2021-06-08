@@ -1,0 +1,165 @@
+@using AVATI.Data
+@using Microsoft.AspNetCore.Components
+@inject IProposalService _proposal
+@inject NavigationManager _navigationManager
+@inject IBasicDataService _basic
+@inject IHardskillService _hardskill
+@if (ShowEdit)
+{
+    <div class="modal fade show d-block" data-bs-backdrop="static" id="exampleModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content bg-light border border-dark border-2 font-weight-bold text-black">
+                <div class="modal-header">
+                    <h5 class="modal-title font-weight-bolder" id="titleLabel">Angebot editieren</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick=@Close>
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body text-left">
+                    <EditForm Model="@Proposal" OnValidSubmit="@HandleValidSubmit">
+                        <DataAnnotationsValidator/>
+                        <ValidationSummary/>
+                        <div class="form-group">
+                            <label for="title">Angebotstitel </label>
+                            <InputText id="title" class="form-control" @bind-Value="@Proposal.ProposalTitle" placeholder="Titel"></InputText>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="mr-3">Hardskills: </label>
+                            @foreach (var hardskill in Proposal.Hardskills)
+                            {
+                                <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Proposal.Hardskills.Remove(hardskill); })>
+                                    @hardskill.Description <span class="oi oi-x"></span>
+                                </button>
+                            }
+                            <div class="form-group row col">
+                                <input type="search" class="col-7 form-control mr-1" id="suche" @bind-value="TempHardskill" @bind-value:event="oninput" placeholder="C++, Javascript etc."/>
+                            </div>
+                        </div>
+                        <div class="form-group row col-10">
+                            <div class="list-group border-dark overflow-auto mr-3 col-9" style="height: 100px">
+                                @foreach (var hardskill in _hardskill.GetAllHardskills())
+                                {
+                                    @if ((TempHardskill == null || hardskill.Description.Contains(TempHardskill)) && !Proposal.Hardskills.Contains(hardskill))
+                                    {
+                                        <button type="button" class="btn btn-outline-dark" @onclick=@(() => { Proposal.Hardskills.Add(hardskill); })>@hardskill.Description</button>
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="mr-3 mt-2">Softskills: </label>
+                            @foreach (var softskilll in Proposal.Softskills)
+                            {
+                                <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Proposal.Softskills.Remove(softskilll); })>
+                                    @softskilll <span class="oi oi-x"></span>
+                                </button>
+                            }
+                        </div>
+                        @foreach (var softskill in _basic.GetAllSoftSkills())
+                        {
+                            if (!Proposal.Softskills.Contains(softskill))
+                            {
+                                <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { Proposal.Softskills.Add(softskill); })>
+                                    @softskill
+                                </button>
+                            }
+                        }
+                        <div class="form-group">
+                            <label class="mr-3 mt-2">Branchen: </label>
+                            @foreach (var field in Proposal.Fields)
+                            {
+                                <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Proposal.Fields.Remove(field); })>
+                                    @field <span class="oi oi-x"></span>
+                                </button>
+                            }
+                        </div>
+                        @foreach (var field in _basic.GetAllFields())
+                        {
+                            if (!Proposal.Fields.Contains(field))
+                            {
+                                <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { Proposal.Fields.Add(field); })>
+                                    @field
+                                </button>
+                            }
+                        }
+                        <div class="form-group">
+                            <label class="mt-2">Zusätzliche Informationen </label>
+                            <InputText id="addinfo" class="form-control" @bind-Value="@Proposal.AdditionalInfo" placeholder=" "></InputText>
+                        </div>
+                        <button type="submit" class="btn btn-success">Änderungen speichern</button>
+                        <a class="btn btn-danger" @onclick="@Close">Abbrechen</a>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    public string TempHardskill { get; set; }
+    public bool ShowBackdrop { get; set; }
+    public Proposal Proposal;
+    public Proposal TempProp { get; set; }
+    public bool ShowEdit = false;
+
+    public void Close()
+    {
+        ShowEdit = !ShowEdit;
+        ShowBackdrop = !ShowBackdrop;
+        StateHasChanged();
+    }
+
+    public void Show(int propId)
+    {
+        Id = propId;
+        if ((TempProp = _proposal.GetAllProposal().Find(e => e.ProposalId == propId)) != null)
+        {
+            Proposal = new Proposal()
+            {
+                AdditionalInfo = TempProp.AdditionalInfo,
+                ProposalTitle = TempProp.ProposalTitle,
+                Hardskills = TempProp.Hardskills,
+                Softskills = TempProp.Softskills,
+                Fields = TempProp.Fields
+            };
+        }
+        else
+        {
+            Proposal = new Proposal();
+        }
+        Console.WriteLine("2nd function was called aswell");
+        ShowEdit = !ShowEdit;
+        ShowBackdrop = !ShowBackdrop;
+        StateHasChanged();
+    }
+
+    public void HandleValidSubmit()
+    {
+        if (Id != 0)
+        {
+            _proposal.GetAllProposal().Find(e => e.ProposalId == Id).AdditionalInfo = Proposal.AdditionalInfo;
+            _proposal.GetAllProposal().Find(e => e.ProposalId == Id).ProposalTitle = Proposal.ProposalTitle;
+            _proposal.UpdateProposal(Id, _proposal.GetAllProposal().Find(e => e.ProposalId == Id));
+        }
+        else
+        {
+            _proposal.UpdateProposal(0, Proposal);
+        }
+        Console.WriteLine("The submit was handeled");
+        _navigationManager.NavigateTo(_navigationManager.Uri, true);
+        Close();
+    }
+
+}

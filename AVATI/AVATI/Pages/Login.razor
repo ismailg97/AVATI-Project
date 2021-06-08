@@ -11,28 +11,31 @@
         <div class="login-main-text">
             <h3>Login</h3>
             <p>Melde dich von hier aus an, um dein Mitarbeiterprofil zu sehen</p>
+            <!------ Binds inputted Username and Password to log and calls "LoginCheck" on Valid Submit ---------->
+            <EditForm Model="Log" OnValidSubmit="@LoginCheck">
+                <div class="main">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="login-form">
+                             
+                            <p class="@(_boolean ? "" : "collapse") " style=" color: #ff0000"><div class="alert alert-danger">Falscher Benutzername oder falsches Passwort eingegeben.<br/> Bitte versuchen Sie erneut.</div></p>
+                             
+                            <div class="form-group">
+                                <label>Benutzername</label>
+                                <InputText id="username" @bind-Value="Log.Username" placeholder="Max Mustermann"></InputText>
+                            </div>
+                            <div class="form-group">
+                                <label>Passwort</label>
+                                <InputText id="password" @bind-Value="Log.Password" placeholder="123456"></InputText>
+                            </div>
+                            <button type="submit" class="btn btn-secondary">Login</button>
+                        </div>
+                    </div>
+                </div>
+            </EditForm>
+            <!------  ---------->
         </div>     
     </div>
-    <!------ Binds inputted Username and Password to log and calls "LoginCheck" on Valid Submit ---------->
-    <EditForm Model="Log" OnValidSubmit="@LoginCheck">
-        <div class="main">
-            <div class="col-md-6 col-sm-12">
-                <div class="login-form">
-                    <p  class="@(_boolean ? "" : "collapse") " style="margin-top:200px; color: #ff0000">Falscher Benutzername oder falsches Passwort eingegeben.<br /> Bitte versuchen Sie erneut.</p>
-                    <div class="form-group">
-                        <label>Benutzername</label>
-                       <InputText id="username" @bind-Value="Log.Username" placeholder="Max Mustermann"></InputText>
-                    </div>
-                    <div class="form-group">
-                        <label>Passwort</label>
-                       <InputText id="password" @bind-Value="Log.Password" placeholder="123456"></InputText>
-                    </div>
-                    <button type="submit" class="btn btn-secondary">Login</button>
-                </div>
-            </div>
-        </div>
-    </EditForm>
-    <!------  ---------->
+    <text class style="margin-left: 200px">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</text>
 </div>
 @code {
     private bool _boolean = false;
