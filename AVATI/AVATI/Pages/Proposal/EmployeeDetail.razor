@@ -5,56 +5,32 @@
 {
     if (TempEmp != null)
     {
-        <div class="modal fade show d-block" data-bs-backdrop="static" id="exampleModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content bg-light border font-weight-bold text-black">
+        <div class="modal fade show d-block" data-bs-backdrop="static" id="exampleModal" role="dialog">
+            <div class="modal-dialog modal-lg"  role="document">
+                <div class="modal-content bg-light  font-weight-bold text-black" style="height: 600px; width: 800px">
                     <div class="modal-header">
-                        <h5 class="modal-title font-weight-bolder" id="titleLabel">Detailansicht</h5>
+                        <h5 class="modal-title font-weight-bolder text-center" id="titleLabel">Detailansicht</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick=@Close>
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="container">
-                            <div class="row justify-content-start">
-                                <div class="col-4">
-                                    pos1
-                                </div>
-                                <div class="col-4">
-                                    pos2
-                                </div>
+                        <div class="container-fluid">
+                            <div class="row col-3">
+                                <button class="btn btn-secondary">test</button>
+                                <button class="btn btn-secondary">test</button>
+                                <button class="btn btn-secondary">test</button>
+                                <button class="btn btn-secondary">test</button>
+                                <button class="btn btn-secondary">test</button>
                             </div>
-                            <div class="row justify-content-center">
-                                <div class="col-4">
-                                    pos3
-                                </div>
-                                <div class="col-4">
-                                    pos4
-                                </div>
+                            <div class="col d-flex align-items-center justify-content-center">
+                                <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" width="300" height="200" alt=""/>
                             </div>
-                            <div class="row justify-content-end">
-                                <div class="col-4">
-                                    pos5
-                                </div>
-                                <div class="col-4">
-                                    pos6
-                                </div>
-                            </div>
-                            <div class="row justify-content-around">
-                                <div class="col-4">
-                                    pos7
-                                </div>
-                                <div class="col-4">
-                                    pos8
-                                </div>
-                            </div>
-                            <div class="row justify-content-between">
-                                <div class="col-4">
-                                    pos9
-                                </div>
-                                <div class="col-4">
-                                    pos10
-                                </div>
+                            <div class="row row-cols-1">
+                                <button class="btn btn-secondary">tes2t</button>
+                                <button class="btn btn-secondary">tes2t</button>
+                                <button class="btn btn-secondary">te2st</button>
+                                <button class="btn btn-secondary">te2st</button>
                             </div>
                         </div>
                     </div>
@@ -106,4 +82,3 @@
     }
 
 }
-
