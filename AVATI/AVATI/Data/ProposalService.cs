@@ -8,7 +8,6 @@ namespace AVATI.Data
     {
         public List<Proposal> Proposals { get; set; }
 
-
         public ProposalService()
         {
             Proposals = new List<Proposal>()
@@ -24,9 +23,44 @@ namespace AVATI.Data
                     AdditionalInfo = "Das Projekt versucht einer HTML - Seite Tetris beizubringen",
                     Employees = new List<Employee>()
                     {
-                        new Employee() {FirstName = "Watson", LastName = "Smith", Rc = 6},
-                        new Employee() {FirstName = "Sotaw", LastName = "Smith", Rc = 3},
-                        new Employee() {FirstName = "Norman", LastName = "Smith", Rc = 1}
+                        new Employee()
+                        {
+                            FirstName = "Watson", LastName = "Smith", Rc = 6, Softskills = new List<string>()
+                            {
+                                "Soziale Kompetenz",
+                                "Überzeugungskraft"
+                            },
+                            Hardskills = new List<Hardskill>()
+                                {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
+                            Field = new List<string>() {"Robotik",
+                                "Sport"
+                            }, Language = new List<Tuple<string, LanguageLevel>>() {new Tuple<string, LanguageLevel>("English", LanguageLevel.A1)}
+                        },
+                        new Employee()
+                        {
+                            FirstName = "Joe", LastName = "Jonson", Rc = 6, Softskills = new List<string>()
+                            {
+                                "Beratungsfähigkeit",
+                                "Rhetorik",
+                            },
+                            Hardskills = new List<Hardskill>()
+                                {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
+                            Field = new List<string>() {"Robotik",
+                                "Sport",},
+                        },
+                        new Employee()
+                        {
+                            FirstName = "Smith", LastName = "Smart", Rc = 6,
+                            Softskills = new List<string>() {"Lehrfähigkeit",
+                                "Marktkenntnisse",
+                                "Verhandlungsgeschick"}, Hardskills =
+                                new List<Hardskill>()
+                                    {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
+                            Field = new List<string>() {"Automobil",
+                                "Banken/Finanzsektor/Versicherung",
+                                "Beratung",
+                                "Bildung"},
+                        },
                     }
                 },
                 new Proposal()
@@ -169,9 +203,9 @@ namespace AVATI.Data
                 {
                     ProposalId = Proposals.Max(e => e.ProposalId) + 1, Employees = temp.Employees, Fields = temp.Fields,
                     Hardskills = temp.Hardskills, Softskills = temp.Softskills, AdditionalInfo = temp.AdditionalInfo,
-                    ProposalTitle = String.Concat(temp.ProposalTitle, " [KOPIE]") 
+                    ProposalTitle = String.Concat(temp.ProposalTitle, " [KOPIE]")
                 });
-                
+
                 return Proposals.Max(e => e.ProposalId);
             }
 

@@ -1,22 +1,71 @@
-
+@using AVATI.Data
+@inject IProposalService _proposal
 
 @if (ShowEdit)
 {
-    <div class="modal fade show d-block" data-bs-backdrop="static" id="exampleModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content bg-light border font-weight-bold text-black">
-                <div class="modal-header">
-                    <h5 class="modal-title font-weight-bolder" id="titleLabel">Detailansicht</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick=@Close>
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body text-left">
-                    <p>Hier könnten die Mitarbeiterdetails zu finden sein</p>
+    if (TempEmp != null)
+    {
+        <div class="modal fade show d-block" data-bs-backdrop="static" id="exampleModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content bg-light border font-weight-bold text-black">
+                    <div class="modal-header">
+                        <h5 class="modal-title font-weight-bolder" id="titleLabel">Detailansicht</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick=@Close>
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="row justify-content-start">
+                                <div class="col-4">
+                                    pos1
+                                </div>
+                                <div class="col-4">
+                                    pos2
+                                </div>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="col-4">
+                                    pos3
+                                </div>
+                                <div class="col-4">
+                                    pos4
+                                </div>
+                            </div>
+                            <div class="row justify-content-end">
+                                <div class="col-4">
+                                    pos5
+                                </div>
+                                <div class="col-4">
+                                    pos6
+                                </div>
+                            </div>
+                            <div class="row justify-content-around">
+                                <div class="col-4">
+                                    pos7
+                                </div>
+                                <div class="col-4">
+                                    pos8
+                                </div>
+                            </div>
+                            <div class="row justify-content-between">
+                                <div class="col-4">
+                                    pos9
+                                </div>
+                                <div class="col-4">
+                                    pos10
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    }
+    else
+    {
+        Console.WriteLine("Couldn't find employee");
+    }
 }
 
 @if (ShowBackdrop)
@@ -27,20 +76,26 @@
 
 
 @code {
-    
-    [Parameter]
-    public int  empId { get; set; }
 
-    public int  propId { get; set; }
-    
+    [Parameter]
+    public int EmpId { get; set; }
+
+    public int PropId { get; set; }
+    private Employee TempEmp;
     public bool ShowEdit { get; set; }
     public bool ShowBackdrop { get; private set; }
-    public void Show(int empId, int propId)
+
+    public void Show(int employeeId, int proposalId)
     {
         ShowEdit = !ShowEdit;
         ShowBackdrop = !ShowBackdrop;
+        EmpId = employeeId;
+        PropId = proposalId;
+        if (_proposal.GetProposal(PropId) != null)
+        {
+            TempEmp = _proposal.GetProposal(PropId).Employees.Find(e => e.EmployeeId == EmpId);
+        }
         StateHasChanged();
-
     }
 
     private void Close()
@@ -49,4 +104,6 @@
         ShowBackdrop = !ShowBackdrop;
         StateHasChanged();
     }
+
 }
+
