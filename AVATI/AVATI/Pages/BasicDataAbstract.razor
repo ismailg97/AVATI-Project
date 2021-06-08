@@ -12,6 +12,7 @@
 <CreateBasicData @ref="_createBasicData" Type="@Type"/>
 
 <CreateHardskill @ref="_createHardskill"/>
+<EditHardskill @ref="_editHardskill" OldHardskill="@_hardskillService.GetHardskill(Description)"/>
 
 <h3 class="cap"><b>Skills</b></h3>
 <table class="table table-striped">
@@ -33,7 +34,7 @@
         <tr>
             <td>@softskill</td>
             <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditBasicData(softskill, BasicDataType.SoftSkill)">Edit</button></td>
-            <td class="smalltd"><button class="btn btn-dark" @onclick="() => PopDeleteBasicData(softskill, BasicDataType.SoftSkill)">Delete</button></td>
+            <td class="smalltd"><button class="btn btn-dark" @onclick="() => PopDelete(softskill, BasicDataType.SoftSkill)">Delete</button></td>
         </tr>
     }
 </table>
@@ -59,11 +60,17 @@
         
         <tr class="showskill">
             <td>@hardskill.Description</td>
-            <td class="smalltd"><button class="btn btn-secondary">Edit</button></td>
-            <td class="smalltd"><button class="btn btn-dark">Delete</button></td>
+            <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditHardskill(hardskill.Description)">Edit</button></td>
+            <td class="smalltd">
+                <button class="btn btn-dark" @onclick="() => PopDelete(hardskill.Description, BasicDataType.HardSkill)">Delete</button>
+            </td>
         </tr>
         
-        <div class="hideskill"><ShowUpperCat Hardskill="@hardskill"/><a>@hardskill.Description</a></div>
+        @if(hardskill.Uppercat != null) {
+            <div class="hideskill"><ShowUpperCat Hardskill="@hardskill"/><a>@hardskill.Description</a></div>
+        } else {
+            <div class="hideskill"><a>Keine Kategorisierung</a></div>
+        }
     }
 </table>
 <div> <button class="btn btn-info" @onclick="PopCreateHardskill">Create</button> </div>
@@ -121,7 +128,7 @@
         <tr>
             <td>@field</td>
             <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditBasicData(field, BasicDataType.Field)">Edit</button></td>
-            <td class="smalltd"><button class="btn btn-dark" @onclick="() => PopDeleteBasicData(field, BasicDataType.Field)">Delete</button></td>
+            <td class="smalltd"><button class="btn btn-dark" @onclick="() => PopDelete(field, BasicDataType.Field)">Delete</button></td>
         </tr>
     }
 </table>
@@ -149,7 +156,7 @@
         <tr>
             <td>@role</td>
             <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditBasicData(role, BasicDataType.Role)">Edit</button></td>
-            <td class="smalltd"><button class="btn btn-dark" @onclick="() => PopDeleteBasicData(role, BasicDataType.Role)">Delete</button></td>
+            <td class="smalltd"><button class="btn btn-dark" @onclick="() => PopDelete(role, BasicDataType.Role)">Delete</button></td>
         </tr>
     }
 </table>
@@ -162,6 +169,7 @@
     DeleteConfirmation _deleteConfirmation;
 
     CreateHardskill _createHardskill;
+    EditHardskill _editHardskill;
 
     //0: Filter for Softskill, 1: Filter for Hardskill, 2: Filter for Hardskillcategory
     //3: Filter for Field, 4: Filter for Role
@@ -174,10 +182,7 @@
 
     private bool IsVisible(string description, int index)
     {
-        if (string.IsNullOrEmpty(Filter[index]))
-            return true;
-
-        return description.Contains(Filter[index], StringComparison.OrdinalIgnoreCase);
+        return string.IsNullOrEmpty(Filter[index]) || description.Contains(Filter[index], StringComparison.OrdinalIgnoreCase);
     }
 
     void PopCreateBasicData(BasicDataType type)
@@ -193,7 +198,7 @@
         _editBasicData.Showing();
     }
 
-    void PopDeleteBasicData(string description, BasicDataType type)
+    void PopDelete(string description, BasicDataType type)
     {
         Type = type;
         Description = description;
@@ -205,4 +210,9 @@
         _createHardskill.Showing();
     }
 
+    void PopEditHardskill(string description)
+    {
+        Description = description;
+        _editHardskill.Showing();
+    }
 }

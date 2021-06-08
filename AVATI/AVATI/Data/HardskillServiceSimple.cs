@@ -19,16 +19,16 @@ namespace AVATI.Data
 
             Hardskill aussp = 
                 new Hardskill {Description = "Auszeichnungssprachen", Subcat = new List<Hardskill>(){ html, css },
-                    Uppercat = null, Height = 1};
+                    Uppercat = null, Height = 1, IsHardskill = false};
             Hardskill objWeb = 
                 new Hardskill {Description = "objektorientierte Web-Programmierung", Subcat = new List<Hardskill>(){ javascript }, 
-                    Uppercat = null, Height = 1};
+                    Uppercat = null, Height = 1, IsHardskill = false};
             Hardskill fronEnd = 
                 new Hardskill {Description = "Front-End", Subcat = new List<Hardskill>(){ aussp, objWeb }, 
-                    Uppercat = null, Height = 2};
+                    Uppercat = null, Height = 2, IsHardskill = false};
             Hardskill webent = 
                 new Hardskill {Description = "Webentwicklung", Subcat = new List<Hardskill>(){ fronEnd },
-                    Uppercat = null, Height = 3};
+                    Uppercat = null, Height = 3, IsHardskill = false};
             javascript.Uppercat = objWeb;
             css.Uppercat = aussp;
             html.Uppercat = aussp;
@@ -80,21 +80,12 @@ namespace AVATI.Data
 
         public bool CreateHardskillCategory(Hardskill hardskillcat)
         {
-            
             hardskillcat.Uppercat?.Subcat.Add(hardskillcat);
+            
             foreach (var skill in hardskillcat.Subcat)
             {
                 skill.Uppercat = hardskillcat;
                 hardskillcat.Uppercat?.Subcat.Remove(skill);
-            }
-
-            if (hardskillcat.Uppercat != null)
-            {
-                foreach (var skill in hardskillcat.Uppercat.Subcat)
-                {
-                    hardskillcat.Uppercat.Subcat.Remove(skill);
-                    skill.Uppercat = null;
-                }
             }
 
             _allHardskillCat.Add(hardskillcat);

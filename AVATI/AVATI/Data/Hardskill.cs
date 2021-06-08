@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AVATI.Data
 {
@@ -19,21 +20,22 @@ namespace AVATI.Data
         [NotNull]
         public int Height { get; set; }
 
+        public bool IsHardskill { get; set; } = true;
+
         //returns the root of the tree in which the object is contained
         public Hardskill GetRoot()
         {
             return Uppercat == null ? this : Uppercat.GetRoot();
         }
 
-        //returns false if the so called "hardskill" is a hardskill category
-        public bool IsHardskill()
+        public bool ContainsHardskills()
         {
-            return Height == 0;
+            return Subcat != null && Subcat.Any() && Subcat[0].IsHardskill;
         }
 
         public bool IsRoot()
         {
-            return (Height != 0 && Uppercat == null);
+            return (!IsHardskill && Uppercat == null);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿@using AVATI.Data
 
 @inject IBasicDataService _basicDataService
+@inject IHardskillService _hardskillService
 @inject NavigationManager _navigationManager
 
 
@@ -19,9 +20,13 @@
                 <div class="modal-body">
                     Sind Sie sicher, dass die Branche "<b>@Description</b>" gelöscht werden soll?
                 </div>
-            } else {
+            } else if (Type == BasicDataType.Role) {
                 <div class="modal-body">
                     Sind Sie sicher, dass die Rolle "<b>@Description</b>" gelöscht werden soll?
+                </div>
+            } else {
+                <div class="modal-body">
+                    Sind Sie sicher, dass der Hard Skill "<b>@Description</b>" gelöscht werden soll?
                 </div>
             }
             <div class="modal-footer">
@@ -57,8 +62,11 @@
             case BasicDataType.Field:
                 _basicDataService.DeleteField(Description);
                 break;
-            default:
+            case BasicDataType.Role:
                 _basicDataService.DeleteRole(Description);
+                break;
+            default:
+                _hardskillService.DeleteHardskill(Description);
                 break;
         }
         Showing();

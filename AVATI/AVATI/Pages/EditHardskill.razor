@@ -3,17 +3,18 @@
 @inject IHardskillService _hardskillService
 @inject NavigationManager _navigationManager
 
+
 <div class="modal @(_show ? "fade show" : "" )" id="myModal" style=" display: @(_show ? "block" : "none");">
                <div class="modal-dialog">
                  <div class="modal-content">
                    <div class="modal-header">
-                     <h4 class="modal-title">Erstelle ein Hardskill</h4>
+                     <h4 class="modal-title">Ändere den Hardskill</h4>
                      <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
                    </div>
-                   <EditForm Model="@_hardskill" OnValidSubmit="Create">
+                   <EditForm Model="@_newHardskill" OnValidSubmit="Update">
                      <div class="modal-body">
                        <label class="form-label">Bezeichnung:</label>
-                       <InputText class="form-control" @bind-Value="@_hardskill.Description"/>
+                       <InputText class="form-control" @bind-Value="@_newHardskill.Description"/>
                        <label class="form-label">Oberkategorie:</label>
                        <InputSelect class="form-control" @bind-Value="@Description">
                          <option value="">Keine Oberkategorie</option>
@@ -39,18 +40,21 @@
 @code {
   private bool _show = false;
 
+  [Parameter] 
+  public Hardskill OldHardskill{ get; set; }
+
   string Description { get; set; }
 
-  private Hardskill _hardskill = new();
+  private Hardskill _newHardskill = new();
 
-  private void Create()
+  private void Update()
   {
-    _hardskill.Height = 0;
-    _hardskill.Subcat = null;
+    _newHardskill.Height = 0;
+    _newHardskill.Subcat = null;
     
-    _hardskill.Uppercat = string.IsNullOrEmpty(Description) ? null : _hardskillService.GetHardskillCategory(Description);
+    _newHardskill.Uppercat = string.IsNullOrEmpty(Description) ? null : _hardskillService.GetHardskillCategory(Description);
     
-    _hardskillService.CreateHardskill(_hardskill);
+    _hardskillService.UpdateHardskill(_newHardskill, OldHardskill);
     Showing();
     _navigationManager.NavigateTo(_navigationManager.Uri, true);
   }

@@ -4,6 +4,7 @@
     {
         Role,
         SoftSkill,
-        Field
+        Field,
+        HardSkill
     }
 }

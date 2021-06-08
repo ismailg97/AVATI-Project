@@ -30,6 +30,7 @@ namespace AVATI
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddBlazorContextMenu();
             services.AddSingleton<SearchService>();
             services.AddSingleton<IHardskillService, HardskillServiceSimple>();
             services.AddSingleton<IBasicDataService, BasicDataServiceSimple>();

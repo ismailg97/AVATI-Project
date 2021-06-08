@@ -3,7 +3,6 @@
 @inject IBasicDataService _basicDataService
 @inject NavigationManager _navigationManager
 
-
 <div class="modal @(_show ? "fade show" : "" )" id="myModal" style=" display: @(_show ? "block" : "none");">
                <div class="modal-dialog">
                   <div class="modal-content">
@@ -43,7 +42,7 @@
 
   private bool _show = false;
 
-  private string NewDescription { get; set; } 
+  private string NewDescription { get; set; }
 
   private void Update()
   {

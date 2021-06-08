@@ -4,10 +4,6 @@
 }
 *{margin:0;padding: 0;}
 
-a{
-    color: black;
-}
-
 h1 {
     color:#FA9A39;
 }
@@ -72,16 +68,43 @@ ul.tree>li:first-child::after {
     border: 1px #ccc solid;
     border-radius: 5px;
     padding:2px 5px;
+    color: black;
 }
 
-.tree li a:hover, .tree li a:hover+ul li a,
-.tree li a:focus, .tree li a:focus+ul li a {
-    background: #ccc; color: #000; border: 1px solid #000;
+
+
+.button {
+    color: white;
+    width: 20px;
+    font-size: 12px;
+    height: 20px;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0;
 }
 
-.tree li a:hover+ul li::after, .tree li a:focus+ul li::after,
-.tree li a:hover+ul li::before, .tree li a:focus+ul li::before
-.tree li a:hover+ul::before, .tree li a:focus+ul::before
-.tree li a:hover+ul ul::before, .tree li a:focus+ul ul::before{
-    border-color:  #000; /*connector color on hover*/
+div{
+    margin-top: 15px;
+}
+
+div::before{
+    margin-top: 20px;
+    content: "";
+    position: absolute;
+    top:13px;
+    left:10px;
+    border-left:1px solid #ccc;
+    border-radius:0 0 0 0px;
+    width:15px;
+    height:15px;
+}
+
+.green{
+    background-color: green;
+    color: white;
+}
+
+.red{
+    background-color: red;
+    color: white;
 }
