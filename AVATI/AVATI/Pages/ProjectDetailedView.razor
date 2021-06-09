@@ -1,0 +1,81 @@
+﻿@page "/Projektübersicht/ProjectDetailedView"
+@page "/Projektübersicht/ProjectDetailedView/{ID:int}"
+@using AVATI.Data
+
+@inject ProjectServiceSimple _projectServiceSimple
+
+<div class="form-group">
+    <div class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th style="width: 10%">Projekttitel</th>
+            <th>Projektbeschreibung</th>
+            <th style=" width: 10%">Branchen</th>
+            <th style="width: 10%">Mitarbeiter</th>
+            <th style="width: 10%">Projektlaufzeit</th>
+            <th style="width: 10%">Projekaktivitäten</th>
+            <th style="width: 10%">Projektzweck</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>@_project.Projecttitel</td>
+            <td style="height: 100%">@_project.Projectdescription</td>
+            <td style="height: 100%">
+                <div class="col-form-label">
+                    <ul>
+                        @foreach (var field in _project.fields)
+                        {
+                            <li>
+                                @field
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </td>
+            <td>
+                <div class="col-form-label">
+                    <ul>
+                        @foreach (var empl in _project.Employees)
+                        {
+                            <li>
+                                @empl
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </td>
+            <td>@_project.Runtime</td>
+            <td style="height: 100%">@_project.Projectactivities</td>
+            <td>
+                <div class="col-form-label">
+                    <ul>
+                        @foreach (var purpose in _project.Projectpurpose)
+                        {
+                            <li>
+                                @purpose
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </div>
+
+</div>
+
+
+@code {
+
+    [Parameter]
+    public int ID { get; set; }
+
+    public Project _project { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _project = _projectServiceSimple.GetProject(ID);
+    }
+
+}

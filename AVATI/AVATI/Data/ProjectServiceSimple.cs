@@ -94,17 +94,17 @@ namespace AVATI.Data
         {
             Project eins = new Project
             {
-                fields = new List<string>(), Projectdescription = "iwasyallah", Projectpurpose = new List<string>(), Projecttitel = "goodbye",
+                fields = new List<string>(), Projectdescription = "iwasyallah", Employees = new List<Employee>(), Projectpurpose = new List<string>(), Projecttitel = "goodbye",
                 Runtime = DateTime.Today
             };
             Project zwei = new Project
             {
-                fields = new List<string>(), Projectdescription = "zelda", Projectpurpose = new List<string>(), Projecttitel = "link",
+                fields = new List<string>(), Projectdescription = "zelda", Employees = new List<Employee>(), Projectpurpose = new List<string>(), Projecttitel = "link",
                 Runtime = DateTime.Today
             };
             Project drei = new Project
             {
-                fields = new List<string>(), Projectdescription = "bladerunner", Projectpurpose = new List<string>(), Projecttitel = "better than star wars",
+                fields = new List<string>(), Projectdescription = "bladerunner", Employees = new List<Employee>(), Projectpurpose = new List<string>(), Projecttitel = "better than star wars",
                 Runtime = DateTime.Today
             };
             _projects = new List<Project>();
@@ -112,6 +112,7 @@ namespace AVATI.Data
             AddProject(zwei);
             AddProject(drei);
         }
+        
         public List<Project> SearchProject(List<Project> projects, string input)
         {
             Searching = new List<Project>();

@@ -18,6 +18,7 @@
             <div class="modal-header">
                 <div class="body header">
                     <h3>Auswahl der hinzufügbaren Branchen</h3>
+                    <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
                     <div class="modal-body overflow-auto">
                         <div class="form-group col row overflow-auto mr-3 col-9" style="height: 250px">
                             @foreach (var field in AttributestoSearch)
@@ -34,7 +35,7 @@
                             @foreach (var field in AttributestoDisplay)
                             {
                                 <div class="mb-3 col-sm">
-                                    <button type="button" class="btn btn-primary btn-lg btn-block" @onclick=@(() => { UpdateSearch(field); })>@field</button>
+                                    <button type="button" style="width: " class="btn btn-primary btn-lg btn-block" @onclick=@(() => { UpdateSearch(field); })>@field</button>
                                 </div>
                             }
                         </div>
