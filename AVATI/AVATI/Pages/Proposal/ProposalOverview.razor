@@ -1,8 +1,18 @@
 ﻿@page "/ProposalOverview"
 @using System.ComponentModel.DataAnnotations
 @using System.Diagnostics.CodeAnalysis
+@using System.IO
 @using System.Linq
 @using AVATI.Data
+@using BlazorDownloadFile
+@using DocumentFormat.OpenXml
+@using DocumentFormat.OpenXml.InkML
+@using DocumentFormat.OpenXml.Office2010.Excel
+@using DocumentFormat.OpenXml.Packaging
+@using DocumentFormat.OpenXml.Wordprocessing
+@using Table = DocumentFormat.OpenXml.InkML.Table
+@inject IBlazorDownloadFileService _blazorDownloadFileService
+
 @inject IProposalService _proposal
 @inject NavigationManager _navManager
 @inject SearchService _search
@@ -20,7 +30,7 @@
                     <div class="card-header text-center">
                         <p class="font-weight-bolder">Angebot: @proposal.ProposalId.ToString()</p>
                         <p>
-                            <button class="btn btn-outline-dark btn-sm">Dokument erzeugen</button>
+                            <button class="btn btn-outline-dark btn-sm" @onclick=@(async () => {await CreateDocument(proposal.ProposalId); })>Dokument erzeugen</button>
                             <button class="btn btn-outline-success btn-sm ml-2">Projekt erzeugen</button>
                         </p>
                         <button class="btn btn-outline-secondary btn-sm" @onclick=@(() => { ShowEdit(proposal.ProposalId); })> Editieren</button>
@@ -254,5 +264,30 @@
             }
         }
     }
+    public async Task CreateDocument(int id)
+    {
+        using (MemoryStream mem = new MemoryStream())
+        {
+            using (WordprocessingDocument wordDocument =
+                WordprocessingDocument.Create(mem, WordprocessingDocumentType.Document))
+            {
+    //Grundstruktur des Dokuments erzeugen (Document und Rumpf des Dokuments)
+                MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
+                Document document1 = new Document();
+                Body body1 = document1.AppendChild(new Body());
+    //Document zeilenweise befüllen
+                Paragraph para1 = body1.AppendChild(new Paragraph());
+                Run run1 = para1.AppendChild(new Run());
+                run1.AppendChild(new Text("Projekt: " + id.ToString()));
+               
+    //Das erstellte Dokument übergeben
+                mainPart.Document = document1;
+            }
+
+
+            var task = await _blazorDownloadFileService.DownloadFile("test.docx", mem, "application/octet-stream");
+        }
+    }
+
     
 }

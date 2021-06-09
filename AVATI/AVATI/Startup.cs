@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AVATI.Data;
 using AVATI.Pages;
+using BlazorDownloadFile;
 
 namespace AVATI
 {
@@ -43,6 +44,7 @@ namespace AVATI
             services.AddSingleton<IProposalService, ProposalService>();
             services.AddSingleton<SearchService>();
             services.AddSingleton<IEmployeeService, EmployeeServiceSimple>();
+            services.AddBlazorDownloadFile();
 
         }
 
