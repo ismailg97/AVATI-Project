@@ -6,7 +6,7 @@
 @inject IProjektService _projektService
 @inject IEmployeeService _employeeService
 
-<h3>Projektübersicht /  </h3>
+<h3>Projektübersicht</h3>
 
 <table class="table align-middle">
     
@@ -14,7 +14,7 @@
         <th scope="col">Projekttitel</th>
         <th scope="col">Projektbeschreibung</th>
         <th scope="col">Branchen</th>
-        <th scope="col"><button class="btn btn-danger">Hinzufügen</button></th>
+        <th scope="col"></th>
     </tr>
     @foreach (var project in _employeeService.GetEmployeeProfile(Id).Projects)
     {
@@ -39,7 +39,7 @@
     
 </table>
 <a href="/Projektübersicht/Projektedit">
-    <button type="button" class="btn btn-secondary">Edit/Update</button>
+    <button type="button" class="btn btn-danger">Create</button>
 </a>
 
 @code

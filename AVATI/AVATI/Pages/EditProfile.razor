@@ -1,223 +1,384 @@
 ﻿@page "/profile/update"
 @page "/profile/update/{id:int}"
 @using AVATI.Data
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@inject IProjektService _projektService
 @inject IEmployeeService _employee
 @inject NavigationManager _navManager
 
-<link href="css/EditProfile.razor.css" rel="stylesheet"/>
+<link href="css/Profile.razor.css" rel="stylesheet"/>
 <h3>Profil</h3>
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <!------ Include the above in your HEAD tag ---------->
-@(Emp = _employee.GetEmployeeProfile(Id))
-<div>
+<!------ Gets Employee with the same Id as the Router Parameter ---------->
 <EditForm Model="Emp" OnValidSubmit="@EditProfiles">
-    <div class="container emp-profile">
-        <div class="row">
-            <div class="col-md-4">
-                <!------ Profile Image ---------->
-                <div class="profile-img">
-                    <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" style="margin-left: -45px" width="300" height="200" alt=""/>
-                    <div class="file btn btn-lg btn-primary" style="margin-top: 100px; margin-left: -30px">
-                        Change Photo
-                        <input type="file" name="file"/>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="profile-head">
-                    <!------ Employee Name ---------->
-                    <div class="form-group">
-                        <div class="col-md-6">
-                            <input type="text" class="form-control" placeholder="@Emp.FirstName">
-                            <input type="text" class="form-control" placeholder="@Emp.LastName">
-                        </div>
-                    </div>
-                    <!------ Job ---------->
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Programmierer">
-                    </div>
-                    <!------ Rate Card Level ---------->
-                    <div class="row">
-                        <div class="col">
-                            <p class="proile-rating">RateCard </p>
-                            <select class="form-control">
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
-                                <option>4</option>
-                                <option>5</option>
-                                <option>6</option>
-                                <option>7</option>
-                            </select>
-                        </div>
-                    </div>
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">About</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <!------ Confirm Button ---------->
-            <div class="col-md-2">
-                <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Bestätigen"/>
-            </div>
-        </div>
-        <!------ Skills ---------->
-        <div class="row">
-            <div class="col-md-4">
-                <div class="row">
-                    <div class="col">
-                        <label>Hard Skills</label>
-                        <select class="form-control">
-                            <option>Java</option>
-                            <option>C#</option>
-                            <option>Python</option>
-                        </select>
-                    </div>
-                    <div class="col">
-                        <label>Skill Level</label>
-                        <select class="form-control">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row">
-                    <input type="submit" class="profile-edit-btn" name="btnAddMore" value="+"/>
-                    <label style="margin-top: 20px">Soft Skills</label>
-                    <select class="form-control">
-                        <option>Teamleitung</option>
-                        <option>Sonstiges</option>
-                    </select>
-                    <input type="submit" class="profile-edit-btn" name="btnAddMore" value="+"/>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <label >Rollen</label>
-                        <select class="form-control">
-                            <option>Agile Coach</option>
-                            <option>UI/UX-Designer</option>
-                            <option>Product Owner</option>
-                        </select>
-                        <input type="submit" class="profile-edit-btn" name="btnAddMore" value="+"/>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-8">
-                <div class="tab-content profile-tab" id="myTabContent">
-                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label style="font-weight:bold">Nutzer ID</label>
-                            </div>
-                            <div class="col-md-6">
-                                <p style="color:black">@Emp.EmployeeId</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label style="margin-top: 20px">Branchenwissen</label>
-                            </div>
-                            <div class="col-md-6">
-                                <select class="form-control">
 
-                                    <option>field1</option>
-                                    <option>field2</option>
-                                    <option>...</option>
-                                </select>
-                                <input type="submit" class="profile-edit-btn" style="width: 50%" name="btnAddMore" value="+"/>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label style="font-weight:bold">Email</label>
-                            </div>
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="max.mustermann@mail.com">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label style="font-weight:bold">Telefonnummer</label>
-                            </div>
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="1234567890">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label style="margin-top: 20px">Relevante Berufserfahrung</label>
-                            </div>
-                            <div class="col-md-6">
-                                <select class="form-control">
-                                    <option>Webdesign</option>
-                                    <option>Programming</option>
-                                    <option>...</option>
-                                </select>
-                                <input type="submit" class="profile-edit-btn" name="btnAddMore" style="width: 50%" value="+"/>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <table class="table table-striped">
-                                <tr>
-                                    <th>Sprache</th>
-                                    <th>Sprachniveau</th>
-                                    <th>
-                                        <button class="btn btn-secondary">Bearbeiten</button>
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <td>Englisch</td>
-                                    <td>B2</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>Deutsch</td>
-                                    <td>Muttersprache</td>
-                                    <td></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="row">
-                            <table class="table table-striped">
-                                <tr>
-                                    <th>Projekt</th>
-                                    <th>Projekttätigkeit</th>
-                                    <th>
-                                        <a href="/employeeProject/@Emp.EmployeeId">
-                                            <button class="btn btn-secondary">Bearbeiten</button>
-                                        </a>
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <td>Acquiring a new or modified data system</td>
-                                    <td>Design</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>Xitaso Seite</td>
-                                    <td>Programming</td>
-                                    <td></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+
+<div class="row">
+    <!------ Change Profile Image ---------->
+    <div class="col-md-4">
+        <div style="" class="profile-img">
+            <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" style="margin-left: -45px" width="300" height="200" alt=""/>
+            <div class="file btn btn-lg btn-primary" style="margin-top: 50px; margin-left: -30px">
+                Change Photo
+                <input type="file" name="file"/>
             </div>
         </div>
     </div>
-</EditForm>
+    <div class="col-md-6">
+        <div class="profile-head">
+            
+            <!------ Name ---------->
+            <div class="row-md-4 mb-3">
+                <label for="validationServer01">First name</label>
+                <input type="text" class="form-control" @bind-value="Emp.FirstName" placeholder="@Emp.FirstName" required>
+            </div>
+            <div class="row-md-4 mb-3">
+                <label for="validationServer02">Last name</label>
+                <input type="text" class="form-control" @bind-value="Emp.LastName" placeholder="@Emp.LastName" required>
+            </div>
+        </div>
+    </div>
+
+    <!------ Edit Profile Button ---------->
+    <div class="col-md-2">
+        <a href="/profile/update/@Emp.EmployeeId">
+            <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Bestätigen"/>
+        </a>
+    </div>
 </div>
 
+
+<form>
+<!------ Employment Time ---------->
+<div class="form-row">
+    <div class="col-md-6 mb-3">
+        <label for="validationServer03">Beschäftigungszeit</label>
+        <input type="date" class="form-control" @bind-value="@Emp.EmploymentTime" placeholder="max.mustermann@mail.com" required>
+        <div class="invalid-feedback">
+            Please provide a valid city.
+        </div>
+    </div>
+
+    <!------ RC-Level ---------->
+    <div class="col-md-3 mb-3">
+        <label for="validationServer04">Rate-Card Level</label>
+        <select class="form-control">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+        </select>
+    </div>
+</div>
+
+<!------ Skills ---------->
+<div class="form-col">
+
+    <!------ Hard Skills ---------->
+    <div class="form-row">
+        <div class="card-body text-center">
+            <div class="form-row">
+                <div class="col">
+                    <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollHardSkill(); })">Hard Skills</label>
+                </div>
+                <div class="col">
+                    <a href="">
+                        <button class="btn btn-secondary">
+                            Bearbeiten
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="card-text @(_booleanHardSkill ? "" : "collapse")">
+                <table class="table table-striped">
+                    <tr>
+                        <th>Hard Skills</th>
+                    </tr>
+                    @foreach (var hardskill in Emp.Hardskills)
+                    {
+                        <tr>
+                            <td>@hardskill.Description</td>
+
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+    <!------ Soft Skills ---------->
+    <div class="form-row">
+        <div class="card-body text-center">
+            <div class="form-row">
+                <div class="col">
+                    <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollSoftSkill(); })">Soft Skills</label>
+                </div>
+                <div class="col">
+                    <a href="">
+                        <button class="btn btn-secondary">
+                            Bearbeiten
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="card-text @(_booleanSoftSkill ? "" : "collapse")">
+                <table class="table table-striped">
+                    <tr>
+                        <th>Soft Skills</th>
+                    </tr>
+                    @foreach (var softskill in Emp.Softskills)
+                    {
+                        <tr>
+                            <td>@softskill</td>
+
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!------ Rollen ---------->
+    <div class="form-row">
+        <div class="card-body text-center">
+            <div class="form-row">
+                <div class="col">
+                    <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollRole(); })">Rollen</label>
+                </div>
+                <div class="col">
+                    <a href="">
+                        <button class="btn btn-secondary">
+                            Bearbeiten
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="card-text @(_booleanRole ? "" : "collapse")">
+                <table class="table table-striped">
+                    <tr>
+                        <th>Roles</th>
+                    </tr>
+                    @foreach (var roles in Emp.Roles)
+                    {
+                        <tr>
+                            <td>@roles</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+ <div class="form-col">
+ <!------ Fields ---------->
+  <div class="form-row">
+    <div class="card-body text-center">
+        <div class="form-row">
+            <div class="col">
+                <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollField(); })">Branchenwissen</label>
+            </div>
+            <div class="col">
+                <a href="">
+                    <button class="btn btn-secondary">
+                        Bearbeiten
+                    </button>
+                </a>
+            </div>
+        </div>
+        <div class="card-text @(_booleanField ? "" : "collapse")">
+            <ul class="list-group list-group-flush text-left">
+                @if (Emp.Field.Any())
+                {
+                    foreach (var field in Emp.Field)
+                    {
+                        <li class="list-group-item text-center">
+                            @field
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li>
+
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+ <!------ Relevant Work Experience ---------->
+ <div class="form-row">
+     <div class="card-body text-center">
+         <div class="form-row">
+             <div class="col">
+                 <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollWork(); })">Relevante Berufserfahrung</label>
+             </div>
+             <div class="col">
+                 <a href="">
+                     <button class="btn btn-secondary">
+                         Bearbeiten
+                     </button>
+                 </a>
+             </div>
+         </div>
+         <div class="card-text @(_booleanWork ? "" : "collapse")">
+             <ul class="list-group list-group-flush text-left">
+                 @if (Emp.RelevantWorkExperience.Any())
+                 {
+                     foreach (var work in Emp.RelevantWorkExperience)
+                     {
+                         <li class="list-group-item border-dark bg-light font-weight-bold text-black text-center">
+                             @work
+                         </li>
+                     }
+                 }
+                 else
+                 {
+                     <li>
+
+                     </li>
+                 }
+             </ul>
+         </div>
+     </div>
+ </div>
+ 
+ <!------ Languages ---------->
+  <div class="form-row">
+    <div class="card-body text-center">
+        <div class="form-row">
+            <div class="col">
+                <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollLang(); })">Sprachen</label>
+            </div>
+            <div class="col">
+                <a href="">
+                    <button class="btn btn-secondary">
+                        Bearbeiten
+                    </button>
+                </a>
+            </div>
+        </div>
+        <div class="card-text @(_booleanLang ? "" : "collapse")">
+            <table align="left" style="text-align: left" class="table align-middle">
+                <tr>
+                    <th class="text-left">Sprache</th>
+                    <th class="text-center">Sprachniveau</th>
+                </tr>
+                @if (Emp.Language.Any())
+                {
+                    foreach (var lang in Emp.Language)
+                    {
+                        <tr>
+                            <td class="text-left">@lang.Item1</td>
+                            <td class="text-center">@lang.Item2</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+<!------ Projects ---------->
+<div class="form-row">
+    <div class="card-body text-center">
+        <div class="form-row">
+            <div class="col">
+                <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollProj(); })">Projekte</label>
+            </div>
+            <div class="col">
+                <a href="/employeeProject/@Emp.EmployeeId">
+                    <button class="btn btn-secondary">
+                        Bearbeiten
+                    </button>
+                </a>
+            </div>
+        </div>
+        <div class="card-text @(_booleanProj ? "" : "collapse")">
+            <table align="left" style="text-align: left" class="table align-middle">
+                <tr>
+                    <th class="text-left">Projekt</th>
+                    <th class="text-center">Projekttätigkeit</th>
+                </tr>
+
+                @if (Emp.Projects.Any())
+                {
+                    foreach (var project in Emp.Projects)
+                    {
+                        <tr>
+                            <td class="text-left">@project.Projecttitel</td>
+                            <td class="text-center">Projecttätigkeit</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                }
+
+            </table>
+        </div>
+    </div>
+</div>
+</form>
+</EditForm>
+
+
+
+
 @code {
+
 
     [Parameter]
     public int Id { get; set; }
 
-    public Employee Emp = new Employee()
+
+    protected override void OnInitialized()
+    {
+        Emp = _employee.GetEmployeeProfile(Id);
+    }
+
+
+    public void EditProject()
+    {
+        _navManager.NavigateTo("/employeeProject/@Emp.EmployeeId");
+    }
+
+
+    public void EditProfiles()
+    {
+        _employee.EditEmployeeProfile(Emp);
+        _navManager.NavigateTo("https://localhost:5001/");
+    }
+
+
+    private bool _booleanLang = false;
+    private bool _booleanProj = false;
+    private bool _booleanField = false;
+    private bool _booleanHardSkill = false;
+    private bool _booleanSoftSkill = false;
+    private bool _booleanRole = false;
+    private bool _booleanWork = false;
+    //private bool _booleanName;
+
+
+    Employee Emp = new Employee()
     {
         FirstName = "Ismail", LastName = "Gürsöz", Roles = new List<string>() {"Programming"}, Hardskills = new List<Hardskill>()
         {
@@ -227,15 +388,59 @@
         Softskills = new List<string>() {"Teamleading"}
     };
 
-    public void EditProject()
+
+    public void CollLang()
     {
-        _navManager.NavigateTo("/employeeProject/@Emp.EmployeeId");
+        _booleanLang = !_booleanLang;
     }
 
-    public void EditProfiles()
+
+    public void CollProj()
     {
-        Emp.EmployeeId = Id;
-        _employee.EditEmployeeProfile(Emp);
+        _booleanProj = !_booleanProj;
+    }
+
+
+    public void CollField()
+    {
+        _booleanField = !_booleanField;
+    }
+
+
+    public void CollHardSkill()
+    {
+        _booleanHardSkill = !_booleanHardSkill;
+    }
+
+
+    public void CollSoftSkill()
+    {
+        _booleanSoftSkill = !_booleanSoftSkill;
+    }
+
+
+    public void CollRole()
+    {
+        _booleanRole = !_booleanRole;
+    }
+
+
+    public void CollWork()
+    {
+        _booleanWork = !_booleanWork;
+    }
+
+
+    public void Check()
+    {
+        var regexItem = new Regex("^[a-zA-Z]*$");
+        if (!regexItem.IsMatch(Emp.FirstName) || !regexItem.IsMatch(Emp.LastName))
+        {
+            //_booleanName = false;
+            return;
+        }
+
+        EditProfiles();
     }
 
 }
