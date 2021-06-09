@@ -118,6 +118,12 @@ th, td {
 
 
 
+#title:hover {
+    border: none;
+    color: #000;
+    background:#fff;
+}
+
 
 
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 
@@ -42,6 +43,15 @@ namespace AVATI.Data
                     {
                         "Design",
                         "Test"
+                    },
+                    Projects = new List<Project>()
+                    {
+                        new Project() {Projecttitel = "Auto 3.0",Projectdescription = "Irgendwas mit Autos", ProjectID = 3, fields = new List<string>() {"Automobil","Smtn"}},
+                        new Project() {Projecttitel = "BuildBsp",Projectdescription = "Was weiss ich", ProjectID = 4, fields = new List<string>(){"Bildung"}}
+                    },
+                    Language = new List<Tuple<string, LanguageLevel>>()
+                    {
+                       
                     }
                 },
 
@@ -129,6 +139,11 @@ namespace AVATI.Data
                     {
                         new Project() {Projecttitel = "Auto 3.0",Projectdescription = "Irgendwas mit Autos", ProjectID = 3, fields = new List<string>() {"Automobil","Smtn"}},
                         new Project() {Projecttitel = "BuildBsp",Projectdescription = "Was weiss ich", ProjectID = 4, fields = new List<string>(){"Bildung"}}
+                    },
+                    Language = new List<Tuple<string, LanguageLevel>>()
+                    {
+                        Tuple.Create<string,LanguageLevel>("Englisch", LanguageLevel.B2),
+                        Tuple.Create<string,LanguageLevel>("Deutsch",LanguageLevel.A1)
                     }
                 },
                 new Employee()
