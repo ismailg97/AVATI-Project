@@ -74,14 +74,30 @@ ul.tree>li:first-child::after {
     padding:2px 5px;
 }
 
-.tree li a:hover, .tree li a:hover+ul li a,
-.tree li a:focus, .tree li a:focus+ul li a {
-    background: #ccc; color: #000; border: 1px solid #000;
+.btn-secondary, .btn-primary{
+    padding: 3px;
 }
 
-.tree li a:hover+ul li::after, .tree li a:focus+ul li::after,
-.tree li a:hover+ul li::before, .tree li a:focus+ul li::before
-.tree li a:hover+ul::before, .tree li a:focus+ul::before
-.tree li a:hover+ul ul::before, .tree li a:focus+ul ul::before{
-    border-color:  #000; /*connector color on hover*/
+.hardskill:hover {
+    background-color: white;
+    color: #c2364b !important;
+    border-color: #c2364b !important;
+}
+
+.cat:hover {
+    background-color: white;
+    color: #7a212e !important;
+    border-color: #7a212e !important;
+}
+
+.hardskill{
+    background-color: #c2364b;
+    color: white !important;
+    border-color: #c2364b !important;
+}
+
+.cat {
+    background-color: #7a212e;
+    color: white !important;
+    border-color: #7a212e !important;
 }

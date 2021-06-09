@@ -4,10 +4,6 @@
 }
 *{margin:0;padding: 0;}
 
-h1 {
-    color:#FA9A39;
-}
-
 p { padding-bottom:50px;}
 
 .content {
@@ -68,19 +64,51 @@ ul.tree>li:first-child::after {
     border: 1px #ccc solid;
     border-radius: 5px;
     padding:2px 5px;
-    color: black;
 }
 
-
-
-.button {
+.plus, .check, .stop {
     color: white;
     width: 20px;
     font-size: 12px;
     height: 20px;
     text-align: center;
     vertical-align: middle;
+    border-radius: 5px;
     padding: 0;
+}
+
+.plus{
+    font-weight: bold;
+    background: #5cb85c;
+    border-color: #5cb85c;
+    box-shadow: #5cb85c;
+    border-left: #5cb85c;
+    border-right: #5cb85c;
+}
+
+.check {
+    background: #0275d8;
+    border-color: #0275d8;
+    box-shadow: #0275d8;
+    border-left: #0275d8;
+    border-right: #0275d8;
+}
+
+.stop {
+    font-weight: bold;
+    background: #d9534f;
+    border-color: #d9534f;
+    box-shadow: #d9534f;
+    border-left: #d9534f;
+    border-right: #d9534f;
+}
+
+.plus:active, .check:active, .stop:active {
+    outline: none;
+}
+
+.plus:focus, .check:focus, .stop:focus {
+    outline: none;
 }
 
 div{
@@ -99,12 +127,30 @@ div::before{
     height:15px;
 }
 
-.green{
-    background-color: green;
-    color: white;
+.btn-secondary, .btn-primary{
+    padding: 3px;
 }
 
-.red{
-    background-color: red;
-    color: white;
+.hardskill:hover {
+    background-color: white;
+    color: #c2364b !important;
+    border-color: #c2364b !important;
+}
+
+.cat:hover {
+    background-color: white;
+    color: #7a212e !important;
+    border-color: #7a212e !important;
+}
+
+.hardskill{
+    background-color: #c2364b;
+    color: white !important;
+    border-color: #c2364b !important;
+}
+
+.cat {
+    background-color: #7a212e;
+    color: white !important;
+    border-color: #7a212e !important;
 }
