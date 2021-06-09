@@ -8,6 +8,7 @@
     position: fixed;
     width: 100%;
     transition: 0.5s;
+    z-index: +1;
 }
 .sidebar {
     height: 100%;
@@ -40,6 +41,8 @@
     padding-bottom: 1rem;
 }
 .content {
+    
+    text-align: center;
     padding-top: 100px;
     transition: 0.5s;
 }
@@ -53,17 +56,22 @@
 .brand {
     color: white;
     font-size: 1.5rem;
+}
+#brandCollapsed {
     margin-left: 30px;
 }
-.aboutOpen {
+#brandOpen {
+    margin-left: 30px;
+}
+.about {
     color: white;
     font-size: 1.3rem;
+}
+#aboutOpen {
     margin-left: 570px;
 }
-.aboutCollapsed {
-    color: white;
-    font-size: 1.3rem;
-    margin-left: 680px;
+#aboutCollapsed {
+    margin-left: 700px;
 }
 .nav-item ::deep a.active {
     background-color: rgba(255,255,255,0.2);
@@ -105,6 +113,11 @@
 .logo {
     width: 277px;
     height: 70px;
+}
+#logoCollapsed {
+    margin-left: 575px;
+}
+#logoOpen {
     margin-left: 535px;
 }
 /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
