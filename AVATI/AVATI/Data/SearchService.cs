@@ -12,41 +12,42 @@ namespace AVATI.Data
         public IEmployeeService EmployeeService { get; set; }
 
         public Employee Employee { get; set; }
-        public int  Priority { get; set; }
+        public int Priority { get; set; }
 
-        public bool PerfectMatch { get; set;}
+        public bool PerfectMatch { get; set; }
 
         public bool TableIsVisible = false;
+
         //These are the attributes the user can choose from in the Search-Mask
         public List<string> SoftskillsToDisplay { get; set; } = new List<string>();
         public List<string> RolesToDisplay { get; set; } = new List<string>();
         public List<Hardskill> HardskillsToDisplay { get; set; } = new List<Hardskill>();
-        
+
         //These are the for the search selected attributes
         public string EmployeeName { get; set; }
         public List<string> SoftskillsToSearch { get; set; } = new List<string>();
         public List<string> RolesToSearch { get; set; } = new List<string>();
         public List<Hardskill> HardskillsToSearch { get; set; } = new List<Hardskill>();
-        
+
         //These get initialized in the EmployeeSearch Page and wont be changed
-        
-        public List<string> Softskills { get; set; }
-        public List<string> Roles { get; set; }
-        public List<Hardskill> Hardskills { get; set; } 
+
+        public List<string> Softskills { get; set; } = new List<string>();
+        public List<string> Roles { get; set; } = new List<string>();
+        public List<Hardskill> Hardskills { get; set; } = new List<Hardskill>();
 
         //In order to only display the relevant Attributes
-        
+
         public string EmployeeNameTemp { get; set; }
         public List<string> SoftskillsToSearchTemp { get; set; } = new List<string>();
         public List<string> RolesToSearchTemp { get; set; } = new List<string>();
         public List<Hardskill> HardskillsToSearchTemp { get; set; } = new List<Hardskill>();
-        
+
         // List to Compare with current Proposal
 
         public List<Employee> AlreadyAddedEmployees { get; set; } = new List<Employee>();
 
         //All Functions
-        
+
         public void AddSoftSearch(string softskill)
         {
             if (!SoftskillsToSearch.Contains(softskill))
@@ -55,6 +56,7 @@ namespace AVATI.Data
                 SoftskillsToDisplay.Remove(softskill);
             }
         }
+
         public void AddHardSearch(Hardskill hardskill)
         {
             if (!HardskillsToSearch.Contains(hardskill))
@@ -63,10 +65,11 @@ namespace AVATI.Data
                 HardskillsToDisplay.Remove(hardskill);
             }
         }
+        
         public void AddRoleSearch(string role)
         {
             if (!RolesToSearch.Contains(role))
-            { 
+            {
                 RolesToSearch.Insert(0, role);
                 RolesToDisplay.Remove(role);
             }
@@ -74,16 +77,25 @@ namespace AVATI.Data
 
         public void EmptyQuery()
         {
-            SoftskillsToSearch.Clear();
-            HardskillsToSearch.Clear();
-            RolesToSearch.Clear();
+            SoftskillsToSearch?.Clear();
+            HardskillsToSearch?.Clear();
+            RolesToSearch?.Clear();
             EmployeeName = null;
-            SoftskillsToDisplay = new List<string>(Softskills);
-            HardskillsToDisplay = new List<Hardskill>(Hardskills);
-            HardskillsToDisplay = HardskillsToDisplay.OrderBy(e => e.Description).ToList();
-            RolesToDisplay = new List<string>(Roles);
+            if (SoftskillsToDisplay != null)
+            {
+                SoftskillsToDisplay = new List<string>(Softskills);
+            }
 
-            
+            if (HardskillsToDisplay != null)
+            {
+                HardskillsToDisplay = new List<Hardskill>(Hardskills);
+                HardskillsToDisplay = HardskillsToDisplay.OrderBy(e => e.Description).ToList();
+            }
+
+            if (RolesToDisplay != null)
+            {
+                RolesToDisplay = new List<string>(Roles);
+            }
         }
 
         public void EmptySoftSearch()
@@ -116,7 +128,7 @@ namespace AVATI.Data
             RolesToDisplay = new List<string>(Roles);
             TableIsVisible = false;
         }
-        
+
 
         public List<Employee> SearchEmployee(string name, List<string> Softskill, List<Hardskill> Hardskill,
             List<string> Rolle
@@ -141,7 +153,6 @@ namespace AVATI.Data
                 {
                     if (employee.Softskills.Contains(soft))
                     {
-
                         ++numberOfMatches;
                     }
                 }
@@ -176,14 +187,13 @@ namespace AVATI.Data
             TempEmployee = TempEmployee.OrderBy(e => e.Priority).ToList();
             TempEmployee.Reverse();
 
-            foreach(var service in TempEmployee)
+            foreach (var service in TempEmployee)
             {
                 EmployeeListToReturn.Add(service.Employee);
             }
 
-            
+
             return EmployeeListToReturn;
         }
-
     }
 }

@@ -11,7 +11,7 @@
 
 <div class="container h-100" style="padding-bottom: 7000px">
     <div class="row h-100 justify-content-center align-items-center">
-        <div class="col-12 text-left">
+        <div class="col-13 text-left">
             <EditForm Model="_searchService">
                 @if (Id != 0 && _proposal.GetProposal(Id) != null)
                 {
@@ -25,12 +25,19 @@
                     <label class="font-weight-bold">Mitarbeitername <small class="text-muted">(Optional)</small> </label>
                     <InputText type="text" class="form-control col-8" placeholder="Vor- und Nachname" @bind-Value="_searchService.EmployeeName"/>
                 </div>
-                <div class="form-group">
-                    <label class="font-weight-bold text-left">Hardskills</label>
-                    <div class="form-group row col">
-                        <input type="text" class="form-control col-10 mr-2" value="@String.Join(" | ", _searchService.HardskillsToSearch.Select(e => e.Description).ToArray())" placeholder="Hardskill(s)" readonly>
-                        <button class="btn btn-danger " type="button" @onclick=@_searchService.EmptyHardSearch>Löschen</button>
+                <label class="font-weight-bold">Hardskills: </label>
+                <div class="form-group col-9" style="min-height: 96px; border: 2px solid darkslategray;  border-radius: 6px">
+
+                    <div class="row">
+                        @foreach (var hardskill in  _searchService.HardskillsToSearch)
+                        {
+                            <button type="button" class="btn btn-info btn-sm border border-dark" @onclick=@(() => { _searchService.HardskillsToSearch.Remove(hardskill); _searchService.HardskillsToDisplay.Add(hardskill); _searchService.HardskillsToDisplay = _searchService.HardskillsToDisplay.OrderBy(e => e.Description).ToList();})>
+                                @hardskill.Description <span class="oi oi-x"></span>
+                            </button>
+                        }
                     </div>
+
+
                 </div>
                 <label for="suche">Suche <small class="text-muted">TODO: Nach Kategorien suchen</small></label>
                 <div class="form-group row col">
@@ -51,25 +58,45 @@
                 </div>
                 <div class="form-group">
                     <label class="font-weight-bold">Softskills</label>
-                    <div class="form-group row col">
-                        <input type="text" class="form-control col-10 mr-2" value="@String.Join(" | ", _searchService.SoftskillsToSearch.ToArray())" placeholder="Softskill(s)" readonly>
-                        <button class="btn btn btn-danger " @onclick=@(() => { _searchService.EmptySoftSearch(); })>Löschen</button>
+                    <div class="form-group col-9" style="min-height: 100px; border: 2px solid darkslategray;  border-radius: 6px">
+                        <div class="row">
+                            @foreach (var softskill in _searchService.SoftskillsToSearch)
+                            {
+                                <button type="button" class="btn btn-info btn-sm border border-dark" @onclick=@(() => { _searchService.SoftskillsToSearch.Remove(softskill); _searchService.SoftskillsToDisplay.Add(softskill); _searchService.SoftskillsToDisplay.Sort();})>
+                                    @softskill <span class="oi oi-x"></span>
+                                </button>
+                            }
+
+                        </div>
                     </div>
                 </div>
-                <div class="form-group row col-10">
-                    @foreach (var softskill in _searchService.SoftskillsToDisplay)
-                    {
-                        <button class="btn btn-sm btn-outline-info mb-1 mr-1" @onclick=@(() => { _searchService.AddSoftSearch(softskill); })>@softskill</button>
-                    }
+                <div class="form-group">
+
+                    <div class="form-group col-9">
+                        <div class="row">
+                            @foreach (var softskill in _searchService.SoftskillsToDisplay)
+                            {
+                                <button class="btn btn-sm btn-outline-info mb-1 mr-1" @onclick=@(() => { _searchService.AddSoftSearch(softskill); })>@softskill</button>
+                            }
+
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="font-weight-bold">Rolle(n)</label>
-                    <div class="form-group row col">
-                        <input type="text" class="form-control col-10 mr-2" value="@String.Join(" | ", _searchService.RolesToSearch.ToArray())" placeholder="Rolle(n)" readonly>
-                        <button class="btn btn btn-danger " @onclick=@(() => { _searchService.EmptyRoleSearch(); })>Löschen</button>
+                    <div class="form-group col-9" style="min-height: 35px; border: 2px solid darkslategray; border-radius: 6px">
+                        <div class="row">
+                            @foreach (var role in _searchService.RolesToSearch)
+                            {
+                                <button type="button" class="btn btn-info btn-sm border border-dark" @onclick=@(() => { _searchService.RolesToSearch.Remove(role); _searchService.RolesToDisplay.Add(role);})>
+                                    @role <span class="oi oi-x"></span>
+                                </button>
+                            }
+
+                        </div>
                     </div>
                 </div>
-                <div class="form-group row col-10 mb-4">
+                <div class="form-group row col-9 mb-4">
                     @foreach (var role in _searchService.RolesToDisplay)
                     {
                         <button class="btn btn-sm btn-outline-info  mb-1 mr-1" @onclick=@(() => { _searchService.AddRoleSearch(role); })>@role</button>
@@ -83,7 +110,7 @@
                 {
                     <div class="alert alert-danger">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die alle Kriterien erfüllt!</div>
                 }
-                
+
                 @if (!SelectEmployees.Any())
                 {
                     <div class="alert alert-danger">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die mindestens eines der Kriterien erfüllt!</div>
@@ -91,7 +118,7 @@
                 else
                 {
                     <h4 class="mb-3 font-weight-bold">Gefundene Mitarbeiter:</h4>
-                    <table class="table table-bordered table-striped mb-5">
+                    <table class="table table-bordered table-striped text-center">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -101,7 +128,7 @@
                             <th>Rolle(n)</th>
                             @if (Id == 0)
                             {
-                            <th>Status</th>
+                                <th>Status</th>
                             }
                             else
                             {
@@ -113,11 +140,10 @@
                         @foreach (var employee in SelectEmployees)
                         {
                             <tr>
-                                <td style="width: 10%">@employee.FirstName @employee.LastName</td>
-                                <td style="width: 10%">
-                                    <div class="form-group text-center">
-                                        <button class="btn btn-primary btn-sm mr-1 mb-1">@employee.Rc</button>
-                                    </div>
+                                <td class="font-weight-bold" style="width: 15%">@employee.FirstName @employee.LastName</td>
+                                <td style="width: 5%">
+
+                                    <button type="button" class="btn btn-primary align-middle col">@employee.Rc</button>
                                 </td>
                                 <td style="width:20%">
                                     <div class="form-group row col">
@@ -152,32 +178,30 @@
                                         }
                                     </div>
                                 </td>
-                                <td style="width: 10%">
-                                    <div class="form-group row col">
-                                        @if (Id != 0 && !_proposal.GetProposal(Id).Employees.Contains(employee))
-                                        {
-                                            <button class="btn btn-sm btn-outline-success" @onclick=@(() => { AddToProposal(employee); })>Hinzufügen</button>
-                                        } else if (Id != 0 && _proposal.GetProposal(Id).Employees.Contains(employee))
-                                        {
-                                            <button class="btn btn-sm btn-outline-danger" @onclick=@(() => { RemoveFromProposal(employee); })>Löschen</button>
-                                        } else if(employee.IsActive)
-                                        {
-                                            <button class="btn btn-sm btn-success" @onclick=@(() => { employee.IsActive = !employee.IsActive;})>Aktiv</button>
-                                        }
-                                        else
-                                        {
-                                            <button class="btn btn-sm btn-danger" @onclick=@(() => { employee.IsActive = !employee.IsActive;}) >Inaktiv</button>
-                                        }
-                                    </div>
+                                <td style="width: 10%" class="text-center">
+
+                                    @if (Id != 0 && _proposal.GetProposal(Id).Employees.Find(e => e.EmployeeId == employee.EmployeeId) == null)
+                                    {
+                                        <button class="btn btn-sm btn-outline-success" @onclick=@(() => { AddToProposal(employee); })>Hinzufügen</button>
+                                    }
+                                    else if (Id != 0 && _proposal.GetProposal(Id).Employees.Find(e => e.EmployeeId == employee.EmployeeId) != null)
+                                    {
+                                        <button class="btn btn-sm btn-outline-danger" @onclick=@(() => { RemoveFromProposal(employee); })>Löschen</button>
+                                    }
+                                    else if (employee.IsActive)
+                                    {
+                                        <button class="btn btn-sm btn-success" @onclick=@(() => { employee.IsActive = !employee.IsActive; })>Aktiv</button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-sm btn-danger" @onclick=@(() => { employee.IsActive = !employee.IsActive; })>Inaktiv</button>
+                                    }
                                 </td>
                             </tr>
-                            
                         }
                         </tbody>
                     </table>
-                    
                 }
-                
             }
 
         </div>
@@ -189,7 +213,7 @@
 
     [Parameter]
     public int Id { get; set; }
-    
+
     public string TempHardskill { get; set; }
 
     public List<Hardskill> PseudoHardskills { get; set; }
@@ -201,7 +225,7 @@
 
     protected override void OnInitialized()
     {
-        
+        _searchService.EmptyQuery();
         _employee = new EmployeeServiceSimple();
         AllEmployees = _employee.GetAllEmployees();
         JSonStructure.Rootclass root = _import.ImportJsonFile();
@@ -230,7 +254,6 @@
     {
         SelectEmployees = _searchService.SearchEmployee(_searchService.EmployeeName, _searchService.SoftskillsToSearch, _searchService.HardskillsToSearch, _searchService.RolesToSearch);
         _searchService.EmptyQuery();
-
     }
 
     public void AddToProposal(Employee emp)
@@ -242,5 +265,5 @@
     {
         _proposal.GetProposal(Id).Employees.Remove(emp);
     }
-    
+
 }
