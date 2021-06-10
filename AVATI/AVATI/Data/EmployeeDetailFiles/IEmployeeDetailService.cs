@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
 
-namespace AVATI.Data
+namespace AVATI.Data.EmployeeDetailFiles
 {
     public interface IEmployeeDetailService
     {

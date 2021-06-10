@@ -1,10 +1,14 @@
 using System.Collections.Generic;
 
-namespace AVATI.Data
+namespace AVATI.Data.EmployeeDetailFiles
 {
     public class EmployeeDetailService : IEmployeeDetailService
     {
-        public List<EmployeeDetail> EmployeeDetails { get; set; } = new List<EmployeeDetail>();
+        public EmployeeDetailService()
+        {
+            EmployeeDetails = new List<EmployeeDetail>();
+        }
+        public List<EmployeeDetail> EmployeeDetails;
         public bool UpdateEmployeeDetail(EmployeeDetail employeeDetail)
         {
             throw new System.NotImplementedException();
@@ -15,7 +19,13 @@ namespace AVATI.Data
             EmployeeDetail temp;
             if ((temp = EmployeeDetails.Find(e => e.ProposalId == proposalId && e.EmployeeId == employeeId)) == null)
             {
-                return false;
+                EmployeeDetails.Add(new EmployeeDetail()
+                {
+                    EmployeeId = employeeId, ProposalId = proposalId, Rc = employeeDetail.Rc, Softskills = employeeDetail.Softskills,
+                    Hardskills = employeeDetail.Hardskills, Fields = employeeDetail.Fields, Languages = employeeDetail.Languages,
+                    Roles = employeeDetail.Roles
+                });
+                return true;
             }
             else
             {

@@ -1,7 +1,10 @@
 @using AVATI.Data
+@using AVATI.Data.EmployeeDetailFiles
 @using DocumentFormat.OpenXml.Drawing
+
 @inject IProposalService _proposal
 @inject IEmployeeService _employeeService
+@inject IEmployeeDetailService _employeeDetailService
 
 @if (ShowEdit)
 {
@@ -27,12 +30,10 @@
                                         <p class="card-text text-left">Beschäftigung seit: @_employeeService.GetEmployeeProfile(EmpId).EmploymentTime.ToString("dd/MM/yyyy")</p>
                                         <div class="card-text text-left">Branchen:</div>
                                         <div class="card-text text-left">
-                                            <ul>
-                                                @foreach (var field in _employeeService.GetEmployeeProfile(EmpId).Field)
+                                            @foreach (var field in _employeeService.GetEmployeeProfile(EmpId).Field)
                                                 {
-                                                    <li>@field</li>   
+                                                    <button class="@(Detail.FieldVis(field)? "btn btn-sm btn-outline-success mb-1 mr-1" : "btn btn-sm btn-outline-dark")">@field</button>  
                                                 }
-                                            </ul>
                                         </div>
                                     </div>
                                 </div>
@@ -104,10 +105,12 @@
     [Parameter]
     public int EmpId { get; set; }
     public int PropId { get; set; }
+    public Data.EmployeeDetailFiles.EmployeeDetail Detail;
     private Employee _tempEmp;
+    private Employee _emp;
     public bool ShowEdit { get; set; }
     public bool ShowBackdrop { get; private set; }
-
+    
     public void Show(int employeeId, int proposalId)
     {
         ShowEdit = !ShowEdit;
@@ -125,5 +128,15 @@
         ShowEdit = !ShowEdit;
         ShowBackdrop = !ShowBackdrop;
         StateHasChanged();
+    }
+    protected override void OnInitialized()
+    {
+        _emp = _employeeService.GetEmployeeProfile(EmpId);
+        _employeeDetailService.UpdateEmployeeDetail(EmpId, PropId, new Data.EmployeeDetailFiles.EmployeeDetail()
+        {
+               Softskills = _emp.Softskills, Hardskills = _emp.Hardskills, Fields = _emp.Field, Languages = _emp.Language,
+                Roles = _emp.Roles, Rc = _emp.Rc
+        });
+        Detail = _employeeDetailService.GetEmployeeDetail(EmpId, PropId);
     }
 }
