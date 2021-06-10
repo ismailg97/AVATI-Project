@@ -3,21 +3,41 @@
 @inject IHardskillService _hardskillService
 @inject NavigationManager _navigationManager
 
+@{
+  ShowCreateCat = !_hardskillService.GetAllHardskillCategorys().Exists(x => x.Description == Description);
+}
+
 <div class="modal @(_show ? "fade show" : "" )" id="myModal" style=" display: @(_show ? "block" : "none");">
                <div class="modal-dialog">
                  <div class="modal-content">
                    <div class="modal-header">
-                     <h4 class="modal-title">Füge der Kategorie @Description Hardskills hinzu</h4>
+                       @if (ShowCreateCat) {
+                         <h5 class="modal-title">
+                           Erstellen einer neuen Kategorie
+                         </h5>
+                       } else {
+                         <h5 class="modal-title">
+                           Kategorisierung von Hardskills in "<b>@Description</b>"
+                         </h5>
+                       }
                      <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
                    </div>
                    <div class="modal-body">
                      <div class="container">
+                       
+                       @if (ShowCreateCat)
+                       {
+                         <div class="form-group">
+                           <label>Bezeichnung der Kategorie:</label>
+                           <input class="form-control" type="text" @bind="_cat"/>
+                         </div>
+                       }
 
-                       @if(_hardskillService.GetHardskillCategory(Description)?.Subcat != null && _hardskillService.GetHardskillCategory(Description).Subcat.Any())
+                       @if (_hardskillService.GetHardskillCategory(Description)?.Subcat != null && _hardskillService.GetHardskillCategory(Description).ContainsAnyHardskills())
                        {
                          <h6>Bereits enthaltene Hardskills</h6>
                          <hr/>
-                         @foreach(var hardskill in _hardskillService.GetHardskillCategory(Description).Subcat)
+                         @foreach (var hardskill in _hardskillService.GetHardskillCategory(Description).Subcat)
                          {
                            if (hardskill.IsHardskill)
                            {
@@ -25,7 +45,7 @@
                            }
                          }
                        }
-                       
+
 
                        @if (_hardskillService.GetAllHardskills().Any(x => x.Uppercat == null))
                        {
@@ -39,42 +59,46 @@
                            }
                          }
                        }
-                       
-                       @if (_showCreate)
+
+                       @if (_showCreateSkill)
                        {
                          <div class="distance">
-                           <input type="text" @bind="_description"/>
+                           <input class="form-control" type="text" @bind="_hardskill"/>
                            <button class="btn btn-success btn-sm" @onclick="CreateHardskill">Speichern</button>
-                           <button class="btn btn-danger btn-sm" @onclick="ShowingCreate">Abbrechen</button>
+                           <button class="btn btn-danger btn-sm" @onclick="ShowingCreateHardskill">Abbrechen</button>
                          </div>
-                       } else {
+                       }
+                       else
+                       {
                          <div>
-                           <button class="btn btn-outline-success" @onclick="ShowingCreate">Create New Hardskill</button>
+                           <button class="btn btn-outline-success" @onclick="ShowingCreateHardskill">Create New Hardskill</button>
                          </div>
-                       } 
+                       }
 
                        <div>
                          <button class="btn btn-outline-info" @onclick="ShowingCat">Hardskills mit Kategorien @(_showCat ? "ausblenden" : "einblenden")</button>
                        </div>
                        @if (_showCat)
                        {
-                         @foreach (var hardskillcat in _hardskillService.GetAllHardskillCategorys())
-                         {
-                           if (hardskillcat.ContainsAnyHardskills() && hardskillcat.Description != Description)
-                           {
-
-                             <h6>@hardskillcat.Description</h6>
-                             <hr/>
-                             foreach (var hardskill in hardskillcat.Subcat)
-                             {
-                               if (hardskill.IsHardskill)
-                               {
-                                 <button type="button" class="@(IsInList(hardskill.Description) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">@hardskill.Description</button>
-                               }
-                             }
-
-                           }
-                         }
+                         <div class="list-group border-dark overflow-auto mr-3 col-9" style="height: 200px">
+                              @foreach (var hardskillcat in _hardskillService.GetAllHardskillCategorys())
+                              {
+                                  if (hardskillcat.ContainsAnyHardskills() && hardskillcat.Description != Description)
+                                  {
+                                    <div class="container">
+                                      <h6>@hardskillcat.Description</h6>
+                                      <hr/>
+                                      @foreach (var hardskill in hardskillcat.Subcat)
+                                      {
+                                          if (hardskill.IsHardskill)
+                                          {
+                                            <button type="button" class="@(IsInList(hardskill.Description) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">@hardskill.Description</button>
+                                          }
+                                      }
+                                    </div>
+                                  }
+                              }
+                         </div>
                        }
 
                      </div>
@@ -97,13 +121,17 @@
 
   private List<Hardskill> Subcat { get; set; } = new();
 
-  private string _description;
+  private string _hardskill;
+
+  private string _cat;
   
   private bool _show = false;
 
   private bool _showCat = false;
 
-  private bool _showCreate = false;
+  private bool _showCreateSkill = false;
+
+  private bool ShowCreateCat { get; set; } = false;
 
   protected override void OnInitialized()
   {
@@ -124,11 +152,11 @@
     _showCat = !_showCat;
   }
 
-  private void ShowingCreate()
+  private void ShowingCreateHardskill()
   {
-    _showCreate = !_showCreate;
+    _showCreateSkill = !_showCreateSkill;
   }
-  
+
   private void HardskillList(Hardskill hardskill)
   {
     if (Subcat.Contains(hardskill))
@@ -144,7 +172,21 @@
 
   private void AddingHardskills()
   {
-    _hardskillService.EditHardskillsCategory(Description, Subcat);
+    if (ShowCreateCat)
+    {
+      var cat = new Hardskill()
+      {
+          Description = _cat,
+          Uppercat = null,
+          Subcat = new List<Hardskill>(Subcat),
+          Height = 2,
+          IsHardskill = false
+      };
+      _hardskillService.CreateHardskillCategory(cat);
+    } 
+    else 
+      _hardskillService.EditHardskillsCategory(Description, Subcat);
+    
     Subcat.Clear();
     Showing();
   }
@@ -153,14 +195,14 @@
   {
     var hardskill = new Hardskill()
     {
-      Description = _description,
+      Description = _hardskill,
       Uppercat = null,
       Subcat = null,
       Height = 0
     };
     _hardskillService.CreateHardskill(hardskill);
     HardskillList(hardskill);
-    ShowingCreate();
+    ShowingCreateHardskill();
   }
 
   public void Showing()

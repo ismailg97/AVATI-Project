@@ -15,6 +15,8 @@
 <CreateHardskill @ref="_createHardskill"/>
 <EditHardskill @ref="_editHardskill" OldHardskill="@_hardskillService.GetHardskill(Description)"/>
 
+<AddHardskills @ref="_createCat" Description=""/>
+
 <h3 class="cap"><b>Skills</b></h3>
 <table class="table table-striped">
     <caption><h5><b>Softskills</b></h5></caption>
@@ -103,25 +105,30 @@
             <tr class="showcat">
                 <td>@hardskillcat.Description</td>
                 <td class="smalltd">
-                    <button class="btn btn-secondary" @onclick="() => ShowingEditCat(hardskillcat.Description)">Editieren</button>
+                        @if (_showEditCat[hardskillcat.Description])
+                        {
+                            <button class="btn btn-primary" @onclick="() => ShowingEditCat(hardskillcat.Description)">Abgeschlossen</button>
+                        } else {
+                            <button class="btn btn-secondary" @onclick="() => ShowingEditCat(hardskillcat.Description)">Editieren</button>
+                        }
                 </td>
             </tr>
             
             if(_showEditCat[hardskillcat.Description])
             {
                 <div>
-                    <button class="btn btn-primary" @onclick="() => ShowingEditCat(hardskillcat.Description)">Finish</button>
-                    <hr/>
                     <EditTreeElement Hardskills="@(new List<Hardskill>() {hardskillcat})"/>
                 </div>
             } else {
-                <div class="hidecat"><TreeElement Hardskills="@(new List<Hardskill>() {hardskillcat})"/></div>
+                <div class="hidecat">
+                    <TreeElement Hardskills="@(new List<Hardskill>() {hardskillcat})"/>
+                </div>
             }
             
         }
     }
 </table>
-<div> <button class="btn btn-success">Hinzufügen</button> </div>
+<div> <button class="btn btn-success" @onclick="PopCreateHardskillCat">Hinzufügen</button> </div>
 
 
 <h3 class="cap"><b>Branchen</b><a></a></h3>
@@ -187,6 +194,8 @@
     CreateHardskill _createHardskill;
     EditHardskill _editHardskill;
 
+    AddHardskills _createCat;
+
     //0: Filter for Softskill, 1: Filter for Hardskill, 2: Filter for Hardskillcategory
     //3: Filter for Field, 4: Filter for Role
     private string[] Filter { get; set; } = new string[5];
@@ -242,4 +251,10 @@
         Description = description;
         _editHardskill.Showing();
     }
+
+    void PopCreateHardskillCat()
+    {
+        _createCat.Showing();
+    }
+
 }

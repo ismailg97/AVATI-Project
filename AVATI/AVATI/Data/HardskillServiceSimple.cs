@@ -91,8 +91,8 @@ namespace AVATI.Data
             
             foreach (var skill in hardskillcat.Subcat)
             {
+                skill.Uppercat?.Subcat.Remove(skill);
                 skill.Uppercat = hardskillcat;
-                hardskillcat.Uppercat?.Subcat.Remove(skill);
             }
 
             _allHardskillCat.Add(hardskillcat);
