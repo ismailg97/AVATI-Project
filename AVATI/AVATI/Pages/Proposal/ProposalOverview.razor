@@ -1,13 +1,11 @@
 ﻿@page "/ProposalOverview"
-@using System.ComponentModel.DataAnnotations
-@using System.Diagnostics.CodeAnalysis
+@page "/ProposalOverview/{Open:int}"
 @using System.IO
 @using System.Linq
 @using AVATI.Data
 @using BlazorDownloadFile
 @using DocumentFormat.OpenXml
 @using DocumentFormat.OpenXml.InkML
-@using DocumentFormat.OpenXml.Office2010.Excel
 @using DocumentFormat.OpenXml.Packaging
 @using DocumentFormat.OpenXml.Wordprocessing
 @using Table = DocumentFormat.OpenXml.InkML.Table
@@ -30,7 +28,7 @@
                     <div class="card-header text-center">
                         <p class="font-weight-bolder">Angebot: @proposal.ProposalId.ToString()</p>
                         <p>
-                            <button class="btn btn-outline-dark btn-sm" @onclick=@(async () => {await CreateDocument(proposal.ProposalId); })>Dokument erzeugen</button>
+                            <button class="btn btn-outline-dark btn-sm" @onclick=@(async () => { await CreateDocument(proposal.ProposalId); })>Dokument erzeugen</button>
                             <button class="btn btn-outline-success btn-sm ml-2">Projekt erzeugen</button>
                         </p>
                         <button class="btn btn-outline-secondary btn-sm" @onclick=@(() => { ShowEdit(proposal.ProposalId); })> Editieren</button>
@@ -60,17 +58,17 @@
                                         <li class="list-group-item border-dark bg-light font-weight-bold text-black">
                                             <span>@employee.FirstName @employee.LastName</span>
                                             <div class="btn-group float-right">
-                                            <button class="btn btn-info btn-sm mr-2" @onclick=@(() => { ShowDetail(employee.EmployeeId, proposal.ProposalId); })>Details</button>
-                                            <button class="btn btn-primary btn-sm " @onclick=@(() => { ShowRcEdit(employee, 0); })>RC: @employee.Rc </button>
+                                                <button class="btn btn-info btn-sm mr-2" @onclick=@(() => { ShowDetail(employee.EmployeeId, proposal.ProposalId); })>Details</button>
+                                                <button class="btn btn-primary btn-sm " @onclick=@(() => { ShowRcEdit(proposal, employee.EmployeeId, 3); })>RC: @proposal.AltRc[employee.EmployeeId] </button>
                                             </div>
-                                            
+
                                         </li>
                                     }
                                     else
                                     {
                                         <li class="list-group-item border-danger bg-light text-left font-weight-bold text-black">
                                             <span class="align-middle d-inline-block">@employee.FirstName @employee.LastName</span>
-                                            <button type="button" class="btn float-right btn-sm" @onclick=@(() => { RemoveEmployee(proposal.ProposalId, employee.EmployeeId);})>
+                                            <button type="button" class="btn float-right btn-sm" @onclick=@(() => { RemoveEmployee(proposal.ProposalId, employee.EmployeeId); })>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
                                                     <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
                                                 </svg>
@@ -129,8 +127,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { ShowRcEdit(null, 1); })">Abbrechen</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { ShowRcEdit(null, 0); })">Speichern</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { ShowPop = !ShowPop; })">Abbrechen</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { RcToEdit.AltRc[EmpEdit] = _changeValue; ShowPop = !ShowPop; })">Speichern</button>
                 </div>
             </div>
         </div>
@@ -142,6 +140,9 @@
 
 @code {
 
+    [Parameter]
+    public int Open { get; set; }
+
     EditProposal _editProposal;
     EmployeeDetail _employeeDetail;
     Dictionary<int, bool> _showEmployee;
@@ -149,9 +150,9 @@
     Dictionary<int, bool> _showAdditionalInfo;
     Dictionary<int, bool> _promptDelete;
     public bool ShowPop { get; set; }
-    public Employee RcToEdit { get; set; }
+    public Proposal RcToEdit { get; set; }
+    public static int EmpEdit { get; set; }
 
-    private static int _restoreValue;
     private static int _changeValue;
 
     protected override void OnInitialized()
@@ -163,7 +164,7 @@
         foreach (var proposal in _proposal.GetAllProposals())
         {
             _promptDelete.Add(proposal.ProposalId, true);
-            _showEmployee.Add(proposal.ProposalId, true);
+            _showEmployee.Add(proposal.ProposalId, Open != proposal.ProposalId);
             _showAttributes.Add(proposal.ProposalId, true);
             _showAdditionalInfo.Add(proposal.ProposalId, true);
         }
@@ -195,26 +196,17 @@
     {
         _employeeDetail.Show(employeeId, proposalId);
     }
-    private void ShowRcEdit(Employee emp, int response)
+
+    private void ShowRcEdit(Proposal prop, int employeeId, int response)
     {
         if (!ShowPop)
         {
-            RcToEdit = emp;
-            _restoreValue = emp.Rc;
-            _changeValue = emp.Rc;
-        }
-        else
-        {
-            if (response == 0)
-            {
-                RcToEdit.Rc = _changeValue;
-            }
-            if (response == 1)
-            {
-                RcToEdit.Rc = _restoreValue;
-            }
-        }
+            _changeValue = prop.AltRc[employeeId];
+            RcToEdit = prop;
+            EmpEdit = employeeId;
 
+        }
+        
         ShowPop = !ShowPop;
     }
 
@@ -263,6 +255,7 @@
             }
         }
     }
+
     public async Task CreateDocument(int id)
     {
         using (MemoryStream mem = new MemoryStream())
@@ -278,7 +271,7 @@
                 Paragraph para1 = body1.AppendChild(new Paragraph());
                 Run run1 = para1.AppendChild(new Run());
                 run1.AppendChild(new Text("Projekt: " + id.ToString()));
-               
+
     //Das erstellte Dokument übergeben
                 mainPart.Document = document1;
             }
@@ -288,5 +281,5 @@
         }
     }
 
-    
+
 }

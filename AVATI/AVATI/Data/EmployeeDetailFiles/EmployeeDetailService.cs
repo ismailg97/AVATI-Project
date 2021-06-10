@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace AVATI.Data.EmployeeDetailFiles
@@ -60,6 +61,66 @@ namespace AVATI.Data.EmployeeDetailFiles
         public List<EmployeeDetail> GetAllEmployeeDetail()
         {
             return EmployeeDetails;
+        }
+
+        public void DeleteRc(EmployeeDetail input)
+        {
+            input.Rc = 0;
+        }
+
+        public void DeleteField(EmployeeDetail input, string field)
+        {
+            input.Fields.Remove(field);
+        }
+
+        public void DeleteHard(EmployeeDetail input, Hardskill hardskill)
+        {
+            input.Hardskills.Remove(hardskill);
+        }
+
+        public void DeleteSoft(EmployeeDetail input, string softskill)
+        {
+            input.Softskills.Remove(softskill);
+        }
+
+        public void DeleteLang(EmployeeDetail input, Tuple<string, LanguageLevel> lang)
+        {
+            input.Languages.Remove(lang);
+        }
+
+        public void DeleteRole(EmployeeDetail input, string role)
+        {
+            input.Roles.Remove(role);
+        }
+
+        public void AddRc(EmployeeDetail input, int rc)
+        {
+            input.Rc = rc;
+        }
+
+        public void AddField(EmployeeDetail input, string field)
+        {
+            input.Fields.Add(field);
+        }
+
+        public void AddHard(EmployeeDetail input, Hardskill hardskill)
+        {
+            input.Hardskills.Add(hardskill);
+        }
+
+        public void AddSoft(EmployeeDetail input, string softskill)
+        {
+            input.Softskills.Add(softskill);
+        }
+
+        public void AddLang(EmployeeDetail input, Tuple<string, LanguageLevel> lang)
+        {
+            input.Languages.Add(lang);
+        }
+
+        public void AddRole(EmployeeDetail input, string role)
+        {
+            input.Roles.Add(role);
         }
     }
 }

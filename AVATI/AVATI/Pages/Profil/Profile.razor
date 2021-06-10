@@ -214,7 +214,7 @@
     private bool _booleanWork = false;
 
     [Parameter]
-    public int Id { get; set; }
+    public int Id { get; set; } 
 
 
     Employee Emp = new Employee()
@@ -232,7 +232,7 @@
 
     protected override void OnInitialized()
     {
-        Emp = _employee.GetEmployeeProfile(Id);
+        Emp = _employee.GetEmployeeProfile(Id); 
     }
 
     public void CollLang()
