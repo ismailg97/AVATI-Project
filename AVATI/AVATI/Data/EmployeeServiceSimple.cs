@@ -39,11 +39,7 @@ namespace AVATI.Data
                         "Automobil",
                         "Bildung"
                     },
-                    RelevantWorkExperience = new List<string>()
-                    {
-                        "Design",
-                        "Test"
-                    },
+                    RelevantWorkExperience = (float) 0.32,
                     Projects = new List<Project>()
                     {
                         new Project() {Projecttitel = "Auto 3.0",Projectdescription = "Irgendwas mit Autos", ProjectID = 3, fields = new List<string>() {"Automobil","Smtn"}},
@@ -131,11 +127,7 @@ namespace AVATI.Data
                         "Automobil",
                         "Bildung"
                     },
-                    RelevantWorkExperience = new List<string>()
-                    {
-                        "Design",
-                        "Test"
-                    },
+                    RelevantWorkExperience = (float) 0.8,
                     Projects = new List<Project>()
                     {
                         new Project() {Projecttitel = "Auto 3.0",Projectdescription = "Irgendwas mit Autos", ProjectID = 3, fields = new List<string>() {"Automobil","Smtn"}},

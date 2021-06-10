@@ -54,6 +54,14 @@
                         <input type="date" class="form-control" @bind-value="@Emp.EmploymentTime" placeholder="" required>
                     </div>
                 </div>
+                <div style="margin-top: 20px" class="row" >   
+                    <!------ Relevant Work Experience ---------->
+                    <div class="col-6">
+                        <div class="card-title small font-weight-light lead text-left">Relevante Berufserfahrung</div>
+                        <input type="number" class="form-control" @bind-value="@Emp.RelevantWorkExperience" min="0.01" max="1" step="0.01" placeholder="@Emp.RelevantWorkExperience">
+                    </div>
+                    </div> 
+                
             </div>
 
         </div>
@@ -74,30 +82,14 @@
 
 
 <form>
-<!------ Employment Time 
-<div class="form-row">
-<div class="col-md-6 mb-3">
-    <label for="validationServer03">Beschäftigungszeit</label>
-    <input type="date" class="form-control" @bind-value="@Emp.EmploymentTime" placeholder="max.mustermann@mail.com" required>
-    <div class="invalid-feedback">
-        Please provide a valid city.
-    </div>
-</div> ---------->
-
-<!------ RC-Level 
-<div class="col-md-3 mb-3">
-    <label for="validationServer04">Rate-Card Level</label>
-    <input class="form-control col-4" min="1" max="12" type="number" @bind=@_changeValue id="example-number-input"/>
-</div>
-</div> ---------->
 
 <!------ Skills ---------->
-<div class="form-col">
+<div class="backdrop form-col">
 
     <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
 
     <!------ Hard Skills ---------->
-    <div class="form-group">
+    <div class=" form-group">
         <label class="mr-3 mt-2">Hard Skills: </label>
         @foreach (var hardskilll in Emp.Hardskills)
         {
@@ -184,29 +176,13 @@
     }
 
     <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
-
-    <!------ Relevant Work Experience ---------->
-    <div class="form-group">
-        <label class="mr-3 mt-2">Relevante Berufserfahrung: </label>
-        @foreach (var empWork in Emp.RelevantWorkExperience)
-        {
-            <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.RelevantWorkExperience.Remove(empWork); })>
-                @empWork <span class="oi oi-x"></span>
-            </button>
-        }
-    </div>
-    <div class="row">
-        <input type="text" class="form-control col-3 mr-3" @bind-value="workExperience" placeholder="Relevante Berufserfahrung" required>
-        <input type="button" class="profile-edit-btn small col-2" name="btnAddMore" @onclick=@(() => { Emp.RelevantWorkExperience.Add(workExperience); }) value="Hinzufügen"/>
-    </div>
-    <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
-
+    
     <!------ Languages ---------->
     <div class="form-row">
-        <div class="card-body text-center">
+        <div class="card-body text-left">
             <div class="form-row">
                 <div class="col">
-                    <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollLang(); })">Sprachen</label>
+                    <label class="card-title font-weight-light lead text-left" id="title" @onclick="(() => { CollLang(); })">Sprachen</label>
                 </div>
                 <div class="col">
                     <a href="">
@@ -249,10 +225,10 @@
 
 <!------ Projects ---------->
 <div class="form-row">
-    <div class="card-body text-center">
+    <div class="card-body text-left">
         <div class="form-row">
             <div class="col">
-                <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollProj(); })">Projekte</label>
+                <label class="card-title font-weight-light lead text-left" id="title" @onclick="(() => { CollProj(); })">Projekte</label>
             </div>
             <div class="col">
                 <a href="/employeeProject/@Emp.EmployeeId">

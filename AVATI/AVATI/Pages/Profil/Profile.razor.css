@@ -120,11 +120,17 @@ th, td {
 
 #title:hover {
     border: none;
+    width:40%;
     color: #000;
     background:#fff;
+    border-radius: 25px;
 }
 
-
+.backdrop {
+    background-color: #f7f6ed; 
+    
+    border-radius: 25px;
+}
 
 
 
