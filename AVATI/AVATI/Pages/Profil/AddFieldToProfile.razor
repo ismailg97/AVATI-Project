@@ -1,6 +1,6 @@
-﻿@page "/Projektübersicht/Projektedit/AddFieldToProject"
-@page "/Projektübersicht/Projektedit/AddFieldToProject/{ID:int}"
-@page "/AddFieldToProject"
+﻿@page "/profile/update/AddFieldToProfile"
+@page "/profile/update/AddFieldToProfile/{ID:int}"
+
 
 @using AVATI.Data
 @using System.Net
@@ -11,14 +11,16 @@
 @inject JsonImport _jsonImport
 @inject ProjectServiceSimple _projectServiceSimple
 @inject NavigationManager _navigationManager
+@inject IEmployeeService _employee
 
 <div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
     <div class="modal-dialog modal-dialog-scrollable ">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="body header">
+                    <button type="button" style="color: red"  class="close text-right" data-dismiss="modal" @onclick="Showing">&times;</button>
+                    <h3>Hard Skills</h3>
                     <h3>Auswahl der hinzufügbaren Branchen</h3>
-                    <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
                     <div class="modal-body overflow-auto">
                         <div class="form-group col row overflow-auto mr-3 col-9" style="height: 250px">
                             @foreach (var field in AttributestoSearch)
@@ -40,14 +42,13 @@
                             }
                         </div>
                     </div>
-                    <div class="container">
-                        <input type="text" class="form-control" placeholder="Branche.." @bind="@temp"/>
-                        <button type="button" class="btn btn-success col-sm-3" @onclick="(() => { AddField(temp); })">Branche hinzufügen</button>
-                    </div>
+                    <h3></h3>
                 </div>
             </div>
-            <button type="button" class="btn btn-success " @onclick="(() => { Showing(); Submit(ID); })">Save</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">Cancel</button>
+            <div class="container row-5">
+                <button type="button" class="btn btn-success col-3 " @onclick="(() => { Showing(); Submit(emp); })">Save</button>
+                <button type="button" class="btn btn-danger col-3 " data-dismiss="modal" @onclick="Showing">Cancel</button>
+            </div>
         </div>
     </div>
 </div>
@@ -61,6 +62,8 @@
 
     [Parameter]
     public int ID { get; set; }
+
+    public Employee emp;
 
     private bool _show = false;
 
@@ -81,6 +84,7 @@
 
     protected override void OnInitialized()
     {
+        emp = _employee.GetEmployeeProfile(ID);
         jsonFields = _jsonImport.ImportJsonFile();
         AttributestoDisplay = new List<string>(jsonFields.fields);
     }
@@ -114,7 +118,7 @@
         }
     }
 
-    public void Submit(int ID)
+    public void Submit(Employee emp)
     {
         Project temp = currentProject;
         foreach (var project in _projectServiceSimple._projects)
@@ -124,10 +128,8 @@
                 currentProject = project;
             }
         }
-        currentProject.fields = AttributestoSearch;
-        _projectServiceSimple.DeleteProject(ID);
-        _projectServiceSimple._projects.Add(currentProject);
-        _navigationManager.NavigateTo("/Projektübersicht/Projektedit/" + currentProject.ProjectID);
+        emp.Field = AttributestoSearch;
+        _navigationManager.NavigateTo("/profile/update/" + emp.EmployeeId);
     }
 
 }

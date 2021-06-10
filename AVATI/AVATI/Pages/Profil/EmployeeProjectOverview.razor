@@ -13,7 +13,7 @@
     <tr>
         <th scope="col">Projekttitel</th>
         <th scope="col">Projektbeschreibung</th>
-        <th scope="col">Branchen</th>
+        <th scope="col">Projekttätigkeit</th>
         <th scope="col"></th>
     </tr>
     @foreach (var project in _employeeService.GetEmployeeProfile(Id).Projects)
@@ -30,7 +30,7 @@
                 }
             </td>
             <td>
-                <a href="/Projektübersicht/Projektedit/@project.ProjectID">
+                <a href="/employeeProject/employeeProjectEdit/@project.ProjectID">
                     <button type="button" class="btn btn-secondary">Edit/Update</button>
                 </a>
             </td>
@@ -38,7 +38,7 @@
     }
     
 </table>
-<a href="/Projektübersicht/Projektedit">
+<a href="//employeeProject/employeeProjectEditprofile">
     <button type="button" class="btn btn-danger">Create</button>
 </a>
 
