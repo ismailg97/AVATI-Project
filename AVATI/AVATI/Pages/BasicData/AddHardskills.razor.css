@@ -1,0 +1,35 @@
+﻿.green{
+    background-color: green;
+    color: white;
+}
+
+.red{
+    background-color: red;
+    color: white;
+}
+
+.btn-primary, .btn-secondary {
+    margin-left: 5px;
+}
+
+.btn-outline-info {
+    margin-top: 15px;
+}
+
+.btn-outline-success {
+    margin-top: 15px;
+}
+
+.distance {
+    margin-top: 15px;
+}
+
+hr{
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+h6{
+    margin-top: 15px;
+    color: #7a7a7a;
+}

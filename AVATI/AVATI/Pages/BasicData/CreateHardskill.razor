@@ -17,15 +17,15 @@
                        <label class="form-label">Oberkategorie:</label>
                        <InputSelect class="form-control" @bind-Value="@Description">
                          <option value="">Keine Oberkategorie</option>
-                         @foreach (var hardskillcat in _hardskillService.GetAllHardskillCategorys().Where(hardskillcat => hardskillcat.Height == 1))
+                         @foreach (var hardskillcat in _hardskillService.GetAllHardskillCategorys())
                          {
                            <option value="@hardskillcat.Description">@hardskillcat.Description</option>
                          }
                        </InputSelect>
                      </div>
                    <div class="modal-footer">
-                     <button type="submit" class="btn btn-primary">Save</button>
-                     <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Showing">Close</button>
+                     <button type="submit" class="btn btn-success">Speichern</button>
+                     <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">Abbrechen</button>
                    </div>
                    </EditForm>
                  </div>
