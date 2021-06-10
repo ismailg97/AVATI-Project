@@ -3,82 +3,82 @@
 
 @if (ShowEdit)
 {
-    if (TempEmp != null)
+    if (_tempEmp != null)
     {
         <div class="modal fade show d-block" data-bs-backdrop="static" id="exampleModal" role="dialog">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content bg-light  font-weight-bold text-black">
+            <div class="modal-dialog" style="min-width: 1500px" role="document">
+                <div class="modal-content bg-light text-black">
                     <div class="modal-header">
                         <h5 class="modal-title font-weight-bolder text-center" id="titleLabel">Detailansicht</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick=@Close>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick=@Close> <!--only close, no reset-->
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
-                    <div class="modal-body text-center">
-                        <div class="container">
-                            <div class="row g-4 justify-content-md-center mb-4">
-                                <div class="card border-secondary col mr-4">
-                                    <div class="card-header text-left bg-transparent border-secondary">Hardskills</div>
-                                    <div class="card-body text-left">
-                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
-                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
-                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
-                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
-                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
-                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
-                                    </div>
-                                </div>
-                                <div class="card text-black border-dark col">
+                    <div class="modal-body">
+                        <div class="container ml-3" style="min-width: 100%">
+                            <div class="row justify-content-md-center mb-4">
+                                <div class="card col-sm-4 text-black border-dark">
                                     <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" class="card-img-top" alt=""/>
                                     <div class="card-body">
                                         <h5 class="card-title">Max Mustermann</h5>
                                         <p class="card-text text-left">Eventuell das RC</p>
-                                        <p>Hallo hier sind Infos</p>
+                                        <p class="card-text text-left">Evtl Geburtsdatum</p>
+                                        <p class="card-text text-left">Branchen:</p>
+                                        <p class="card-text text-left">
+                                            <ul>
+                                                <li>Steuerberatung/Wirtschaftsprüfung</li>
+                                                <li>Banken/Finanzsektor/Versicherung</li>
+                                            </ul>
+                                        </p> <!-- needs to stay -->
                                     </div>
                                 </div>
-                                <div class="card border-secondary col ml-4">
-                                    <div class="card-header text-left bg-transparent border-secondary">Softskills</div>
-                                    <div class="card-body text-left">
-                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
-                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
-                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
-                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
-
+                                <div class="col-sm-8">
+                                <div class="row mb-3">
+                                    <div class="card col-sm-8 border-secondary ml-3 mr-3">
+                                        <div class="card-header text-left bg-transparent border-secondary">Hardskills</div>
+                                        <div class="card-body text-left">
+                                            <button class="btn btn-sm btn-outline-success mb-1 mr-1">HP ALM (Application Life Cycle Management)</button>
+                                            <button class="btn btn-sm btn-outline-success mb-1 mr-1">MS SQL Server Management Studio</button>
+                                            <button class="btn btn-sm btn-outline-success mb-1 mr-1">Adaptive Software Development</button>
+                                            <button class="btn btn-sm btn-outline-success mb-1 mr-1">Business process modeling and system integration</button>
+                                            <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                            <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                        </div>
+                                    </div>
+                                    <div class="card border-secondary col-sm-3">
+                                        <div class="card-header text-left bg-transparent border-secondary">Sprache(n)</div>
+                                        <div class="card-body text-left">
+                                            <button class="btn btn-sm btn-outline-success mb-1 mr-1">Französisch</button>
+                                            <button class="btn btn-sm btn-outline-success mb-1 mr-1">Italienisch</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row justify-content-md-center">
-                                <div class="card border-secondary text-center col">
-                                    <div class="card-header text-left bg-transparent border-secondary">Branche(n)</div>
-                                    <div class="card-body">
-                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
-                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
-
+                                    <div class="row">
+                                        <div class="card border-secondary col-sm-8 ml-3 mr-3">
+                                            <div class="card-header text-left bg-transparent border-secondary">Softskills</div>
+                                            <div class="card-body text-left">
+                                                <button class="btn btn-sm btn-outline-success mb-1 mr-1">Methodische und strukturierte Vorgehensweise</button>
+                                                <button class="btn btn-sm btn-outline-success mb-1 mr-1">Interdisziplinärer Sachverstand</button>
+                                                <button class="btn btn-sm btn-outline-success mb-1 mr-1">Ergebnisorientiertes Handeln</button>
+                                                <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                            </div>
+                                        </div>
+                                        <div class="card border-secondary col-sm-3">
+                                            <div class="card-header text-left bg-transparent border-secondary">Rolle(n)</div>
+                                            <div class="card-body text-left">
+                                                <button class="btn btn-sm btn-outline-success mb-1 mr-1">Software Developer</button>
+                                                <button class="btn btn-sm btn-outline-success mb-1 mr-1">UI/UX-Designer</button>
+                                                <button class="btn btn-sm btn-outline-success mb-1 mr-1">Product Owner</button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="card border-secondary col mr-4 ml-4">
-                                    <div class="card-header text-left bg-transparent border-secondary">Rolle(n)</div>
-                                    <div class="card-body text-left">
-                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
-                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
-                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
                                     </div>
-                                </div>
-                                <div class="card border-secondary col ">
-                                    <div class="card-header text-left bg-transparent border-secondary">Sprache(n)</div>
-                                    <div class="card-body text-left">
-                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
-                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
-                        <div class="row float-right mt-5">
-                            <button class="btn btn-danger mr-2"@onclick=@Close>Abbrechen</button>
-                            <button class="btn btn-success mr-2"@onclick=@Close>Änderungen speichern</button>
-                        </div>
-
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-danger ml-4" style="float: left">Abbrechen</button> <!--Close + Reset-->
+                        <button class="btn btn-success mr-4" style="float: right" >Änderungen speichern</button>
                     </div>
                 </div>
             </div>
@@ -95,18 +95,13 @@
     <div class="modal-backdrop fade show"></div>
 }
 
-
-
 @code {
-
     [Parameter]
     public int EmpId { get; set; }
-
     public int PropId { get; set; }
-    private Employee TempEmp;
+    private Employee _tempEmp;
     public bool ShowEdit { get; set; }
     public bool ShowBackdrop { get; private set; }
-
     public void Show(int employeeId, int proposalId)
     {
         ShowEdit = !ShowEdit;
@@ -115,16 +110,14 @@
         PropId = proposalId;
         if (_proposal.GetProposal(PropId) != null)
         {
-            TempEmp = _proposal.GetProposal(PropId).Employees.Find(e => e.EmployeeId == EmpId);
+            _tempEmp = _proposal.GetProposal(PropId).Employees.Find(e => e.EmployeeId == EmpId);
         }
         StateHasChanged();
     }
-
     private void Close()
     {
         ShowEdit = !ShowEdit;
         ShowBackdrop = !ShowBackdrop;
         StateHasChanged();
     }
-
 }
