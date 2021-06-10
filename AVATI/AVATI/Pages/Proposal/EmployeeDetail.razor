@@ -27,28 +27,30 @@
                                     <div class="card-body">
                                         <h5 class="card-title">@_employeeService.GetEmployeeProfile(EmpId).FirstName @_employeeService.GetEmployeeProfile(EmpId).LastName</h5>
                                         <div class="card-title text-left">
-                                            @if (TempEmpDetail.RcVis(_employeeService.GetEmployeeProfile(EmpId).Rc))
+                                            Rate Card Level:
+                                            @if (TempEmpDetail.RcVis())
                                             {
-                                                <button class="btn btn-sm btn-outline-success" >@_employeeService.GetEmployeeProfile(EmpId).Rc</button>
+                                                <button class="btn btn-sm btn-outline-success" @onclick=@(() => { _employeeDetailService.DeleteRc(TempEmpDetail); })>@_employeeService.GetEmployeeProfile(EmpId).Rc</button>
+                                                                                                                                                                                                                 
                                             }
                                             else
                                             {
-                                                <button class="btn btn-sm btn-outline-dark" >@_employeeService.GetEmployeeProfile(EmpId).Rc</button>
+                                                <button class="btn btn-sm btn-outline-dark" @onclick=@(() => {_employeeDetailService.AddRc(TempEmpDetail, _employeeService.GetEmployeeProfile(EmpId).Rc);})>@_employeeService.GetEmployeeProfile(EmpId).Rc</button>
                                             }
                                         </div>
-                                        <div class="card-text text-left">Branchen:</div>
                                         <div class="card-text text-left">
+                                            Branchen:
                                             @foreach (var field in _employeeService.GetEmployeeProfile(EmpId).Field)
+                                            {
+                                                if (TempEmpDetail.FieldVis(field))
                                                 {
-                                                    if (TempEmpDetail.FieldVis(field))
-                                                    {
-                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" >@field</button>
-                                                    }
-                                                    else
-                                                    {
-                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" >@field</button>
-                                                    }
+                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteField(TempEmpDetail, field);})>@field</button>
                                                 }
+                                                else
+                                                {
+                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddField(TempEmpDetail, field);})>@field</button>
+                                                }
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -61,11 +63,11 @@
                                             {
                                                 if (TempEmpDetail.HardVis(hardSkill))
                                                 {
-                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1">@hardSkill.Description</button>    
+                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteHard(TempEmpDetail, hardSkill);})>@hardSkill.Description</button>    
                                                 }
                                                 else
                                                 {
-                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1">@hardSkill.Description</button>
+                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddHard(TempEmpDetail, hardSkill);})>@hardSkill.Description</button>
                                                 }
                                                 
                                             }
@@ -78,11 +80,11 @@
                                             {
                                                 if (TempEmpDetail.LanguageVis(lang.Item1))
                                                 {
-                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1">@lang.Item1</button>
+                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteLang(TempEmpDetail, lang);})>@lang.Item1</button>
                                                 }
                                                 else
                                                 {
-                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" >@lang.Item1</button>
+                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddLang(TempEmpDetail, lang);})>@lang.Item1</button>
                                                 }
                                             }
                                         </div>
@@ -96,11 +98,11 @@
                                                 {
                                                     if (TempEmpDetail.SoftVis(softSkill))
                                                     {
-                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" >@softSkill</button>
+                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteSoft(TempEmpDetail, softSkill);})>@softSkill</button>
                                                     }
                                                     else
                                                     {
-                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" >@softSkill</button>
+                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddSoft(TempEmpDetail, softSkill);})>@softSkill</button>
                                                     }
                                                 }
                                             </div>
@@ -112,11 +114,11 @@
                                                 {
                                                     if (TempEmpDetail.RolesVis(role))
                                                     {
-                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" >@role</button>
+                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteRole(TempEmpDetail, role);})>@role</button>
                                                     }
                                                     else
                                                     {
-                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" >@role</button>
+                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddRole(TempEmpDetail, role);})>@role</button>
                                                     }
                                                 }
                                             </div>
@@ -128,7 +130,7 @@
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-danger" @onclick="@Close">Abbrechen</button>
-                        <button class="btn btn-success" @onclick="@Close">Änderungen speichern</button>
+                        <button class="btn btn-success" @onclick=@(() => { _employeeDetailService.UpdateEmployeeDetail(EmpId, PropId, TempEmpDetail); Close();})>Änderungen speichern</button> <!--TODO: make work-->
                     </div>
                 </div>
             </div>

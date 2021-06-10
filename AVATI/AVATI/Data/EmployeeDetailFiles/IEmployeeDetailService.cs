@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace AVATI.Data.EmployeeDetailFiles
@@ -12,16 +13,28 @@ namespace AVATI.Data.EmployeeDetailFiles
 
         public List<EmployeeDetail> GetAllEmployeeDetail();
 
-        public void DeleteRc(int employeeId, int proposalId);
+        public void DeleteRc(EmployeeDetail input);
 
-        public void DeleteField(int employeeId, int proposalId, string field);
+        public void DeleteField(EmployeeDetail input, string field);
 
-        public void DeleteHard(int employeeId, int proposalId, Hardskill hardskill);
+        public void DeleteHard(EmployeeDetail input, Hardskill hardskill);
 
-        public void DeleteSoft(int employeeId, int proposalId, string softskill);
+        public void DeleteSoft(EmployeeDetail input, string softskill);
 
-        public void DeleteLang(int employeeId, int proposalId, string lang);
+        public void DeleteLang(EmployeeDetail input, Tuple<string, LanguageLevel> lang);
 
-        public void DeleteRole(int employeeId, int proposalId, string role);
+        public void DeleteRole(EmployeeDetail input, string role);
+
+        public void AddRc(EmployeeDetail input, int rc);
+
+        public void AddField(EmployeeDetail input, string field);
+
+        public void AddHard(EmployeeDetail input, Hardskill hardskill);
+
+        public void AddSoft(EmployeeDetail input, string softskill);
+
+        public void AddLang(EmployeeDetail input, Tuple<string, LanguageLevel> lang);
+
+        public void AddRole(EmployeeDetail input, string role);
     }
 }

@@ -40,7 +40,7 @@ namespace AVATI.Data.EmployeeDetailFiles
             return Languages.Find(e => e.Item1 == language) != null;
         }
 
-        public bool RcVis(int rc)
+        public bool RcVis()
         {
             return Rc != 0;
         }
