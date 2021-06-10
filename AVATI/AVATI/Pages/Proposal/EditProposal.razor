@@ -10,7 +10,15 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content bg-light border border-dark border-2 font-weight-bold text-black">
                 <div class="modal-header">
+                    @if (Id == 0)
+                    {
+                        <h5 class="modal-title font-weight-bolder" id="titleLabel">Angebot erstellen</h5>
+                    }
+                    else
+                    {
                     <h5 class="modal-title font-weight-bolder" id="titleLabel">Angebot editieren</h5>
+                        
+                    }
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick=@Close>
                         <span aria-hidden="true">×</span>
                     </button>
@@ -88,8 +96,16 @@
                             <label class="mt-2">Zusätzliche Informationen </label>
                             <InputText id="addinfo" class="form-control" @bind-Value="@Proposal.AdditionalInfo" placeholder=" "></InputText>
                         </div>
+                        @if (Id == 0)
+                        {
+                            <button type="submit" class="btn btn-success">Angebot anlegen</button>
+                        }
+                        else
+                        {
                         <button type="submit" class="btn btn-success">Änderungen speichern</button>
-                        <a class="btn btn-danger" @onclick="@Close">Abbrechen</a>
+                            
+                        }
+                        <a class="btn btn-danger ml-1" @onclick="@Close">Abbrechen</a>
                     </EditForm>
                 </div>
             </div>
@@ -124,7 +140,7 @@
     public void Show(int propId)
     {
         Id = propId;
-        if ((TempProp = _proposal.GetAllProposal().Find(e => e.ProposalId == propId)) != null)
+        if ((TempProp = _proposal.GetAllProposals().Find(e => e.ProposalId == propId)) != null)
         {
             Proposal = new Proposal()
             {
@@ -149,9 +165,9 @@
     {
         if (Id != 0)
         {
-            _proposal.GetAllProposal().Find(e => e.ProposalId == Id).AdditionalInfo = Proposal.AdditionalInfo;
-            _proposal.GetAllProposal().Find(e => e.ProposalId == Id).ProposalTitle = Proposal.ProposalTitle;
-            _proposal.UpdateProposal(Id, _proposal.GetAllProposal().Find(e => e.ProposalId == Id));
+            _proposal.GetAllProposals().Find(e => e.ProposalId == Id).AdditionalInfo = Proposal.AdditionalInfo;
+            _proposal.GetAllProposals().Find(e => e.ProposalId == Id).ProposalTitle = Proposal.ProposalTitle;
+            _proposal.UpdateProposal(Id, _proposal.GetAllProposals().Find(e => e.ProposalId == Id));
         }
         else
         {

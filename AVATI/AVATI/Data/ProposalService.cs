@@ -229,7 +229,7 @@ namespace AVATI.Data
             }
         }
 
-        public List<Proposal> GetAllProposal()
+        public List<Proposal> GetAllProposals()
         {
             return Proposals;
         }
