@@ -6,58 +6,77 @@ namespace AVATI.Data
 {
     public class ProjectActivityServiceSimple : IProjctActivityService
     {
-        private IEmployeeService _employeeService;
-        private IProjektService _projektService;
-        private IHardskillService _hardskillService;
-        
-        public Employee Emp;
-        public Project Proj;
+
+       
         
         
 
         public List<ProjectActivity> pALIst = new List<ProjectActivity>()
         {
-            new ProjectActivity()
-            {
-                Description = "UI-Tester", EmployeeID = 3, ProjectID = 0,
-            }
+            
             
         };
         
 
-        public bool SetProjectActivity(int EmployeeId, int ProjectId, ProjectActivity pA)
+        public bool SetProjectActivity(int EmployeeId, int ProjectId, string Description)
         {
-            Emp = _employeeService.GetEmployeeProfile(EmployeeId);
-            Proj = _projektService.GetProject(ProjectId);
-            foreach (var pActivityEmp in pALIst)
+            ProjectActivity pA = new ProjectActivity();
+            pA.Description = Description;
+            pA.EmployeeID = EmployeeId;
+            pA.ProjectID = ProjectId;
+            foreach (var activity in pALIst)
             {
-                if (pActivityEmp.EmployeeID == Emp.EmployeeId)
+                if (activity.EmployeeID == EmployeeId)
                 {
-                    foreach (var pActivityProj in pALIst)
+                    if (activity.ProjectID == ProjectId)
                     {
-                        if (pActivityProj.ProjectID == Proj.ProjectID)
-                        {
-                            pActivityProj.Description = pA.Description;
-                        }
-                    }  
+                        pALIst.Remove(activity);
+                        
+                    }
                 }
             }
-            
+            pALIst.Add(pA);
+            return true;
 
-
-            throw new System.NotImplementedException();
         }
 
-        
+       
+
 
         public bool DeleteProjectActivity(int EmployeeId, int ProjectId, string Description)
         {
-            throw new System.NotImplementedException();
+            foreach (var activity in pALIst)
+            {
+                if (activity.EmployeeID == EmployeeId)
+                {
+                    if (activity.ProjectID == ProjectId)
+                    {
+                        pALIst.Remove(activity);
+                        return true;
+
+                    }
+                }
+            }
+
+            return false;
         }
 
-        public List<ProjectActivity> GetProjectActivities(int EmployeeId, int ProjectId)
+        public ProjectActivity GetProjectActivities(int EmployeeId, int ProjectId)
         {
-            throw new System.NotImplementedException();
+            foreach (var activity in pALIst)
+            {
+                if (activity.EmployeeID == EmployeeId)
+                {
+                    if (activity.ProjectID == ProjectId)
+                    {
+                        return activity;
+
+
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }
