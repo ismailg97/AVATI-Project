@@ -16,7 +16,7 @@ namespace AVATI.Data
                 new Employee()
                 {
                     
-                    EmployeeId = 0,FirstName = "Ismail", LastName = "Gürsöz", Roles = new List<string>()
+                    EmployeeId = 1,FirstName = "Ismail", LastName = "Gürsöz", Roles = new List<string>()
                     {
                         "Software Developer",
                         "Agile Coach",
@@ -58,7 +58,7 @@ namespace AVATI.Data
                 new Employee()
                 {
                     
-                    EmployeeId = 1,FirstName = "Anton", LastName = "Huber", Roles = new List<string>()
+                    EmployeeId = 0,FirstName = "Anton", LastName = "Huber", Roles = new List<string>()
                     {
                         "Agile Coach",
                         "UI/UX-Designer",

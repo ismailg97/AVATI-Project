@@ -34,7 +34,10 @@ namespace AVATI.Data
                                 {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
                             Field = new List<string>() {"Robotik",
                                 "Sport"
-                            }, Language = new List<Tuple<string, LanguageLevel>>() {new Tuple<string, LanguageLevel>("English", LanguageLevel.A1)}
+                            }, Language = new List<Tuple<string, LanguageLevel>>()
+                            {
+                                new Tuple<string, LanguageLevel>("English", LanguageLevel.A1)},
+                            EmployeeId = 1
                         },
                         new Employee()
                         {
