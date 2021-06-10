@@ -1,5 +1,7 @@
 @using AVATI.Data
+@using DocumentFormat.OpenXml.Drawing
 @inject IProposalService _proposal
+@inject IEmployeeService _employeeService
 
 @if (ShowEdit)
 {
@@ -20,16 +22,18 @@
                                 <div class="card col-sm-4 text-black border-dark">
                                     <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" class="card-img-top" alt=""/>
                                     <div class="card-body">
-                                        <h5 class="card-title">Max Mustermann</h5>
-                                        <p class="card-text text-left">Eventuell das RC</p>
-                                        <p class="card-text text-left">Evtl Geburtsdatum</p>
-                                        <p class="card-text text-left">Branchen:</p>
-                                        <p class="card-text text-left">
+                                        <h5 class="card-title">@_employeeService.GetEmployeeProfile(EmpId).FirstName @_employeeService.GetEmployeeProfile(EmpId).LastName</h5>
+                                        <p class="card-text text-left">RC - Level: </p>
+                                        <p class="card-text text-left">Beschäftigung seit: @_employeeService.GetEmployeeProfile(EmpId).EmploymentTime.ToString("dd/MM/yyyy")</p>
+                                        <div class="card-text text-left">Branchen:</div>
+                                        <div class="card-text text-left">
                                             <ul>
-                                                <li>Steuerberatung/Wirtschaftsprüfung</li>
-                                                <li>Banken/Finanzsektor/Versicherung</li>
+                                                @foreach (var field in _employeeService.GetEmployeeProfile(EmpId).Field)
+                                                {
+                                                    <li>@field</li>   
+                                                }
                                             </ul>
-                                        </p> <!-- needs to stay -->
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-8">
@@ -37,19 +41,19 @@
                                     <div class="card col-sm-8 border-secondary ml-3 mr-3">
                                         <div class="card-header text-left bg-transparent border-secondary">Hardskills</div>
                                         <div class="card-body text-left">
-                                            <button class="btn btn-sm btn-outline-success mb-1 mr-1">HP ALM (Application Life Cycle Management)</button>
-                                            <button class="btn btn-sm btn-outline-success mb-1 mr-1">MS SQL Server Management Studio</button>
-                                            <button class="btn btn-sm btn-outline-success mb-1 mr-1">Adaptive Software Development</button>
-                                            <button class="btn btn-sm btn-outline-success mb-1 mr-1">Business process modeling and system integration</button>
-                                            <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
-                                            <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                            @foreach (var hardSkill in _employeeService.GetEmployeeProfile(EmpId).Hardskills)
+                                            {
+                                                <button class="btn btn-sm btn-outline-success mb-1 mr-1">@hardSkill.Description</button>
+                                            }
                                         </div>
                                     </div>
                                     <div class="card border-secondary col-sm-3">
                                         <div class="card-header text-left bg-transparent border-secondary">Sprache(n)</div>
                                         <div class="card-body text-left">
-                                            <button class="btn btn-sm btn-outline-success mb-1 mr-1">Französisch</button>
-                                            <button class="btn btn-sm btn-outline-success mb-1 mr-1">Italienisch</button>
+                                            @foreach (var lang in _employeeService.GetEmployeeProfile(EmpId).Language)
+                                            {
+                                                <button class="btn btn-sm btn-outline-success mb-1 mr-1">@lang.Item1</button>
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -57,18 +61,19 @@
                                         <div class="card border-secondary col-sm-8 ml-3 mr-3">
                                             <div class="card-header text-left bg-transparent border-secondary">Softskills</div>
                                             <div class="card-body text-left">
-                                                <button class="btn btn-sm btn-outline-success mb-1 mr-1">Methodische und strukturierte Vorgehensweise</button>
-                                                <button class="btn btn-sm btn-outline-success mb-1 mr-1">Interdisziplinärer Sachverstand</button>
-                                                <button class="btn btn-sm btn-outline-success mb-1 mr-1">Ergebnisorientiertes Handeln</button>
-                                                <button class="btn btn-sm btn-outline-success mb-1 mr-1">testsddsf</button>
+                                                @foreach (var softSkill in _employeeService.GetEmployeeProfile(EmpId).Softskills)
+                                                {
+                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1">@softSkill</button>
+                                                }
                                             </div>
                                         </div>
                                         <div class="card border-secondary col-sm-3">
                                             <div class="card-header text-left bg-transparent border-secondary">Rolle(n)</div>
                                             <div class="card-body text-left">
-                                                <button class="btn btn-sm btn-outline-success mb-1 mr-1">Software Developer</button>
-                                                <button class="btn btn-sm btn-outline-success mb-1 mr-1">UI/UX-Designer</button>
-                                                <button class="btn btn-sm btn-outline-success mb-1 mr-1">Product Owner</button>
+                                                @foreach (var role in _employeeService.GetEmployeeProfile(EmpId).Roles)
+                                                {
+                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1">@role</button>
+                                                }
                                             </div>
                                         </div>
                                     </div>
@@ -77,8 +82,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-danger ml-4" style="float: left">Abbrechen</button> <!--Close + Reset-->
-                        <button class="btn btn-success mr-4" style="float: right" >Änderungen speichern</button>
+                        <button class="btn btn-danger" @onclick="@Close">Abbrechen</button>
+                        <button class="btn btn-success" @onclick="@Close">Änderungen speichern</button>
                     </div>
                 </div>
             </div>
@@ -102,6 +107,7 @@
     private Employee _tempEmp;
     public bool ShowEdit { get; set; }
     public bool ShowBackdrop { get; private set; }
+
     public void Show(int employeeId, int proposalId)
     {
         ShowEdit = !ShowEdit;
