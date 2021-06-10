@@ -59,7 +59,7 @@
                                             <span>@employee.FirstName @employee.LastName</span>
                                             <div class="btn-group float-right">
                                                 <button class="btn btn-info btn-sm mr-2" @onclick=@(() => { ShowDetail(employee.EmployeeId, proposal.ProposalId); })>Details</button>
-                                                <button class="btn btn-primary btn-sm " @onclick=@(() => { ShowRcEdit(employee, 0); })>RC: @employee.Rc </button>
+                                                <button class="btn btn-primary btn-sm " @onclick=@(() => { ShowRcEdit(proposal, employee.EmployeeId, 3); })>RC: @proposal.AltRc[employee.EmployeeId] </button>
                                             </div>
 
                                         </li>
@@ -127,8 +127,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { ShowRcEdit(null, 1); })">Abbrechen</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { ShowRcEdit(null, 0); })">Speichern</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { ShowPop = !ShowPop; })">Abbrechen</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { RcToEdit.AltRc[EmpEdit] = _changeValue; ShowPop = !ShowPop; })">Speichern</button>
                 </div>
             </div>
         </div>
@@ -150,9 +150,9 @@
     Dictionary<int, bool> _showAdditionalInfo;
     Dictionary<int, bool> _promptDelete;
     public bool ShowPop { get; set; }
-    public Employee RcToEdit { get; set; }
+    public Proposal RcToEdit { get; set; }
+    public static int EmpEdit { get; set; }
 
-    private static int _restoreValue;
     private static int _changeValue;
 
     protected override void OnInitialized()
@@ -197,26 +197,16 @@
         _employeeDetail.Show(employeeId, proposalId);
     }
 
-    private void ShowRcEdit(Employee emp, int response)
+    private void ShowRcEdit(Proposal prop, int employeeId, int response)
     {
         if (!ShowPop)
         {
-            RcToEdit = emp;
-            _restoreValue = emp.Rc;
-            _changeValue = emp.Rc;
-        }
-        else
-        {
-            if (response == 0)
-            {
-                RcToEdit.Rc = _changeValue;
-            }
-            if (response == 1)
-            {
-                RcToEdit.Rc = _restoreValue;
-            }
-        }
+            _changeValue = prop.AltRc[employeeId];
+            RcToEdit = prop;
+            EmpEdit = employeeId;
 
+        }
+        
         ShowPop = !ShowPop;
     }
 
