@@ -13,7 +13,8 @@ namespace AVATI.Data
         public string Projectdescription { get; set; }
         public List<string> Projectpurpose { get; set; }
         public string Projectactivities { get; set; }
-        public DateTime Runtime { get; set; }                  
+        public DateTime Projectbeginning { get; set; }
+        public DateTime Projectend { get; set; }
         public List<string> fields { get; set; }
         public List<Employee> Employees { get; set; }
     }
