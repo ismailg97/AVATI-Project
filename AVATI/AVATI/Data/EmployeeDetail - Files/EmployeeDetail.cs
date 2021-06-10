@@ -22,7 +22,7 @@ namespace AVATI.Data
 
         public bool HardVis(Hardskill hardskill)
         {
-            return Hardskills.Find(e => e.Description.Equals(hardskill.Description)) != null
+            return Hardskills.Find(e => e.Description.Equals(hardskill.Description)) != null;
         }
 
         public bool RolesVis(string role)
