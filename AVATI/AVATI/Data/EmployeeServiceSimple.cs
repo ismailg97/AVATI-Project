@@ -196,7 +196,7 @@ namespace AVATI.Data
                 if (emp.EmployeeId == employee.EmployeeId)
                 {
                     employee.Field = emp.Field;
-                    employee.FirstName = employee.LastName;
+                    employee.FirstName = employee.FirstName;
                     employee.LastName = emp.LastName;
                     employee.Language = emp.Language;
                     employee.Roles = emp.Roles;

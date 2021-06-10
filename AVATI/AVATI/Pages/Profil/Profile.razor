@@ -20,7 +20,7 @@
     </div>
     <div class="col-md-6">
         <div class="profile-head">
-            <div class="form-group text-left">
+            <div style="margin-left: 12px" class="form-group text-left">
 
                 <!------ Name ---------->
                 <h6 style="color: black">
@@ -31,7 +31,7 @@
                 <p class="proile-rating">RateCard : <span>@Emp.Rc</span></p>
 
                 <!------ Employment Time ---------->
-                <p style="color: #000;margin-top: -7px">Beschäftigt seit: @Emp.EmploymentTime</p>
+                <p style="color: #000;margin-top: -7px">Beschäftigt seit: @Emp.EmploymentTime.ToShortDateString()</p>
 
             </div>
         </div>
@@ -39,7 +39,9 @@
 
     <!------ Edit Profile Button ---------->
     <div class="col-md-2">
-        <input class="profile-edit-btn" @onclick="(() => { EditProfile(); })" name="btnAddMore" value="Profil bearbeiten"/>
+        <a href="profile/update/@Emp.EmployeeId">
+            <input class="profile-edit-btn"    name="btnAddMore" value="Profil bearbeiten"/>
+            </a>
     </div>
 </div>
 

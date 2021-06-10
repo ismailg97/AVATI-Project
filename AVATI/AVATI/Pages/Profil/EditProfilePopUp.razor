@@ -11,43 +11,46 @@
 
 <div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
     <div class="modal-dialog modal-dialog-scrollable modal-lg ">
-        <div class="modal-content bg-light border border-dark border-2 font-weight-bold text-black">
+        <div class="modal-content  border border-dark border-2 font-weight-bold text-black">
             <div class="modal-header">
                 <h5 class="modal-title medium font-weight-normal lead">Profil bearbeiten</h5>
-                <button type="button" @onclick="(() => { Cancel(); })" class="btn-close" data-bs-dismiss="modal" aria-label="Close">x</button>
+                <button type="button" @onclick="(() => { Cancel(); })" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body overflow-auto">
                 <EditForm Model="@emp" OnValidSubmit="@SubmitEmp">
-
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="card-title small font-weight-light lead text-left">Vorname</div>
-                            <InputText id="title" class="form-control" @bind-Value="@emp.FirstName" placeholder="@emp.FirstName"></InputText>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="card-title small font-weight-light lead text-left">Vorname</div>
+                                <InputText id="title" class="form-control" @bind-Value="@emp.FirstName" placeholder="@emp.FirstName"></InputText>
+                            </div>
+                            <div class="col-6">
+                                <div class="card-title small font-weight-light lead text-left">Nachname</div>
+                                <InputText id="title" class="form-control" @bind-Value="@emp.LastName" placeholder="@emp.LastName"></InputText>
+                            </div>
                         </div>
-                        <div class="col-6">
-                            <div class="card-title small font-weight-light lead text-left">Nachname</div>
-                            <InputText id="title" class="form-control" @bind-Value="@emp.LastName" placeholder="@emp.LastName"></InputText>
+                        <div style="margin-top: 20px" class="row">
+                            <div class="col-6">
+                                <div class="card-title small font-weight-light lead text-left">Rate-Card Level</div>
+                                <input class="form-control" min="1" max="7" type="number" @bind=@_changeValue id="example-number-input"/>
+                            </div>
+                            <div class="col-6">
+                                <div class="card-title small font-weight-light lead text-left">Beschäftigungszeit</div>
+                                <input type="date" class="form-control" @bind-value="@emp.EmploymentTime" placeholder="max.mustermann@mail.com" required>
+                            </div>
                         </div>
                     </div>
-                    <div style="margin-top: 20px" class="row">
-                        <div class="col-6">
-                            <div class="card-title small font-weight-light lead text-left">Rate-Card Level</div>
-                            <input class="form-control" min="1" max="7" type="number" @bind=@_changeValue id="example-number-input"/>
-                        </div>
-                        <div class="col-6">
-                            <div class="card-title small font-weight-light lead text-left">Beschäftigungszeit</div>
-                            <input type="date" class="form-control" @bind-value="@emp.EmploymentTime" placeholder="max.mustermann@mail.com" required>
-                        </div>
+                    <div class="form-group">
+                        <div class="card-title small font-weight-light lead text-left">Soft Skills: </div>
+                        
                     </div>
 
 
                     <div class="container">
-
                         <button type="submit" class="btn btn-success">Submit</button>
-
-
                         <button type="button" @onclick="(() => { Cancel(); })" class="btn btn-danger">Cancel</button>
-
                     </div>
                 </EditForm>
             </div>
@@ -77,6 +80,7 @@
 
     public void Show(int EmpId)
     {
+        
         Id = EmpId;
         emp = _employeeService.GetEmployeeProfile(Id);
         softskillList = emp.Softskills;
