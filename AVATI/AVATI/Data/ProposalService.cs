@@ -7,11 +7,11 @@ namespace AVATI.Data
     public class ProposalService : IProposalService
     {
         public List<Proposal> Proposals { get; set; }
-
         public ProposalService()
         {
             Proposals = new List<Proposal>()
             {
+                
                 new Proposal()
                 {
                     ProposalId = 1,
@@ -22,49 +22,7 @@ namespace AVATI.Data
                         {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
                     AdditionalInfo = "Das Projekt versucht einer HTML - Seite Tetris beizubringen",
                     Employees = new List<Employee>()
-                    {
-                        new Employee()
-                        {
-                            FirstName = "Watson", LastName = "Smith", Rc = 6, Softskills = new List<string>()
-                            {
-                                "Soziale Kompetenz",
-                                "Überzeugungskraft"
-                            },
-                            Hardskills = new List<Hardskill>()
-                                {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
-                            Field = new List<string>() {"Robotik",
-                                "Sport"
-                            }, Language = new List<Tuple<string, LanguageLevel>>()
-                            {
-                                new Tuple<string, LanguageLevel>("English", LanguageLevel.A1)},
-                            EmployeeId = 1
-                        },
-                        new Employee()
-                        {
-                            FirstName = "Joe", LastName = "Jonson", Rc = 6, Softskills = new List<string>()
-                            {
-                                "Beratungsfähigkeit",
-                                "Rhetorik",
-                            },
-                            Hardskills = new List<Hardskill>()
-                                {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
-                            Field = new List<string>() {"Robotik",
-                                "Sport",},
-                        },
-                        new Employee()
-                        {
-                            FirstName = "Smith", LastName = "Smart", Rc = 6,
-                            Softskills = new List<string>() {"Lehrfähigkeit",
-                                "Marktkenntnisse",
-                                "Verhandlungsgeschick"}, Hardskills =
-                                new List<Hardskill>()
-                                    {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
-                            Field = new List<string>() {"Automobil",
-                                "Banken/Finanzsektor/Versicherung",
-                                "Beratung",
-                                "Bildung"},
-                        },
-                    }
+                    
                 },
                 new Proposal()
                 {
@@ -76,11 +34,7 @@ namespace AVATI.Data
                         {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "JavaScript"}},
                     AdditionalInfo = "Die beiden Programmiersprachen sollen für diese Anwendung kombiniert werden",
                     Employees = new List<Employee>()
-                    {
-                        new Employee() {FirstName = "Watson", LastName = "Smith", Rc = 6},
-                        new Employee() {FirstName = "Watson", LastName = "Smith", Rc = 6},
-                        new Employee() {FirstName = "Watson", LastName = "Smith", Rc = 3}
-                    }
+                    
                 },
                 new Proposal()
                 {
@@ -92,11 +46,7 @@ namespace AVATI.Data
                         {new Hardskill() {Description = "C#"}, new Hardskill() {Description = "Python"}},
                     AdditionalInfo = "Facial Regognition, die unabhängig vom Smartphone funktioniert",
                     Employees = new List<Employee>()
-                    {
-                        new Employee() {FirstName = "Watson", LastName = "Smith", Rc = 6},
-                        new Employee() {FirstName = "Watson", LastName = "Smith", Rc = 6},
-                        new Employee() {FirstName = "Watson", LastName = "Smith", Rc = 6}
-                    }
+                    
                 },
                 new Proposal()
                 {
@@ -108,10 +58,7 @@ namespace AVATI.Data
                         {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
                     AdditionalInfo = "Das Projekt versucht einer HTML - Seite Tetris beizubringen",
                     Employees = new List<Employee>()
-                    {
-                        new Employee() {FirstName = "Watson", LastName = "Smith", Rc = 6},
-                        new Employee() {FirstName = "Watson", LastName = "Smith", Rc = 6}
-                    }
+                    
                 },
                 new Proposal()
                 {
@@ -123,10 +70,7 @@ namespace AVATI.Data
                         {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
                     AdditionalInfo = "Das System soll Einbrecher identifizieren können",
                     Employees = new List<Employee>()
-                    {
-                        new Employee() {FirstName = "Watson", LastName = "Smith", Rc = 6},
-                        new Employee() {FirstName = "Watson", LastName = "Smith", Rc = 6}
-                    }
+                   
                 },
                 new Proposal()
                 {
@@ -139,10 +83,7 @@ namespace AVATI.Data
                         {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
                     AdditionalInfo = "<<Empty>>",
                     Employees = new List<Employee>()
-                    {
-                        new Employee() {FirstName = "Watson", LastName = "Smith", Rc = 6},
-                        new Employee() {FirstName = "Watson", LastName = "Smith", Rc = 6}
-                    }
+                    
                 },
                 new Proposal()
                 {
@@ -154,9 +95,7 @@ namespace AVATI.Data
                         {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
                     AdditionalInfo = "Die finale Version des HTML - Projekts",
                     Employees = new List<Employee>()
-                    {
-                        new Employee() {FirstName = "Watson", LastName = "Smith", Rc = 6}
-                    }
+                 
                 },
             };
         }

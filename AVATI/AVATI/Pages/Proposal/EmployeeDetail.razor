@@ -15,7 +15,8 @@
                 <div class="modal-content bg-light text-black">
                     <div class="modal-header">
                         <h5 class="modal-title font-weight-bolder text-center" id="titleLabel">Detailansicht</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick=@Close> <!--only close, no reset-->
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick=@Close>
+                            <!--only close, no reset-->
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
@@ -29,65 +30,64 @@
                                         <div class="card-title text-left">
                                             @if (TempEmpDetail.RcVis(_employeeService.GetEmployeeProfile(EmpId).Rc))
                                             {
-                                                <button class="btn btn-sm btn-outline-success" >@_employeeService.GetEmployeeProfile(EmpId).Rc</button>
+                                                <button class="btn btn-sm btn-outline-success">@_employeeService.GetEmployeeProfile(EmpId).Rc</button>
                                             }
                                             else
                                             {
-                                                <button class="btn btn-sm btn-outline-dark" >@_employeeService.GetEmployeeProfile(EmpId).Rc</button>
+                                                <button class="btn btn-sm btn-outline-dark">@_employeeService.GetEmployeeProfile(EmpId).Rc</button>
                                             }
                                         </div>
                                         <div class="card-text text-left">Branchen:</div>
                                         <div class="card-text text-left">
                                             @foreach (var field in _employeeService.GetEmployeeProfile(EmpId).Field)
+                                            {
+                                                if (TempEmpDetail.FieldVis(field))
                                                 {
-                                                    if (TempEmpDetail.FieldVis(field))
-                                                    {
-                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" >@field</button>
-                                                    }
-                                                    else
-                                                    {
-                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" >@field</button>
-                                                    }
+                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1">@field</button>
                                                 }
+                                                else
+                                                {
+                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1">@field</button>
+                                                }
+                                            }
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-8">
-                                <div class="row mb-3">
-                                    <div class="card col-sm-8 border-secondary ml-3 mr-3">
-                                        <div class="card-header text-left bg-transparent border-secondary">Hardskills</div>
-                                        <div class="card-body text-left">
-                                            @foreach (var hardSkill in _employeeService.GetEmployeeProfile(EmpId).Hardskills)
-                                            {
-                                                if (TempEmpDetail.HardVis(hardSkill))
+                                    <div class="row mb-3">
+                                        <div class="card col-sm-8 border-secondary ml-3 mr-3">
+                                            <div class="card-header text-left bg-transparent border-secondary">Hardskills</div>
+                                            <div class="card-body text-left">
+                                                @foreach (var hardSkill in _employeeService.GetEmployeeProfile(EmpId).Hardskills)
                                                 {
-                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1">@hardSkill.Description</button>    
+                                                    if (TempEmpDetail.HardVis(hardSkill))
+                                                    {
+                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">@hardSkill.Description</button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1">@hardSkill.Description</button>
+                                                    }
                                                 }
-                                                else
+                                            </div>
+                                        </div>
+                                        <div class="card border-secondary col-sm-3">
+                                            <div class="card-header text-left bg-transparent border-secondary">Sprache(n)</div>
+                                            <div class="card-body text-left">
+                                                @foreach (var lang in _employeeService.GetEmployeeProfile(EmpId).Language)
                                                 {
-                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1">@hardSkill.Description</button>
+                                                    if (TempEmpDetail.LanguageVis(lang.Item1))
+                                                    {
+                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">@lang.Item1</button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1">@lang.Item1</button>
+                                                    }
                                                 }
-                                                
-                                            }
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="card border-secondary col-sm-3">
-                                        <div class="card-header text-left bg-transparent border-secondary">Sprache(n)</div>
-                                        <div class="card-body text-left">
-                                            @foreach (var lang in _employeeService.GetEmployeeProfile(EmpId).Language)
-                                            {
-                                                if (TempEmpDetail.LanguageVis(lang.Item1))
-                                                {
-                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1">@lang.Item1</button>
-                                                }
-                                                else
-                                                {
-                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" >@lang.Item1</button>
-                                                }
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
                                     <div class="row">
                                         <div class="card border-secondary col-sm-8 ml-3 mr-3">
                                             <div class="card-header text-left bg-transparent border-secondary">Softskills</div>
@@ -96,11 +96,11 @@
                                                 {
                                                     if (TempEmpDetail.SoftVis(softSkill))
                                                     {
-                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" >@softSkill</button>
+                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">@softSkill</button>
                                                     }
                                                     else
                                                     {
-                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" >@softSkill</button>
+                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1">@softSkill</button>
                                                     }
                                                 }
                                             </div>
@@ -112,17 +112,17 @@
                                                 {
                                                     if (TempEmpDetail.RolesVis(role))
                                                     {
-                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" >@role</button>
+                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1">@role</button>
                                                     }
                                                     else
                                                     {
-                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" >@role</button>
+                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1">@role</button>
                                                     }
                                                 }
                                             </div>
                                         </div>
                                     </div>
-                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -146,8 +146,10 @@
 }
 
 @code {
+
     [Parameter]
     public int EmpId { get; set; }
+
     public int PropId { get; set; }
     public Data.EmployeeDetailFiles.EmployeeDetail Detail;
     public Data.EmployeeDetailFiles.EmployeeDetail TempEmpDetail = new Data.EmployeeDetailFiles.EmployeeDetail();
@@ -155,7 +157,7 @@
     private Employee _emp;
     public bool ShowEdit { get; set; }
     public bool ShowBackdrop { get; private set; }
-    
+
     public void Show(int employeeId, int proposalId)
     {
         ShowEdit = !ShowEdit;
@@ -177,12 +179,14 @@
         Console.WriteLine(EmpId.ToString() + PropId.ToString());
         StateHasChanged();
     }
+
     private void Close()
     {
         ShowEdit = !ShowEdit;
         ShowBackdrop = !ShowBackdrop;
         StateHasChanged();
     }
+
     private void _copyDetail(Data.EmployeeDetailFiles.EmployeeDetail source, Data.EmployeeDetailFiles.EmployeeDetail target)
     {
         target.EmployeeId = source.EmployeeId;
@@ -194,4 +198,5 @@
         target.Roles = new List<string>(source.Roles);
         target.Languages = new List<Tuple<string, LanguageLevel>>(source.Languages);
     }
+
 }

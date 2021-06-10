@@ -52,13 +52,13 @@ namespace AVATI.Data
                     Language = new List<Tuple<string, LanguageLevel>>()
                     {
                        
-                    }
+                    }, Rc = 6
                 },
 
                 new Employee()
                 {
                     
-                    EmployeeId = 0,FirstName = "Anton", LastName = "Huber", Roles = new List<string>()
+                    EmployeeId = 6,FirstName = "Anton", LastName = "Huber", Roles = new List<string>()
                     {
                         "Agile Coach",
                         "UI/UX-Designer",
@@ -75,7 +75,8 @@ namespace AVATI.Data
                         "Beratungsfähigkeit",
                         "Rhetorik",
                         "Analytische Fähigkeiten",
-                    }
+                    }, Rc = 4,
+                    
                 },
 
                 new Employee()
@@ -97,7 +98,7 @@ namespace AVATI.Data
                         "Interdisziplinärer Sachverstand",
                         "Kommunikationsfähigkeit",
                         "Problemlösungsfähigkeit"
-                    }
+                    }, Rc = 2
                 },
                 new Employee()
                 {
@@ -108,12 +109,12 @@ namespace AVATI.Data
                             new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
                             new Hardskill() {Description = "Python"}, new Hardskill() {Description = "C#"}
                         },
-                    Softskills = new List<string>() {"none"}
+                    Softskills = new List<string>() {"none"}, Rc = 6
                 },
                 new Employee()
                 {
                     
-                    EmployeeId = 4,FirstName = "Victoria", LastName = "Airotciv", Roles = new List<string>() {"Product Owner"},
+                    EmployeeId = 4,FirstName = "Victoria", LastName = "Airotciv", Roles = new List<string>() {"Product Owner"}, 
                     Hardskills = new List<Hardskill>()
                     {
                         new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
@@ -144,7 +145,7 @@ namespace AVATI.Data
                     {
                         Tuple.Create<string,LanguageLevel>("Englisch", LanguageLevel.B2),
                         Tuple.Create<string,LanguageLevel>("Deutsch",LanguageLevel.A1)
-                    }
+                    }, Rc = 3
                 },
                 new Employee()
                 {
@@ -160,7 +161,7 @@ namespace AVATI.Data
                         "Akquisitionsstärke",
                         "Beratungsfähigkeit",
                         "Rhetorik"
-                    }
+                    }, Rc = 3
                 }
             };
         }

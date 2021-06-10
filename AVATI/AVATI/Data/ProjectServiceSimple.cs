@@ -19,26 +19,28 @@ namespace AVATI.Data
 
         public bool UpdateProject(Project project)
         {
-           if (_projects.Any() == false)
+            if (_projects.Any() == false)
             {
                 return false;
             }
             else if (project.ProjectID != 0)
-           {
-               foreach (var proj in _projects)
-               {
-                   if (project.ProjectID.Equals(proj.ProjectID))
-                   {
-                       proj.Projecttitel = project.Projecttitel;
-                       proj.Projectdescription = project.Projectdescription;
-                       proj.fields = project.fields;
-                       proj.Projectpurpose = project.Projectpurpose;
-                       proj.Projectbeginning = project.Projectbeginning;
-                   }
-               }
-           }
-           return true;
-        }                           //probleme mit updating 
+            {
+                foreach (var proj in _projects)
+                {
+                    if (project.ProjectID.Equals(proj.ProjectID))
+                    {
+                        proj.Projecttitel = project.Projecttitel;
+                        proj.Projectdescription = project.Projectdescription;
+                        proj.fields = project.fields;
+                        proj.Projectpurpose = project.Projectpurpose;
+                        proj.Projectbeginning = project.Projectbeginning;
+                    }
+                }
+            }
+
+            return true;
+        } //probleme mit updating 
+
         public bool DeleteProject(int projectID)
         {
             Project temp = _projects.Find(x => x.ProjectID.Equals(projectID));
@@ -84,14 +86,15 @@ namespace AVATI.Data
         {
             Project eins = new Project
             {
-                fields = new List<string>(), Projectdescription = "iwasyallah", Employees = new List<Employee>(), Projectpurpose = new List<string>(), Projecttitel = "goodbye",
+                fields = new List<string>(), Projectdescription = "iwasyallah", Employees = new List<Employee>(),
+                Projectpurpose = new List<string>(), Projecttitel = "goodbye",
                 Projectbeginning = DateTime.Today
             };
-            
+
             _projects = new List<Project>();
             _projects.Add(eins);
         }
-        
+
         public List<Project> SearchProject(List<Project> projects, string input)
         {
             Searching = new List<Project>();
@@ -99,9 +102,9 @@ namespace AVATI.Data
             {
                 return null;
             }
+
             foreach (var project in projects)
             {
-                
                 if (project.Projecttitel.Contains(input))
                 {
                     Searching.Add(project);
@@ -109,6 +112,7 @@ namespace AVATI.Data
 
                 Searching = Searching.OrderBy(x => x.Projecttitel).ToList();
             }
+
             Console.WriteLine("did it");
             return Searching;
         }
