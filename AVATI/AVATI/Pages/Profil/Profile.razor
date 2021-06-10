@@ -5,219 +5,205 @@
 @inject IEmployeeService _employee
 @inject IProjectActivityService _projctActivityService
 
-<EditProfilePopUp @ref="_editProfile"></EditProfilePopUp>
-
 
 <h3 class="text-left">Profil</h3>
 
-<div class="container emp-profile">
-<form>
+<div class="container backdrop emp-profile">
+    <form>
 
-<div class="row">
-    <div class="col-md-4">
-        <div style="margin-top: -5%" class="profile-img">
-            <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" style="margin-left: -45px" width="300" height="200" alt=""/>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="profile-head">
-            <div style="margin-left: 12px" class="form-group text-left">
-
-                <!------ Name ---------->
-                <h6 style="color: black">
-                    @Emp.FirstName @Emp.LastName
-                </h6>
-
-                <!------ RC-Level ---------->
-                <p class="proile-rating">RateCard : <span>@Emp.Rc</span></p>
-
-                <!------ Employment Time ---------->
-                <p style="color: #000;margin-top: -7px">Beschäftigt seit: @Emp.EmploymentTime.ToShortDateString()</p>
-
+        <div class="row">
+            <div class="col-md-4">
+                <div style="margin-top: -5%; border-radius: 80%" class="profile-img">
+                    <img class="rounded" src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" style="margin-left: -45px" width="300" height="200" alt=""/>
+                </div>
             </div>
-        </div>
-    </div>
+            <div class="col-md-6">
+                <div class="rounded-3 profile-head">
+                    <div style="margin-left: 12px" class="form-group text-left">
 
-    <!------ Edit Profile Button ---------->
-    <div class="col-md-2">
-        <a href="profile/update/@Emp.EmployeeId">
-            <input class="profile-edit-btn" name="btnAddMore" value="Profil bearbeiten"/>
-        </a>
-    </div>
-</div>
+                        <!------ Name ---------->
+                        <h6 style="color: black">
+                            @Emp.FirstName @Emp.LastName
+                        </h6>
 
+                        <!------ RC-Level ---------->
+                        <p class="proile-rating">RateCard : <span>@Emp.Rc</span></p>
 
-<!------ Skills ---------->
-<div class="row">
-    <div style="border-color: black" class="col-md-4 rounded">
+                        <!------ Employment Time ---------->
+                        <p style="color: #000;margin-top: -7px">Beschäftigt seit: @Emp.EmploymentTime.ToShortDateString()</p>
 
-        <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
-        <div class="form-group text-left">
+                        <p style="color: #000;margin-top: -7px">Relevante Berufserfahrung: @(Emp.RelevantWorkExperience * 100)%</p>
 
-            <!------ Hard Skills ---------->
-            <div class="card-body small text-left">
-                <div class="card-title medium font-weight-light lead text-left" id="title" @onclick="(() => { CollHardSkill(); })">Hard Skills</div>
-                <div class="card-text @(_booleanHardSkill ? "" : "collapse")">
-                    <table class="table table-striped">
-                        <tr>
-                            <th></th>
-                        </tr>
-                        @foreach (var hardskill in Emp.Hardskills)
-                        {
-                            <tr>
-                                <td>@hardskill.Description</td>
-                            </tr>
-                        }
-                    </table>
+                    </div>
                 </div>
             </div>
 
-            <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
-
-            <!------ Soft Skills ---------->
-            <div class="card-body small text-left">
-                <div class="card-title medium font-weight-light lead text-left" id="title" @onclick="(() => { CollSoftSkill(); })">Soft Skills</div>
-                <div class="card-text @(_booleanSoftSkill ? "" : "collapse")">
-                    <table class="table table-striped">
-                        <tr>
-                            <th></th>
-                        </tr>
-                        @foreach (var softskill in Emp.Softskills)
-                        {
-                            <tr>
-                                <td>@softskill</td>
-                            </tr>
-                        }
-                    </table>
-                </div>
-            </div>
-
-            <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
-
-            <!------ Rollen ---------->
-            <div class="card-body small text-left">
-                <div class="card-title medium font-weight-light lead text-left" id="title" @onclick="(() => { CollRole(); })">Rollen</div>
-                <div class="card-text @(_booleanRole ? "" : "collapse")">
-                    <ul class="list-group mb-3 text-left">
-                        <li class="list-group-item mb-1">
-                            @string.Join(" | ", Emp.Roles)
-                        </li>
-
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div style="border-color: black" class="form-group rounded col-md-8">
-        <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider"></div>
-
-        <!------ Fields ---------->
-        <div class="form-row">
-            <div class="card-body small text-left">
-                <div class="card-title medium font-weight-light lead text-left" id="title" @onclick="(() => { CollField(); })">Branchenwissen</div>
-                <div class="card-text @(_booleanField ? "" : "collapse")">
-                    <ul class="list-group mb-3 text-left">
-                        <li class="list-group-item mb-1">
-                            @string.Join(" | ", Emp.Field)
-                        </li>
-                    </ul>
-                </div>
+            <!------ Edit Profile Button ---------->
+            <div class="col-md-2">
+                <a href="profile/update/@Emp.EmployeeId">
+                    <input class="profile-edit-btn" name="btnAddMore" value="Profil bearbeiten"/>
+                </a>
             </div>
         </div>
 
-        <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
 
-        <!------ Relevant Work Experience ---------->
-        <div class="card-body small text-left">
-            <div class="card-title medium font-weight-light lead text-left" id="title" @onclick="(() => { CollWork(); })">Relevante Berufserfahrung</div>
-            <div class="card-text @(_booleanWork ? "" : "collapse")">
-                <ul class="list-group mb-3 text-left">
-                    <li class="list-group-item mb-1">
-                        @string.Join(" | ", Emp.RelevantWorkExperience)
-                    </li>
+        <!------ Skills ---------->
+        <div class="row rounded ">
 
-                </ul>
-            </div>
-        </div>
+            <div style="border-color: black" class="col-md-4 backdrop form-group rounded">
 
-        <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
+                <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
+                <div class="form-group  text-left">
 
-        <!------ Languages ---------->
-        <div class="card-body small rounded text-left">
-            <div class="card-title medium font-weight-light lead text-left" id="title" @onclick="(() => { CollLang(); })">Sprachen</div>
-            <div class="card-text @(_booleanLang ? "" : "collapse")">
-                @if (Emp.Language.Any())
-                {
-                    <table align="left" style="text-align: left" class="table align-middle">
-                        <tr>
-                            <th class="text-left">Sprache</th>
-                            <th class="text-center">Sprachniveau</th>
-                        </tr>
-                        @foreach (var lang in Emp.Language)
-                        {
-                            <tr>
-                                <td class="text-left">@lang.Item1</td>
-                                <td class="text-center">@lang.Item2</td>
-                            </tr>
-                        }
-                    </table>
-                }
-                else
-                {
-                    <p>Scheint nichts hier zu sein.</p>
-                }
-            </div>
-        </div>
-
-        <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
-
-        <!------ Projects ---------->
-        <div class="card-body small text-left">
-            <div class="card-title medium font-weight-light lead text-left" id="title" @onclick="(() => { CollProj(); })">Projekte</div>
-            <div class="card-text @(_booleanProj ? "" : "collapse")">
-                <table align="left" style="text-align: left" class="table align-middle">
-                    <tr>
-                        <th class="text-left">Projekt</th>
-                        <th class="text-center">Projekttätigkeit</th>
-                    </tr>
-                    @if (Emp.Projects.Any())
-                    {
-                        foreach (var project in Emp.Projects)
-                        {
-                            <tr>
-                                <td class="text-left">@project.Projecttitel</td>
-                                @if (_projctActivityService.GetProjectActivities(Id, project.ProjectID) == null)
+                    <!------ Hard Skills ---------->
+                    <div class="card-body small text-left">
+                        <div class="card-title medium font-weight-light lead text-left" id="title" @onclick="(() => { CollHardSkill(); })">Hard Skills</div>
+                        <div class="card-text @(_booleanHardSkill ? "" : "collapse")">
+                            <table class="table table-striped">
+                                <tr>
+                                    <th></th>
+                                </tr>
+                                @foreach (var hardskill in Emp.Hardskills)
                                 {
-                                <td></td>
+                                    <tr>
+                                        <td>@hardskill.Description</td>
+                                    </tr>
                                 }
-                                else{
-                                <td class="text-center">@_projctActivityService.GetProjectActivities(Id, project.ProjectID).Description</td>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
+
+                    <!------ Soft Skills ---------->
+                    <div class="card-body small text-left">
+                        <div class="card-title medium font-weight-light lead text-left" id="title" @onclick="(() => { CollSoftSkill(); })">Soft Skills</div>
+                        <div class="card-text @(_booleanSoftSkill ? "" : "collapse")">
+                            <table class="table table-striped">
+                                <tr>
+                                    <th></th>
+                                </tr>
+                                @foreach (var softskill in Emp.Softskills)
+                                {
+                                    <tr>
+                                        <td>@softskill</td>
+                                    </tr>
                                 }
-                            </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
+
+                    <!------ Rollen ---------->
+                    <div class="card-body small text-left">
+                        <div class="card-title medium font-weight-light lead text-left" id="title" @onclick="(() => { CollRole(); })">Rollen</div>
+                        <div class="card-text @(_booleanRole ? "" : "collapse")">
+                            <ul class="list-group mb-3 text-left">
+                                <li class="list-group-item mb-1">
+                                    @string.Join(" | ", Emp.Roles)
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div style="border-color: black" class="form-group backdrop rounded col-md-8">
+                <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider"></div>
+
+                <!------ Fields ---------->
+                <div class="form-row">
+                    <div class="card-body backdrop small text-left">
+                        <div class="card-title medium font-weight-light lead text-left" id="title" @onclick="(() => { CollField(); })">Branchenwissen</div>
+                        <div class="card-text @(_booleanField ? "" : "collapse")">
+                            <ul class="list-group mb-3 text-left">
+                                <li class="list-group-item mb-1">
+                                    @string.Join(" | ", Emp.Field)
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
+
+                <!------ Languages ---------->
+                <div class="card-body small rounded text-left">
+                    <div class="card-title medium font-weight-light lead text-left" id="title" @onclick="(() => { CollLang(); })">Sprachen</div>
+                    <div class="card-text @(_booleanLang ? "" : "collapse")">
+                        @if (Emp.Language.Any())
+                        {
+                            <table align="left" style="text-align: left" class="table align-middle">
+                                <tr>
+                                    <th class="text-left">Sprache</th>
+                                    <th class="text-center">Sprachniveau</th>
+                                </tr>
+                                @foreach (var lang in Emp.Language)
+                                {
+                                    <tr>
+                                        <td class="text-left">@lang.Item1</td>
+                                        <td class="text-center">@lang.Item2</td>
+                                    </tr>
+                                }
+                            </table>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    }
-                </table>
+                        else
+                        {
+                            <p>Scheint nichts hier zu sein.</p>
+                        }
+                    </div>
+                </div>
+
+                <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
+
+                <!------ Projects ---------->
+                <div class="card-body backdrop small text-left">
+                    <div class="card-title medium font-weight-light lead text-left" id="title" @onclick="(() => { CollProj(); })">Projekte</div>
+                    <div class="card-text @(_booleanProj ? "" : "collapse")">
+                        <table align="left" style="text-align: left" class="table align-middle">
+                            <tr>
+                                <th class="text-left">Projekt</th>
+                                <th class="text-center">Projekttätigkeit</th>
+                            </tr>
+                            @if (Emp.Projects.Any())
+                            {
+                                foreach (var project in Emp.Projects)
+                                {
+                                    <tr>
+                                        <td class="text-left">@project.Projecttitel</td>
+                                        @if (_projctActivityService.GetProjectActivities(Id, project.ProjectID) == null)
+                                        {
+                                            <td></td>
+                                        }
+                                        else
+                                        {
+                                            <td class="text-center">@_projctActivityService.GetProjectActivities(Id, project.ProjectID).Description</td>
+                                        }
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-        <!--   </div>
-        </div> -->
-    </div>
-</div>
-</form>
+    </form>
 </div>
 
 
 @code {
 
-    EditProfilePopUp _editProfile;
 
     private bool _booleanLang = false;
     private bool _booleanProj = false;
@@ -284,10 +270,7 @@
         _booleanWork = !_booleanWork;
     }
 
-    public void EditProfile()
-    {
-        _editProfile.Show(Emp.EmployeeId);
-    }
+
 
 
 }

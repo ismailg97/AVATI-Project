@@ -12,7 +12,7 @@ namespace AVATI.Data
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Image;
-        public List<string> RelevantWorkExperience { get; set; }
+        public float RelevantWorkExperience { get; set; }
         public DateTime EmploymentTime { get; set; }
         public int Rc { get; set; }
         public List<string> Softskills { get; set; }
