@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AVATI.Data;
 using AVATI.Pages;
+using AVATI.Pages.Project;
 using BlazorDownloadFile;
 
 namespace AVATI
