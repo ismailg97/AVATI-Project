@@ -4,7 +4,7 @@
 
 namespace AVATI.Data
 {
-    public class ProjectActivityServiceSimple : IProjctActivityService
+    public class ProjectActivityServiceSimple : IProjectActivityService
     {
 
        
@@ -13,8 +13,6 @@ namespace AVATI.Data
 
         public List<ProjectActivity> pALIst = new List<ProjectActivity>()
         {
-            
-            
         };
         
 
@@ -43,7 +41,7 @@ namespace AVATI.Data
        
 
 
-        public bool DeleteProjectActivity(int EmployeeId, int ProjectId, string Description)
+        public bool DeleteProjectActivity(int EmployeeId, int ProjectId)
         {
             foreach (var activity in pALIst)
             {

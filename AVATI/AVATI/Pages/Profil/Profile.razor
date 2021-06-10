@@ -3,6 +3,7 @@
 @using AVATI.Data
 @inject NavigationManager _navManager
 @inject IEmployeeService _employee
+@inject IProjectActivityService _projctActivityService
 
 <EditProfilePopUp @ref="_editProfile"></EditProfilePopUp>
 
@@ -40,8 +41,8 @@
     <!------ Edit Profile Button ---------->
     <div class="col-md-2">
         <a href="profile/update/@Emp.EmployeeId">
-            <input class="profile-edit-btn"    name="btnAddMore" value="Profil bearbeiten"/>
-            </a>
+            <input class="profile-edit-btn" name="btnAddMore" value="Profil bearbeiten"/>
+        </a>
     </div>
 </div>
 
@@ -52,7 +53,7 @@
 
         <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
         <div class="form-group text-left">
-            
+
             <!------ Hard Skills ---------->
             <div class="card-body small text-left">
                 <div class="card-title medium font-weight-light lead text-left" id="title" @onclick="(() => { CollHardSkill(); })">Hard Skills</div>
@@ -141,7 +142,7 @@
         </div>
 
         <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
-        
+
         <!------ Languages ---------->
         <div class="card-body small rounded text-left">
             <div class="card-title medium font-weight-light lead text-left" id="title" @onclick="(() => { CollLang(); })">Sprachen</div>
@@ -186,7 +187,13 @@
                         {
                             <tr>
                                 <td class="text-left">@project.Projecttitel</td>
-                                <td class="text-center">Projecttätigkeit</td>
+                                @if (_projctActivityService.GetProjectActivities(Id, project.ProjectID) == null)
+                                {
+                                <td></td>
+                                }
+                                else{
+                                <td class="text-center">@_projctActivityService.GetProjectActivities(Id, project.ProjectID).Description</td>
+                                }
                             </tr>
                         }
                     }
