@@ -10,26 +10,18 @@ namespace AVATI.Data
     {
         public List<Project> _projects;
         public List<Project> Searching;
-        private static int identification = 1;
-        
+
         public bool CreateProject(Project project)
         {
             _projects.Add(project);
             return true;
         }
 
-        public void AddProject(Project project)
-        {
-            project.ProjectID = identification++;
-            _projects.Add(project);
-        }
-
         public bool UpdateProject(Project project)
         {
            if (_projects.Any() == false)
             {
-                project.ProjectID = 0;
-                AddProject(project);
+                return false;
             }
             else if (project.ProjectID != 0)
            {
@@ -41,11 +33,9 @@ namespace AVATI.Data
                        proj.Projectdescription = project.Projectdescription;
                        proj.fields = project.fields;
                        proj.Projectpurpose = project.Projectpurpose;
-                       proj.Runtime = project.Runtime;
-                       
+                       proj.Projectbeginning = project.Projectbeginning;
                    }
                }
-               
            }
            return true;
         }                           //probleme mit updating 
@@ -95,22 +85,11 @@ namespace AVATI.Data
             Project eins = new Project
             {
                 fields = new List<string>(), Projectdescription = "iwasyallah", Employees = new List<Employee>(), Projectpurpose = new List<string>(), Projecttitel = "goodbye",
-                Runtime = DateTime.Today
+                Projectbeginning = DateTime.Today
             };
-            Project zwei = new Project
-            {
-                fields = new List<string>(), Projectdescription = "zelda", Employees = new List<Employee>(), Projectpurpose = new List<string>(), Projecttitel = "link",
-                Runtime = DateTime.Today
-            };
-            Project drei = new Project
-            {
-                fields = new List<string>(), Projectdescription = "bladerunner", Employees = new List<Employee>(), Projectpurpose = new List<string>(), Projecttitel = "better than star wars",
-                Runtime = DateTime.Today
-            };
+            
             _projects = new List<Project>();
-            AddProject(eins);
-            AddProject(zwei);
-            AddProject(drei);
+            _projects.Add(eins);
         }
         
         public List<Project> SearchProject(List<Project> projects, string input)

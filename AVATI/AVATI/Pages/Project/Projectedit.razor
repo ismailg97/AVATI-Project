@@ -24,9 +24,9 @@
 
 
         <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Projektbeschreibung</label>
+            <label class="col-sm-2 col-form-label ">Projektbeschreibung</label>
             <div class="col-sm-10">
-                <InputText id="projektbeschreibung" class="form-control" @bind-Value="_project.Projectdescription"></InputText>
+                <textarea id="projektbeschreibung" class="form-control" rows="3" @bind="_project.Projectdescription"></textarea>
             </div>
         </div>
 
@@ -34,25 +34,43 @@
         <div class="form-group row">
             <label class="col-sm-2 col-form-label">Branchen</label>
             <div class="col-sm-8 col-form-label">
-                <input class="form-control" type="text" value="@String.Join(" | ", 
-                   _projectServiceSimple.GetAllFieldsFromOneProject(ID).ToArray())" placeholder="" readonly/>
-                <div><button class="btn btn-info" @onclick="() => PopAddFieldToProject()">Add Branchen</button> </div>
+                <div class="row col">
+                    <input class="form-control col-8" type="text" value="@String.Join(" | ", _projectServiceSimple.GetAllFieldsFromOneProject(ID).ToArray())" placeholder="" readonly/>
+                    <div>
+                        <button class="btn btn-info mb-3" @onclick="() => PopAddFieldToProject()">Add Branchen</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Projektanfang</label>
-            <div class="col-sm-2 col-form-label">
-                <input type="date" id="datetimepicker" @bind="_project.Runtime"/>
+        <div class="container-fluid">
+            <div class="row">
+                <label class="col-sm-2 col-form-label">Projektanfang</label>
+                <div class="col-sm col-form-label">
+                    <div class="row">
+                        <input class="center col-2" type="date" value=@_project.Projectbeginning/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-2 col-form-label">Projektende</label>
+                <div class="col-sm col-form-label">
+                    <div class="row">
+                        <input class="center col-2" type="date" value=@_project.Projectend/>
+                    </div>
+                </div>
             </div>
         </div>
 
+
         <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Projekttätigkeiten</label>
+            <label class="col-sm-2 col-form-label">Mitarbeiter</label>
             <div class="col-sm-2 col-form-label">
                 <!--                     brauch hier die employee klasse                                  -->
             </div>
         </div>
+
+
     </div>
     <div class="container">
         <a href="/Projektübersicht" class="col-sm-8 col-form-label">
@@ -74,15 +92,16 @@
 
     public DateTime time { get; set; }
     public string field { get; set; }
-    
+
 
     private void Save()
     {
         _projectServiceSimple.UpdateProject(_project);
         _navigationManager.NavigateTo("/Projektübersicht");
     }
+
     public void PopAddFieldToProject()
-    {   
+    {
         _addFieldToProject.Showing();
     }
 
