@@ -4,11 +4,11 @@
 @inject NavigationManager _navManager
 
 <link href="css/Login.razor.css" rel="stylesheet" />
-<img src="https://xitaso.com/wp-content/uploads/Office_Austrasse.jpg" alt="" />
+<img style="alignment: center" src="https://xitaso.com/wp-content/uploads/Office_Austrasse.jpg" alt="" />
 <!------ SideBar ---------->
 <div style="text-align:left">
-    <div class="sidenav">
-        <div class="login-main-text">
+    <div style="width: 30%" class="sidenav">
+        <div style="margin-top: 10px" class="login-main-text">
             <h3>Login</h3>
             <p>Melde dich von hier aus an, um dein Mitarbeiterprofil zu sehen</p>
             <!------ Binds inputted Username and Password to log and calls "LoginCheck" on Valid Submit ---------->
@@ -21,11 +21,11 @@
                              
                             <div class="form-group">
                                 <label>Benutzername</label>
-                                <InputText id="username" @bind-Value="Log.Username" placeholder="Max Mustermann"></InputText>
+                                <InputText type="username" id="username" @bind-Value="Log.Username" placeholder="Max Mustermann"></InputText>
                             </div>
                             <div class="form-group">
                                 <label>Passwort</label>
-                                <InputText id="password" @bind-Value="Log.Password" placeholder="123456"></InputText>
+                                <InputText type="password" id="password" @bind-Value="Log.Password" placeholder="123456"></InputText>
                             </div>
                             <button type="submit" class="btn btn-secondary">Login</button>
                         </div>

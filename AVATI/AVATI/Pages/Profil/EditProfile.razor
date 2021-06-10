@@ -7,6 +7,8 @@
 @inject IEmployeeService _employee
 @inject NavigationManager _navManager
 @inject ProjectServiceSimple _projectServiceSimple
+@inject IBasicDataService _basicDataService
+@inject IHardskillService _hardskillService
 
 <AddFieldToProfile @ref="_addFieldToProfile"/>
 
@@ -31,227 +33,173 @@
     <div class="col-md-6">
         <div class="profile-head">
 
-            <!------ Name ---------->
-            <div class="row-md-4 mb-3">
-                <label for="validationServer01">First name</label>
-                <input type="text" class="form-control" @bind-value="Emp.FirstName" placeholder="@Emp.FirstName" required>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card-title small font-weight-light lead text-left">Vorname</div>
+                        <input type="text" class="form-control" @bind-value="@Emp.FirstName" placeholder="@Emp.FirstName" required>
+                    </div>
+                    <div class="col-6">
+                        <div class="card-title small font-weight-light lead text-left">Nachname</div>
+                        <input type="text" class="form-control" @bind-value="@Emp.LastName" placeholder="@Emp.LastName" required>
+                    </div>
+                </div>
+                <div style="margin-top: 20px" class="row">
+                    <div class="col-6">
+                        <div class="card-title small font-weight-light lead text-left">Rate-Card Level</div>
+                        <input class="form-control" min="1" max="7" type="number" @bind=@_changeValue id="example-number-input"/>
+                    </div>
+                    <div class="col-6">
+                        <div class="card-title small font-weight-light lead text-left">Beschäftigungszeit</div>
+                        <input type="date" class="form-control" @bind-value="@Emp.EmploymentTime" placeholder="" required>
+                    </div>
+                </div>
             </div>
-            <div class="row-md-4 mb-3">
-                <label for="validationServer02">Last name</label>
-                <input type="text" class="form-control" @bind-value="Emp.LastName" placeholder="@Emp.LastName" required>
-            </div>
+
         </div>
     </div>
 
     <!------ Edit Profile Button ---------->
     <div class="col-md-2">
-        <a href="/profile/@Emp.EmployeeId">
-            <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Bestätigen"/>
+        <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Bestätigen"/>
+
+
+        <!------ Return Button ---------->
+
+        <a style="margin-top: 20px" href="/profile/@Emp.EmployeeId">
+            <input type="button" class="profile-edit-btn" name="btnAddMore" value="Zurück"/>
         </a>
     </div>
 </div>
 
 
 <form>
-<!------ Employment Time ---------->
+<!------ Employment Time 
 <div class="form-row">
-    <div class="col-md-6 mb-3">
-        <label for="validationServer03">Beschäftigungszeit</label>
-        <input type="date" class="form-control" @bind-value="@Emp.EmploymentTime" placeholder="max.mustermann@mail.com" required>
-        <div class="invalid-feedback">
-            Please provide a valid city.
-        </div>
+<div class="col-md-6 mb-3">
+    <label for="validationServer03">Beschäftigungszeit</label>
+    <input type="date" class="form-control" @bind-value="@Emp.EmploymentTime" placeholder="max.mustermann@mail.com" required>
+    <div class="invalid-feedback">
+        Please provide a valid city.
     </div>
+</div> ---------->
 
-    <!------ RC-Level ---------->
-    <div class="col-md-3 mb-3">
-        <label for="validationServer04">Rate-Card Level</label>
-        <input class="form-control col-4" min="1" max="12" type="number" @bind=@_changeValue id="example-number-input"/>
-    </div>
+<!------ RC-Level 
+<div class="col-md-3 mb-3">
+    <label for="validationServer04">Rate-Card Level</label>
+    <input class="form-control col-4" min="1" max="12" type="number" @bind=@_changeValue id="example-number-input"/>
 </div>
+</div> ---------->
 
 <!------ Skills ---------->
 <div class="form-col">
 
+    <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
+
     <!------ Hard Skills ---------->
-    <div class="form-row">
-        <div class="card-body text-center">
-            <div class="form-row">
-                <div class="col">
-                    <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollHardSkill(); })">Hard Skills</label>
-                </div>
-                <div class="col">
-                    <a href="">
-                        <button class="btn btn-secondary">
-                            Bearbeiten
-                        </button>
-                    </a>
-                </div>
-            </div>
-            <div class="card-text @(_booleanHardSkill ? "" : "collapse")">
-                <table class="table table-striped">
-                    <tr>
-                        <th>Hard Skills</th>
-                    </tr>
-                    @foreach (var hardskill in Emp.Hardskills)
-                    {
-                        <tr>
-                            <td>@hardskill.Description</td>
-
-                        </tr>
-                    }
-                </table>
-            </div>
-        </div>
+    <div class="form-group">
+        <label class="mr-3 mt-2">Hard Skills: </label>
+        @foreach (var hardskilll in Emp.Hardskills)
+        {
+            <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Hardskills.Remove(hardskilll); })>
+                @hardskilll.Description <span class="oi oi-x"></span>
+            </button>
+        }
     </div>
+    @foreach (var hardskill in _hardskillService.GetAllHardskills())
+    {
+        if (!Emp.Hardskills.Contains(hardskill))
+        {
+            <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { Emp.Hardskills.Add(hardskill); })>
+                @hardskill.Description
+            </button>
+        }
+    }
+
+    <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
+
     <!------ Soft Skills ---------->
-    <div class="form-row">
-        <div class="card-body text-center">
-            <div class="form-row">
-                <div class="col">
-                    <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollSoftSkill(); })">Soft Skills</label>
-                </div>
-                <div class="col">
-                    <a href="">
-                        <button class="btn btn-secondary">
-                            Bearbeiten
-                        </button>
-                    </a>
-                </div>
-            </div>
-            <div class="card-text @(_booleanSoftSkill ? "" : "collapse")">
-                <table class="table table-striped">
-                    <tr>
-                        <th>Soft Skills</th>
-                    </tr>
-                    @foreach (var softskill in Emp.Softskills)
-                    {
-                        <tr>
-                            <td>@softskill</td>
-
-                        </tr>
-                    }
-                </table>
-            </div>
-        </div>
+    <div class="form-group">
+        <label class="mr-3 mt-2">Softskills: </label>
+        @foreach (var softskilll in Emp.Softskills)
+        {
+            <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Softskills.Remove(softskilll); })>
+                @softskilll <span class="oi oi-x"></span>
+            </button>
+        }
     </div>
+    @foreach (var softskill in _basicDataService.GetAllSoftSkills())
+    {
+        if (!Emp.Softskills.Contains(softskill))
+        {
+            <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { Emp.Softskills.Add(softskill); })>
+                @softskill
+            </button>
+        }
+    }
+
+    <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
 
     <!------ Rollen ---------->
-    <div class="form-row">
-        <div class="card-body text-center">
-            <div class="form-row">
-                <div class="col">
-                    <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollRole(); })">Rollen</label>
-                </div>
-                <div class="col">
-                    <a href="">
-                        <button class="btn btn-secondary">
-                            Bearbeiten
-                        </button>
-                    </a>
-                </div>
-            </div>
-            <div class="card-text @(_booleanRole ? "" : "collapse")">
-                <table class="table table-striped">
-                    <tr>
-                        <th>Roles</th>
-                    </tr>
-                    @foreach (var roles in Emp.Roles)
-                    {
-                        <tr>
-                            <td>@roles</td>
-                        </tr>
-                    }
-                </table>
-            </div>
-        </div>
+    <div class="form-group">
+        <label class="mr-3 mt-2">Rollen: </label>
+        @foreach (var empRoles in Emp.Roles)
+        {
+            <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Roles.Remove(empRoles); })>
+                @empRoles <span class="oi oi-x"></span>
+            </button>
+        }
     </div>
-</div>
+    @foreach (var roles in _basicDataService.GetAllRoles())
+    {
+        if (!Emp.Roles.Contains(roles))
+        {
+            <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { Emp.Roles.Add(roles); })>
+                @roles
+            </button>
+        }
+    }
 
+    <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
 
-<div class="form-col">
     <!------ Fields ---------->
 
-    <!------ <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Branchen</label>
-        <div class="col-sm-8 col-form-label">
-            <input class="form-control" type="text" value="@String.Join(" | ", _projectServiceSimple.GetAllFieldsFromOneProject(Id).ToArray())" placeholder="" readonly/>
-            <div><button class="btn btn-info" @onclick="() => PopAddFieldToProfile()">Add Branchen</button> </div>
-        </div>
-    </div> ---------->
-
-    <div class="form-row">
-        <div class="card-body text-center">
-            <div class="form-row">
-                <div class="col">
-                    <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollField(); })">Branchenwissen</label>
-                </div>
-                <div class="col">
-
-                    <button class="btn btn-secondary" @onclick="() => PopAddFieldToProfile()">
-                        Bearbeiten
-                    </button>
-
-                </div>
-            </div>
-            <div class="card-text @(_booleanField ? "" : "collapse")">
-                <ul class="list-group list-group-flush text-left">
-                    @if (Emp.Field.Any())
-                    {
-                        foreach (var field in Emp.Field)
-                        {
-                            <li class="list-group-item text-center">
-                                @field
-                            </li>
-                        }
-                    }
-                    else
-                    {
-                        <li>
-
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
+    <div class="form-group">
+        <label class="mr-3 mt-2">Branchenwissen: </label>
+        @foreach (var empField in Emp.Field)
+        {
+            <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Field.Remove(empField); })>
+                @empField <span class="oi oi-x"></span>
+            </button>
+        }
     </div>
+    @foreach (var field in _basicDataService.GetAllFields())
+    {
+        if (!Emp.Field.Contains(field))
+        {
+            <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { Emp.Field.Add(field); })>
+                @field
+            </button>
+        }
+    }
+
+    <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
 
     <!------ Relevant Work Experience ---------->
-    <div class="form-row">
-        <div class="card-body text-center">
-            <div class="form-row">
-                <div class="col">
-                    <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollWork(); })">Relevante Berufserfahrung</label>
-                </div>
-                <div class="col">
-                    <a href="">
-                        <button class="btn btn-secondary">
-                            Bearbeiten
-                        </button>
-                    </a>
-                </div>
-            </div>
-            <div class="card-text @(_booleanWork ? "" : "collapse")">
-                <ul class="list-group list-group-flush text-left">
-                    @if (Emp.RelevantWorkExperience.Any())
-                    {
-                        foreach (var work in Emp.RelevantWorkExperience)
-                        {
-                            <li class="list-group-item border-dark bg-light font-weight-bold text-black text-center">
-                                @work
-                            </li>
-                        }
-                    }
-                    else
-                    {
-                        <li>
-
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
+    <div class="form-group">
+        <label class="mr-3 mt-2">Relevante Berufserfahrung: </label>
+        @foreach (var empWork in Emp.RelevantWorkExperience)
+        {
+            <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.RelevantWorkExperience.Remove(empWork); })>
+                @empWork <span class="oi oi-x"></span>
+            </button>
+        }
     </div>
+    <div class="row">
+        <input type="text" class="form-control col-3 mr-3" @bind-value="workExperience" placeholder="Relevante Berufserfahrung" required>
+        <input type="button" class="profile-edit-btn small col-2" name="btnAddMore" @onclick=@(() => { Emp.RelevantWorkExperience.Add(workExperience); }) value="Hinzufügen"/>
+    </div>
+    <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
 
     <!------ Languages ---------->
     <div class="form-row">
@@ -296,6 +244,9 @@
         </div>
     </div>
 </div>
+
+<div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
+
 <!------ Projects ---------->
 <div class="form-row">
     <div class="card-body text-center">
@@ -351,9 +302,14 @@
     [Parameter]
     public int Id { get; set; }
 
+    public Employee Emp;
+    public Employee TEmp;
+
+    public string workExperience;
 
     protected override void OnInitialized()
     {
+        TEmp = new Employee();
         Emp = _employee.GetEmployeeProfile(Id);
     }
 
@@ -366,6 +322,7 @@
 
     public void EditProfiles()
     {
+        Emp.Rc = _changeValue;
         _employee.EditEmployeeProfile(Emp);
         _navManager.NavigateTo("profile/" + Emp.EmployeeId);
     }
@@ -380,17 +337,6 @@
     private bool _booleanWork = false;
     private int _changeValue;
     //private bool _booleanName;
-
-
-    Employee Emp = new Employee()
-    {
-        FirstName = "Ismail", LastName = "Gürsöz", Roles = new List<string>() {"Programming"}, Hardskills = new List<Hardskill>()
-        {
-            new Hardskill {Description = "JavaScript", Subcat = null, Uppercat = null, Height = 0},
-            new Hardskill {Description = "CSS", Subcat = null, Uppercat = null, Height = 0}
-        },
-        Softskills = new List<string>() {"Teamleading"}
-    };
 
 
     public void CollLang()
@@ -446,9 +392,5 @@
         EditProfiles();
     }
 
-    public void PopAddFieldToProfile()
-    {
-        _addFieldToProfile.Showing();
-    }
 
 }
