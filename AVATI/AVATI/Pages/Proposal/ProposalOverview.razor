@@ -23,7 +23,7 @@
 <button class="btn btn-success float-left" @onclick=@(() => { ShowEdit(0); })>Neues Angebot</button>
 <div class="container col-10">
     <div class="row row-cols-1 row-cols-md-1 g-4">
-        @foreach (var proposal in _proposal.GetAllProposal())
+        @foreach (var proposal in _proposal.GetAllProposals())
         {
             <div class="col-4 mb-4">
                 <div class="card border-dark h-100">
@@ -151,7 +151,6 @@
     public bool ShowPop { get; set; }
     public Employee RcToEdit { get; set; }
 
-
     private static int _restoreValue;
     private static int _changeValue;
 
@@ -161,7 +160,7 @@
         _showEmployee = new Dictionary<int, bool>();
         _showAttributes = new Dictionary<int, bool>();
         _showAdditionalInfo = new Dictionary<int, bool>();
-        foreach (var proposal in _proposal.GetAllProposal())
+        foreach (var proposal in _proposal.GetAllProposals())
         {
             _promptDelete.Add(proposal.ProposalId, true);
             _showEmployee.Add(proposal.ProposalId, true);

@@ -21,6 +21,6 @@ namespace AVATI.Data
 
         public Proposal GetProposal(int proposalId);
 
-        public List<Proposal> GetAllProposal();
+        public List<Proposal> GetAllProposals();
     }
 }
