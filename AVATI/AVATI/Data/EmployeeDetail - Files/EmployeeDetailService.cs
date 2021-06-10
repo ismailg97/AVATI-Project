@@ -10,6 +10,11 @@ namespace AVATI.Data
             throw new System.NotImplementedException();
         }
 
+        public bool UpdateEmployeeDetail(int employeeId, int proposalId, EmployeeDetail employeeDetail)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public EmployeeDetail GetEmployeeDetail(int employeeId, int proposalId)
         {
             
