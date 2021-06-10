@@ -10,7 +10,7 @@
         <tr>
             <th style="width: 10%">Projekttitel</th>
             <th>Projektbeschreibung</th>
-            <th style=" width: 10%">Branchen</th>
+            <th style="width: 10%">Branchen</th>           <!-- as to not intervene with css file and other styling -->
             <th style="width: 10%">Mitarbeiter</th>
             <th style="width: 10%">Projektlaufzeit</th>
             <th style="width: 10%">Projekaktivitäten</th>
@@ -45,7 +45,7 @@
                     </ul>
                 </div>
             </td>
-            <td>@_project.Runtime</td>
+            <td>@_project.Projectbeginning</td>
             <td style="height: 100%">@_project.Projectactivities</td>
             <td>
                 <div class="col-form-label">
@@ -59,6 +59,8 @@
                     </ul>
                 </div>
             </td>
+            
+            
         </tr>
         </tbody>
     </div>
