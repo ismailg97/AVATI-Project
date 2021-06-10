@@ -124,7 +124,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -148,6 +148,7 @@
 }
 
 @code {
+
     [Parameter]
     public int EmpId { get; set; }
     public int PropId { get; set; }
@@ -157,7 +158,7 @@
     private Employee _emp;
     public bool ShowEdit { get; set; }
     public bool ShowBackdrop { get; private set; }
-    
+
     public void Show(int employeeId, int proposalId)
     {
         ShowEdit = !ShowEdit;
@@ -179,12 +180,14 @@
         Console.WriteLine(EmpId.ToString() + PropId.ToString());
         StateHasChanged();
     }
+
     private void Close()
     {
         ShowEdit = !ShowEdit;
         ShowBackdrop = !ShowBackdrop;
         StateHasChanged();
     }
+
     private void _copyDetail(Data.EmployeeDetailFiles.EmployeeDetail source, Data.EmployeeDetailFiles.EmployeeDetail target)
     {
         target.EmployeeId = source.EmployeeId;

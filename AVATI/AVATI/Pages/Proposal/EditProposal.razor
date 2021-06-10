@@ -16,8 +16,7 @@
                     }
                     else
                     {
-                    <h5 class="modal-title font-weight-bolder" id="titleLabel">Angebot editieren</h5>
-                        
+                        <h5 class="modal-title font-weight-bolder" id="titleLabel">Angebot editieren</h5>
                     }
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick=@Close>
                         <span aria-hidden="true">×</span>
@@ -96,16 +95,17 @@
                             <label class="mt-2">Zusätzliche Informationen </label>
                             <InputText id="addinfo" class="form-control" @bind-Value="@Proposal.AdditionalInfo" placeholder=" "></InputText>
                         </div>
-                        @if (Id == 0)
-                        {
-                            <button type="submit" class="btn btn-success">Angebot anlegen</button>
-                        }
-                        else
-                        {
-                        <button type="submit" class="btn btn-success">Änderungen speichern</button>
-                            
-                        }
-                        <a class="btn btn-danger ml-1" @onclick="@Close">Abbrechen</a>
+                        <div class="form-row float-right">
+                            <button class="btn btn-danger mr-1" @onclick="@Close">Abbrechen</button>
+                            @if (Id == 0)
+                            {
+                                <button type="submit" class="btn btn-success">Angebot anlegen</button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-success">Änderungen speichern</button>
+                            }
+                        </div>
                     </EditForm>
                 </div>
             </div>
