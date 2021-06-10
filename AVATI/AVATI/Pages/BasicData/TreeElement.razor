@@ -7,7 +7,7 @@
 
 @if (Hardskills[0].IsRoot())
     {
-        <div>
+        <div class="container">
             <ul class="tree">
                 @foreach (var hardskillcat in Hardskills) {
             
@@ -16,7 +16,7 @@
                         Show.Add(hardskillcat.Description, !hardskillcat.ContainsHardskills());
                     }
                 
-                    <li><a type="button" @onclick="() => Showing(hardskillcat.Description)">@hardskillcat.Description</a>
+                    <li><a class="@(hardskillcat.IsHardskill ? "hardskill":"cat")" type="button" @onclick="() => Showing(hardskillcat.Description)">@hardskillcat.Description</a>
                     
                         @if (Show[hardskillcat.Description] && hardskillcat.Subcat != null && hardskillcat.Subcat.Any())
                         {
@@ -37,7 +37,7 @@
                     Show.Add(hardskillcat.Description, !hardskillcat.ContainsHardskills());
                 }
                 
-                <li><a type="button" @onclick="() => Showing(hardskillcat.Description)">@hardskillcat.Description</a>
+                <li><a class="@(hardskillcat.IsHardskill ? "hardskill":"cat")" type="button" @onclick="() => Showing(hardskillcat.Description)">@hardskillcat.Description</a>
                     
                     @if (Show[hardskillcat.Description] && hardskillcat.Subcat != null && hardskillcat.Subcat.Any())
                     {

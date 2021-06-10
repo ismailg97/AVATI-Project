@@ -35,17 +35,12 @@
             <!------  ---------->
         </div>     
     </div>
-    <text class style="margin-left: 200px">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</text>
+   <!------ <text class style="margin-left: 200px">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</text>  ---------->
 </div>
 @code {
     private bool _boolean = false;
     LoginClass Log = new LoginClass();
     
-    //<InputText @bind-value="Log.Password" id="password" class="form-control" placeholder="Beispiel1234"/>
-    
-    //@(_boolean ? "" : "collapse") 
-    
-    //Checks with LoginServiceSimple, if username and password is correct
     private void LoginCheck()
     {
         if (_login.LogIn(Log.Username, Log.Password))

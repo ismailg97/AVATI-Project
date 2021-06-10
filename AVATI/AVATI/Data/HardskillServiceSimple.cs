@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace AVATI.Data
 {
@@ -51,8 +52,14 @@ namespace AVATI.Data
         {
             var index = _allHardskills.IndexOf(oldHardskill);
             if (index == -1) return false;
-            oldHardskill.Uppercat?.Subcat.Remove(oldHardskill);
-            newHardskill.Uppercat?.Subcat.Add(newHardskill);
+            if (oldHardskill.Uppercat == newHardskill.Uppercat && newHardskill.Uppercat != null)
+            {
+                var indexUp = oldHardskill.Uppercat.Subcat.IndexOf(oldHardskill);
+                newHardskill.Uppercat.Subcat[indexUp] = newHardskill;
+            } else {
+                oldHardskill.Uppercat?.Subcat.Remove(oldHardskill);
+                newHardskill.Uppercat?.Subcat.Add(newHardskill);
+            }
 
             _allHardskills[index] = newHardskill;
             return true;
@@ -84,8 +91,8 @@ namespace AVATI.Data
             
             foreach (var skill in hardskillcat.Subcat)
             {
+                skill.Uppercat?.Subcat.Remove(skill);
                 skill.Uppercat = hardskillcat;
-                hardskillcat.Uppercat?.Subcat.Remove(skill);
             }
 
             _allHardskillCat.Add(hardskillcat);
@@ -97,6 +104,29 @@ namespace AVATI.Data
             var hardskillcat = _allHardskillCat.Find(x => x.Description == oldDescription);
             if (hardskillcat == null) return false;
             hardskillcat.Description = newDescription;
+            return true;
+        }
+
+        public bool EditHardskillsCategory(string hardskillcat, List<Hardskill> hardskills)
+        {
+            var cat = _allHardskillCat.Find(x => x.Description == hardskillcat );
+
+            if (cat == null || cat.Subcat == null) return false;
+            
+            foreach (var skill in cat.Subcat.ToList())
+            {
+                if (!skill.IsHardskill) continue;
+                cat.Subcat.Remove(skill);
+                skill.Uppercat = null;
+            }
+
+            foreach(var hardskill in hardskills.ToList())
+            {
+                if (!hardskill.IsHardskill) return false;
+                hardskill.Uppercat?.Subcat.Remove(hardskill);
+                hardskill.Uppercat = cat;
+                cat.Subcat.Add(hardskill);
+            }
             return true;
         }
 

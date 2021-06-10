@@ -1,5 +1,6 @@
 ﻿@page "/BasicDataAbstract"
 @using AVATI.Data
+@using DocumentFormat.OpenXml.Drawing
 
 @inject IBasicDataService _basicDataService
 @inject IHardskillService _hardskillService
@@ -14,18 +15,20 @@
 <CreateHardskill @ref="_createHardskill"/>
 <EditHardskill @ref="_editHardskill" OldHardskill="@_hardskillService.GetHardskill(Description)"/>
 
+<AddHardskills @ref="_createCat" Description=""/>
+
 <h3 class="cap"><b>Skills</b></h3>
 <table class="table table-striped">
     <caption><h5><b>Softskills</b></h5></caption>
-    <div class="form-group">
+    <div class="form-group col-8">
         <input class="form-control" type="text" placeholder="Filter..."
                @bind="Filter[0]"
                @bind:event="oninput">
     </div>
     <tr>
         <th>Bezeichnung</th>
-        <th>Bearbeiten</th>
-        <th>Löschen</th>
+        <th></th>
+        <th></th>
     </tr>
     @foreach (string softskill in _basicDataService.GetAllSoftSkills())
     {
@@ -33,24 +36,24 @@
             continue;
         <tr>
             <td>@softskill</td>
-            <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditBasicData(softskill, BasicDataType.SoftSkill)">Edit</button></td>
-            <td class="smalltd"><button class="btn btn-dark" @onclick="() => PopDelete(softskill, BasicDataType.SoftSkill)">Delete</button></td>
+            <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditBasicData(softskill, BasicDataType.SoftSkill)">Editieren</button></td>
+            <td class="smalltd"><button class="btn btn-danger" @onclick="() => PopDelete(softskill, BasicDataType.SoftSkill)">Löschen</button></td>
         </tr>
     }
 </table>
-<div> <button class="btn btn-info" @onclick="() => PopCreateBasicData(BasicDataType.SoftSkill)">Create</button> </div>
+<div> <button class="btn btn-success" @onclick="() => PopCreateBasicData(BasicDataType.SoftSkill)">Hinzufügen</button> </div>
 
 <table class="table table-striped">
     <caption><h5><b>Hardskills</b></h5></caption>
-    <div class="form-group">
+    <div class="form-group col-8">
             <input class="form-control" type="text" placeholder="Filter..."
                    @bind="Filter[1]"
                    @bind:event="oninput">
     </div>
     <tr>
         <th>Bezeichnung</th>
-        <th>Bearbeiten</th>
-        <th>Löschen</th>
+        <th></th>
+        <th></th>
     </tr>
         
     @foreach (Hardskill hardskill in _hardskillService.GetAllHardskills())
@@ -60,9 +63,9 @@
         
         <tr class="showskill">
             <td>@hardskill.Description</td>
-            <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditHardskill(hardskill.Description)">Edit</button></td>
+            <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditHardskill(hardskill.Description)">Editieren</button></td>
             <td class="smalltd">
-                <button class="btn btn-dark" @onclick="() => PopDelete(hardskill.Description, BasicDataType.HardSkill)">Delete</button>
+                <button class="btn btn-danger" @onclick="() => PopDelete(hardskill.Description, BasicDataType.HardSkill)">Löschen</button>
             </td>
         </tr>
         
@@ -73,19 +76,18 @@
         }
     }
 </table>
-<div> <button class="btn btn-info" @onclick="PopCreateHardskill">Create</button> </div>
+<div> <button class="btn btn-success" @onclick="PopCreateHardskill">Hinzufügen</button> </div>
 
 <table class="table table-striped">
     <caption><h5><b>Hardskillkategorien</b></h5></caption>
-    <div class="form-group">
+    <div class="form-group col-8">
             <input class="form-control" type="text" placeholder="Filter..."
                    @bind="Filter[2]"
                    @bind:event="oninput">
     </div>
     <tr>
         <th>Bezeichnung</th>
-        <th>Bearbeiten</th>
-        <th>Löschen</th>
+        <th></th>
     </tr>
         
     @foreach (Hardskill hardskillcat in _hardskillService.GetAllHardskillCategorys())
@@ -95,21 +97,42 @@
         
         @if (hardskillcat.IsRoot())
         {
+            if(!_showEditCat.ContainsKey(hardskillcat.Description))
+            {
+                _showEditCat.Add(hardskillcat.Description, false);
+            }
+            
             <tr class="showcat">
                 <td>@hardskillcat.Description</td>
-                <td class="smalltd"><button class="btn btn-secondary">Edit</button></td>
-                <td class="smalltd"><button class="btn btn-dark">Delete</button></td>
+                <td class="smalltd">
+                        @if (_showEditCat[hardskillcat.Description])
+                        {
+                            <button class="btn btn-primary" @onclick="() => ShowingEditCat(hardskillcat.Description)">Abgeschlossen</button>
+                        } else {
+                            <button class="btn btn-secondary" @onclick="() => ShowingEditCat(hardskillcat.Description)">Editieren</button>
+                        }
+                </td>
             </tr>
-
-            <div class="hidecat"><TreeElement Hardskills="@(new List<Hardskill>() {hardskillcat})"/></div>
+            
+            if(_showEditCat[hardskillcat.Description])
+            {
+                <div>
+                    <EditTreeElement Hardskills="@(new List<Hardskill>() {hardskillcat})"/>
+                </div>
+            } else {
+                <div class="hidecat">
+                    <TreeElement Hardskills="@(new List<Hardskill>() {hardskillcat})"/>
+                </div>
+            }
+            
         }
     }
 </table>
-<div> <button class="btn btn-info">Create</button> </div>
+<div> <button class="btn btn-success" @onclick="PopCreateHardskillCat">Hinzufügen</button> </div>
 
 
 <h3 class="cap"><b>Branchen</b><a></a></h3>
-<div class="form-group">
+<div class="form-group col-6">
         <input class="form-control" type="text" placeholder="Filter..."
                @bind="Filter[3]"
                @bind:event="oninput">
@@ -117,8 +140,8 @@
 <table class="table">
     <tr>
         <th>Bezeichnung</th>
-        <th>Bearbeiten</th>
-        <th>Löschen</th>
+        <th></th>
+        <th></th>
     </tr>
     @foreach(var field in _basicDataService.GetAllFields()) {
         
@@ -127,17 +150,17 @@
         
         <tr>
             <td>@field</td>
-            <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditBasicData(field, BasicDataType.Field)">Edit</button></td>
-            <td class="smalltd"><button class="btn btn-dark" @onclick="() => PopDelete(field, BasicDataType.Field)">Delete</button></td>
+            <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditBasicData(field, BasicDataType.Field)">Editieren</button></td>
+            <td class="smalltd"><button class="btn btn-danger" @onclick="() => PopDelete(field, BasicDataType.Field)">Löschen</button></td>
         </tr>
     }
 </table>
-<div> <button class="btn btn-info" @onclick="() => PopCreateBasicData(BasicDataType.Field)">Create</button> </div>
+<div> <button class="btn btn-success" @onclick="() => PopCreateBasicData(BasicDataType.Field)">Hinzufügen</button> </div>
 
 
 
 <h3 class="cap"><b>Rollen</b></h3>
-<div class="form-group">
+<div class="form-group col-6">
         <input class="form-control" type="text" placeholder="Filter..."
                @bind="Filter[4]"
                @bind:event="oninput">
@@ -145,8 +168,8 @@
 <table class="table">
     <tr>
         <th>Bezeichnung</th>
-        <th>Bearbeiten</th>
-        <th>Löschen</th>
+        <th></th>
+        <th></th>
     </tr>
     @foreach(var role in _basicDataService.GetAllRoles()){
         
@@ -155,12 +178,12 @@
         
         <tr>
             <td>@role</td>
-            <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditBasicData(role, BasicDataType.Role)">Edit</button></td>
-            <td class="smalltd"><button class="btn btn-dark" @onclick="() => PopDelete(role, BasicDataType.Role)">Delete</button></td>
+            <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditBasicData(role, BasicDataType.Role)">Editieren</button></td>
+            <td class="smalltd"><button class="btn btn-danger" @onclick="() => PopDelete(role, BasicDataType.Role)">Löschen</button></td>
         </tr>
     }
 </table>
-<div> <button class="btn btn-info" @onclick="() => PopCreateBasicData(BasicDataType.Role)">Create</button> </div>
+<div> <button class="btn btn-success" @onclick="() => PopCreateBasicData(BasicDataType.Role)">Hinzufügen</button> </div>
 
 
 @code {
@@ -171,10 +194,14 @@
     CreateHardskill _createHardskill;
     EditHardskill _editHardskill;
 
+    AddHardskills _createCat;
+
     //0: Filter for Softskill, 1: Filter for Hardskill, 2: Filter for Hardskillcategory
     //3: Filter for Field, 4: Filter for Role
     private string[] Filter { get; set; } = new string[5];
-    
+
+    private Dictionary<string, bool> _showEditCat = new();
+
     private string Description { get; set; }
 
     private BasicDataType Type { get; set; }
@@ -183,6 +210,15 @@
     private bool IsVisible(string description, int index)
     {
         return string.IsNullOrEmpty(Filter[index]) || description.Contains(Filter[index], StringComparison.OrdinalIgnoreCase);
+    }
+
+    private void ShowingEditCat(string cat)
+    {
+        if(!_showEditCat.ContainsKey(cat))
+        {
+            _showEditCat.Add(cat, true);
+        }
+        _showEditCat[cat] = !_showEditCat[cat];
     }
 
     void PopCreateBasicData(BasicDataType type)
@@ -215,4 +251,10 @@
         Description = description;
         _editHardskill.Showing();
     }
+
+    void PopCreateHardskillCat()
+    {
+        _createCat.Showing();
+    }
+
 }

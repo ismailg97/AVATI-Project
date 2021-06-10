@@ -33,6 +33,12 @@ namespace AVATI.Data
             return Subcat != null && Subcat.Any() && Subcat[0].IsHardskill;
         }
 
+        public bool ContainsAnyHardskills()
+        {
+            if (Subcat == null || !Subcat.Any()) return false;
+            return Subcat.Any(hardskill => hardskill.IsHardskill);
+        }
+
         public bool IsRoot()
         {
             return (!IsHardskill && Uppercat == null);

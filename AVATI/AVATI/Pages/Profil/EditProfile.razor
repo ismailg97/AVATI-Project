@@ -1,15 +1,18 @@
 ﻿@page "/profile/update"
 @page "/profile/update/{id:int}"
 @using AVATI.Data
+@using Blazorise
 @using System.Text.RegularExpressions
-@using System.ComponentModel.DataAnnotations
 @inject IProjektService _projektService
 @inject IEmployeeService _employee
 @inject NavigationManager _navManager
+@inject ProjectServiceSimple _projectServiceSimple
 
-<link href="css/Profile.razor.css" rel="stylesheet"/>
+<AddFieldToProfile @ref="_addFieldToProfile"/>
+
+
 <h3>Profil</h3>
-<!------ Include the above in your HEAD tag ---------->
+
 <!------ Gets Employee with the same Id as the Router Parameter ---------->
 <EditForm Model="Emp" OnValidSubmit="@EditProfiles">
 
@@ -27,7 +30,7 @@
     </div>
     <div class="col-md-6">
         <div class="profile-head">
-            
+
             <!------ Name ---------->
             <div class="row-md-4 mb-3">
                 <label for="validationServer01">First name</label>
@@ -42,7 +45,7 @@
 
     <!------ Edit Profile Button ---------->
     <div class="col-md-2">
-        <a href="/profile/update/@Emp.EmployeeId">
+        <a href="/profile/@Emp.EmployeeId">
             <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Bestätigen"/>
         </a>
     </div>
@@ -63,15 +66,7 @@
     <!------ RC-Level ---------->
     <div class="col-md-3 mb-3">
         <label for="validationServer04">Rate-Card Level</label>
-        <select class="form-control">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option>6</option>
-            <option>7</option>
-        </select>
+        <input class="form-control col-4" min="1" max="12" type="number" @bind=@_changeValue id="example-number-input"/>
     </div>
 </div>
 
@@ -174,123 +169,132 @@
 </div>
 
 
- <div class="form-col">
- <!------ Fields ---------->
-  <div class="form-row">
-    <div class="card-body text-center">
-        <div class="form-row">
-            <div class="col">
-                <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollField(); })">Branchenwissen</label>
-            </div>
-            <div class="col">
-                <a href="">
-                    <button class="btn btn-secondary">
+<div class="form-col">
+    <!------ Fields ---------->
+
+    <!------ <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Branchen</label>
+        <div class="col-sm-8 col-form-label">
+            <input class="form-control" type="text" value="@String.Join(" | ", _projectServiceSimple.GetAllFieldsFromOneProject(Id).ToArray())" placeholder="" readonly/>
+            <div><button class="btn btn-info" @onclick="() => PopAddFieldToProfile()">Add Branchen</button> </div>
+        </div>
+    </div> ---------->
+
+    <div class="form-row">
+        <div class="card-body text-center">
+            <div class="form-row">
+                <div class="col">
+                    <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollField(); })">Branchenwissen</label>
+                </div>
+                <div class="col">
+
+                    <button class="btn btn-secondary" @onclick="() => PopAddFieldToProfile()">
                         Bearbeiten
                     </button>
-                </a>
+
+                </div>
             </div>
-        </div>
-        <div class="card-text @(_booleanField ? "" : "collapse")">
-            <ul class="list-group list-group-flush text-left">
-                @if (Emp.Field.Any())
-                {
-                    foreach (var field in Emp.Field)
+            <div class="card-text @(_booleanField ? "" : "collapse")">
+                <ul class="list-group list-group-flush text-left">
+                    @if (Emp.Field.Any())
                     {
-                        <li class="list-group-item text-center">
-                            @field
+                        foreach (var field in Emp.Field)
+                        {
+                            <li class="list-group-item text-center">
+                                @field
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li>
+
                         </li>
                     }
-                }
-                else
-                {
-                    <li>
-
-                    </li>
-                }
-            </ul>
+                </ul>
+            </div>
         </div>
     </div>
-</div>
 
- <!------ Relevant Work Experience ---------->
- <div class="form-row">
-     <div class="card-body text-center">
-         <div class="form-row">
-             <div class="col">
-                 <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollWork(); })">Relevante Berufserfahrung</label>
-             </div>
-             <div class="col">
-                 <a href="">
-                     <button class="btn btn-secondary">
-                         Bearbeiten
-                     </button>
-                 </a>
-             </div>
-         </div>
-         <div class="card-text @(_booleanWork ? "" : "collapse")">
-             <ul class="list-group list-group-flush text-left">
-                 @if (Emp.RelevantWorkExperience.Any())
-                 {
-                     foreach (var work in Emp.RelevantWorkExperience)
-                     {
-                         <li class="list-group-item border-dark bg-light font-weight-bold text-black text-center">
-                             @work
-                         </li>
-                     }
-                 }
-                 else
-                 {
-                     <li>
-
-                     </li>
-                 }
-             </ul>
-         </div>
-     </div>
- </div>
- 
- <!------ Languages ---------->
-  <div class="form-row">
-    <div class="card-body text-center">
-        <div class="form-row">
-            <div class="col">
-                <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollLang(); })">Sprachen</label>
+    <!------ Relevant Work Experience ---------->
+    <div class="form-row">
+        <div class="card-body text-center">
+            <div class="form-row">
+                <div class="col">
+                    <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollWork(); })">Relevante Berufserfahrung</label>
+                </div>
+                <div class="col">
+                    <a href="">
+                        <button class="btn btn-secondary">
+                            Bearbeiten
+                        </button>
+                    </a>
+                </div>
             </div>
-            <div class="col">
-                <a href="">
-                    <button class="btn btn-secondary">
-                        Bearbeiten
-                    </button>
-                </a>
+            <div class="card-text @(_booleanWork ? "" : "collapse")">
+                <ul class="list-group list-group-flush text-left">
+                    @if (Emp.RelevantWorkExperience.Any())
+                    {
+                        foreach (var work in Emp.RelevantWorkExperience)
+                        {
+                            <li class="list-group-item border-dark bg-light font-weight-bold text-black text-center">
+                                @work
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li>
+
+                        </li>
+                    }
+                </ul>
             </div>
         </div>
-        <div class="card-text @(_booleanLang ? "" : "collapse")">
-            <table align="left" style="text-align: left" class="table align-middle">
-                <tr>
-                    <th class="text-left">Sprache</th>
-                    <th class="text-center">Sprachniveau</th>
-                </tr>
-                @if (Emp.Language.Any())
-                {
-                    foreach (var lang in Emp.Language)
+    </div>
+
+    <!------ Languages ---------->
+    <div class="form-row">
+        <div class="card-body text-center">
+            <div class="form-row">
+                <div class="col">
+                    <label class="card-title font-weight-light lead text-center" id="title" @onclick="(() => { CollLang(); })">Sprachen</label>
+                </div>
+                <div class="col">
+                    <a href="">
+                        <button class="btn btn-secondary">
+                            Bearbeiten
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="card-text @(_booleanLang ? "" : "collapse")">
+                <table align="left" style="text-align: left" class="table align-middle">
+                    <tr>
+                        <th class="text-left">Sprache</th>
+                        <th class="text-center">Sprachniveau</th>
+                    </tr>
+                    @if (Emp.Language.Any())
+                    {
+                        foreach (var lang in Emp.Language)
+                        {
+                            <tr>
+                                <td class="text-left">@lang.Item1</td>
+                                <td class="text-center">@lang.Item2</td>
+                            </tr>
+                        }
+                    }
+                    else
                     {
                         <tr>
-                            <td class="text-left">@lang.Item1</td>
-                            <td class="text-center">@lang.Item2</td>
+                            <td></td>
+                            <td></td>
                         </tr>
                     }
-                }
-                else
-                {
-                    <tr>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                }
-            </table>
+                </table>
+            </div>
         </div>
     </div>
-</div>
 </div>
 <!------ Projects ---------->
 <div class="form-row">
@@ -340,10 +344,9 @@
 </EditForm>
 
 
-
-
 @code {
 
+    AddFieldToProfile _addFieldToProfile;
 
     [Parameter]
     public int Id { get; set; }
@@ -364,7 +367,7 @@
     public void EditProfiles()
     {
         _employee.EditEmployeeProfile(Emp);
-        _navManager.NavigateTo("https://localhost:5001/");
+        _navManager.NavigateTo("profile/" + Emp.EmployeeId);
     }
 
 
@@ -375,6 +378,7 @@
     private bool _booleanSoftSkill = false;
     private bool _booleanRole = false;
     private bool _booleanWork = false;
+    private int _changeValue;
     //private bool _booleanName;
 
 
@@ -434,13 +438,17 @@
     public void Check()
     {
         var regexItem = new Regex("^[a-zA-Z]*$");
-        if (!regexItem.IsMatch(Emp.FirstName) || !regexItem.IsMatch(Emp.LastName))
+        if (regexItem.IsMatch(Emp.FirstName) || regexItem.IsMatch(Emp.LastName))
         {
-            //_booleanName = false;
             return;
         }
 
         EditProfiles();
+    }
+
+    public void PopAddFieldToProfile()
+    {
+        _addFieldToProfile.Showing();
     }
 
 }
