@@ -139,10 +139,10 @@
                 currentProject = project;
             }
         }
-        currentProject.fields = AttributestoSearch;
+        currentProject.Fields = AttributestoSearch;
         _projectServiceSimple.DeleteProject(ID);
         _navigationManager.NavigateTo("/Projektübersicht/Projektedit/" + currentProject.ProjectID);
     }
 
-}
+
 }

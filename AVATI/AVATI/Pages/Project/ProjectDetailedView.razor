@@ -24,7 +24,7 @@
             <td style="height: 100%">
                 <div class="col-form-label">
                     <ul>
-                        @foreach (var field in _project.fields)
+                        @foreach (var field in _project.Fields)
                         {
                             <li>
                                 @field
@@ -46,7 +46,6 @@
                 </div>
             </td>
             <td>@_project.Projectbeginning</td>
-            <td style="height: 100%">@_project.Projectactivities</td>
             <td>
                 <div class="col-form-label">
                     <ul>

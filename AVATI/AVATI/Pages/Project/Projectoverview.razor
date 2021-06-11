@@ -1,9 +1,9 @@
 ﻿@page "/Projektübersicht"
 
 @using AVATI.Data
-@inject IProjektService _projektService
+@inject IProjektService _projectService
 @inject JsonImport _jsonImport
-@inject ProjectServiceSimple _projectServiceSimple
+
 
 <h3>Projektübersicht</h3>
 
@@ -21,16 +21,16 @@
     </tr>
     </thead>
     <tbody>
-    @if (_projectServiceSimple._projects.Any())
+    @if (_projectService.GetAllProjects().Any())
     {
-        foreach (var project in _projectServiceSimple._projects)
+        foreach (var project in _projectService.GetAllProjects())
         {
             @if (!IsVisible(project.Projecttitel))
                 continue;
             <tr>
                 <td>@project.Projecttitel</td>
                 <td>@project.Projectdescription</td>
-                <td>@String.Join(" | ", project.fields)</td>
+                <td>@String.Join(" | ", project.Fields)</td>
                 <td>
                     <a href="/Projektübersicht/Projektedit/@project.ProjectID">
                         <button type="button" class="btn btn-secondary">Edit</button>
@@ -65,8 +65,8 @@
     public void ProjectSuche()
     {
         Clicked = true;
-        List<Project> projects = _projectServiceSimple.GetAllProjects();
-        _projectServiceSimple.SearchProject(projects, Input);
+        List<Project> projects = _projectService.GetAllProjects();
+        _projectService.SearchProject(projects, Input);
     }
 
 }

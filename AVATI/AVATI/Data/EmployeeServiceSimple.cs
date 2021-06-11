@@ -42,8 +42,8 @@ namespace AVATI.Data
                     RelevantWorkExperience = (float) 0.32,
                     Projects = new List<Project>()
                     {
-                        new Project() {Projecttitel = "Auto 3.0",Projectdescription = "Irgendwas mit Autos", ProjectID = 3, fields = new List<string>() {"Automobil","Smtn"}},
-                        new Project() {Projecttitel = "BuildBsp",Projectdescription = "Was weiss ich", ProjectID = 4, fields = new List<string>(){"Bildung"}}
+                        new Project() {Projecttitel = "Auto 3.0",Projectdescription = "Irgendwas mit Autos", ProjectID = 3, Fields = new List<string>() {"Automobil","Smtn"}},
+                        new Project() {Projecttitel = "BuildBsp",Projectdescription = "Was weiss ich", ProjectID = 4, Fields = new List<string>(){"Bildung"}}
                     },
                     Language = new List<Tuple<string, LanguageLevel>>()
                     {
@@ -130,8 +130,8 @@ namespace AVATI.Data
                     RelevantWorkExperience = (float) 0.8,
                     Projects = new List<Project>()
                     {
-                        new Project() {Projecttitel = "Auto 3.0",Projectdescription = "Irgendwas mit Autos", ProjectID = 3, fields = new List<string>() {"Automobil","Smtn"}},
-                        new Project() {Projecttitel = "BuildBsp",Projectdescription = "Was weiss ich", ProjectID = 4, fields = new List<string>(){"Bildung"}}
+                        new Project() {Projecttitel = "Auto 3.0",Projectdescription = "Irgendwas mit Autos", ProjectID = 3, Fields = new List<string>() {"Automobil","Smtn"}},
+                        new Project() {Projecttitel = "BuildBsp",Projectdescription = "Was weiss ich", ProjectID = 4, Fields = new List<string>(){"Bildung"}}
                     },
                     Language = new List<Tuple<string, LanguageLevel>>()
                     {

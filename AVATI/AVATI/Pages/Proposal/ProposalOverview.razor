@@ -10,7 +10,7 @@
 @using DocumentFormat.OpenXml.Wordprocessing
 @using Table = DocumentFormat.OpenXml.InkML.Table
 @inject IBlazorDownloadFileService _blazorDownloadFileService
-
+@inject IProjektService _projekt
 @inject IProposalService _proposal
 @inject NavigationManager _navManager
 @inject SearchService _search
@@ -29,7 +29,7 @@
                         <p class="font-weight-bolder">Angebot: @proposal.ProposalId.ToString()</p>
                         <p>
                             <button class="btn btn-outline-dark btn-sm" @onclick=@(async () => { await CreateDocument(proposal.ProposalId); })>Dokument erzeugen</button>
-                            <button class="btn btn-outline-success btn-sm ml-2">Projekt erzeugen</button>
+                            <button class="btn btn-outline-success btn-sm ml-2" @onclick=@(() => { CreateProject(proposal.ProposalId); })>Projekt erzeugen</button>
                         </p>
                         <button class="btn btn-outline-secondary btn-sm" @onclick=@(() => { ShowEdit(proposal.ProposalId); })> Editieren</button>
                         <button class="btn btn-outline-info btn-sm" @onclick=@(() => { CallCopy(proposal.ProposalId); })>Kopieren</button>
@@ -256,6 +256,25 @@
         }
     }
 
+    public void CreateProject(int proposalId)
+    {
+        Proposal temp;
+        if ((temp = _proposal.GetProposal(proposalId)) != null)
+        {
+            if (_projekt.CreateProject(new Project()
+            {
+                Employees = temp.Employees, Fields = temp.Fields, Projectdescription = temp.AdditionalInfo,
+                Projectbeginning = DateTime.Now, Softskills = new List<string>(temp.Softskills), Hardskills = new List<Hardskill>(temp.Hardskills), Projecttitel = temp.ProposalTitle
+            }))
+            {
+                if (_proposal.DeleteProposal(proposalId))
+                {
+                    Console.WriteLine("War erfolgreich");
+                }
+            }
+        }
+    }
+    
     public async Task CreateDocument(int id)
     {
         using (MemoryStream mem = new MemoryStream())

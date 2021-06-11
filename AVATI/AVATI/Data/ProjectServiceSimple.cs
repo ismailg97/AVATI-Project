@@ -31,7 +31,7 @@ namespace AVATI.Data
                     {
                         proj.Projecttitel = project.Projecttitel;
                         proj.Projectdescription = project.Projectdescription;
-                        proj.fields = project.fields;
+                        proj.Fields = project.Fields;
                         proj.Projectpurpose = project.Projectpurpose;
                         proj.Projectbeginning = project.Projectbeginning;
                     }
@@ -64,7 +64,7 @@ namespace AVATI.Data
             {
                 if (field.ProjectID == ProjectID)
                 {
-                    temp = field.fields;
+                    temp = field.Fields;
                 }
             }
 
@@ -77,7 +77,7 @@ namespace AVATI.Data
             {
                 if (projectid == project.ProjectID)
                 {
-                    project.fields.Add(field);
+                    project.Fields.Add(field);
                 }
             }
         }
@@ -86,7 +86,7 @@ namespace AVATI.Data
         {
             Project eins = new Project
             {
-                fields = new List<string>(), Projectdescription = "iwasyallah", Employees = new List<Employee>(),
+                Fields = new List<string>(), Projectdescription = "iwasyallah", Employees = new List<Employee>(),
                 Projectpurpose = new List<string>(), Projecttitel = "goodbye",
                 Projectbeginning = DateTime.Today
             };

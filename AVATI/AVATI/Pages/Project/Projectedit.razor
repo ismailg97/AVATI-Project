@@ -3,7 +3,7 @@
 
 @using AVATI.Data
 @using Blazorise
-@inject IProjektService _projektService
+@inject IProjektService _projectService
 @inject NavigationManager _navigationManager
 @inject ProjectServiceSimple _projectServiceSimple
 
@@ -96,7 +96,7 @@
 
     private void Save()
     {
-        _projectServiceSimple.UpdateProject(_project);
+        _projectService.UpdateProject(_project);
         _navigationManager.NavigateTo("/Projektübersicht");
     }
 
