@@ -1,4 +1,5 @@
 ﻿@using AVATI.Data
+@using DocumentFormat.OpenXml.InkML
 
 @inject IBasicDataService _basicDataService
 @inject NavigationManager _navigationManager
@@ -7,18 +8,23 @@
                <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
-                      @if (Type == BasicDataType.SoftSkill){
+                      @if (Type == BasicDataType.SoftSkill)
+                      {
                         <h4 class="modal-title">Ändere den Softskill</h4>
-                      } else if (Type == BasicDataType.Field) {
+                      }
+                      else if (Type == BasicDataType.Field)
+                      {
                         <h4 class="modal-title">Ändere die Branche</h4>
-                      } else {
+                      }
+                      else
+                      {
                         <h4 class="modal-title">Ändere die Rolle</h4>
                       }
                       <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
                     </div>
                     <div class="modal-body">
-                      <input type="text" id="softskill" @bind="NewDescription" />
-                      </div>
+                      <input class="form-control col-7" type="text" id="softskill" @bind="NewDescription"/>
+                    </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-success" @onclick="Update">Speichern</button>
                       <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">Abbrechen</button>
@@ -33,7 +39,8 @@
 
 
 @code {
-
+  [Parameter] public BasicDataAbstract Abstract { get; set; }
+  
   [Parameter]
   public string OldDescription { get; set; }
 
@@ -41,8 +48,14 @@
   public BasicDataType Type { get; set; }
 
   private bool _show = false;
-
+  
   private string NewDescription { get; set; }
+
+  protected override void OnParametersSet()
+  {
+    NewDescription = OldDescription;
+  }
+
 
   private void Update()
   {
@@ -58,8 +71,9 @@
         _basicDataService.UpdateRole(NewDescription, OldDescription);
         break;
     }
+    Abstract.UpdateLists();
     Showing();
-    _navigationManager.NavigateTo(_navigationManager.Uri, true);
+    //_navigationManager.NavigateTo(_navigationManager.Uri, true);
   }
 
   public void Showing()

@@ -87,6 +87,7 @@ ul.tree>li:first-child::after {
 }
 
 .check {
+    font-weight: bold;
     background: #0275d8;
     border-color: #0275d8;
     box-shadow: #0275d8;
@@ -153,4 +154,31 @@ div::before{
     background-color: #7a212e;
     color: white !important;
     border-color: #7a212e !important;
+}
+
+.remove{
+    visibility: hidden !important;
+    font-size: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    opacity: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    transition: visibility 0s, opacity 0.3s linear !important;
+    border: none !important;
+    display: inline !important;
+}
+
+.showRemove:hover + .remove,
+.remove:hover{
+    visibility: visible !important;
+    font-size: smaller !important;
+    height: auto !important;
+    width: auto !important;
+    padding: 2px !important;
+    opacity: 1 !important;
+}
+
+.inline{
+    display: inline !important;
 }
