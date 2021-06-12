@@ -1,0 +1,159 @@
+﻿@using AVATI.Data
+
+@inject IHardskillService _hardskillService
+@inject NavigationManager _navigationManager
+
+
+
+<div class="modal @(_show ? "fade show" : "" )" id="myModal" style=" display: @(_show ? "block" : "none");">
+               <div class="modal-dialog">
+                 <div class="modal-content">
+                   <div class="modal-header">
+                     <h4 class="modal-title">Bitte wählen Sie ein Sprachniveau aus</h4>
+                     <button type="button" class="close" data-dismiss="modal" @onclick="Show">&times;</button>
+                   </div>
+                   
+                     <div class="modal-body">
+                       <button type="button" @onclick="(() => { Save(1); })" class="btn btn-outline-success btn-sm mr-2">A1</button>
+                       <button type="button" @onclick="(() => { Save(2); })" class="btn btn-outline-primary btn-sm mr-2">A2</button>
+                       <button type="button" @onclick="(() => { Save(3); })" class="btn btn-outline-secondary btn-sm mr-2">B1</button>
+                       <button type="button" @onclick="(() => { Save(4); })" class="btn btn-outline-dark btn-sm mr-2">B2</button>
+                       <button type="button" @onclick="(() => { Save(5); })" class="btn btn-outline-info btn-sm mr-2">C1</button>
+                       <button type="button" @onclick="(() => { Save(6); })" class="btn btn-outline-warning btn-sm mr-2">C2</button>
+                     </div>
+                   <div class="modal-footer">
+                     <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Show">Abbrechen</button>
+                   </div>
+                   
+                 </div>
+               </div>
+          </div>
+@if (_show)
+{
+  <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+  private bool _show = false;
+  public Employee Employee { get; set; }
+  public string languageName { get; set; }
+
+    [Parameter] 
+  public Hardskill OldHardskill{ get; set; }
+
+  string Description { get; set; }
+
+  private Hardskill _newHardskill = new();
+
+  private void Update()
+  {
+    
+  }
+
+  public void Showing(Employee Emp, string lang )
+  {
+    Employee = Emp;
+    languageName = lang;
+    _show = !_show;
+    StateHasChanged();
+  }
+  
+  public void Show( )
+  {
+    Employee.LanguageName.Remove(languageName);
+    _show = !_show;
+    StateHasChanged();
+    _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+  }
+  //<EditForm Model="@_newHardskill" OnValidSubmit="Update"></EditForm>
+
+  public void Save(int buttonId)
+  {
+    if (buttonId == 1)
+    {
+      foreach (var langtuple in Employee.Language)
+      {
+        if (languageName == langtuple.Item1)
+        {
+          Employee.Language.Remove(langtuple);
+        }
+      }
+      Employee.Language.Add(new Tuple<string, LanguageLevel>(languageName, LanguageLevel.A1));
+      _show = !_show;
+      StateHasChanged();
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+    }
+    if (buttonId == 2)
+    {
+      foreach (var langtuple in Employee.Language)
+      {
+        if (languageName == langtuple.Item1)
+        {
+          Employee.Language.Remove(langtuple);
+        }
+      }
+      Employee.Language.Add(new Tuple<string, LanguageLevel>(languageName, LanguageLevel.A2));
+      _show = !_show;
+      StateHasChanged();
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+    }
+    if (buttonId == 3)
+    {
+      foreach (var langtuple in Employee.Language)
+      {
+        if (languageName == langtuple.Item1)
+        {
+          Employee.Language.Remove(langtuple);
+        }
+      }
+      Employee.Language.Add(new Tuple<string, LanguageLevel>(languageName, LanguageLevel.B1));
+      _show = !_show;
+      StateHasChanged();
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+    }
+    if (buttonId == 4)
+    {
+      foreach (var langtuple in Employee.Language)
+      {
+        if (languageName == langtuple.Item1)
+        {
+          Employee.Language.Remove(langtuple);
+        }
+      }
+      Employee.Language.Add(new Tuple<string, LanguageLevel>(languageName, LanguageLevel.B2));
+      _show = !_show;
+      StateHasChanged();
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+    }
+    if (buttonId == 5)
+    {
+      foreach (var langtuple in Employee.Language)
+      {
+        if (languageName == langtuple.Item1)
+        {
+          Employee.Language.Remove(langtuple);
+        }
+      }
+      Employee.Language.Add(new Tuple<string, LanguageLevel>(languageName, LanguageLevel.C1));
+      _show = !_show;
+      StateHasChanged();
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+    }
+    if (buttonId == 6)
+    {
+      foreach (var langtuple in Employee.Language)
+      {
+        if (languageName == langtuple.Item1)
+        {
+          Employee.Language.Remove(langtuple);
+        }
+      }
+      Employee.Language.Add(new Tuple<string, LanguageLevel>(languageName, LanguageLevel.C2));
+      _show = !_show;
+      StateHasChanged();
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+    }
+    
+  }
+    
+}
