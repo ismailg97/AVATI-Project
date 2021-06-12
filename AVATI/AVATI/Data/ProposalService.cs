@@ -7,6 +7,21 @@ namespace AVATI.Data
     public class ProposalService : IProposalService
     {
         public List<Proposal> Proposals { get; set; }
+        public List<string> GetSoftskills(int proposalId)
+        {
+            return GetProposal(proposalId).Softskills;
+        }
+
+        public List<Hardskill> GetHardskills(int proposalId)
+        {
+            return GetProposal(proposalId).Hardskills;;
+        }
+
+        public List<string> GetFields(int proposalId)
+        {
+            return GetProposal(proposalId).Fields;
+        }
+
         public ProposalService()
         {
             Proposals = new List<Proposal>()
