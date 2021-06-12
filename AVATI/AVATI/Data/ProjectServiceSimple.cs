@@ -50,6 +50,7 @@ namespace AVATI.Data
         public Project GetProject(int projectID)
         {
             return _projects.Find(x => x.ProjectID.Equals(projectID));
+            
         }
 
         public List<Project> GetAllProjects()
@@ -86,12 +87,20 @@ namespace AVATI.Data
         {
             Project eins = new Project
             {
-                Fields = new List<string>(), Projectdescription = "iwasyallah", Employees = new List<Employee>(),
+                ProjectID = 1, Fields = new List<string>(), Projectdescription = "iwasyallah",
+                Employees = new List<Employee>(),
                 Projectpurpose = new List<string>(), Projecttitel = "goodbye",
                 Projectbeginning = DateTime.Today
             };
+                Project zwei = new Project
+            {
+                ProjectID = 2, Fields = new List<string>(), Projectdescription = "smtn",
+                Employees = new List<Employee>(),
+                Projectpurpose = new List<string>(), Projecttitel = "testing",
+                Projectbeginning = DateTime.Today
+            };
 
-            _projects = new List<Project>();
+                _projects = new List<Project>();
             _projects.Add(eins);
         }
 

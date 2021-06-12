@@ -4,6 +4,7 @@
 @inject NavigationManager _navManager
 @inject IEmployeeService _employee
 @inject IProjectActivityService _projctActivityService
+@inject IProjektService _projektService
 
 
 <h3 class="text-left">Profil</h3>
@@ -63,10 +64,10 @@
                                 <tr>
                                     <th></th>
                                 </tr>
-                                @foreach (var hardskill in Emp.Hardskills)
+                                @foreach (var hardskill in Emp.HardSkillLevel)
                                 {
                                     <tr>
-                                        <td>@hardskill.Description</td>
+                                        <td>@hardskill.Item1.Description | @hardskill.Item2</td>
                                     </tr>
                                 }
                             </table>
@@ -167,23 +168,21 @@
                         <table align="left" style="text-align: left" class="table align-middle">
                             <tr>
                                 <th class="text-left">Projekt</th>
-                                <th class="text-center">Projekttätigkeit</th>
+                                <th class="text-left">Projekttätigkeit</th>
                             </tr>
-                            @if (Emp.Projects.Any())
-                            {
-                                foreach (var project in Emp.Projects)
+                        @if (_projctActivityService.GetProjectActivityListEmployee(Id).Any())
+                        {
+                            
+                                foreach (var activity in _projctActivityService.GetProjectActivityListEmployee(Id))
                                 {
-                                    <tr>
-                                        <td class="text-left">@project.Projecttitel</td>
-                                        @if (_projctActivityService.GetProjectActivities(Id, project.ProjectID) == null)
-                                        {
-                                            <td></td>
-                                        }
-                                        else
-                                        {
-                                            <td class="text-center">@_projctActivityService.GetProjectActivities(Id, project.ProjectID).Description</td>
-                                        }
+                                    @if( activity.EmployeeID == Id)
+                                    {
+                                        <tr>
+                                        <td class="text-left">@activity.ProjectID</td>
+                                        <td class="text-left">@activity.Description</td>
                                     </tr>
+                                        
+                                    }
                                 }
                             }
                             else
@@ -192,7 +191,7 @@
                                     <td></td>
                                     <td></td>
                                 </tr>
-                            }
+                            } 
                         </table>
                     </div>
                 </div>
@@ -215,6 +214,8 @@
 
     [Parameter]
     public int Id { get; set; } 
+    
+    public List<ProjectActivity> ActivityList { get; set; }
 
 
     Employee Emp = new Employee()

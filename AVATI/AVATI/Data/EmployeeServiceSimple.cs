@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using DocumentFormat.OpenXml.Office2016.Excel;
 
 
 namespace AVATI.Data
@@ -23,11 +24,7 @@ namespace AVATI.Data
                         "UI/UX-Designer",
                         "Product Owner"
                     },
-                    Hardskills = new List<Hardskill>()
-                    {
-                        new Hardskill {Description = "C++"}, new Hardskill() {Description = "C"},
-                        new Hardskill() {Description = "JavaScript"}, new Hardskill() {Description = "C#"}
-                    },
+                    Hardskills = new List<Hardskill>(),
                     Softskills = new List<string>()
                     {
                         "Konzeptionsstärke",
@@ -40,11 +37,10 @@ namespace AVATI.Data
                         "Bildung"
                     },
                     RelevantWorkExperience = (float) 0.32,
-                    Projects = new List<Project>()
-                    {
-                        new Project() {Projecttitel = "Auto 3.0",Projectdescription = "Irgendwas mit Autos", ProjectID = 3, Fields = new List<string>() {"Automobil","Smtn"}},
-                        new Project() {Projecttitel = "BuildBsp",Projectdescription = "Was weiss ich", ProjectID = 4, Fields = new List<string>(){"Bildung"}}
-                    },
+                    ProjectActivities = new List<ProjectActivity>(),
+                    HardSkillLevel = new List<Tuple<Hardskill, int>>(),
+                    LanguageName = new List<string>(),
+                    
                     Language = new List<Tuple<string, LanguageLevel>>()
                     {
                        
@@ -66,6 +62,7 @@ namespace AVATI.Data
                             new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
                             new Hardskill() {Description = "Python"}, new Hardskill() {Description = "C#"}
                         },
+                    ProjectActivities = new List<ProjectActivity>(),
                     Softskills = new List<string>()
                     {
                         "Beratungsfähigkeit",
@@ -94,7 +91,9 @@ namespace AVATI.Data
                         "Interdisziplinärer Sachverstand",
                         "Kommunikationsfähigkeit",
                         "Problemlösungsfähigkeit"
-                    }, Rc = 2
+                    },
+                    ProjectActivities = new List<ProjectActivity>(),
+                    Rc = 2
                 },
                 new Employee()
                 {
@@ -105,6 +104,7 @@ namespace AVATI.Data
                             new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
                             new Hardskill() {Description = "Python"}, new Hardskill() {Description = "C#"}
                         },
+                    ProjectActivities = new List<ProjectActivity>(),
                     Softskills = new List<string>() {"none"}, Rc = 6
                 },
                 new Employee()
@@ -116,6 +116,7 @@ namespace AVATI.Data
                         new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
                         new Hardskill() {Description = "Python"}, new Hardskill() {Description = "C#"}
                     },
+                    ProjectActivities = new List<ProjectActivity>(),
                     Softskills = new List<string>()
                     {
                         "Innovationsfreudigkeit",
@@ -128,11 +129,7 @@ namespace AVATI.Data
                         "Bildung"
                     },
                     RelevantWorkExperience = (float) 0.8,
-                    Projects = new List<Project>()
-                    {
-                        new Project() {Projecttitel = "Auto 3.0",Projectdescription = "Irgendwas mit Autos", ProjectID = 3, Fields = new List<string>() {"Automobil","Smtn"}},
-                        new Project() {Projecttitel = "BuildBsp",Projectdescription = "Was weiss ich", ProjectID = 4, Fields = new List<string>(){"Bildung"}}
-                    },
+                    
                     Language = new List<Tuple<string, LanguageLevel>>()
                     {
                         Tuple.Create<string,LanguageLevel>("Englisch", LanguageLevel.B2),
@@ -148,6 +145,7 @@ namespace AVATI.Data
                             new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
                             new Hardskill() {Description = "Python"}, new Hardskill() {Description = "C#"}
                         },
+                    ProjectActivities = new List<ProjectActivity>(),
                     Softskills = new List<string>()
                     {
                         "Akquisitionsstärke",

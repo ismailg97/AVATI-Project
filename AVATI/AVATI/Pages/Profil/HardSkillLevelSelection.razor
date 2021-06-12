@@ -1,0 +1,110 @@
+﻿@using AVATI.Data
+
+@inject IHardskillService _hardskillService
+@inject NavigationManager _navigationManager
+
+
+
+<div class="modal @(_show ? "fade show" : "" )" id="myModal" style=" display: @(_show ? "block" : "none");">
+               <div class="modal-dialog">
+                 <div class="modal-content">
+                   <div class="modal-header">
+                     <h4 class="modal-title">Bitte wählen Sie ein Hardskill-Level aus</h4>
+                     <button type="button" class="close" data-dismiss="modal" @onclick="Show">&times;</button>
+                   </div>
+                   
+                     <div class="modal-body">
+                       <button type="button" @onclick="(() => { Save(1); })" class="btn btn-outline-success btn-sm mr-2">1</button>
+                       <button type="button" @onclick="(() => { Save(2); })" class="btn btn-outline-primary btn-sm mr-2">2</button>
+                       <button type="button" @onclick="(() => { Save(3); })" class="btn btn-outline-secondary btn-sm mr-2">3</button>
+                       <button type="button" @onclick="(() => { Save(4); })" class="btn btn-outline-dark btn-sm mr-2">4</button>
+                     </div>
+                   <div class="modal-footer">
+                     <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Show">Abbrechen</button>
+                   </div>
+                   
+                 </div>
+               </div>
+          </div>
+@if (_show)
+{
+  <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+  private bool _show = false;
+  public Employee Employee { get; set; }
+  public Hardskill Hardskill { get; set; }
+
+    [Parameter] 
+  public Hardskill OldHardskill{ get; set; }
+
+  string Description { get; set; }
+
+  private Hardskill _newHardskill = new();
+
+  private void Update()
+  {
+    
+  }
+
+  public void Showing(Employee Emp, Hardskill hardskill )
+  {
+    Employee = Emp;
+    Hardskill = hardskill;
+    _show = !_show;
+    StateHasChanged();
+  }
+  
+  public void Show( )
+  {
+    Employee.Hardskills.Remove(Hardskill);
+    _show = !_show;
+    StateHasChanged();
+    _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+  }
+  //<EditForm Model="@_newHardskill" OnValidSubmit="Update"></EditForm>
+
+  public void Save(int buttonId)
+  {
+    if (buttonId == 1)
+    {
+      foreach (var hardskilltuple in Employee.HardSkillLevel)
+      {
+        if (Hardskill == hardskilltuple.Item1)
+        {
+          Employee.HardSkillLevel.Remove(hardskilltuple);
+        }
+      }
+      Employee.HardSkillLevel.Add(new Tuple<Hardskill, int>(Hardskill, 1));
+      _show = !_show;
+      StateHasChanged();
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+    }
+    if (buttonId == 2)
+    {
+      
+      Employee.HardSkillLevel.Add(new Tuple<Hardskill, int>(Hardskill, 2));
+      _show = !_show;
+      StateHasChanged();
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+    }
+    if (buttonId == 3)
+    {
+      
+      Employee.HardSkillLevel.Add(new Tuple<Hardskill, int>(Hardskill, 3));
+      _show = !_show;
+      StateHasChanged();
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+    }
+    if (buttonId == 4)
+    {
+      
+      Employee.HardSkillLevel.Add(new Tuple<Hardskill, int>(Hardskill, 4));
+      _show = !_show;
+      StateHasChanged();
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+    }
+  }
+    
+}

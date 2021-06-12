@@ -17,11 +17,13 @@ namespace AVATI.Data
         public int Rc { get; set; }
         public List<string> Softskills { get; set; }
         public List<Hardskill> Hardskills { get; set; }
+        public List<Tuple<Hardskill,int>> HardSkillLevel { get; set; }
         public List<string> Field { get; set; }
         public List<string> Roles { get; set; }
+        public List<string> LanguageName { get; set; }
         public List<Tuple<string,LanguageLevel>> Language { get; set; }
         public EmployeeType EmpType { get; set; }
         public bool IsActive  { get; set; } = true;
-        public List<Project> Projects { get; set; }
+        public List<ProjectActivity> ProjectActivities { get; set; }
     }
 }

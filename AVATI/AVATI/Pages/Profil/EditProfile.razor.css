@@ -126,8 +126,8 @@ th, td {
 
 
 .backdrop {
-    background-color:#f3f1e2;
-
+    background-color:#FFFFFF;
+    border-color: black;
     border-radius: 15px;
 }
 
