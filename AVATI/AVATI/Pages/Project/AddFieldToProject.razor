@@ -5,11 +5,12 @@
 @using AVATI.Data
 @using System.Net
 @using System.Threading
+@using Blazorise
 @using Microsoft.AspNetCore.Http.Extensions
 
 @inject Projectedit _projectedit
 @inject JsonImport _jsonImport
-@inject ProjectServiceSimple _projectServiceSimple
+@inject IProjektService _projectService
 @inject NavigationManager _navigationManager
 
 <div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
@@ -28,9 +29,15 @@
                             <div class="form-group row col overflow-auto border" style="height: 250px">
                                 @foreach (var field in AttributestoDisplay)
                                 {
-                                    <div class="mb-3 col-sm">
-                                        <button type="button" class="btn btn-sm btn-outline-info btn-lg btn-block col" @onclick=@(() => { UpdateSearch(field); })>@field</button>
-                                    </div>
+                                    if (AttributestoSearch.Contains(field))
+                                    {
+                                    }
+                                    else
+                                    {
+                                        <div class="mb-3 col-sm">
+                                            <button type="button" class="btn btn-sm btn-outline-info btn-lg btn-block col" @onclick=@(() => { UpdateSearch(field); })>@field</button>
+                                        </div>
+                                    }
                                 }
                             </div>
                         </div>
@@ -76,7 +83,6 @@
     private bool _show = false;
 
     public string temp { get; set; }
-    Project currentProject = new Project();
 
     public List<string> AttributestoDisplay { get; set; } = new List<string>();
     public List<string> AttributestoSearch { get; set; } = new List<string>();
@@ -94,6 +100,7 @@
     {
         jsonFields = _jsonImport.ImportJsonFile();
         AttributestoDisplay = new List<string>(jsonFields.fields);
+        AttributestoSearch = new List<string>(_projectService.GetProject(ID).Fields);
     }
     public void UpdateSearch(string field)
     {
@@ -123,6 +130,7 @@
     {
         if (field == null)
         {
+            
         }
         else
         {
@@ -132,16 +140,10 @@
 
     public void Submit(int ID)
     {
-        foreach (var project in _projectServiceSimple._projects)
-        {
-            if (ID == project.ProjectID)
-            {
-                currentProject = project;
-            }
-        }
-        currentProject.Fields = AttributestoSearch;
-        _projectServiceSimple.DeleteProject(ID);
-        _navigationManager.NavigateTo("/Projektübersicht/Projektedit/" + currentProject.ProjectID);
+        Project temp = _projectService.GetProject(ID);
+        temp.Fields = AttributestoSearch;
+        _navigationManager.NavigateTo("/Projektübersicht/Projektedit/" + ID);
+        StateHasChanged();
     }
 
 

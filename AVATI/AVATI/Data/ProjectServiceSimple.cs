@@ -11,8 +11,11 @@ namespace AVATI.Data
         public List<Project> _projects;
         public List<Project> Searching;
 
+        private static int identification = 0;
         public bool CreateProject(Project project)
         {
+            project.ProjectID = identification++;
+            project.Projectbeginning = DateTime.Today;
             _projects.Add(project);
             return true;
         }
@@ -34,6 +37,11 @@ namespace AVATI.Data
                         proj.Fields = project.Fields;
                         proj.Projectpurpose = project.Projectpurpose;
                         proj.Projectbeginning = project.Projectbeginning;
+                        proj.Employees = project.Employees;
+                        proj.Projectend = project.Projectend;
+                        proj.ProjectActivities = project.ProjectActivities;
+                        proj.Softskills = project.Softskills;
+                        proj.Hardskills = project.Hardskills;
                     }
                 }
             }
@@ -50,7 +58,6 @@ namespace AVATI.Data
         public Project GetProject(int projectID)
         {
             return _projects.Find(x => x.ProjectID.Equals(projectID));
-            
         }
 
         public List<Project> GetAllProjects()
@@ -85,23 +92,7 @@ namespace AVATI.Data
 
         public ProjectServiceSimple()
         {
-            Project eins = new Project
-            {
-                ProjectID = 1, Fields = new List<string>(), Projectdescription = "iwasyallah",
-                Employees = new List<Employee>(),
-                Projectpurpose = new List<string>(), Projecttitel = "goodbye",
-                Projectbeginning = DateTime.Today
-            };
-                Project zwei = new Project
-            {
-                ProjectID = 2, Fields = new List<string>(), Projectdescription = "smtn",
-                Employees = new List<Employee>(),
-                Projectpurpose = new List<string>(), Projecttitel = "testing",
-                Projectbeginning = DateTime.Today
-            };
-
-                _projects = new List<Project>();
-            _projects.Add(eins);
+            _projects = new List<Project>();
         }
 
         public List<Project> SearchProject(List<Project> projects, string input)
@@ -121,8 +112,6 @@ namespace AVATI.Data
 
                 Searching = Searching.OrderBy(x => x.Projecttitel).ToList();
             }
-
-            Console.WriteLine("did it");
             return Searching;
         }
     }

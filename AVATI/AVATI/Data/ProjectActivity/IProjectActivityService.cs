@@ -7,7 +7,8 @@ namespace AVATI.Data
         public bool SetProjectActivity(int EmployeeId, int ProjectId, string Description);
         public bool DeleteProjectActivity(int EmployeeId, int ProjectId);
      
-        public ProjectActivity GetProjectActivities(int EmployeeId, int ProjectId);
+        public List<ProjectActivity> GetProjectActivities(int EmployeeId, int ProjectId);
+        public List<ProjectActivity> ReturnListProjectActivities(int ProjectID);
         //Fehler im Designklassendiagramm
         public List<ProjectActivity> GetProjectActivitiesList();
         public List<ProjectActivity> GetProjectActivityListEmployee(int EmployeeId);

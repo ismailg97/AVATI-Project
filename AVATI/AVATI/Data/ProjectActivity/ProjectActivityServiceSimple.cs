@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using DocumentFormat.OpenXml;
 
 
 namespace AVATI.Data
@@ -18,7 +19,7 @@ namespace AVATI.Data
                 new ProjectActivity() {Description = "test1", EmployeeID = 1, ProjectID = 2}
             };
         }
-
+        
 
         public bool SetProjectActivity(int EmployeeId, int ProjectId, string Description)
         {
@@ -57,6 +58,16 @@ namespace AVATI.Data
             }
 
             return false;
+        }
+
+        List<ProjectActivity> IProjectActivityService.GetProjectActivities(int EmployeeId, int ProjectId)
+        {
+            return pALIst.FindAll(x => x.ProjectID == ProjectId && x.EmployeeID == EmployeeId);
+        }
+
+        public List<ProjectActivity> ReturnListProjectActivities(int ProjectID)
+        {
+            return pALIst.FindAll(x => x.ProjectID == ProjectID);
         }
 
 

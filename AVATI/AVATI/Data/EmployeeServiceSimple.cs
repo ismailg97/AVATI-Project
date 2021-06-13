@@ -9,7 +9,6 @@ namespace AVATI.Data
     public class EmployeeServiceSimple : IEmployeeService
     {
         public List<Employee> Employees { get; set; }
-
         public EmployeeServiceSimple()
         {
             Employees = new List<Employee>()

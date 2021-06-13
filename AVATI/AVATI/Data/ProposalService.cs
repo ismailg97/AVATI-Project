@@ -21,7 +21,7 @@ namespace AVATI.Data
                     Hardskills = new List<Hardskill>()
                         {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
                     AdditionalInfo = "Das Projekt versucht einer HTML - Seite Tetris beizubringen",
-                    Employees = new List<Employee>()
+                    Employees = new List<Employee>(){new Employee(){FirstName = "Celestine", EmployeeId = 238, Rc = 3}}, AltRc = new Dictionary<int, int>(){{238, 7}}
                     
                 },
                 new Proposal()

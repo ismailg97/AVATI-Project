@@ -2,7 +2,7 @@
 @page "/Projektübersicht/ProjectDetailedView/{ID:int}"
 @using AVATI.Data
 
-@inject ProjectServiceSimple _projectServiceSimple
+@inject IProjektService _projectService
 
 <div class="form-group">
     <div class="table">
@@ -10,7 +10,7 @@
         <tr>
             <th style="width: 10%">Projekttitel</th>
             <th>Projektbeschreibung</th>
-            <th style="width: 10%">Branchen</th>           <!-- as to not intervene with css file and other styling -->
+            <th style="width: 10%">Branchen</th> <!-- as to not intervene with css file and other styling -->
             <th style="width: 10%">Mitarbeiter</th>
             <th style="width: 10%">Projektlaufzeit</th>
             <th style="width: 10%">Projekaktivitäten</th>
@@ -19,15 +19,15 @@
         </thead>
         <tbody>
         <tr>
-            <td>@_project.Projecttitel</td>
-            <td style="height: 100%">@_project.Projectdescription</td>
+            <td>@_project.Projecttitel</td> <!-- TITEL -->
+            <td style="height: 100%">@_project.Projectdescription</td> <!-- Beschreibung -->
             <td style="height: 100%">
                 <div class="col-form-label">
                     <ul>
                         @foreach (var field in _project.Fields)
                         {
                             <li>
-                                @field
+                                @field <!-- Branchen -->
                             </li>
                         }
                     </ul>
@@ -39,13 +39,25 @@
                         @foreach (var empl in _project.Employees)
                         {
                             <li>
-                                @empl
+                                @empl.FirstName @empl.LastName <!-- Mitarbeiter -->
                             </li>
                         }
                     </ul>
                 </div>
             </td>
-            <td>@_project.Projectbeginning</td>
+            <td>@_project.Projectbeginning</td> <!-- Projektanfang -->
+            <td>
+                <div class="col-form-label">
+                    <ul>
+                        @foreach (var activ in _project.ProjectActivities)
+                        {
+                            <li>
+                                @activ <!-- Projektaktivitäten-->
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </td>
             <td>
                 <div class="col-form-label">
                     <ul>
@@ -58,8 +70,8 @@
                     </ul>
                 </div>
             </td>
-            
-            
+
+
         </tr>
         </tbody>
     </div>
@@ -76,7 +88,7 @@
 
     protected override void OnInitialized()
     {
-        _project = _projectServiceSimple.GetProject(ID);
+        _project = _projectService.GetProject(ID);
     }
 
 }

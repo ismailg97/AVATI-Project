@@ -1,0 +1,127 @@
+﻿@page "/Projektübersicht/Projektedit/AddProjectActivityToEmployee/{ID:int}"
+@page "/Projektübersicht/Projektedit/AddProjectActivityToEmployee"
+
+@using AVATI.Data
+
+@inject IProjectActivityService _projectActivity
+@inject IProjektService _projectService
+
+
+<div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
+    <div class="modal modal-dialog-scrollable modal-dialog col">
+        <div class="modal-content">
+            <div class="body header">
+                <div class="modal-header">
+                    <h5 class="modal-title">Auswahl Projekttätigkeiten</h5>
+                    <button type="button" class="close" data-dismiss="modal" @onclick=@Close>
+                        <span aria-hidden="true">x</span>
+                    </button>
+                </div>
+                <div class="container row" style="border: 1px solid #cecece;">
+                    <div class="modal-body col">
+                        <div class="form-group col">
+                            @if (CurrentProjectActivities.Any())
+                            {
+                                foreach (var activity in CurrentProjectActivities)
+                                {
+                                    <td class="btn-group" role="group" data-toggle="buttons">
+                                        <input type="checkbox" class="btn-check" autocomplete="off" @onclick=@(() => { UpdateActivity(activity); }) checked/>@activity.Description
+                                    </td>
+                                }
+                            }
+                            else
+                            {
+                                <label type="text" class="text-center">
+                                    [Tätigkeiten hinzufügen]
+                                </label>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="container row" style="border: 1px solid #cecece;">
+                    <div class="modal-body col">
+                        <div class="form-group col">
+                            @if (SelectedProjectActivity != null)
+                            {
+                                <td class="btn-group" role="group" data-toggle="buttons">
+                                    <input type="checkbox" class="btn-check" autocomplete="off" @onclick=@(() => { ReverseActivity(@SelectedProjectActivity); }) checked/>@SelectedProjectActivity.Description
+                                </td>
+                            }
+                            else
+                            {
+                                <label type="text" class="text-center">
+                                    [Mitarbeiter zuzuweisende Tätigkeit]
+                                </label>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer" style="border-bottom: 0 none">
+                    <div class="form-group mb-3">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">Cancel</button>
+                        <button type="button" class="btn btn-success" @onclick="(() => { Showing(); Submit(ID);})">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (_show)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code{
+
+    [Parameter]
+    public int ID { get; set; }
+    public int EmployeeID { get; set; }
+
+    private bool _show = false;
+    private string Activity { get; set; }
+
+    public List<ProjectActivity> CurrentProjectActivities { get; set; }
+
+    public ProjectActivity SelectedProjectActivity { get; set; }
+
+    public void Showing()
+    {
+        _show = !_show;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        _show = !_show;
+        StateHasChanged();
+    }
+
+    public void Submit(int ID)
+    {
+        _projectActivity.SetProjectActivity(ID, ID, Activity);
+        StateHasChanged();
+    }
+
+    public void UpdateActivity(ProjectActivity activity)
+    {
+        CurrentProjectActivities.Remove(activity);
+        SelectedProjectActivity = activity;
+    }
+
+    protected override void OnInitialized()
+    {
+        CurrentProjectActivities = _projectActivity.GetProjectActivityListProject(ID);
+    }
+
+    public void ReverseActivity(ProjectActivity activity)
+    {
+        CurrentProjectActivities.Add(activity);
+        SelectedProjectActivity = null;
+    }
+
+    
+
+}
+

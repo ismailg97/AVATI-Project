@@ -8,7 +8,6 @@ namespace AVATI.Data
         public int EmployeeID { get; set; }
         public int ProjectID { get; set; }
         public List<string> SoftSkills { get; set; }
-
         public List<Hardskill> HardSkills { get; set; }
     }
 }
