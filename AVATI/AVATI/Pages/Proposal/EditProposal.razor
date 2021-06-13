@@ -123,7 +123,10 @@
 
     [Parameter]
     public int Id { get; set; }
-
+    
+    [Parameter]
+    public ProposalOverview Abstract { get; set; }
+    
     public string TempHardskill { get; set; }
     public bool ShowBackdrop { get; set; }
     public Proposal Proposal;
@@ -174,7 +177,7 @@
             _proposal.UpdateProposal(0, Proposal);
         }
         Console.WriteLine("The submit was handeled");
-        _navigationManager.NavigateTo(_navigationManager.Uri, true);
+        Abstract.Update();
         Close();
     }
 

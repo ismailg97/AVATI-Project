@@ -14,8 +14,8 @@
 @inject IProposalService _proposal
 @inject NavigationManager _navManager
 @inject SearchService _search
-<EmployeeDetail @ref="_employeeDetail"></EmployeeDetail>
-<EditProposal @ref="_editProposal"></EditProposal>
+<EmployeeDetail @ref="_employeeDetail" Abstract="@this"/>
+<EditProposal @ref="_editProposal" Abstract="@this"/>
 
 
 <button class="btn btn-success float-right mr-2" @onclick=@(() => { ShowEdit(0); })>Neues Angebot</button>
@@ -220,7 +220,7 @@
                     </div>
                     <div class="float-right">
                         <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { PromptConfirmation = !PromptConfirmation; })">Abbrechen</button>
-                        <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { HandleConfirm(); })">Projekt erzeugen</button>
+                        <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { HandleProjectCreate(); })">Projekt erzeugen</button>
                     </div>
                 </div>
             </div>
@@ -247,7 +247,6 @@
     public static int EmpEdit { get; set; }
     public Proposal Temp { get; set; }
     private static int _changeValue;
-
     protected override void OnInitialized()
     {
         _promptDelete = new Dictionary<int, bool>();
@@ -263,6 +262,10 @@
         }
     }
 
+    public void Update()
+    {
+        StateHasChanged();
+    }
     public void ChangeVisible(int typeOfInfo, int identifier)
     {
         if (typeOfInfo == 1)
@@ -357,7 +360,7 @@
         }
     }
 
-    private bool HandleConfirm()
+    private bool HandleProjectCreate()
     {
         PromptConfirmation = !PromptConfirmation;
         if (_project.CreateProject(new Project()
@@ -368,6 +371,7 @@
         {
             if (_proposal.DeleteProposal(Temp.ProposalId))
             {
+                _navManager.NavigateTo("/Projektübersicht",true);
                 return true;
             }
             return false;
