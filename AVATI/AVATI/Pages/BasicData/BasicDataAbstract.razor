@@ -8,14 +8,14 @@
 <h1><b>Basisdaten</b> <small>Hier können Sie Basisdaten hinzugefügen, editieren und löschen</small></h1>
 <hr />
 
-<EditBasicData @ref="_editBasicData" OldDescription="@Description" Type="@Type"/>
-<DeleteConfirmation @ref="_deleteConfirmation" Description="@Description" Type="@Type"/>
-<CreateBasicData @ref="_createBasicData" Type="@Type"/>
+<EditBasicData @ref="_editBasicData" OldDescription="@Description" Type="@Type" Abstract="@this"/>
+<DeleteConfirmation @ref="_deleteConfirmation" Description="@Description" Type="@Type" Abstract="@this"/>
+<CreateBasicData @ref="_createBasicData" Type="@Type" Abstract="@this"/>
 
-<CreateHardskill @ref="_createHardskill"/>
-<EditHardskill @ref="_editHardskill" OldHardskill="@_hardskillService.GetHardskill(Description)"/>
+<CreateHardskill @ref="_createHardskill" Abstract="@this"/>
+<EditHardskill @ref="_editHardskill" OldHardskill="@_hardskillService.GetHardskill(Description)" Abstract="@this"/>
 
-<AddHardskills @ref="_createCat" Description=""/>
+<AddHardskills @ref="_createCat" Description="" Abstract="@this"/>
 
 <h3 class="cap"><b>Skills</b></h3>
 <table class="table table-striped">
@@ -25,7 +25,7 @@
                @bind="Filter[0]"
                @bind:event="oninput">
     </div>
-    @if (_basicDataService.GetAllSoftSkills().Any(x => IsVisible(x, 0)))
+    @if (_softskills.Any(x => IsVisible(x, 0)))
     {
         <tr>
             <th>Bezeichnung</th>
@@ -33,7 +33,7 @@
             <th></th>
         </tr>
     
-        foreach (string softskill in _basicDataService.GetAllSoftSkills())
+        foreach (string softskill in _softskills)
         {
             if (!IsVisible(softskill, 0))
                 continue;
@@ -58,7 +58,7 @@
                @bind="Filter[1]"
                @bind:event="oninput">
     </div>
-    @if (_hardskillService.GetAllHardskills().Any(x => IsVisible(x.Description, 1)))
+    @if (_hardskills.Any(x => IsVisible(x.Description, 1)))
     {
         <tr>
             <th>Bezeichnung</th>
@@ -66,7 +66,7 @@
             <th></th>
         </tr>
 
-        @foreach (Hardskill hardskill in _hardskillService.GetAllHardskills())
+        @foreach (Hardskill hardskill in _hardskills)
         {
             @if (!IsVisible(hardskill.Description, 1))
                 continue;
@@ -103,14 +103,14 @@
                @bind="Filter[2]"
                @bind:event="oninput">
     </div>
-    @if (_hardskillService.GetAllHardskillCategorys().Any(x => IsVisible(x.Description, 2)))
+    @if (_hardskillCats.Any(x => IsVisible(x.Description, 2)))
     {
         <tr>
             <th>Bezeichnung</th>
             <th></th>
         </tr>
         
-        @foreach (Hardskill hardskillcat in _hardskillService.GetAllHardskillCategorys())
+        @foreach (Hardskill hardskillcat in _hardskillCats)
         {
             if (!IsVisible(hardskillcat.Description, 2))
                 continue;
@@ -127,7 +127,7 @@
                     <td class="smalltd">
                         @if (_showEditCat[hardskillcat.Description])
                         {
-                            <button class="btn btn-primary" style="position: static;" @onclick="() => ShowingEditCat(hardskillcat.Description)">Abgeschlossen</button>
+                            <button class="btn btn-primary" @onclick="() => ShowingEditCat(hardskillcat.Description)">Abgeschlossen</button>
                         }
                         else
                         {
@@ -167,14 +167,14 @@
                @bind:event="oninput">
 </div>
 <table class="table">
-    @if (_basicDataService.GetAllFields().Any(x => IsVisible(x, 3)))
+    @if (_fields.Any(x => IsVisible(x, 3)))
     {
         <tr>
             <th>Bezeichnung</th>
             <th></th>
             <th></th>
         </tr>
-        @foreach (var field in _basicDataService.GetAllFields())
+        @foreach (var field in _fields)
         {
 
             @if (!IsVisible(field, 3))
@@ -203,14 +203,14 @@
                @bind:event="oninput">
 </div>
 <table class="table">
-    @if (_basicDataService.GetAllRoles().Any(x => IsVisible(x, 4)))
+    @if (_roles.Any(x => IsVisible(x, 4)))
     {
         <tr>
             <th>Bezeichnung</th>
             <th></th>
             <th></th>
         </tr>
-        @foreach (var role in _basicDataService.GetAllRoles())
+        @foreach (var role in _roles)
         {
 
             @if (!IsVisible(role, 4))
@@ -232,6 +232,12 @@
 
 
 @code {
+    List<string> _softskills;
+    List<string> _fields;
+    List<string> _roles;
+    List<Hardskill> _hardskills;
+    List<Hardskill> _hardskillCats;
+        
     CreateBasicData _createBasicData;
     EditBasicData _editBasicData;
     DeleteConfirmation _deleteConfirmation;
@@ -250,7 +256,26 @@
     private string Description { get; set; }
 
     private BasicDataType Type { get; set; }
-    
+
+    protected override void OnInitialized()
+    {
+        _softskills = _basicDataService.GetAllSoftSkills();
+        _fields = _basicDataService.GetAllFields();
+        _roles = _basicDataService.GetAllRoles();
+        _hardskills = _hardskillService.GetAllHardskills();
+        _hardskillCats = _hardskillService.GetAllHardskillCategorys();
+    }
+
+    public void UpdateLists()
+    {
+        _softskills = _basicDataService.GetAllSoftSkills();
+        _fields = _basicDataService.GetAllFields();
+        _roles = _basicDataService.GetAllRoles();
+        _hardskills = _hardskillService.GetAllHardskills();
+        _hardskillCats = _hardskillService.GetAllHardskillCategorys();
+        StateHasChanged();
+    }
+
     private bool IsVisible(string description, int index)
     {
         return string.IsNullOrEmpty(Filter[index]) || description.Contains(Filter[index], StringComparison.OrdinalIgnoreCase);
@@ -288,6 +313,7 @@
     void PopCreateHardskill()
     {
         _createHardskill.Showing();
+        _hardskills = _hardskillService.GetAllHardskills();
     }
 
     void PopEditHardskill(string description)

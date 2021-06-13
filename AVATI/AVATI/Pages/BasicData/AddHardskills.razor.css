@@ -33,3 +33,51 @@ h6{
     margin-top: 15px;
     color: #7a7a7a;
 }
+
+.remove{
+    visibility: hidden;
+    font-size: 0px;
+    height: 0;
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: visibility 0s, opacity 0.3s linear;
+}
+
+.showRemove:hover + .remove, 
+.remove:hover{
+    visibility: visible;
+    font-size: smaller;
+    height: auto;
+    width: auto;
+    opacity: 1;
+}
+
+.check, .stop {
+    color: white;
+    width: 20px;
+    font-size: 12px;
+    height: 20px;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 5px;
+    padding: 0;
+}
+
+.check{
+    font-weight: bold;
+    background: #5cb85c;
+    border-color: #5cb85c;
+    box-shadow: #5cb85c;
+    border-left: #5cb85c;
+    border-right: #5cb85c;
+}
+
+.stop {
+    font-weight: bold;
+    background: #d9534f;
+    border-color: #d9534f;
+    box-shadow: #d9534f;
+    border-left: #d9534f;
+    border-right: #d9534f;
+}
