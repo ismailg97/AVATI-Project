@@ -9,11 +9,11 @@ namespace AVATI.Data.EmployeeDetailFiles
         public int ProposalId { get; set; }
         
         public int Rc { get; set; }
-        public List<string> Softskills { get; set; }
-        public List<Hardskill> Hardskills { get; set; }
-        public List<string> Fields { get; set; }
-        public List<string> Roles { get; set; }
-        public List<Tuple<string,LanguageLevel>> Languages { get; set; }
+        public List<string> Softskills { get; set; } = new List<string>();
+        public List<Hardskill> Hardskills { get; set; } = new List<Hardskill>();
+        public List<string> Fields { get; set; } = new List<string>();
+        public List<string> Roles { get; set; } = new List<string>();
+        public List<Tuple<string, LanguageLevel>> Languages { get; set; } = new List<Tuple<string, LanguageLevel>>();
 
         public bool SoftVis(string softskill)
         {
