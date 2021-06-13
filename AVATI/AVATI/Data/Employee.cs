@@ -15,15 +15,15 @@ namespace AVATI.Data
         public float RelevantWorkExperience { get; set; }
         public DateTime EmploymentTime { get; set; }
         public int Rc { get; set; }
-        public List<string> Softskills { get; set; }
-        public List<Hardskill> Hardskills { get; set; }
+        public List<string> Softskills { get; set; } = new List<string>();
+        public List<Hardskill> Hardskills { get; set; } = new List<Hardskill>();
         public List<Tuple<Hardskill,int>> HardSkillLevel { get; set; }
-        public List<string> Field { get; set; }
-        public List<string> Roles { get; set; }
-        public List<string> LanguageName { get; set; }
-        public List<Tuple<string,LanguageLevel>> Language { get; set; }
+        public List<string> Field { get; set; } = new List<string>();
+        public List<string> Roles { get; set; } = new List<string>();
+        public List<string> LanguageName { get; set; } = new List<string>();
+        public List<Tuple<string, LanguageLevel>> Language { get; set; } = new List<Tuple<string, LanguageLevel>>();
         public EmployeeType EmpType { get; set; }
         public bool IsActive  { get; set; } = true;
-        public List<ProjectActivity> ProjectActivities { get; set; }
+        public List<ProjectActivity> ProjectActivities { get; set; } = new List<ProjectActivity>();
     }
 }
