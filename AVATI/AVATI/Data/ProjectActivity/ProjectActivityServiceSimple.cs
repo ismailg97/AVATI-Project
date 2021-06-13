@@ -31,7 +31,7 @@ namespace AVATI.Data
                 EmployeeID = EmployeeId,
                 ProjectID = ProjectId
             };
-            if ((temp = pALIst.Find(x => x.ProjectID == ProjectId && x.Description == Description)) == null)
+            if ((temp = pALIst.Find(x => x.ProjectID == ProjectId && EmployeeId == x.EmployeeID)) == null)
             {
                 pALIst.Add(pA);
             }

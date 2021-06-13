@@ -2,7 +2,6 @@
 @page "/Projektübersicht/Projektedit/{ID:int}"
 
 @using AVATI.Data
-@using Blazorise
 @inject IProjektService _projectService
 @inject NavigationManager _navigationManager
 @inject IProjectActivityService _projectActivity
@@ -10,31 +9,34 @@
 
 <AddFieldToProject @ref="_addFieldToProject"></AddFieldToProject>
 <AddProjectActivityToEmployee @ref="_addProjectActivitytoemployee"></AddProjectActivityToEmployee>
-<AddProjectActivity @ref="_addprojectActivitytoProject"></AddProjectActivity>
+<AddProjectActivity @ref="_addprojectActivityToProject"></AddProjectActivity>
+<AddEmployeeToProject @ref="_addEmployeeToProject"></AddEmployeeToProject>
 
 <EditForm Model="@_project" OnInvalidSubmit="@Save">
     <DataAnnotationsValidator/>
-    <h3>Edit Projekt</h3>
+    <ValidationSummary/>
+
     <div class="container col h-100">
         <div class="row col h-100">
             <div class="text-left col">
                 <div class="column">
+                    <h3 class="text-lg-left font-weight-bold">Projekt Editieren</h3>
                     <div class="form-group row">
-                        <label class="col-sm-3 col-form-label" value="@_project.Projecttitel">Projekttitel</label>
+                        <label class="col-sm-3 col-form-label font-weight-bold" value="@_project.Projecttitel">Projekttitel</label>
                         <div class="col-sm-9">
                             <InputText id="projekttitel" class="form-control" @bind-Value="_project.Projecttitel"></InputText>
                         </div>
                     </div>
 
                     <div class="form-group row">
-                        <label class="col-sm-3 col-form-label ">Projektbeschreibung</label>
+                        <label class="col-sm-3 col-form-label font-weight-bold">Projektbeschreibung</label>
                         <div class="col-sm-9">
                             <textarea id="projektbeschreibung" class="form-control" rows="3" @bind="_project.Projectdescription"></textarea>
                         </div>
                     </div>
 
                     <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Branchen</label>
+                        <label class="col-sm-3 col-form-label font-weight-bold">Branchen</label>
                         <div class="col-sm-8 col-form-label">
                             <div class="form-group row col">
                                 <input class="form-control col-8" type="text"
@@ -45,7 +47,7 @@
                     </div>
 
                     <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Projektanfang</label>
+                        <label class="col-sm-3 col-form-label font-weight-bold">Projektanfang</label>
                         <div class="col-sm col-form-label">
                             <div class="row col">
                                 <input class="center col-2" type="date" value=@_project.Projectbeginning.ToString("yyyy-MM-d")/>
@@ -53,7 +55,7 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Projektende</label>
+                        <label class="col-sm-3 col-form-label font-weight-bold">Projektende</label>
                         <div class="col-sm col-form-label">
                             <div class="row col">
                                 <input class="center col-2" type="date" value="@_project.Projectend.ToString("yyyy-MM-d")"/>
@@ -63,12 +65,16 @@
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">Mitarbeiter</label>
+                    <label class="col-sm-3 col-form-label font-weight-bold">Mitarbeiter</label>
                     <table class="table border-primary col text-center">
                         <thead>
                         <tr>
                             <th scope="col" style="width: 50%">Mitarbeiter</th>
-                            <th scope="col" style="width: 10%">Hinzufügen</th>
+                            <th>
+                                <div class="form-group text-right">
+                                    <button type="button" class="btn btn-info" @onclick="() => { PopAddEmployeeToProject(); }">Hinzufügen</button>
+                                </div>
+                            </th>
                         </tr>
                         </thead>
                         <tbody>
@@ -78,9 +84,6 @@
                             <tr>
                                 <td>@emp.FirstName @emp.LastName</td>
                                 <td>
-                                    <div class="form-group text-right">
-                                        <button type="button" class="btn btn-info col"  @onclick="(() => { PopAddActivity(); })">+</button> <!--//modal window -->
-                                    </div>
                                 </td>
                             </tr>
                         }
@@ -90,12 +93,14 @@
 
 
                 <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">Projekttätigkeiten</label>
+                    <label class="col-sm-3 col-form-label font-weight-bold">Projekttätigkeiten</label>
                     <table class="table border-primary col text-center">
                         <thead>
                         <th scope="col">Projekttätigkeiten</th>
                         <th scope="col">Zugewiesene Mitarbeiter</th>
-                        <th scope="col"><button type="button" class="btn btn-info" @onclick="(() => { PopAddProjectActivity(description); })">Hinzufügen</button></th>
+                        <th scope="col">
+                            <button type="button" class="btn btn-info" @onclick="(() => { PopAddProjectActivity(description); })">Hinzufügen</button>
+                        </th>
                         </thead>
                         <tbody>
                         @if (!_projectActivity.ReturnListProjectActivities(ID).Any())
@@ -112,7 +117,7 @@
                                 <td>@activ.Description</td>
                                 <td>@_project.Employees.Find(x => x.EmployeeId == activ.EmployeeID)</td>
                                 <td>
-                                    <button type="button" class="btn btn-info" @onclick="(() => { PopAddProjectActivity(activ.Description); })">Verwalten</button>
+                                    <button type="button" class="btn btn-info" @onclick="(() => { PopAddActivity(); })">Verwalten</button>
                                 </td>
                             </tr>
                         }
@@ -121,10 +126,10 @@
                 </div>
                 <div class="form-group text-center">
                     <a href="/Projektübersicht" class="col-sm col-form-label">
-                        <button type="button" class="btn btn-success" @onclick="(() => { Save(); })">Speichern</button>
+                        <button type="button" class="btn btn-danger">Abbrechen</button>
                     </a>
                     <a href="/Projektübersicht" class="col-sm col-form-label">
-                        <button type="button" class="btn btn-danger">Abbrechen</button>
+                        <button type="button" class="btn btn-success" @onclick="(() => { Save(); })">Speichern</button>
                     </a>
                 </div>
             </div>
@@ -139,7 +144,10 @@
 
     AddFieldToProject _addFieldToProject;
     AddProjectActivityToEmployee _addProjectActivitytoemployee;
-    AddProjectActivity _addprojectActivitytoProject;
+    AddProjectActivity _addprojectActivityToProject;
+    AddEmployeeToProject _addEmployeeToProject;
+
+
     public List<ProjectActivity> Activitieslist { get; set; } = new List<ProjectActivity>();
 
 
@@ -164,7 +172,7 @@
 
     public void PopAddProjectActivity(string description)
     {
-        _addprojectActivitytoProject.Showing(description);
+        _addprojectActivityToProject.Showing(description);
     }
 
     protected override void OnInitialized()
@@ -180,9 +188,11 @@
         _addProjectActivitytoemployee.Showing();
     }
 
-    public void PopAddEmployee()
+    public void PopAddEmployeeToProject()
     {
-        
+        _addEmployeeToProject.Showing();
     }
+
+
 
 }

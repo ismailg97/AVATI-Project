@@ -53,15 +53,15 @@
                         </div>
                         <div class="container col row">
                             <input type="text" class="form-control col" placeholder="Branche..." @bind="@temp"/>
-                            <button type="button" class="btn btn-success col-sm-3" @onclick="(() => { AddField(temp); })">Add</button>
+                            <button type="button" class="btn btn-success col-sm-3" @onclick="(() => { AddField(temp); })">Hinzufügen</button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer" style="border-bottom: 0 none">
                 <div class="form-group mb-3">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">Cancel</button>
-                    <button type="button" class="btn btn-success" @onclick="(() => { Showing(); Submit(ID); })">Save</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">Abbrechen</button>
+                    <button type="button" class="btn btn-success" @onclick="(() => { Showing(); Submit(ID); })">Speichern</button>
                 </div>
             </div>
         </div>
