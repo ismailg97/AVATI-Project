@@ -139,7 +139,7 @@
                 if (_showEditCat[hardskillcat.Description])
                 {
                     <div>
-                        <EditTreeElement Hardskills="@(new List<Hardskill>() {hardskillcat})"/>
+                        <EditTreeElement Hardskills="@(new List<Hardskill>() {hardskillcat})" Abstract="@this"/>
                     </div>
                 }
                 else
@@ -251,7 +251,7 @@
     //3: Filter for Field, 4: Filter for Role
     private string[] Filter { get; set; } = new string[5];
 
-    private Dictionary<string, bool> _showEditCat = new();
+    public Dictionary<string, bool> _showEditCat = new();
 
     private string Description { get; set; }
 
