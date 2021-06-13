@@ -37,7 +37,7 @@
                         <label class="col-sm-3 col-form-label">Branchen</label>
                         <div class="col-sm-8 col-form-label">
                             <div class="form-group row col">
-                                <input class="form-control col-8" type="text" 
+                                <input class="form-control col-8" type="text"
                                        value="@String.Join(" | ", _projectService.GetAllFieldsFromOneProject(ID).ToArray())" placeholder="" readonly/>
                                 <button class="btn btn-success mb-3" @onclick="() => PopAddFieldToProject()">+</button>
                             </div>
@@ -63,13 +63,12 @@
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">Mitarbeiter + zugewiesene Tätigkeiten</label>
+                    <label class="col-sm-3 col-form-label">Mitarbeiter</label>
                     <table class="table border-primary col text-center">
                         <thead>
                         <tr>
-                            <th scope="col" style="width: auto">Mitarbeiter</th>
-                            <th scope="col" style="width: auto">Projekttätigkeiten</th>
-                            <th scope="col" style="width: 10%">Edit</th>
+                            <th scope="col" style="width: 50%">Mitarbeiter</th>
+                            <th scope="col" style="width: 10%">Hinzufügen</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -78,18 +77,9 @@
                         {
                             <tr>
                                 <td>@emp.FirstName @emp.LastName</td>
-                                @if (!_projectActivity.GetProjectActivities(emp.EmployeeId, ID).Any())
-                                    {
-                                        <td>[Fehlende Projekttätigkeit]</td>
-                                    }
-                                else
-                                {
-                                    <td>@String.Join("", _projectActivity.GetProjectActivities(emp.EmployeeId, ID)
-                                            .Select(x => x.Description))</td>
-                                }
                                 <td>
                                     <div class="form-group text-right">
-                                        <button type="button" class="btn btn-info col" @bind="@description" @onclick="(() => { PopAddActivity(); })">+</button>
+                                        <button type="button" class="btn btn-info col"  @onclick="(() => { PopAddActivity(); })">+</button> <!--//modal window -->
                                     </div>
                                 </td>
                             </tr>
@@ -97,33 +87,44 @@
                         </tbody>
                     </table>
                 </div>
+
+
                 <div class="form-group row">
                     <label class="col-sm-3 col-form-label">Projekttätigkeiten</label>
                     <table class="table border-primary col text-center">
                         <thead>
-                        <th scope="col">Verfügbare Projekttätigkeiten</th>
+                        <th scope="col">Projekttätigkeiten</th>
+                        <th scope="col">Zugewiesene Mitarbeiter</th>
+                        <th scope="col"><button type="button" class="btn btn-info" @onclick="(() => { PopAddProjectActivity(description); })">Hinzufügen</button></th>
                         </thead>
                         <tbody>
-                        @foreach (var activ in Activitieslist)
+                        @if (!_projectActivity.ReturnListProjectActivities(ID).Any())
                         {
-                            if (Activitieslist.Any() == false)
-                            {
-                                <tr>Projekttätigkeiten hinzufügen!</tr>
-                            }
-                            else
-                            {
-                                <tr><button type="button" class="btn btn-info col" @bind="@description" @onclick="(() => { PopAddProjectActivity(); })">+</button></tr>
-                            }
+                            <tr>
+                                <td>Projekttätigkeiten hinzufügen!</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        }
+                        @foreach (var activ in _projectActivity.ReturnListProjectActivities(ID))
+                        {
+                            <tr>
+                                <td>@activ.Description</td>
+                                <td>@_project.Employees.Find(x => x.EmployeeId == activ.EmployeeID)</td>
+                                <td>
+                                    <button type="button" class="btn btn-info" @onclick="(() => { PopAddProjectActivity(activ.Description); })">Verwalten</button>
+                                </td>
+                            </tr>
                         }
                         </tbody>
                     </table>
                 </div>
                 <div class="form-group text-center">
                     <a href="/Projektübersicht" class="col-sm col-form-label">
-                        <button type="button" class="btn btn-success" @onclick="(() => { Save(); })">Submit</button>
+                        <button type="button" class="btn btn-success" @onclick="(() => { Save(); })">Speichern</button>
                     </a>
                     <a href="/Projektübersicht" class="col-sm col-form-label">
-                        <button type="button" class="btn btn-danger">Cancel</button>
+                        <button type="button" class="btn btn-danger">Abbrechen</button>
                     </a>
                 </div>
             </div>
@@ -161,9 +162,9 @@
         _addFieldToProject.Showing();
     }
 
-    public void PopAddProjectActivity()
+    public void PopAddProjectActivity(string description)
     {
-        _addprojectActivitytoProject.Showing();
+        _addprojectActivitytoProject.Showing(description);
     }
 
     protected override void OnInitialized()
@@ -177,6 +178,11 @@
     public void PopAddActivity()
     {
         _addProjectActivitytoemployee.Showing();
+    }
+
+    public void PopAddEmployee()
+    {
+        
     }
 
 }

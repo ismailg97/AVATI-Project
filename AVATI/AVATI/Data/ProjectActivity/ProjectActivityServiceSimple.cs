@@ -9,6 +9,7 @@ namespace AVATI.Data
     {
         private List<ProjectActivity> EmpList;
         private List<ProjectActivity> ProjList;
+        
         public List<ProjectActivity> pALIst;
 
         public ProjectActivityServiceSimple()
@@ -19,26 +20,25 @@ namespace AVATI.Data
                 new ProjectActivity() {Description = "test1", EmployeeID = 1, ProjectID = 2}
             };
         }
-        
+
 
         public bool SetProjectActivity(int EmployeeId, int ProjectId, string Description)
         {
-            ProjectActivity pA = new ProjectActivity();
-            pA.Description = Description;
-            pA.EmployeeID = EmployeeId;
-            pA.ProjectID = ProjectId;
-            foreach (var activity in pALIst)
+            ProjectActivity temp;
+            ProjectActivity pA = new ProjectActivity()
             {
-                if (activity.EmployeeID == EmployeeId)
-                {
-                    if (activity.ProjectID == ProjectId)
-                    {
-                        pALIst.Remove(activity);
-                    }
-                }
+                Description = Description,
+                EmployeeID = EmployeeId,
+                ProjectID = ProjectId
+            };
+            if ((temp = pALIst.Find(x => x.ProjectID == ProjectId && x.Description == Description)) == null)
+            {
+                pALIst.Add(pA);
             }
-
-            pALIst.Add(pA);
+            else
+            {
+                temp = pA;
+            }
             return true;
         }
 

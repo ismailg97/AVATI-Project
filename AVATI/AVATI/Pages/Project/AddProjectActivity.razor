@@ -9,30 +9,32 @@
 @inject IProjektService _projectService
 @inject NavigationManager _navigationmanager
 
-<div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
-    <div class="modal modal-dialog-scrollable modal-dialog col">
-        <div class="modal-content">
-            <div class="body header">
-                <div class="modal-header">
-                    <h5 class="modal-title">Projekttätigkeit hinzufügen/löschen</h5>
-                    <button type="button" class="close" data-dismiss="modal" @onclick=@Close>
-                        <span aria-hidden="true">x</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <InputText id="projekttitel" class="form-control" @bind-Value="@temp"></InputText>
-                    <button type="button" class="btn btn-success" @onclick="() => { AddActivityTProject(temp); }">+</button>
-                </div>
-                <div class="modal-footer" style="border-bottom: 0 none">
-                    <div class="form-group mb-3">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">Cancel</button>
-                        <button type="button" class="btn btn-success" @onclick="(() => { Showing(); Submit(ID);})">Save</button>
+<EditForm Model="NewProjectactivity" OnValidSubmit="@Save">
+    <DataAnnotationsValidator/>
+    <div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
+        <div class="modal-dialog modal-sm col">
+            <div class="modal-content">
+                <div class="body header">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Projekttätigkeit hinzufügen/löschen</h5>
+                        <button type="button" class="close" data-dismiss="modal" @onclick=@Close>
+                            <span aria-hidden="true">x</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <InputText id="projekttitel" class="form-control" @bind-Value="@ExistingValue"></InputText>
+                    </div>
+                    <div class="modal-footer" style="border-bottom: 0 none">
+                        <div class="form-group mb-3">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Close">Cancel</button>
+                            <button type="submit" class="btn btn-success" >Save</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</EditForm>
 
 @if (_show)
 {
@@ -47,11 +49,13 @@
     private bool _show = false;
     public List<ProjectActivity> ActivitiestoDisplay { get; set; } = new List<ProjectActivity>();
     public List<ProjectActivity> ActivitiestoSearch { get; set; } = new List<ProjectActivity>();
-
-   public string temp { get; set; }
-    public ProjectActivity iwas { get; set; }
-    public void Showing()
+    
+    public string ExistingValue { get; set; }
+    public ProjectActivity NewProjectactivity { get; set; } = new ProjectActivity();
+    
+    public void Showing(string input)
     {
+        ExistingValue = input;
         _show = !_show;
         StateHasChanged();
     }
@@ -62,11 +66,10 @@
         StateHasChanged();
     }
 
-    public void Submit(int ID)
+    public void Save()
     {
-        Project temp = _projectService.GetProject(ID);
-        temp.ProjectActivities = ActivitiestoSearch;
-        _navigationmanager.NavigateTo("/Projektübersicht/Projektedit/" + ID);
+        _projectActivity.SetProjectActivity(0, ID, ExistingValue);
+        _show = !_show;
         StateHasChanged();
     }
     protected override void OnInitialized()
@@ -74,13 +77,5 @@
         ActivitiestoDisplay = _projectActivity.ReturnListProjectActivities(ID);
         ActivitiestoSearch = new List<ProjectActivity>(_projectActivity.ReturnListProjectActivities(ID));
     }
-
-    public void AddActivityTProject(String input)
-    {
-        Project p = _projectService.GetProject(ID);
-        iwas.Description = input;
-        iwas.ProjectID = p.ProjectID;
-        if(DESCRIPTION == INPUT)            //muss noch reinschreiben
-        p.ProjectActivities.Add(iwas);
-    }
+    
 }
