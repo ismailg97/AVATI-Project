@@ -15,16 +15,16 @@
                 <div class="modal-content bg-light text-black">
                     <div class="modal-header">
                         <h5 class="modal-title font-weight-bolder text-center" id="titleLabel">Detailansicht</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick=@Close> <!--only close, no reset-->
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick=@Close>
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
                     <div class="modal-body">
                         <div class="container ml-3" style="min-width: 100%">
-                            <div class="row justify-content-md-center mb-4">
+                            <div class="row justify-content-md-center">
                                 <div class="card col-sm-4 text-black border-dark">
                                     <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" class="card-img-top" alt=""/>
-                                    <div class="card-body">
+                                    <div class="card-body pb-3 pt-3">
                                         <h5 class="card-title">@_employeeService.GetEmployeeProfile(EmpId).FirstName @_employeeService.GetEmployeeProfile(EmpId).LastName</h5>
                                         <div class="card-title text-left">
                                             Rate Card Level:
@@ -41,22 +41,22 @@
                                         <div class="card-text text-left">
                                             Branchen:
                                             @foreach (var field in _employeeService.GetEmployeeProfile(EmpId).Field)
-                                            {
-                                                if (TempEmpDetail.FieldVis(field))
                                                 {
-                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteField(TempEmpDetail, field);})>@field</button>
+                                                    if (TempEmpDetail.FieldVis(field))
+                                                    {
+                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteField(TempEmpDetail, field);})>@field</button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddField(TempEmpDetail, field);})>@field</button>
+                                                    }
                                                 }
-                                                else
-                                                {
-                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddField(TempEmpDetail, field);})>@field</button>
-                                                }
-                                            }
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-8">
-                                <div class="row mb-3">
-                                    <div class="card col-sm-8 border-secondary ml-3 mr-3">
+                                <div class="row mb-2">
+                                    <div class="card col-sm-8 border-secondary ml-2 mr-2" style="min-height: 221.883px">
                                         <div class="card-header text-left bg-transparent border-secondary">Hardskills</div>
                                         <div class="card-body text-left">
                                             @foreach (var hardSkill in _employeeService.GetEmployeeProfile(EmpId).Hardskills)
@@ -73,25 +73,25 @@
                                             }
                                         </div>
                                     </div>
-                                    <div class="card border-secondary col-sm-3">
+                                    <div class="card col-sm-3 border-secondary">
                                         <div class="card-header text-left bg-transparent border-secondary">Sprache(n)</div>
                                         <div class="card-body text-left">
                                             @foreach (var lang in _employeeService.GetEmployeeProfile(EmpId).Language)
                                             {
                                                 if (TempEmpDetail.LanguageVis(lang.Item1))
                                                 {
-                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteLang(TempEmpDetail, lang);})>@lang.Item1</button>
+                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteLang(TempEmpDetail, lang);})>@lang.Item1 @lang.Item2</button>
                                                 }
                                                 else
                                                 {
-                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddLang(TempEmpDetail, lang);})>@lang.Item1</button>
+                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddLang(TempEmpDetail, lang);})>@lang.Item1 @lang.Item2</button>
                                                 }
                                             }
                                         </div>
                                     </div>
                                 </div>
-                                    <div class="row">
-                                        <div class="card border-secondary col-sm-8 ml-3 mr-3">
+                                    <div class="row mt-2">
+                                        <div class="card border-secondary col-sm-8 ml-2 mr-2" style="min-height: 221.883px">
                                             <div class="card-header text-left bg-transparent border-secondary">Softskills</div>
                                             <div class="card-body text-left">
                                                 @foreach (var softSkill in _employeeService.GetEmployeeProfile(EmpId).Softskills)
@@ -128,7 +128,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer mt-5">
                         <button class="btn btn-danger" @onclick="@Close">Abbrechen</button>
                         <button class="btn btn-success" @onclick=@(() => { _employeeDetailService.UpdateEmployeeDetail(EmpId, PropId, TempEmpDetail); Close();})>Änderungen speichern</button> <!--TODO: make work-->
                     </div>

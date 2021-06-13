@@ -24,7 +24,10 @@ namespace AVATI.Data
                         "UI/UX-Designer",
                         "Product Owner"
                     },
-                    Hardskills = new List<Hardskill>(),
+                    Hardskills = new List<Hardskill>(){
+                        new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
+                        new Hardskill() {Description = "Python"}, new Hardskill() {Description = "C#"}
+                    },
                     Softskills = new List<string>()
                     {
                         "Konzeptionsstärke",
@@ -43,6 +46,9 @@ namespace AVATI.Data
                     
                     Language = new List<Tuple<string, LanguageLevel>>()
                     {
+                        Tuple.Create<string,LanguageLevel>("Englisch", LanguageLevel.B2), 
+                        Tuple.Create<string,LanguageLevel>("Deutsch",LanguageLevel.A1), 
+                        Tuple.Create<string, LanguageLevel>("Französisch", LanguageLevel.B2)
                        
                     }, Rc = 6
                 },
@@ -133,7 +139,8 @@ namespace AVATI.Data
                     Language = new List<Tuple<string, LanguageLevel>>()
                     {
                         Tuple.Create<string,LanguageLevel>("Englisch", LanguageLevel.B2),
-                        Tuple.Create<string,LanguageLevel>("Deutsch",LanguageLevel.A1)
+                        Tuple.Create<string,LanguageLevel>("Deutsch",LanguageLevel.A1),
+                        Tuple.Create<string, LanguageLevel>("Französisch", LanguageLevel.B2)
                     }, Rc = 3
                 },
                 new Employee()
