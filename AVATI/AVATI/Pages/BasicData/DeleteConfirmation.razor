@@ -43,7 +43,8 @@
 
 
 @code {
-
+    [Parameter] public BasicDataAbstract Abstract { get; set; }
+    
     [Parameter]
     public string Description { get; set; }
 
@@ -69,8 +70,9 @@
                 _hardskillService.DeleteHardskill(Description);
                 break;
         }
+        Abstract?.UpdateLists();
         Showing();
-        _navigationManager.NavigateTo(_navigationManager.Uri, true);
+        //_navigationManager.NavigateTo(_navigationManager.Uri, true);
     }
 
     public void Showing()

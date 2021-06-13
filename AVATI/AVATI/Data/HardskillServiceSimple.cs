@@ -52,16 +52,11 @@ namespace AVATI.Data
         {
             var index = _allHardskills.IndexOf(oldHardskill);
             if (index == -1) return false;
-            if (oldHardskill.Uppercat == newHardskill.Uppercat && newHardskill.Uppercat != null)
-            {
-                var indexUp = oldHardskill.Uppercat.Subcat.IndexOf(oldHardskill);
-                newHardskill.Uppercat.Subcat[indexUp] = newHardskill;
-            } else {
-                oldHardskill.Uppercat?.Subcat.Remove(oldHardskill);
-                newHardskill.Uppercat?.Subcat.Add(newHardskill);
-            }
-
-            _allHardskills[index] = newHardskill;
+            oldHardskill.Description = newHardskill.Description;
+            if (oldHardskill.Uppercat == newHardskill.Uppercat) return true;
+            oldHardskill.Uppercat?.Subcat.Remove(oldHardskill);
+            oldHardskill.Uppercat = newHardskill.Uppercat;
+            newHardskill.Uppercat?.Subcat.Add(oldHardskill);
             return true;
         }
 

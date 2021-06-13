@@ -15,7 +15,7 @@
                        <label class="form-label">Bezeichnung:</label>
                        <InputText class="form-control" @bind-Value="@_hardskill.Description"/>
                        <label class="form-label">Oberkategorie:</label>
-                       <InputSelect class="form-control" @bind-Value="@Description">
+                       <InputSelect class="form-control" @bind-Value="@UpperCat">
                          <option value="">Keine Oberkategorie</option>
                          @foreach (var hardskillcat in _hardskillService.GetAllHardskillCategorys())
                          {
@@ -37,22 +37,31 @@
 }
 
 @code {
+  [Parameter] public BasicDataAbstract Abstract { get; set; }
   private bool _show = false;
 
+  string UpperCat { get; set; }
+  
   string Description { get; set; }
 
   private Hardskill _hardskill = new();
 
   private void Create()
   {
-    _hardskill.Height = 0;
-    _hardskill.Subcat = null;
-    
-    _hardskill.Uppercat = string.IsNullOrEmpty(Description) ? null : _hardskillService.GetHardskillCategory(Description);
-    
-    _hardskillService.CreateHardskill(_hardskill);
+    var hardskill = new Hardskill
+    {
+      Description = _hardskill.Description,
+      Uppercat = string.IsNullOrEmpty(UpperCat) ? null : _hardskillService.GetHardskillCategory(UpperCat),
+      Subcat = null,
+      Height = 0
+    };
+
+    _hardskillService.CreateHardskill(hardskill);
+    UpperCat = "";
+    _hardskill.Description = "";
+    Abstract.UpdateLists();
     Showing();
-    _navigationManager.NavigateTo(_navigationManager.Uri, true);
+    //_navigationManager.NavigateTo(_navigationManager.Uri, true);
   }
 
   public void Showing()

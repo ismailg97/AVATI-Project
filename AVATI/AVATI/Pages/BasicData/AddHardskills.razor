@@ -1,25 +1,23 @@
 ﻿@using AVATI.Data
+@using DocumentFormat.OpenXml.Wordprocessing
 
 @inject IHardskillService _hardskillService
 @inject NavigationManager _navigationManager
-
-@{
-  ShowCreateCat = !_hardskillService.GetAllHardskillCategorys().Exists(x => x.Description == Description);
-}
 
 <div class="modal @(_show ? "fade show" : "" )" id="myModal" style=" display: @(_show ? "block" : "none");">
                <div class="modal-dialog">
                  <div class="modal-content">
                    <div class="modal-header">
-                       @if (ShowCreateCat) {
-                         <h5 class="modal-title">
-                           Erstellen einer neuen Kategorie
-                         </h5>
-                       } else {
-                         <h5 class="modal-title">
-                           Kategorisierung von Hardskills in "<b>@Description</b>"
-                         </h5>
-                       }
+                     @if (ShowCreateCat)
+                     {
+                       <h5 class="modal-title">
+                         Erstellen einer neuen Kategorie
+                       </h5>
+                     } else {
+                       <h5 class="modal-title">
+                         Kategorisierung von Hardskills in "<b>@Description</b>"
+                       </h5>
+                     }
                      <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
                    </div>
                    <div class="modal-body">
@@ -41,7 +39,9 @@
                          {
                            if (hardskill.IsHardskill)
                            {
-                             <button type="button" class="@(IsInList(hardskill.Description) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">@hardskill.Description</button>
+                             <button type="button" class="@(IsInList(hardskill.Description) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">
+                               <a><a class="@(IsInList(hardskill.Description) ? "showRemove" : "")">@hardskill.Description</a> <a class="remove"><span class="oi oi-x"></span></a></a>
+                             </button>
                            }
                          }
                        }
@@ -55,7 +55,9 @@
                          {
                            if (hardskill.Uppercat == null)
                            {
-                             <button type="button" class="@(IsInList(hardskill.Description) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">@hardskill.Description</button>
+                             <button type="button" class="@(IsInList(hardskill.Description) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">
+                               <a><a class="@(IsInList(hardskill.Description) ? "showRemove" : "")">@hardskill.Description</a> <a class="remove"><span class="oi oi-x"></span></a></a>
+                             </button>
                            }
                          }
                        }
@@ -63,9 +65,10 @@
                        @if (_showCreateSkill)
                        {
                          <div class="distance">
+                           <label>Bezeichnung des Hardskills:</label>
                            <input class="form-control" type="text" @bind="_hardskill"/>
-                           <button class="btn btn-success btn-sm" @onclick="CreateHardskill">Speichern</button>
-                           <button class="btn btn-danger btn-sm" @onclick="ShowingCreateHardskill">Abbrechen</button>
+                           <button class="check" @onclick="CreateHardskill">&#10003;</button>
+                           <button class="stop" @onclick="ShowingCreateHardskill">&#10005;</button>
                          </div>
                        }
                        else
@@ -92,7 +95,9 @@
                                       {
                                           if (hardskill.IsHardskill)
                                           {
-                                            <button type="button" class="@(IsInList(hardskill.Description) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">@hardskill.Description</button>
+                                            <button type="button" class="@(IsInList(hardskill.Description) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">
+                                              <a><a class="@(IsInList(hardskill.Description) ? "showRemove" : "")">@hardskill.Description</a> <a class="remove"><span class="oi oi-x"></span></a></a>
+                                            </button>
                                           }
                                       }
                                     </div>
@@ -116,6 +121,8 @@
 }
 
 @code {
+  [Parameter] public BasicDataAbstract Abstract { get; set; }
+  
   [Parameter]
   public string Description { get; set; }
 
@@ -133,10 +140,11 @@
 
   private bool ShowCreateCat { get; set; } = false;
 
-  protected override void OnInitialized()
+  protected override void OnParametersSet()
   {
+    ShowCreateCat = !_hardskillService.GetAllHardskillCategorys().Exists(x => x.Description == Description);
     var cat = _hardskillService.GetHardskillCategory(Description);
-
+    
     if (cat != null)
     {
       foreach(var hardskill in cat.Subcat)
@@ -183,6 +191,7 @@
           IsHardskill = false
       };
       _hardskillService.CreateHardskillCategory(cat);
+      Abstract.UpdateLists();
     } 
     else 
       _hardskillService.EditHardskillsCategory(Description, Subcat);

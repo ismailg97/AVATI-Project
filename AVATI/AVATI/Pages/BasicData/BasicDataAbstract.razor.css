@@ -67,15 +67,7 @@ hr {
     transition: visibility 0s, opacity 0.5s linear;
 }
 
-.showcat:hover + .hidecat {
-    visibility: visible;
-    color: #818181;
-    font-size: 15px;
-    height: auto;
-    width: auto;
-    opacity: 1;
-}
-
+.showcat:hover + .hidecat, 
 .hidecat:hover {
     visibility: visible;
     color: #818181;
