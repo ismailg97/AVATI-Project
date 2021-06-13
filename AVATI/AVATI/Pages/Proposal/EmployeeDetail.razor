@@ -170,11 +170,14 @@
             _tempEmp = _proposal.GetProposal(PropId).Employees.Find(e => e.EmployeeId == EmpId);
         }
         _emp = _employeeService.GetEmployeeProfile(EmpId);
-        _employeeDetailService.UpdateEmployeeDetail(EmpId, PropId, new Data.EmployeeDetailFiles.EmployeeDetail()
+        if (_employeeDetailService.GetAllEmployeeDetail().Find(e => e.EmployeeId == EmpId && e.ProposalId == PropId) == null)
         {
-            Softskills = _emp.Softskills, Hardskills = _emp.Hardskills, Fields = _emp.Field, Languages = _emp.Language,
-            Roles = _emp.Roles, Rc = _emp.Rc
-        });
+            _employeeDetailService.UpdateEmployeeDetail(EmpId, PropId, new Data.EmployeeDetailFiles.EmployeeDetail()
+            {
+                Softskills = _emp.Softskills, Hardskills = _emp.Hardskills, Fields = _emp.Field, Languages = _emp.Language,
+                Roles = _emp.Roles, Rc = _emp.Rc
+            });
+        }
         Detail = _employeeDetailService.GetEmployeeDetail(EmpId, PropId);
         _copyDetail(Detail, TempEmpDetail);
         Console.WriteLine(EmpId.ToString() + PropId.ToString());
