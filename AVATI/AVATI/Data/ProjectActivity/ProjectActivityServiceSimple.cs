@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using DocumentFormat.OpenXml;
 
 
 namespace AVATI.Data
@@ -8,6 +9,7 @@ namespace AVATI.Data
     {
         private List<ProjectActivity> EmpList;
         private List<ProjectActivity> ProjList;
+        
         public List<ProjectActivity> pALIst;
 
         public ProjectActivityServiceSimple()
@@ -22,22 +24,21 @@ namespace AVATI.Data
 
         public bool SetProjectActivity(int EmployeeId, int ProjectId, string Description)
         {
-            ProjectActivity pA = new ProjectActivity();
-            pA.Description = Description;
-            pA.EmployeeID = EmployeeId;
-            pA.ProjectID = ProjectId;
-            foreach (var activity in pALIst)
+            ProjectActivity temp;
+            ProjectActivity pA = new ProjectActivity()
             {
-                if (activity.EmployeeID == EmployeeId)
-                {
-                    if (activity.ProjectID == ProjectId)
-                    {
-                        pALIst.Remove(activity);
-                    }
-                }
+                Description = Description,
+                EmployeeID = EmployeeId,
+                ProjectID = ProjectId
+            };
+            if ((temp = pALIst.Find(x => x.ProjectID == ProjectId && EmployeeId == x.EmployeeID)) == null)
+            {
+                pALIst.Add(pA);
             }
-
-            pALIst.Add(pA);
+            else
+            {
+                temp = pA;
+            }
             return true;
         }
 
@@ -57,6 +58,16 @@ namespace AVATI.Data
             }
 
             return false;
+        }
+
+        List<ProjectActivity> IProjectActivityService.GetProjectActivities(int EmployeeId, int ProjectId)
+        {
+            return pALIst.FindAll(x => x.ProjectID == ProjectId && x.EmployeeID == EmployeeId);
+        }
+
+        public List<ProjectActivity> ReturnListProjectActivities(int ProjectID)
+        {
+            return pALIst.FindAll(x => x.ProjectID == ProjectID);
         }
 
 

@@ -10,5 +10,7 @@ namespace AVATI.Data
         public Project GetProject(int projectID);
         public List<Project> GetAllProjects();
         public List<Project> SearchProject(List<Project> projects, string input);
+        public List<string> GetAllFieldsFromOneProject(int ProjectID);
+        
     }
 }

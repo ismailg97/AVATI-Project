@@ -1,0 +1,143 @@
+﻿@page "/AddEmployeeToProject/{ID:int}"
+@using AVATI.Data
+@using DocumentFormat.OpenXml
+
+@inject IEmployeeService _employeeServiceSimple
+@inject IProjektService _projectService
+@inject NavigationManager _navigationmanager
+
+<EditForm Model="EmployeeToProject" OnValidSubmit="@Save">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+    <div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
+        <div class="modal-dialog col">
+            <div class="modal-content">
+                <div class="body header">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Mitarbeiter hinzufügen/löschen</h5>
+                        <button type="button" class="close" data-dismiss="modal" @onclick=@Close>
+                            <span aria-hidden="true">x</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container ">
+                            <label class="col-sm-3 col-form-label font-weight-bold">Vorgeschlagene Mitarbeiter zum Hinzufügen für das Projekt.:</label>
+                            <div class="form-group row col overflow-auto border" style="height: 250px">
+                                @foreach (var employee in EmployeesNotInProject)
+                                {
+                                    if (EmployeesAddedToProject.Contains(employee))
+                                    {
+
+                                    }
+                                    else
+                                    {
+                                        <div class="mb-3 col-sm">
+                                            <button type="button" class="btn btn-sm btn-outline-info btn-lg btn-block col" @onclick=@(() => { EmployeesInProject(employee); })>@employee.FirstName + @employee.LastName</button>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="container">
+                            <label class="col-sm-3 col-form-label font-weight-bold">Mitarbeiter im Projekt.:</label>
+                            <div class="form-group row col overflow-auto border" style="height: 250px">
+                                @foreach (var employee in EmployeesAddedToProject)
+                                {
+                                    <div class="mb-3 col-sm">
+                                        <button type="button" class="btn btn-sm btn-outline-info col btn-block" @onclick=@(() => { EmployessOutOfProject(employee); })>@employee.FirstName + @employee.LastName</button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+
+                        <div class="modal-footer" style="border-bottom: 0 none">
+                            <div class="form-group mb-3">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Close">Abbrechen</button>
+                                <button type="submit" class="btn btn-success">Speichern</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@if (_show)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code{
+
+    [Parameter]
+    public int ID { get; set; }
+
+    public Employee EmployeeToProject { get; set; } = new Employee();
+
+    public List<Employee> EmployeesAddedToProject { get; set; } = new List<Employee>();
+    public List<Employee> EmployeesNotInProject { get; set; } = new List<Employee>();
+
+    private bool _show = false;
+
+    public void Showing()
+    {
+        _show = !_show;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        _show = !_show;
+        StateHasChanged();
+    }
+
+    public void Save()
+    {
+        _show = !_show;
+        StateHasChanged();
+    }
+
+    protected override void OnInitialized()
+    {
+        EmployeesAddedToProject = _projectService.GetProject(ID).Employees;
+        EmployeesNotInProject = _employeeServiceSimple.GetAllEmployees(); 
+        foreach (var elem in EmployeesNotInProject)
+        {
+            foreach (var employee in EmployeesAddedToProject)
+            {
+                if (elem.Equals(employee))
+                {
+                    EmployeesNotInProject.Remove(elem);
+                }
+                else
+                {
+                    
+                }
+            }
+        }
+            
+        
+        StateHasChanged();
+    }
+
+    public void EmployeesInProject(Employee e)
+    {
+        if (EmployeesNotInProject.Contains(e))
+        {
+            EmployeesNotInProject.Remove(e);
+            EmployeesAddedToProject.Add(e);
+        }
+    }
+
+    public void EmployessOutOfProject(Employee e)
+    {
+        if (EmployeesAddedToProject.Contains(e))
+        {
+            EmployeesAddedToProject.Remove(e);
+            EmployeesNotInProject.Add(e);
+        }
+    }
+        //MITARBEITERSUCHE HIER EINFÜGEN
+}

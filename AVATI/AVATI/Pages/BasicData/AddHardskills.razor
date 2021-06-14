@@ -66,9 +66,9 @@
                        {
                          <div class="distance">
                            <label>Bezeichnung des Hardskills:</label>
-                           <input class="form-control" type="text" @bind="_hardskill"/>
-                           <button class="check" @onclick="CreateHardskill">&#10003;</button>
-                           <button class="stop" @onclick="ShowingCreateHardskill">&#10005;</button>
+                           <input class="form-control" style="display: inline;" type="text" @bind="_hardskill"/>
+                           <button class="check" style="display: inline;" @onclick="CreateHardskill">&#10003;</button>
+                           <button class="stop" style="display: inline;" @onclick="ShowingCreateHardskill">&#10005;</button>
                          </div>
                        }
                        else
@@ -109,8 +109,8 @@
                      </div>
                    </div>
                    <div class="modal-footer">
-                     <button type="button" class="btn btn-success" @onclick="AddingHardskills">Speichern</button>
                      <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">Abbrechen</button>
+                     <button type="button" class="btn btn-success" @onclick="AddingHardskills">Speichern</button>
                    </div>
                  </div>
                </div>

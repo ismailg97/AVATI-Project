@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -49,7 +50,9 @@ namespace AVATI
             services.AddBlazorDownloadFile();
             services.AddSingleton<IEmployeeDetailService, EmployeeDetailService>();
             services.AddSingleton<IProjectActivityService, ProjectActivityServiceSimple>();
-
+            services.AddSingleton<ProjectActivityServiceSimple>();
+            services.AddSingleton<EmployeeServiceSimple>();
+            services.AddSingleton<ProjectActivityServiceSimple>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
