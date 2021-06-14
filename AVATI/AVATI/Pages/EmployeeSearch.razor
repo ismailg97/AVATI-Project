@@ -54,7 +54,7 @@
         <div class="list-group border-dark border overflow-auto mr-3 col-9" style="height: 200px">
             @foreach (var hardskill in _searchService.HardskillsToDisplay)
             {
-                @if (TempHardskill == null || hardskill.Description.Contains(TempHardskill))
+                @if (TempHardskill == null || hardskill.Description.Contains(TempHardskill, StringComparison.OrdinalIgnoreCase))
                 {
                     <button class="btn btn-outline-dark" @onclick=@(() => { _searchService.AddHardSearch(hardskill); })>@hardskill.Description</button>
                 }
