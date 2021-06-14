@@ -1,0 +1,16 @@
+
+.cross {
+    visibility: hidden;
+
+    height: 0;
+    width: 0;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.3s linear;
+}
+.section:hover .cross { visibility: visible;
+
+    visibility: visible;
+    height: auto;
+    width: auto;
+    opacity: 1;
+}

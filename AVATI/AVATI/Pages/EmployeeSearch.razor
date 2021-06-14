@@ -36,8 +36,8 @@
             }
             @foreach (var hardskill in  _searchService.HardskillsToSearch)
             {
-                <button type="button" class="btn btn-info btn-sm border border-dark" @onclick=@(() => { _searchService.HardskillsToSearch.Remove(hardskill); _searchService.HardskillsToDisplay.Add(hardskill); _searchService.HardskillsToDisplay = _searchService.HardskillsToDisplay.OrderBy(e => e.Description).ToList();})>
-                    @hardskill.Description <span class="oi oi-x"></span>
+                <button type="button" class="btn btn-info btn-sm border border-dark section" @onclick=@(() => { _searchService.HardskillsToSearch.Remove(hardskill); _searchService.HardskillsToDisplay.Add(hardskill); _searchService.HardskillsToDisplay = _searchService.HardskillsToDisplay.OrderBy(e => e.Description).ToList();})>
+                    @hardskill.Description <span class="oi oi-x cross"></span>
                 </button>
             }
         </div>
@@ -71,8 +71,8 @@
                 }
                 @foreach (var softskill in _searchService.SoftskillsToSearch)
                 {
-                    <button type="button" class="btn btn-info btn-sm border border-dark" @onclick=@(() => { _searchService.SoftskillsToSearch.Remove(softskill); _searchService.SoftskillsToDisplay.Add(softskill); _searchService.SoftskillsToDisplay.Sort();})>
-                        @softskill <span class="oi oi-x"></span>
+                    <button type="button" class="btn btn-info btn-sm border border-dark section" @onclick=@(() => { _searchService.SoftskillsToSearch.Remove(softskill); _searchService.SoftskillsToDisplay.Add(softskill); _searchService.SoftskillsToDisplay.Sort();})>
+                        @softskill <span class="oi oi-x cross"></span>
                     </button>
                 }
 
@@ -101,8 +101,8 @@
                 }
                 @foreach (var role in _searchService.RolesToSearch)
                 {
-                    <button type="button" class="btn btn-info btn-sm border border-dark" @onclick=@(() => { _searchService.RolesToSearch.Remove(role); _searchService.RolesToDisplay.Add(role);})>
-                        @role <span class="oi oi-x"></span>
+                    <button type="button" class="btn btn-info btn-sm border border-dark section" @onclick=@(() => { _searchService.RolesToSearch.Remove(role); _searchService.RolesToDisplay.Add(role);})>
+                        @role <span class="oi oi-x cross"></span>
                     </button>
                 }
 
