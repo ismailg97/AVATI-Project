@@ -32,7 +32,7 @@
                                     else
                                     {
                                         <div class="mb-3 col-sm">
-                                            <button type="button" class="btn btn-sm btn-outline-info btn-lg btn-block col" @onclick=@(() => { EmployeesInProject(employee); })>@employee.FirstName + @employee.LastName</button>
+                                            <button type="button" class="btn btn-sm btn-outline-info btn-lg btn-block col" @onclick=@(() => { EmployeesInProject(employee); })>@employee.FirstName @employee.LastName</button>
                                         </div>
                                     }
                                 }
