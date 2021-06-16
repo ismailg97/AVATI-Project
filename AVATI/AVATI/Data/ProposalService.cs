@@ -29,7 +29,7 @@ namespace AVATI.Data
                 
                 new Proposal()
                 {
-                    ProposalId = 1,
+                    ProposalID = 1,
                     ProposalTitle = "Machine Learning with HTML",
                     Softskills = new List<string>() {"Office", "Risk Management Skills"},
                     Fields = new List<string>() {"Marketing", "Sales", "It-Support"},
@@ -40,7 +40,7 @@ namespace AVATI.Data
                 },
                 new Proposal()
                 {
-                    ProposalId = 2,
+                    ProposalID = 2,
                     ProposalTitle = "Webanwendung mit C++ und Javascript",
                     Softskills = new List<string>() {"Bootstrap 5 Modal Dialogs", "Charisma"},
                     Fields = new List<string>() {"Design", "Wetter", "It-Support"},
@@ -52,7 +52,7 @@ namespace AVATI.Data
                 },
                 new Proposal()
                 {
-                    ProposalId = 3,
+                    ProposalID = 3,
                     ProposalTitle = "Facial Recognition with Smartphones",
                     Softskills = new List<string>() {"UML - Klassendiagramme", "Risk Management Skills"},
                     Fields = new List<string>() {"Marketing", "Sales", "AI - Development"},
@@ -64,7 +64,7 @@ namespace AVATI.Data
                 },
                 new Proposal()
                 {
-                    ProposalId = 4,
+                    ProposalID = 4,
                     ProposalTitle = "Machine Learning with HTML v2",
                     Softskills = new List<string>() {"Office", "Risk Management Skills"},
                     Fields = new List<string>() {"Marketing", "Sales", "It-Support"},
@@ -76,7 +76,7 @@ namespace AVATI.Data
                 },
                 new Proposal()
                 {
-                    ProposalId = 5,
+                    ProposalID = 5,
                     ProposalTitle = "Facial Recognition with Security Kameras",
                     Softskills = new List<string>() {"Office", "Risk Management Skills"},
                     Fields = new List<string>() {"Marketing", "Sales", "It-Support"},
@@ -88,7 +88,7 @@ namespace AVATI.Data
                 },
                 new Proposal()
                 {
-                    ProposalId = 6,
+                    ProposalID = 6,
                     ProposalTitle = "Web 4.0",
                     Softskills = new List<string>()
                         {"Libre Office", "Risk Management Skills", "Grundlegende Mathematik"},
@@ -101,7 +101,7 @@ namespace AVATI.Data
                 },
                 new Proposal()
                 {
-                    ProposalId = 7,
+                    ProposalID = 7,
                     ProposalTitle = "Machine Learning with HTML v3",
                     Softskills = new List<string>() {"Office", "Risk Management Skills"},
                     Fields = new List<string>() {"Marketing", "Sales", "It-Support"},
@@ -131,7 +131,11 @@ namespace AVATI.Data
             }
             else
             {
-                proposal.ProposalId = Proposals.Max(e => e.ProposalId) + 1;
+                if (proposal.ProposalTitle == null)
+                {
+                    proposal.ProposalTitle = "leer";
+                }
+                proposal.ProposalID = Proposals.Max(e => e.ProposalID) + 1;
                 Proposals.Add(proposal);
             }
 
@@ -142,7 +146,7 @@ namespace AVATI.Data
         {
             if (GetProposal(proposalId) != null)
             {
-                Proposals.Remove(Proposals.Find(e => e.ProposalId == proposalId));
+                Proposals.Remove(Proposals.Find(e => e.ProposalID == proposalId));
                 return true;
             }
 
@@ -157,12 +161,12 @@ namespace AVATI.Data
                 temp = GetProposal(proposalId);
                 Proposals.Add(new Proposal()
                 {
-                    ProposalId = Proposals.Max(e => e.ProposalId) + 1, Employees = temp.Employees, Fields = temp.Fields,
+                    ProposalID = Proposals.Max(e => e.ProposalID) + 1, Employees = temp.Employees, Fields = temp.Fields,
                     Hardskills = temp.Hardskills, Softskills = temp.Softskills, AdditionalInfo = temp.AdditionalInfo,
                     ProposalTitle = String.Concat(temp.ProposalTitle, " [KOPIE]")
                 });
 
-                return Proposals.Max(e => e.ProposalId);
+                return Proposals.Max(e => e.ProposalID);
             }
 
             return 0;
@@ -175,9 +179,9 @@ namespace AVATI.Data
 
         public Proposal GetProposal(int proposalId)
         {
-            if (Proposals.Find(e => e.ProposalId == proposalId) != null)
+            if (Proposals.Find(e => e.ProposalID == proposalId) != null)
             {
-                return Proposals.Find(e => e.ProposalId == proposalId);
+                return Proposals.Find(e => e.ProposalID == proposalId);
             }
             else
             {
