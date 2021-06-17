@@ -96,7 +96,7 @@
                             <InputText id="addinfo" class="form-control" @bind-Value="@Proposal.AdditionalInfo" placeholder=" "></InputText>
                         </div>
                         <div class="form-row float-right">
-                            <button class="btn btn-danger mr-1" @onclick="@Close">Abbrechen</button>
+                            <button class="btn btn-danger mr-1" type="button" @onclick=@Close>Abbrechen</button>
                             @if (Id == 0)
                             {
                                 <button type="submit" class="btn btn-success">Angebot anlegen</button>
@@ -137,7 +137,6 @@
     {
         ShowEdit = !ShowEdit;
         ShowBackdrop = !ShowBackdrop;
-        StateHasChanged();
     }
 
     public void Show(int propId)
