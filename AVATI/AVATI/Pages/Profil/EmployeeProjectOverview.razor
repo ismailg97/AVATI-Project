@@ -136,13 +136,13 @@
     public void setProjectActivity(int empId, int projId, string description)
     {
         _projctActivityService.SetProjectActivity(empId, projId, description);
-        _navManager.NavigateTo("/employeeProject/" + Emp.EmployeeId, forceLoad: true);
+        _navManager.NavigateTo("/employeeProject/" + Emp.EmployeeID, forceLoad: true);
     }
 
     public void deleteProjectActivity(int empId, int projId)
     {
         _projctActivityService.DeleteProjectActivity(empId, projId);
-        _navManager.NavigateTo("/employeeProject/" + Emp.EmployeeId, forceLoad: true);
+        _navManager.NavigateTo("/employeeProject/" + Emp.EmployeeID, forceLoad: true);
     }
 
 

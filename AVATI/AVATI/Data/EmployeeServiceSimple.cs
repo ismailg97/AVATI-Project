@@ -16,7 +16,7 @@ namespace AVATI.Data
                 new Employee()
                 {
                     
-                    EmployeeId = 1,FirstName = "Ismail", LastName = "Gürsöz", Roles = new List<string>()
+                    EmployeeID = 1,FirstName = "Ismail", LastName = "Gürsöz", Roles = new List<string>()
                     {
                         "Software Developer",
                         "Agile Coach",
@@ -55,7 +55,7 @@ namespace AVATI.Data
                 new Employee()
                 {
                     
-                    EmployeeId = 6,FirstName = "Anton", LastName = "Huber", Roles = new List<string>()
+                    EmployeeID = 6,FirstName = "Anton", LastName = "Huber", Roles = new List<string>()
                     {
                         "Agile Coach",
                         "UI/UX-Designer",
@@ -80,7 +80,7 @@ namespace AVATI.Data
                 new Employee()
                 {
                     
-                    EmployeeId = 2,FirstName = "Victoria", LastName = "Kuch", Roles = new List<string>()
+                    EmployeeID = 2,FirstName = "Victoria", LastName = "Kuch", Roles = new List<string>()
                     {
                         "Software Developer",
                         "Agile Coach",
@@ -103,7 +103,7 @@ namespace AVATI.Data
                 new Employee()
                 {
                     
-                    EmployeeId = 3,FirstName = "Alex", LastName = "Xela", Roles = new List<string>() {"Product Owner"}, Hardskills =
+                    EmployeeID = 3,FirstName = "Alex", LastName = "Xela", Roles = new List<string>() {"Product Owner"}, Hardskills =
                         new List<Hardskill>()
                         {
                             new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
@@ -115,7 +115,7 @@ namespace AVATI.Data
                 new Employee()
                 {
                     
-                    EmployeeId = 4,FirstName = "Victoria", LastName = "Airotciv", Roles = new List<string>() {"Product Owner"}, 
+                    EmployeeID = 4,FirstName = "Victoria", LastName = "Airotciv", Roles = new List<string>() {"Product Owner"}, 
                     Hardskills = new List<Hardskill>()
                     {
                         new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
@@ -145,7 +145,7 @@ namespace AVATI.Data
                 new Employee()
                 {
                     
-                    EmployeeId = 5,FirstName = "Tobi", LastName = "Ibot", Roles = new List<string>() {"UI/UX-Designer"}, Hardskills =
+                    EmployeeID = 5,FirstName = "Tobi", LastName = "Ibot", Roles = new List<string>() {"UI/UX-Designer"}, Hardskills =
                         new List<Hardskill>()
                         {
                             new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
@@ -190,7 +190,7 @@ namespace AVATI.Data
         {
             foreach (Employee employee in Employees)
             {
-                if (emp.EmployeeId == employee.EmployeeId)
+                if (emp.EmployeeID == employee.EmployeeID)
                 {
                     employee.Field = emp.Field;
                     employee.FirstName = employee.FirstName;
@@ -214,7 +214,7 @@ namespace AVATI.Data
         {
             foreach (Employee emp in Employees)
             {
-                if (emp.EmployeeId == employeeId)
+                if (emp.EmployeeID == employeeId)
                 {
                     return emp;
                 }
@@ -227,7 +227,7 @@ namespace AVATI.Data
         {
             foreach (Employee emp in Employees)
             {
-                if (emp.EmployeeId == employeeId)
+                if (emp.EmployeeID == employeeId)
                 {
                     emp.IsActive = status;
                     return true;
@@ -241,7 +241,7 @@ namespace AVATI.Data
         {
             foreach (Employee emp in Employees)
             {
-                if (emp.EmployeeId == employeeId)
+                if (emp.EmployeeID == employeeId)
                 {
                     return emp.IsActive;
                 }

@@ -169,7 +169,7 @@
         PropId = proposalId;
         if (_proposal.GetProposal(PropId) != null)
         {
-            _tempEmp = _proposal.GetProposal(PropId).Employees.Find(e => e.EmployeeId == EmpId);
+            _tempEmp = _proposal.GetProposal(PropId).Employees.Find(e => e.EmployeeID == EmpId);
         }
         _emp = _employeeService.GetEmployeeProfile(EmpId);
         if (_employeeDetailService.GetAllEmployeeDetail().Find(e => e.EmployeeId == EmpId && e.ProposalId == PropId) == null)

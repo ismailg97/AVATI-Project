@@ -80,7 +80,7 @@
 
         <!------ Return Button ---------->
 
-        <a style="margin-top: 20px" href="/profile/@Emp.EmployeeId">
+        <a style="margin-top: 20px" href="/profile/@Emp.EmployeeID">
             <input type="button" class="profile-edit-btn" name="btnAddMore" value="Zurück"/>
         </a>
     </div>
@@ -286,7 +286,7 @@
             <th class="text-left">Projekt</th>
             <th class="text-left">Projekttätigkeit</th>
             <th>
-                <a href="/employeeProject/@Emp.EmployeeId">
+                <a href="/employeeProject/@Emp.EmployeeID">
                     <button style="margin-left: -120px" type="button" class="profile-edit-btn btn btn-outline-warning">
                         Bearbeiten
                     </button>
@@ -356,7 +356,7 @@
     {
         Emp.Rc = _changeValue;
         _employee.EditEmployeeProfile(Emp);
-        _navManager.NavigateTo("profile/" + Emp.EmployeeId);
+        _navManager.NavigateTo("profile/" + Emp.EmployeeID);
     }
 
 

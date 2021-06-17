@@ -61,7 +61,7 @@
     Employee.Hardskills.Remove(Hardskill);
     _show = !_show;
     StateHasChanged();
-    _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+    _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
   }
   //<EditForm Model="@_newHardskill" OnValidSubmit="Update"></EditForm>
 
@@ -79,7 +79,7 @@
       Employee.HardSkillLevel.Add(new Tuple<Hardskill, int>(Hardskill, 1));
       _show = !_show;
       StateHasChanged();
-      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
     }
     if (buttonId == 2)
     {
@@ -87,7 +87,7 @@
       Employee.HardSkillLevel.Add(new Tuple<Hardskill, int>(Hardskill, 2));
       _show = !_show;
       StateHasChanged();
-      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
     }
     if (buttonId == 3)
     {
@@ -95,7 +95,7 @@
       Employee.HardSkillLevel.Add(new Tuple<Hardskill, int>(Hardskill, 3));
       _show = !_show;
       StateHasChanged();
-      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
     }
     if (buttonId == 4)
     {
@@ -103,7 +103,7 @@
       Employee.HardSkillLevel.Add(new Tuple<Hardskill, int>(Hardskill, 4));
       _show = !_show;
       StateHasChanged();
-      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
     }
   }
     

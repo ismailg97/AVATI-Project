@@ -194,11 +194,11 @@
                     </td>
                     <td style="width: 10%" class="text-center">
 
-                        @if (Id != 0 && _proposal.GetProposal(Id).Employees.Find(e => e.EmployeeId == employee.EmployeeId) == null)
+                        @if (Id != 0 && _proposal.GetProposal(Id).Employees.Find(e => e.EmployeeID == employee.EmployeeID) == null)
                         {
                             <button class="btn btn-sm btn-outline-success" @onclick=@(() => { AddToProposal(employee); })>Hinzufügen</button>
                         }
-                        else if (Id != 0 && _proposal.GetProposal(Id).Employees.Find(e => e.EmployeeId == employee.EmployeeId) != null)
+                        else if (Id != 0 && _proposal.GetProposal(Id).Employees.Find(e => e.EmployeeID == employee.EmployeeID) != null)
                         {
                             <button class="btn btn-sm btn-outline-danger" @onclick=@(() => { RemoveFromProposal(employee); })>Löschen</button>
                         }
@@ -277,13 +277,13 @@
     public void AddToProposal(Employee emp)
     {
         _proposal.GetProposal(Id).Employees.Add(emp);
-        _proposal.GetProposal(Id).AltRc.Add(emp.EmployeeId, emp.Rc);
+        _proposal.GetProposal(Id).AltRc.Add(emp.EmployeeID, emp.Rc);
     }
 
     public void RemoveFromProposal(Employee emp)
     {
         _proposal.GetProposal(Id).Employees.Remove(emp);
-        _proposal.GetProposal(Id).AltRc.Remove(emp.EmployeeId);
+        _proposal.GetProposal(Id).AltRc.Remove(emp.EmployeeID);
     }
 
     private void ReturnToProposal(int proposalId)
