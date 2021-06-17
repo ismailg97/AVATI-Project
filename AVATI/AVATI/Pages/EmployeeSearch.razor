@@ -26,13 +26,13 @@
         <label class="font-weight-bold">Mitarbeitername <small class="text-muted">(Optional)</small> </label>
         <InputText type="text" class="form-control col-8" placeholder="Vor- und Nachname" @bind-Value="_searchService.EmployeeName"/>
     </div>
-    <label class="font-weight-bold">Hardskills: </label>
+    <label class="font-weight-bold">Hardskills/Kategorien: </label>
     <div class="form-group col-9" style="min-height: 96px; border: 2px solid darkslategray;  border-radius: 6px">
 
         <div class="row">
             @if (!_searchService.HardskillsToSearch.Any())
             {
-                <div class="text-muted mt-2 ml-2">[Über die untenstehenden Buttons Hardskills ergänzen]</div>
+                <div class="text-muted mt-2 ml-2">[Über die untenstehenden Buttons Hardskills/Kategorien ergänzen]</div>
             }
             @foreach (var hardskill in  _searchService.HardskillsToSearch)
             {
@@ -44,21 +44,38 @@
 
 
     </div>
-    <label for="suche">Suche <small class="text-muted">Nach individuellen Hardskills suchen</small></label>
-    <div class="form-group row col">
-        <div class="form-group row col">
-            <input type="search" class="col-7 form-control mr-2" id="suche" @bind-value="TempHardskill" @bind-value:event="oninput" placeholder="C++, Javascript etc."/>
-        </div>
-    </div>
-    <div class="form-group row col-10">
-        <div class="list-group border-dark border overflow-auto mr-3 col-9" style="height: 200px">
-            @foreach (var hardskill in _searchService.HardskillsToDisplay)
-            {
-                @if (TempHardskill == null || hardskill.Description.Contains(TempHardskill, StringComparison.OrdinalIgnoreCase))
+
+    <div class="form-group row">
+        <div class="col-4 mr-4">
+            <label for="suche">Filter <small class="text-muted">(Nach individuellen Hardskills suchen)</small></label>
+            <input type="search" class="col form-control" id="suche" @bind-value="TempHardskill" @bind-value:event="oninput" placeholder="Hardskill..."/>
+            <div class="form-group row col">
+
+            </div>
+            <div class="list-group overflow-auto" style="height: 200px;  border: 3px solid lightgreen; border-radius: 6px; min-width:90%">
+                @foreach (var hardskill in _searchService.HardskillsToDisplay)
                 {
-                    <button class="btn btn-outline-dark" @onclick=@(() => { _searchService.AddHardSearch(hardskill); })>@hardskill.Description</button>
+                    @if (TempHardskill == null || hardskill.Description.Contains(TempHardskill, StringComparison.OrdinalIgnoreCase))
+                    {
+                        <button class="btn btn-outline-dark" @onclick=@(() => { _searchService.AddHardSearch(hardskill); })>@hardskill.Description</button>
+                    }
                 }
-            }
+            </div>
+        </div>
+        <div class="col-4">
+            <label for="suche">Filter <small class="text-muted">(Nach Hardskillkategorien suchen)</small></label>
+            <input type="search" class="col form-control" id="suche" @bind-value="TempHardskill" @bind-value:event="oninput" placeholder="Hardskillkategorie..."/>
+            <div class="form-group row col">
+            </div>
+            <div class="list-group overflow-auto" style="height: 200px;  border: 3px solid lightblue; border-radius: 6px; min-width:90%">
+                @foreach (var hardskill in _searchService.HardskillsToDisplay)
+                {
+                    @if (TempHardskill == null || hardskill.Description.Contains(TempHardskill, StringComparison.OrdinalIgnoreCase))
+                    {
+                        <button class="btn btn-outline-dark" @onclick=@(() => { _searchService.AddHardSearch(hardskill); })>IchBinKategorie</button>
+                    }
+                }
+            </div>
         </div>
     </div>
     <div class="form-group">
@@ -131,7 +148,7 @@
     else
     {
         <h4 class="mb-3 font-weight-bold">Gefundene Mitarbeiter:</h4>
-        
+
         <table class="table table-bordered table-striped text-center">
             <thead>
             <tr>
