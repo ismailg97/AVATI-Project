@@ -19,7 +19,7 @@ namespace AVATI.Data.DatabaseConnection
         {
             //Uses the connection string stored in appsettings.json (Jede Person hat ihren eigenen Connection-String!!)
             return new SqlConnection
-                (_configuration.GetConnectionString("TestDBAnton"));
+                (_configuration.GetConnectionString("AVATI-Database"));
         }
 
         public bool CreateTables()
