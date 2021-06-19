@@ -24,6 +24,7 @@ namespace AVATI.Data.DatabaseConnection
 
         public bool CreateTables()
         {
+            //TODO Do this for every table
             using DbConnection db = GetConnection();
             db.Open();
             string sqlToCheck = "SELECT CASE WHEN OBJECT_ID('dbo." + "Testtabelle" + "', 'U') IS NOT NULL THEN 1 ELSE 0 END";
@@ -36,7 +37,7 @@ namespace AVATI.Data.DatabaseConnection
             else
             {
                 db.Execute("create table Testtabelle ( Id int not null identity(1, 1) primary key, Name varchar(50) not null, Skilltype bit not null)");
-                //The tables does not exist yet
+                //The tables doe not exist yet
                 
             }
                     
