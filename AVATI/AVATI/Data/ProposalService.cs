@@ -199,7 +199,7 @@ namespace AVATI.Data
             Proposal temp;
             using DbConnection db = GetConnection();
             db.Open();
-            if ((temp = db.Query<Proposal>("SELECT FROM Proposal Where ProposalId = @propId", new {propId = proposalId})
+            if ((temp = db.Query<Proposal>("SELECT * FROM Proposal Where ProposalId = @propId", new {propId = proposalId})
                 .FirstOrDefault()) == null)
             {
                 Console.WriteLine("FEEEEEHLER DAS PROPOSAL JIBT ES NICHT");
