@@ -1,32 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
+using Dapper;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace AVATI.Data
 {
     public class ProposalService : IProposalService
     {
+        private readonly IConfiguration _configuration;
         public List<Proposal> Proposals { get; set; }
-        public List<string> GetSoftskills(int proposalId)
+
+        public DbConnection GetConnection()
         {
-            return GetProposal(proposalId).Softskills;
+            return new SqlConnection
+                (_configuration.GetConnectionString("AVATI-Database"));
         }
 
-        public List<Hardskill> GetHardskills(int proposalId)
+        
+        public ProposalService(IConfiguration configuration)
         {
-            return GetProposal(proposalId).Hardskills;;
-        }
-
-        public List<string> GetFields(int proposalId)
-        {
-            return GetProposal(proposalId).Fields;
-        }
-
-        public ProposalService()
-        {
+            _configuration = configuration;
             Proposals = new List<Proposal>()
             {
-                
+
                 new Proposal()
                 {
                     ProposalID = 1,
@@ -48,7 +47,7 @@ namespace AVATI.Data
                         {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "JavaScript"}},
                     AdditionalInfo = "Die beiden Programmiersprachen sollen für diese Anwendung kombiniert werden",
                     Employees = new List<Employee>()
-                    
+
                 },
                 new Proposal()
                 {
@@ -60,7 +59,7 @@ namespace AVATI.Data
                         {new Hardskill() {Description = "C#"}, new Hardskill() {Description = "Python"}},
                     AdditionalInfo = "Facial Regognition, die unabhängig vom Smartphone funktioniert",
                     Employees = new List<Employee>()
-                    
+
                 },
                 new Proposal()
                 {
@@ -72,7 +71,7 @@ namespace AVATI.Data
                         {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
                     AdditionalInfo = "Das Projekt versucht einer HTML - Seite Tetris beizubringen",
                     Employees = new List<Employee>()
-                    
+
                 },
                 new Proposal()
                 {
@@ -84,7 +83,7 @@ namespace AVATI.Data
                         {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
                     AdditionalInfo = "Das System soll Einbrecher identifizieren können",
                     Employees = new List<Employee>()
-                   
+
                 },
                 new Proposal()
                 {
@@ -97,7 +96,7 @@ namespace AVATI.Data
                         {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
                     AdditionalInfo = "<<Empty>>",
                     Employees = new List<Employee>()
-                    
+
                 },
                 new Proposal()
                 {
@@ -109,67 +108,85 @@ namespace AVATI.Data
                         {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
                     AdditionalInfo = "Die finale Version des HTML - Projekts",
                     Employees = new List<Employee>()
-                 
+
                 },
             };
         }
 
-
-        public bool CreateProposal(string title, List<string> Softskills, List<string> Fields,
-            List<Hardskill> Hardskills, List<Employee> Employees)
+        public List<string> GetSoftskills(int proposalId)
         {
-            throw new System.NotImplementedException();
+            return GetProposal(proposalId).Softskills;
         }
+
+        public List<Hardskill> GetHardskills(int proposalId)
+        {
+            return GetProposal(proposalId).Hardskills;;
+        }
+
+        public List<string> GetFields(int proposalId)
+        {
+            return GetProposal(proposalId).Fields;
+        }
+
+        
 
         public bool UpdateProposal(int id, Proposal proposal)
         {
-            Proposal temp = GetProposal(id);
-            if (temp != null)
+
+            using DbConnection db = GetConnection();
+            db.Open();
+            var result = db.Query<Proposal>("SELECT * FROM Proposal WHERE ProposalID = @propId",
+                new {propId = id});
+            if (result.FirstOrDefault() == null)
             {
-                temp = proposal;
-                return true;
+                db.Execute("INSERT INTO Proposal VALUES(@proposalTitle, @Info)",
+                    new {proposalTitle = proposal.ProposalTitle ?? "LEER", Info = proposal.AdditionalInfo ?? "[Keine Zusatzinformationen]"});
             }
             else
             {
-                if (proposal.ProposalTitle == null)
-                {
-                    proposal.ProposalTitle = "leer";
-                }
-                proposal.ProposalID = Proposals.Max(e => e.ProposalID) + 1;
-                Proposals.Add(proposal);
+                db.Execute("update Proposal set ProposalTitle = @propTitle, AdditionalInfo = @addInfo where ProposalId = @propId", new
+                    {propTitle = proposal.ProposalTitle ?? "Leer", addInfo = proposal.AdditionalInfo ?? "[Keine Zusatzinformationen", propId = id});
             }
-
+            
+            
             return false;
         }
 
         public bool DeleteProposal(int proposalId)
         {
-            if (GetProposal(proposalId) != null)
+            using DbConnection db = GetConnection();
+            db.Open();
+            if (db.Query<Proposal>("SELECT * FROM PROPOSAL WHERE ProposalId = @propID", new {propId = proposalId})
+                .FirstOrDefault() == null)
             {
-                Proposals.Remove(Proposals.Find(e => e.ProposalID == proposalId));
+                Console.WriteLine("fehler beim löschen des Probosals");
+                return false;
+            }
+            else
+            {
+                db.Execute("DELETE FROM Proposal WHERE ProposalId = @propId", new {propId = proposalId});
                 return true;
             }
-
-            return false;
+            
         }
 
         public int CopyProposal(int proposalId)
         {
+            using DbConnection db = GetConnection();
             Proposal temp;
-            if (GetProposal(proposalId) != null)
+            db.Open();
+            if ((temp = db.Query<Proposal>("SELECT * FROM Proposal WHERE ProposalId = @propId", new {propId = proposalId})
+                .FirstOrDefault()) == null)
             {
-                temp = GetProposal(proposalId);
-                Proposals.Add(new Proposal()
-                {
-                    ProposalID = Proposals.Max(e => e.ProposalID) + 1, Employees = temp.Employees, Fields = temp.Fields,
-                    Hardskills = temp.Hardskills, Softskills = temp.Softskills, AdditionalInfo = temp.AdditionalInfo,
-                    ProposalTitle = String.Concat(temp.ProposalTitle, " [KOPIE]")
-                });
-
-                return Proposals.Max(e => e.ProposalID);
+                return 0;
             }
-
-            return 0;
+            else
+            {
+                db.Execute("INSERT INTO Proposal VALUES(@title, @addInfo)",
+                    new {title = temp.ProposalTitle, addInfo = temp.AdditionalInfo});
+                return db.Query<int>("SELECT max(ProposalID) from Proposal").First();
+            }
+            
         }
 
         public bool GenerateDocument(int proposalId)
@@ -179,13 +196,18 @@ namespace AVATI.Data
 
         public Proposal GetProposal(int proposalId)
         {
-            if (Proposals.Find(e => e.ProposalID == proposalId) != null)
+            Proposal temp;
+            using DbConnection db = GetConnection();
+            db.Open();
+            if ((temp = db.Query<Proposal>("SELECT FROM Proposal Where ProposalId = @propId", new {propId = proposalId})
+                .FirstOrDefault()) == null)
             {
-                return Proposals.Find(e => e.ProposalID == proposalId);
+                Console.WriteLine("FEEEEEHLER DAS PROPOSAL JIBT ES NICHT");
+                return null;
             }
             else
             {
-                return null;
+                return temp;
             }
         }
 

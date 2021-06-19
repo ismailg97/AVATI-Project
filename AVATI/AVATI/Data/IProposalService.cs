@@ -11,8 +11,6 @@ namespace AVATI.Data
         public List<Hardskill> GetHardskills(int proposalId);
 
         public List<string> GetFields(int proposalId);
-                
-        public bool CreateProposal(string title, List<string> Softskills, List<string> Fields, List<Hardskill> Hardskills, List<Employee> Employees);
 
         public bool UpdateProposal(int Id, Proposal proposal);
 
