@@ -1,4 +1,6 @@
-﻿@page "/"
+﻿@inject DatabaseUtils _database
+@page "/"
+@using AVATI.Data.DatabaseConnection
 
 <div class="row justify-content-center mb-2">
     <h1>Hello, world!</h1>
@@ -19,3 +21,11 @@
         <button type="button" class="btn btn-secondary">Profil</button>
     </a>
 </div>
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        _database.CreateTables();
+    }
+}
