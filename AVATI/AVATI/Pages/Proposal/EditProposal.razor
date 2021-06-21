@@ -31,6 +31,17 @@
                             <InputText id="title" class="form-control" @bind-Value="@Proposal.ProposalTitle" placeholder="Titel"></InputText>
 
                         </div>
+                        <div class="row mb-2">
+                            <div class="col">
+                                <label for="start">Vsl. Start </label>
+                                <InputDate id="start" class="form-control col" @bind-Value="@Proposal.Start"></InputDate>
+                            </div>
+                            <div class="col">
+                                <label for="ende">Vsl. Ende </label>
+                                <InputDate id="ende" class="form-control col" @bind-Value="@Proposal.End"></InputDate>
+                            </div>
+
+                        </div>
                         <div class="form-group">
                             <label class="mr-3">Hardskills: </label>
                             @foreach (var hardskill in Proposal.Hardskills)
@@ -78,7 +89,7 @@
                             @foreach (var field in Proposal.Fields)
                             {
                                 <button type="button" class="btn btn-outline-success btn-sm mr-2 section" @onclick=@(() => { Proposal.Fields.Remove(field); })>
-                                    @field <span class="oi oi-x cross" ></span>
+                                    @field <span class="oi oi-x cross"></span>
                                 </button>
                             }
                         </div>
@@ -123,10 +134,10 @@
 
     [Parameter]
     public int Id { get; set; }
-    
+
     [Parameter]
     public ProposalOverview Abstract { get; set; }
-    
+
     public string TempHardskill { get; set; }
     public bool ShowBackdrop { get; set; }
     public Proposal Proposal;
@@ -146,6 +157,8 @@
         {
             Proposal = new Proposal()
             {
+                Start = TempProp.Start,
+                End = TempProp.End,
                 AdditionalInfo = TempProp.AdditionalInfo,
                 ProposalTitle = TempProp.ProposalTitle,
                 Hardskills = TempProp.Hardskills,
@@ -167,7 +180,6 @@
     {
         if (Id != 0)
         {
-
             _proposal.UpdateProposal(Id, Proposal);
         }
         else
