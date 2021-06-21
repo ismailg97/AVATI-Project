@@ -213,11 +213,11 @@
 
                         @if (Id != 0 && _proposal.GetProposal(Id).Employees.Find(e => e.EmployeeID == employee.EmployeeID) == null)
                         {
-                            <button class="btn btn-sm btn-outline-success" @onclick=@(() => { AddToProposal(employee); })>Hinzufügen</button>
+                            <button class="btn btn-sm btn-outline-success" @onclick=@(() => { _proposal.AddEmployee(Id, employee.EmployeeID, employee.Rc); })>Hinzufügen</button>
                         }
                         else if (Id != 0 && _proposal.GetProposal(Id).Employees.Find(e => e.EmployeeID == employee.EmployeeID) != null)
                         {
-                            <button class="btn btn-sm btn-outline-danger" @onclick=@(() => { RemoveFromProposal(employee); })>Löschen</button>
+                            <button class="btn btn-sm btn-outline-danger" @onclick=@(() => { _proposal.RemoveEmployee(Id, employee.EmployeeID); })>Löschen</button>
                         }
                         else if (employee.IsActive)
                         {

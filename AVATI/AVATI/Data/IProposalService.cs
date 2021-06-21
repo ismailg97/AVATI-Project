@@ -20,6 +20,10 @@ namespace AVATI.Data
 
         public bool GenerateDocument(int proposalId);
 
+        public bool RemoveEmployee(int propId, int emp);
+
+        public bool AddEmployee(int propId, int emp, int rc);
+        
         public Proposal GetProposal(int proposalId);
 
         public List<Proposal> GetAllProposals();

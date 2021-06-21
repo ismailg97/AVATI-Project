@@ -14,6 +14,7 @@ namespace AVATI.Data
         private readonly IConfiguration _configuration;
         public List<Proposal> Proposals { get; set; }
         private EmployeeDetailService _employeeDetailService;
+
         public DbConnection GetConnection()
         {
             return new SqlConnection
@@ -42,6 +43,64 @@ namespace AVATI.Data
             return GetProposal(proposalId).Fields;
         }
 
+        public bool RemoveEmployee(int propId, int empId)
+        {
+            using DbConnection db = GetConnection();
+            db.Open();
+            db.Execute("Delete FROM EmployeeDetail_Softskill WHERE ProposalId = @prop and EmployeeId = @emp",
+                new {prop = propId, emp = empId});
+            db.Execute("Delete FROM EmployeeDetail_Hardskill WHERE ProposalId = @prop and EmployeeId = @emp",
+                new {prop = propId, emp = empId});
+            db.Execute("Delete FROM EmployeeDetail_Field WHERE ProposalId = @prop and EmployeeId = @emp",
+                new {prop = propId, emp = empId});
+            db.Execute("Delete FROM EmployeeDetail_Language WHERE ProposalId = @prop and EmployeeId = @emp",
+                new {prop = propId, emp = empId});
+            db.Execute("Delete FROM EmployeeDetail_Role WHERE ProposalId = @prop and EmployeeId = @emp",
+                new {prop = propId, emp = empId});
+            db.Execute("Delete FROM EmployeeDetail WHERE ProposalId = @prop and EmployeeId = @emp",
+                new {prop = propId, emp = empId});
+            return true;
+        }
+
+        public bool AddEmployee(int propId, int empl, int rc)
+        {
+            using DbConnection db = GetConnection();
+            db.Open();
+            Employee tempEmp =
+                db.QuerySingle<Employee>("SELECT * FROM Employee WHERE EmployeeID = @emp", new {emp = empl});
+            if (tempEmp == null)
+            {
+                Console.WriteLine("Damn Bro");
+            }
+            db.Execute("INSERT INTO EmployeeDetail VALUES(@prop, @emp, @oldRc)",
+                new {prop = propId, emp = empl, oldRc = rc});
+            foreach (var field in tempEmp.Field)
+            {
+                db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@prop, @emp, @value)",
+                    new {prop = propId, emp = empl, value = field});
+            }
+            foreach (var hardskill in tempEmp.Hardskills)
+            {
+                db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@prop, @emp, @value)",
+                    new {prop = propId, emp = empl, value = hardskill.Description});
+            }
+            foreach (var language in tempEmp.Language)
+            {
+                db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@prop, @emp, @value)",
+                    new {prop = propId, emp = empl, value = language});
+            }
+            foreach (var role in tempEmp.Roles)
+            {
+                db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@prop, @emp, @value)",
+                    new {prop = propId, emp = empl, value = role});
+            }
+            foreach (var softskill in tempEmp.Softskills)
+            {
+                db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@prop, @emp, @value)",
+                    new {prop = propId, emp = empl, value = softskill});
+            }
+            return true;
+        }
 
         public bool UpdateProposal(int id, Proposal proposal)
         {
@@ -112,10 +171,12 @@ namespace AVATI.Data
         {
             using DbConnection db = GetConnection();
             db.Open();
-            foreach (var empId in db.Query<int>("SELECT EmployeeID from EmployeeDetail WHERE ProposalID = @prop", new {prop = proposalId}))
+            foreach (var empId in db.Query<int>("SELECT EmployeeID from EmployeeDetail WHERE ProposalID = @prop",
+                new {prop = proposalId}))
             {
                 _employeeDetailService.DeleteEmployeeDetail(empId, proposalId);
             }
+
             if (db.Query<Proposal>("SELECT * FROM PROPOSAL WHERE ProposalId = @propID", new {propId = proposalId})
                 .FirstOrDefault() == null)
             {
@@ -204,6 +265,10 @@ namespace AVATI.Data
                 {
                     temp.Employees.Add(db.QuerySingle<Employee>("SELECT * FROM Employee WHERE EmployeeID = @empId",
                         new {empId = employeeId}));
+                    temp.AltRc.Add(employeeId,
+                        db.QuerySingle<int>(
+                            "SELECT AltRC FROM EmployeeDetail WHERE EmployeeID = @empId and ProposalID = @prop",
+                            new {empId = employeeId, prop = proposalId}));
                 }
 
                 temp.Softskills = new List<string>(db
@@ -211,6 +276,7 @@ namespace AVATI.Data
                         new {propId = proposalId}).ToList());
                 temp.Fields = new List<string>(db.Query<string>(
                     "SELECT Field from Proposal_Fields where ProposalId = @propId", new {propId = proposalId}));
+
                 return temp;
             }
         }
