@@ -8,7 +8,7 @@
 
 @if (ShowEdit)
 {
-    if (_tempEmp != null)
+    if (EmployeeDet != null)
     {
         <div class="modal fade show d-block" data-bs-backdrop="static" id="exampleModal" role="dialog">
             <div class="modal-dialog" style="min-width: 1500px" role="document">
@@ -28,27 +28,27 @@
                                         <h5 class="card-title">@_employeeService.GetEmployeeProfile(EmpId).FirstName @_employeeService.GetEmployeeProfile(EmpId).LastName</h5>
                                         <div class="card-title text-left">
                                             Rate Card Level:
-                                            @if (TempEmpDetail.RcVis())
+                                            @if (EmployeeDet.Rc != 0)
                                             {
-                                                <button class="btn btn-sm btn-outline-success" @onclick=@(() => { _employeeDetailService.DeleteRc(TempEmpDetail); })>@_employeeService.GetEmployeeProfile(EmpId).Rc</button>
+                                                <button class="btn btn-sm btn-outline-success" @onclick=@(() => { _employeeDetailService.DeleteRc(Detail); })>@_employeeDetailService.GetEmployeeDetail(EmpId, PropId).Rc</button>
                                                                                                                                                                                                                  
                                             }
                                             else
                                             {
-                                                <button class="btn btn-sm btn-outline-dark" @onclick=@(() => {_employeeDetailService.AddRc(TempEmpDetail, _employeeService.GetEmployeeProfile(EmpId).Rc);})>@_employeeService.GetEmployeeProfile(EmpId).Rc</button>
+                                                <button class="btn btn-sm btn-outline-dark" @onclick=@(() => {_employeeDetailService.AddRc(Detail, _employeeService.GetEmployeeProfile(EmpId).Rc);})>@_employeeDetailService.GetEmployeeDetail(EmpId, PropId).Rc</button>
                                             }
                                         </div>
                                         <div class="card-text text-left">
                                             Branchen:
-                                            @foreach (var field in _employeeService.GetEmployeeProfile(EmpId).Field)
+                                            @foreach (var field in EmployeeDet.Field)
                                                 {
-                                                    if (TempEmpDetail.FieldVis(field))
+                                                    if (Detail.Fields.Contains(field))
                                                     {
-                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteField(TempEmpDetail, field);})>@field</button>
+                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteField(Detail, field);})>@field</button>
                                                     }
                                                     else
                                                     {
-                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddField(TempEmpDetail, field);})>@field</button>
+                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddField(Detail, field);})>@field</button>
                                                     }
                                                 }
                                         </div>
@@ -59,15 +59,15 @@
                                     <div class="card col-sm-8 border-secondary ml-2 mr-2" style="min-height: 221.883px">
                                         <div class="card-header text-left bg-transparent border-secondary">Hardskills</div>
                                         <div class="card-body text-left">
-                                            @foreach (var hardSkill in _employeeService.GetEmployeeProfile(EmpId).Hardskills)
+                                            @foreach (var hardSkill in EmployeeDet.Hardskills)
                                             {
-                                                if (TempEmpDetail.HardVis(hardSkill))
+                                                if (Detail.Hardskills.Contains(hardSkill))
                                                 {
-                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteHard(TempEmpDetail, hardSkill);})>@hardSkill.Description</button>    
+                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteHard(Detail, hardSkill);})>@hardSkill.Description</button>    
                                                 }
                                                 else
                                                 {
-                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddHard(TempEmpDetail, hardSkill);})>@hardSkill.Description</button>
+                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddHard(Detail, hardSkill);})>@hardSkill.Description</button>
                                                 }
                                                 
                                             }
@@ -76,15 +76,15 @@
                                     <div class="card col-sm-3 border-secondary">
                                         <div class="card-header text-left bg-transparent border-secondary">Sprache(n)</div>
                                         <div class="card-body text-left">
-                                            @foreach (var lang in _employeeService.GetEmployeeProfile(EmpId).Language)
+                                            @foreach (var lang in EmployeeDet.Language)
                                             {
-                                                if (TempEmpDetail.LanguageVis(lang.Item1))
+                                                if (Detail.Languages.Contains(lang))
                                                 {
-                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteLang(TempEmpDetail, lang);})>@lang.Item1 @lang.Item2</button>
+                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteLang(Detail, lang);})>@lang.Item1 @lang.Item2</button>
                                                 }
                                                 else
                                                 {
-                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddLang(TempEmpDetail, lang);})>@lang.Item1 @lang.Item2</button>
+                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddLang(Detail, lang);})>@lang.Item1 @lang.Item2</button>
                                                 }
                                             }
                                         </div>
@@ -94,15 +94,15 @@
                                         <div class="card border-secondary col-sm-8 ml-2 mr-2" style="min-height: 221.883px">
                                             <div class="card-header text-left bg-transparent border-secondary">Softskills</div>
                                             <div class="card-body text-left">
-                                                @foreach (var softSkill in _employeeService.GetEmployeeProfile(EmpId).Softskills)
+                                                @foreach (var softSkill in EmployeeDet.Softskills)
                                                 {
-                                                    if (TempEmpDetail.SoftVis(softSkill))
+                                                    if (Detail.Softskills.Contains(softSkill))
                                                     {
-                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteSoft(TempEmpDetail, softSkill);})>@softSkill</button>
+                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteSoft(Detail, softSkill);})>@softSkill</button>
                                                     }
                                                     else
                                                     {
-                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddSoft(TempEmpDetail, softSkill);})>@softSkill</button>
+                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddSoft(Detail, softSkill);})>@softSkill</button>
                                                     }
                                                 }
                                             </div>
@@ -110,15 +110,15 @@
                                         <div class="card border-secondary col-sm-3">
                                             <div class="card-header text-left bg-transparent border-secondary">Rolle(n)</div>
                                             <div class="card-body text-left">
-                                                @foreach (var role in _employeeService.GetEmployeeProfile(EmpId).Roles)
+                                                @foreach (var role in EmployeeDet.Roles)
                                                 {
-                                                    if (TempEmpDetail.RolesVis(role))
+                                                    if (Detail.Roles.Contains(role))
                                                     {
-                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteRole(TempEmpDetail, role);})>@role</button>
+                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {_employeeDetailService.DeleteRole(Detail, role);})>@role</button>
                                                     }
                                                     else
                                                     {
-                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddRole(TempEmpDetail, role);})>@role</button>
+                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {_employeeDetailService.AddRole(Detail, role);})>@role</button>
                                                     }
                                                 }
                                             </div>
@@ -130,7 +130,7 @@
                     </div>
                     <div class="modal-footer mt-5">
                         <button class="btn btn-danger" @onclick="@Close">Abbrechen</button>
-                        <button class="btn btn-success" @onclick=@(() => { _employeeDetailService.UpdateEmployeeDetail(EmpId, PropId, TempEmpDetail); Close();})>Änderungen speichern</button> <!--TODO: make work-->
+                        <button class="btn btn-success" @onclick=@(() => { _employeeDetailService.UpdateEmployeeDetail(EmpId, PropId, Detail); Close();})>Änderungen speichern</button> <!--TODO: make work-->
                     </div>
                 </div>
             </div>
@@ -155,9 +155,7 @@
     public ProposalOverview Abstract { get; set; }
     public int PropId { get; set; }
     public Data.EmployeeDetailFiles.EmployeeDetail Detail;
-    public Data.EmployeeDetailFiles.EmployeeDetail TempEmpDetail = new Data.EmployeeDetailFiles.EmployeeDetail();
-    private Employee _tempEmp;
-    private Employee _emp;
+    public Data.Employee EmployeeDet;
     public bool ShowEdit { get; set; }
     public bool ShowBackdrop { get; private set; }
 
@@ -167,21 +165,8 @@
         ShowBackdrop = !ShowBackdrop;
         EmpId = employeeId;
         PropId = proposalId;
-        if (_proposal.GetProposal(PropId) != null)
-        {
-            _tempEmp = _proposal.GetProposal(PropId).Employees.Find(e => e.EmployeeID == EmpId);
-        }
-        _emp = _employeeService.GetEmployeeProfile(EmpId);
-        if (_employeeDetailService.GetAllEmployeeDetail().Find(e => e.EmployeeId == EmpId && e.ProposalId == PropId) == null)
-        {
-            _employeeDetailService.UpdateEmployeeDetail(EmpId, PropId, new Data.EmployeeDetailFiles.EmployeeDetail()
-            {
-                Softskills = _emp.Softskills, Hardskills = _emp.Hardskills, Fields = _emp.Field, Languages = _emp.Language,
-                Roles = _emp.Roles, Rc = _emp.Rc
-            });
-        }
         Detail = _employeeDetailService.GetEmployeeDetail(EmpId, PropId);
-        _copyDetail(Detail, TempEmpDetail);
+        EmployeeDet = _employeeService.Employees.First();
         Console.WriteLine(EmpId.ToString() + PropId.ToString());
         StateHasChanged();
     }

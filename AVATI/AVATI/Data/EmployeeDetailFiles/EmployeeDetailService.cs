@@ -10,6 +10,7 @@ namespace AVATI.Data.EmployeeDetailFiles
     public class EmployeeDetailService : IEmployeeDetailService
     {
         private readonly IConfiguration _configuration;
+
         public DbConnection GetConnection()
         {
             return new SqlConnection
@@ -21,7 +22,9 @@ namespace AVATI.Data.EmployeeDetailFiles
             _configuration = configuration;
             EmployeeDetails = new List<EmployeeDetail>();
         }
+
         public List<EmployeeDetail> EmployeeDetails;
+
         public bool UpdateEmployeeDetail(EmployeeDetail employeeDetail)
         {
             throw new System.NotImplementedException();
@@ -34,8 +37,10 @@ namespace AVATI.Data.EmployeeDetailFiles
             {
                 EmployeeDetails.Add(new EmployeeDetail()
                 {
-                    EmployeeId = employeeId, ProposalId = proposalId, Rc = employeeDetail.Rc, Softskills = employeeDetail.Softskills,
-                    Hardskills = employeeDetail.Hardskills, Fields = employeeDetail.Fields, Languages = employeeDetail.Languages,
+                    EmployeeId = employeeId, ProposalId = proposalId, Rc = employeeDetail.Rc,
+                    Softskills = employeeDetail.Softskills,
+                    Hardskills = employeeDetail.Hardskills, Fields = employeeDetail.Fields,
+                    Languages = employeeDetail.Languages,
                     Roles = employeeDetail.Roles
                 });
                 return true;
@@ -60,7 +65,7 @@ namespace AVATI.Data.EmployeeDetailFiles
                 new {empID = emp, propId = proposalId});
             db.Execute("INSERT INTO EmployeeDetail VALUES(@propId, @empId, @rc)",
                 new {propId = newId, empId = emp, @rc = tempRC});
-                    
+
             foreach (var softskill in db.Query<string>(
                 "SELECT Softskill from EmployeeDetail_Softskill Where ProposalID = @propId and EmployeeID = @empId",
                 new {propId = proposalId, empId = emp}))
@@ -68,6 +73,7 @@ namespace AVATI.Data.EmployeeDetailFiles
                 db.Execute("INSERT INTO EmployeeDetail_Softskill VALUES(@newPropId, @empId, @softskillCopy)",
                     new {newPropId = newId, empId = emp, softskillCopy = softskill});
             }
+
             foreach (var field in db.Query<string>(
                 "SELECT Field from EmployeeDetail_Field Where ProposalID = @propId and EmployeeID = @empId",
                 new {propId = proposalId, empId = emp}))
@@ -75,6 +81,7 @@ namespace AVATI.Data.EmployeeDetailFiles
                 db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@newPropId, @empId, @Copy)",
                     new {newPropId = newId, empId = emp, Copy = field});
             }
+
             foreach (var role in db.Query<string>(
                 "SELECT Role from EmployeeDetail_Role Where ProposalID = @propId and EmployeeID = @empId",
                 new {propId = proposalId, empId = emp}))
@@ -82,6 +89,7 @@ namespace AVATI.Data.EmployeeDetailFiles
                 db.Execute("INSERT INTO EmployeeDetail_Role VALUES(@newPropId, @empId, @Copy)",
                     new {newPropId = newId, empId = emp, Copy = role});
             }
+
             foreach (var hardskill in db.Query<string>(
                 "SELECT Hardskill from EmployeeDetail_Hardskill Where ProposalID = @propId and EmployeeID = @empId",
                 new {propId = proposalId, empId = emp}))
@@ -89,6 +97,7 @@ namespace AVATI.Data.EmployeeDetailFiles
                 db.Execute("INSERT INTO EmployeeDetail_Hardskill VALUES(@newPropId, @empId, @Copy)",
                     new {newPropId = newId, empId = emp, Copy = hardskill});
             }
+
             foreach (var language in db.Query<string>(
                 "SELECT Language from EmployeeDetail_Language Where ProposalID = @propId and EmployeeID = @empId",
                 new {propId = proposalId, empId = emp}))
@@ -96,27 +105,60 @@ namespace AVATI.Data.EmployeeDetailFiles
                 db.Execute("INSERT INTO EmployeeDetail_Language VALUES(@newPropId, @empId, @Copy)",
                     new {newPropId = newId, empId = emp, Copy = language});
             }
+
             return true;
         }
 
         public EmployeeDetail GetEmployeeDetail(int employeeId, int proposalId)
         {
-            
-            if (EmployeeDetails?.Find(e => e.EmployeeId == employeeId) != null && EmployeeDetails.Find(e => e.ProposalId == proposalId) != null)
+            EmployeeDetail temp = new EmployeeDetail();
+            using DbConnection db = GetConnection();
+            db.Open();
+            temp.Fields =
+                new List<string>(db.Query<string>(
+                    "SELECT Field from EmployeeDetail_Field WHERE EmployeeId = @empId and ProposalId = @propId",
+                    new {empId = employeeId, propId = proposalId}));
+            temp.Softskills = new List<string>(db.Query<string>(
+                "SELECT Softskill from EmployeeDetail_Softskill WHERE EmployeeId = @empId and ProposalId = @propId",
+                new {empId = employeeId, propId = proposalId}));
+            temp.Languages = new List<Tuple<string, LanguageLevel>>();
+            foreach (var language in db.Query<string>(
+                "SELECT Language from EmployeeDetail_Language  WHERE EmployeeId = @empId and ProposalId = @propId",
+                new {empId = employeeId, propId = proposalId}))
             {
-                return EmployeeDetails.Find(e => e.EmployeeId == employeeId && e.ProposalId == proposalId);
+                temp.Languages.Add(new Tuple<string, LanguageLevel>(language,
+                    db.QuerySingle<LanguageLevel>(
+                        "SELECT Level from Employee_Language WHERE EmployeeId = @emp and Language = @lang",
+                        new {emp = employeeId, lang = language})));
             }
-            else
+
+            temp.Rc = db.QuerySingle<int>(
+                "SELECT AltRC from EmployeeDetail WHERE EmployeeId = @empId and ProposalId = @propId",
+                new {empId = employeeId, propId = proposalId});
+            temp.Hardskills = new List<Hardskill>();
+            foreach (var hardskill in db.Query<string>(
+                "SELECT Hardskill from EmployeeDetail_Hardskill WHERE EmployeeId = @empId and ProposalId = @propId",
+                new {empId = employeeId, propId = proposalId}))
             {
-                return null;
+                temp.Hardskills.Add(new Hardskill() {Description = hardskill});
             }
+
+            return temp;
         }
 
         public bool DeleteEmployeeDetail(int employeeId, int proposalId)
         {
             using DbConnection db = GetConnection();
             db.Open();
-            db.Execute("DELETE FROM EmployeeDetail WHERE EmployeeId = @empId and ProposalID = @propId",
+            db.Execute("DELETE FROM EmployeeDetail_Softskill WHERE EmployeeId = @empId and ProposalID = @propId",
+                new {empId = employeeId, propId = proposalId});
+            db.Execute("DELETE FROM EmployeeDetail_Hardskill WHERE EmployeeId = @empId and ProposalID = @propId",
+                new {empId = employeeId, propId = proposalId});
+            db.Execute("DELETE FROM EmployeeDetail_Field WHERE EmployeeId = @empId and ProposalID = @propId",
+                new {empId = employeeId, propId = proposalId});
+            db.Execute("DELETE FROM EmployeeDetail_Language WHERE EmployeeId = @empId and ProposalID = @propId",
+                new {empId = employeeId, propId = proposalId});
+            db.Execute("DELETE FROM EmployeeDetail_Role WHERE EmployeeId = @empId and ProposalID = @propId",
                 new {empId = employeeId, propId = proposalId});
             return true;
         }
