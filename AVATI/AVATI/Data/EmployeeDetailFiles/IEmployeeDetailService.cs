@@ -7,6 +7,8 @@ namespace AVATI.Data.EmployeeDetailFiles
     {
         public bool UpdateEmployeeDetail(int employeeId, int proposalId, EmployeeDetail employeeDetail);
 
+        public bool CopyDetail(int oldProp, int newProp, int empId);
+
         public EmployeeDetail GetEmployeeDetail(int employeeId, int proposalId);
 
         public bool DeleteEmployeeDetail(int employeeId, int proposalId);

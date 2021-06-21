@@ -1,12 +1,24 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using Dapper;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace AVATI.Data.EmployeeDetailFiles
 {
     public class EmployeeDetailService : IEmployeeDetailService
     {
-        public EmployeeDetailService()
+        private readonly IConfiguration _configuration;
+        public DbConnection GetConnection()
         {
+            return new SqlConnection
+                (_configuration.GetConnectionString("AVATI-Database"));
+        }
+
+        public EmployeeDetailService(IConfiguration configuration)
+        {
+            _configuration = configuration;
             EmployeeDetails = new List<EmployeeDetail>();
         }
         public List<EmployeeDetail> EmployeeDetails;
@@ -40,6 +52,53 @@ namespace AVATI.Data.EmployeeDetailFiles
             }
         }
 
+        public bool CopyDetail(int proposalId, int newId, int emp)
+        {
+            using DbConnection db = GetConnection();
+            int tempRC = db.QuerySingle<int>(
+                "SELECT AltRC from EmployeeDetail Where EmployeeId = @empID and ProposalID = @propId",
+                new {empID = emp, propId = proposalId});
+            db.Execute("INSERT INTO EmployeeDetail VALUES(@propId, @empId, @rc)",
+                new {propId = newId, empId = emp, @rc = tempRC});
+                    
+            foreach (var softskill in db.Query<string>(
+                "SELECT Softskill from EmployeeDetail_Softskill Where ProposalID = @propId and EmployeeID = @empId",
+                new {propId = proposalId, empId = emp}))
+            {
+                db.Execute("INSERT INTO EmployeeDetail_Softskill VALUES(@newPropId, @empId, @softskillCopy)",
+                    new {newPropId = newId, empId = emp, softskillCopy = softskill});
+            }
+            foreach (var field in db.Query<string>(
+                "SELECT Field from EmployeeDetail_Field Where ProposalID = @propId and EmployeeID = @empId",
+                new {propId = proposalId, empId = emp}))
+            {
+                db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@newPropId, @empId, @Copy)",
+                    new {newPropId = newId, empId = emp, Copy = field});
+            }
+            foreach (var role in db.Query<string>(
+                "SELECT Role from EmployeeDetail_Role Where ProposalID = @propId and EmployeeID = @empId",
+                new {propId = proposalId, empId = emp}))
+            {
+                db.Execute("INSERT INTO EmployeeDetail_Role VALUES(@newPropId, @empId, @Copy)",
+                    new {newPropId = newId, empId = emp, Copy = role});
+            }
+            foreach (var hardskill in db.Query<string>(
+                "SELECT Hardskill from EmployeeDetail_Hardskill Where ProposalID = @propId and EmployeeID = @empId",
+                new {propId = proposalId, empId = emp}))
+            {
+                db.Execute("INSERT INTO EmployeeDetail_Hardskill VALUES(@newPropId, @empId, @Copy)",
+                    new {newPropId = newId, empId = emp, Copy = hardskill});
+            }
+            foreach (var language in db.Query<string>(
+                "SELECT Language from EmployeeDetail_Language Where ProposalID = @propId and EmployeeID = @empId",
+                new {propId = proposalId, empId = emp}))
+            {
+                db.Execute("INSERT INTO EmployeeDetail_Language VALUES(@newPropId, @empId, @Copy)",
+                    new {newPropId = newId, empId = emp, Copy = language});
+            }
+            return true;
+        }
+
         public EmployeeDetail GetEmployeeDetail(int employeeId, int proposalId)
         {
             
@@ -55,7 +114,11 @@ namespace AVATI.Data.EmployeeDetailFiles
 
         public bool DeleteEmployeeDetail(int employeeId, int proposalId)
         {
-            throw new System.NotImplementedException();
+            using DbConnection db = GetConnection();
+            db.Open();
+            db.Execute("DELETE FROM EmployeeDetail WHERE EmployeeId = @empId and ProposalID = @propId",
+                new {empId = employeeId, propId = proposalId});
+            return true;
         }
 
         public List<EmployeeDetail> GetAllEmployeeDetail()

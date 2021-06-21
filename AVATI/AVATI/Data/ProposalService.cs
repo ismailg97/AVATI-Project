@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using AVATI.Data.EmployeeDetailFiles;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -12,105 +13,18 @@ namespace AVATI.Data
     {
         private readonly IConfiguration _configuration;
         public List<Proposal> Proposals { get; set; }
-
+        private EmployeeDetailService _employeeDetailService;
         public DbConnection GetConnection()
         {
             return new SqlConnection
                 (_configuration.GetConnectionString("AVATI-Database"));
         }
 
-        
+
         public ProposalService(IConfiguration configuration)
         {
             _configuration = configuration;
-            Proposals = new List<Proposal>()
-            {
-
-                new Proposal()
-                {
-                    ProposalID = 1,
-                    ProposalTitle = "Machine Learning with HTML",
-                    Softskills = new List<string>() {"Office", "Risk Management Skills"},
-                    Fields = new List<string>() {"Marketing", "Sales", "It-Support"},
-                    Hardskills = new List<Hardskill>()
-                        {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
-                    AdditionalInfo = "Das Projekt versucht einer HTML - Seite Tetris beizubringen",
-
-                },
-                new Proposal()
-                {
-                    ProposalID = 2,
-                    ProposalTitle = "Webanwendung mit C++ und Javascript",
-                    Softskills = new List<string>() {"Bootstrap 5 Modal Dialogs", "Charisma"},
-                    Fields = new List<string>() {"Design", "Wetter", "It-Support"},
-                    Hardskills = new List<Hardskill>()
-                        {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "JavaScript"}},
-                    AdditionalInfo = "Die beiden Programmiersprachen sollen für diese Anwendung kombiniert werden",
-                    Employees = new List<Employee>()
-
-                },
-                new Proposal()
-                {
-                    ProposalID = 3,
-                    ProposalTitle = "Facial Recognition with Smartphones",
-                    Softskills = new List<string>() {"UML - Klassendiagramme", "Risk Management Skills"},
-                    Fields = new List<string>() {"Marketing", "Sales", "AI - Development"},
-                    Hardskills = new List<Hardskill>()
-                        {new Hardskill() {Description = "C#"}, new Hardskill() {Description = "Python"}},
-                    AdditionalInfo = "Facial Regognition, die unabhängig vom Smartphone funktioniert",
-                    Employees = new List<Employee>()
-
-                },
-                new Proposal()
-                {
-                    ProposalID = 4,
-                    ProposalTitle = "Machine Learning with HTML v2",
-                    Softskills = new List<string>() {"Office", "Risk Management Skills"},
-                    Fields = new List<string>() {"Marketing", "Sales", "It-Support"},
-                    Hardskills = new List<Hardskill>()
-                        {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
-                    AdditionalInfo = "Das Projekt versucht einer HTML - Seite Tetris beizubringen",
-                    Employees = new List<Employee>()
-
-                },
-                new Proposal()
-                {
-                    ProposalID = 5,
-                    ProposalTitle = "Facial Recognition with Security Kameras",
-                    Softskills = new List<string>() {"Office", "Risk Management Skills"},
-                    Fields = new List<string>() {"Marketing", "Sales", "It-Support"},
-                    Hardskills = new List<Hardskill>()
-                        {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
-                    AdditionalInfo = "Das System soll Einbrecher identifizieren können",
-                    Employees = new List<Employee>()
-
-                },
-                new Proposal()
-                {
-                    ProposalID = 6,
-                    ProposalTitle = "Web 4.0",
-                    Softskills = new List<string>()
-                        {"Libre Office", "Risk Management Skills", "Grundlegende Mathematik"},
-                    Fields = new List<string>() {"Marketing", "Sales", "It-Support"},
-                    Hardskills = new List<Hardskill>()
-                        {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
-                    AdditionalInfo = "<<Empty>>",
-                    Employees = new List<Employee>()
-
-                },
-                new Proposal()
-                {
-                    ProposalID = 7,
-                    ProposalTitle = "Machine Learning with HTML v3",
-                    Softskills = new List<string>() {"Office", "Risk Management Skills"},
-                    Fields = new List<string>() {"Marketing", "Sales", "It-Support"},
-                    Hardskills = new List<Hardskill>()
-                        {new Hardskill() {Description = "C++"}, new Hardskill() {Description = "Python"}},
-                    AdditionalInfo = "Die finale Version des HTML - Projekts",
-                    Employees = new List<Employee>()
-
-                },
-            };
+            _employeeDetailService = new EmployeeDetailService(configuration);
         }
 
         public List<string> GetSoftskills(int proposalId)
@@ -120,7 +34,7 @@ namespace AVATI.Data
 
         public List<Hardskill> GetHardskills(int proposalId)
         {
-            return GetProposal(proposalId).Hardskills;;
+            return GetProposal(proposalId).Hardskills;
         }
 
         public List<string> GetFields(int proposalId)
@@ -128,34 +42,80 @@ namespace AVATI.Data
             return GetProposal(proposalId).Fields;
         }
 
-        
 
         public bool UpdateProposal(int id, Proposal proposal)
         {
-
             using DbConnection db = GetConnection();
             db.Open();
+            int idToUSe = id;
             var result = db.Query<Proposal>("SELECT * FROM Proposal WHERE ProposalID = @propId",
                 new {propId = id});
             if (result.FirstOrDefault() == null)
             {
                 db.Execute("INSERT INTO Proposal VALUES(@proposalTitle, @Info)",
-                    new {proposalTitle = proposal.ProposalTitle ?? "LEER", Info = proposal.AdditionalInfo ?? "[Keine Zusatzinformationen]"});
+                    new
+                    {
+                        proposalTitle = proposal.ProposalTitle ?? "LEER",
+                        Info = proposal.AdditionalInfo ?? "[Keine Zusatzinformationen]"
+                    });
+                idToUSe = db.QueryFirst<int>("SELECT max(ProposalID) from Proposal");
             }
             else
             {
-                db.Execute("update Proposal set ProposalTitle = @propTitle, AdditionalInfo = @addInfo where ProposalId = @propId", new
-                    {propTitle = proposal.ProposalTitle ?? "Leer", addInfo = proposal.AdditionalInfo ?? "[Keine Zusatzinformationen", propId = id});
+                Console.WriteLine("Are we ebin :=");
+                db.Execute(
+                    "update Proposal set ProposalTitle = @propTitle, AdditionalInfo = @addInfo where ProposalId = @propId",
+                    new
+                    {
+                        propTitle = proposal.ProposalTitle ?? "Leer",
+                        addInfo = proposal.AdditionalInfo ?? "[Keine Zusatzinformationen", propId = idToUSe
+                    });
             }
-            
-            
-            return false;
+
+            foreach (var softskill in proposal.Softskills)
+            {
+                if (db.Query<string>(
+                    "SELECT Softskill from Proposal_Softskill WHERE ProposalId = @propId and Softskill = @soft",
+                    new {propId = idToUSe, soft = softskill}).FirstOrDefault() == null)
+                {
+                    db.Query<string>("INSERT INTO Proposal_Softskill VALUES(@propId, @softskillToAdd)",
+                        new {propId = idToUSe, softskillToAdd = softskill});
+                }
+            }
+
+            foreach (var field in proposal.Fields)
+            {
+                if (db.Query<string>(
+                    "SELECT Field from Proposal_Fields WHERE ProposalId = @propId and Field = @fieldSe",
+                    new {propId = idToUSe, fieldSe = field}).FirstOrDefault() == null)
+                {
+                    db.Query<string>("INSERT INTO Proposal_Fields VALUES(@propId, @fieldToAdd)",
+                        new {propId = idToUSe, fieldToAdd = field});
+                }
+            }
+
+            foreach (var hardskill in proposal.Hardskills)
+            {
+                if (db.Query<string>(
+                    "SELECT Hardskill from Proposal_Hardskill WHERE ProposalId = @propId and Hardskill = @desc",
+                    new {propId = idToUSe, desc = hardskill.Description}).FirstOrDefault() == null)
+                {
+                    db.Query<string>("INSERT INTO Proposal_Hardskill VALUES(@propId, @hardskillToAdd)",
+                        new {propId = idToUSe, hardskillToAdd = hardskill.Description});
+                }
+            }
+
+            return true;
         }
 
         public bool DeleteProposal(int proposalId)
         {
             using DbConnection db = GetConnection();
             db.Open();
+            foreach (var empId in db.Query<int>("SELECT EmployeeID from EmployeeDetail WHERE ProposalID = @prop", new {prop = proposalId}))
+            {
+                _employeeDetailService.DeleteEmployeeDetail(empId, proposalId);
+            }
             if (db.Query<Proposal>("SELECT * FROM PROPOSAL WHERE ProposalId = @propID", new {propId = proposalId})
                 .FirstOrDefault() == null)
             {
@@ -167,7 +127,6 @@ namespace AVATI.Data
                 db.Execute("DELETE FROM Proposal WHERE ProposalId = @propId", new {propId = proposalId});
                 return true;
             }
-            
         }
 
         public int CopyProposal(int proposalId)
@@ -175,18 +134,43 @@ namespace AVATI.Data
             using DbConnection db = GetConnection();
             Proposal temp;
             db.Open();
-            if ((temp = db.Query<Proposal>("SELECT * FROM Proposal WHERE ProposalId = @propId", new {propId = proposalId})
+            if ((temp = db.Query<Proposal>("SELECT * FROM Proposal WHERE ProposalId = @propId",
+                    new {propId = proposalId})
                 .FirstOrDefault()) == null)
             {
                 return 0;
             }
             else
             {
-                db.Execute("INSERT INTO Proposal VALUES(@title, @addInfo)",
-                    new {title = temp.ProposalTitle, addInfo = temp.AdditionalInfo});
-                return db.Query<int>("SELECT max(ProposalID) from Proposal").First();
+                db.Execute("INSERT INTO Proposal VALUES(@titleCopy, @addInfo)",
+                    new {titleCopy = temp.ProposalTitle + " [Kopie]", addInfo = temp.AdditionalInfo});
+                int newId = db.Query<int>("SELECT max(ProposalID) from Proposal").First();
+                foreach (var hardskill in db.Query<string>(
+                    "SELECT Hardskill FROM Proposal_Hardskill WHERE ProposalID = @propId", new {propId = proposalId}))
+                {
+                    db.Execute("INSERT INTO Proposal_Hardskill VALUES(@id, @desc)", new {id = newId, desc = hardskill});
+                }
+
+                foreach (var field in db.Query<string>("SELECT Field FROM Proposal_Fields WHERE ProposalID = @propId",
+                    new {propId = proposalId}))
+                {
+                    db.Execute("INSERT INTO Proposal_Fields VALUES(@id, @desc)", new {id = newId, desc = field});
+                }
+
+                foreach (var softskill in db.Query<string>(
+                    "SELECT Softskill FROM Proposal_Softskill WHERE ProposalID = @propId", new {propId = proposalId}))
+                {
+                    db.Execute("INSERT INTO Proposal_Softskill VALUES(@id, @desc)", new {id = newId, desc = softskill});
+                }
+
+                foreach (var emp in db.Query<int>("SELECT EmployeeId from EmployeeDetail WHERE ProposalID = @propId",
+                    new {propId = proposalId}))
+                {
+                    _employeeDetailService.CopyDetail(proposalId, newId, emp);
+                }
+
+                return newId;
             }
-            
         }
 
         public bool GenerateDocument(int proposalId)
@@ -199,7 +183,8 @@ namespace AVATI.Data
             Proposal temp;
             using DbConnection db = GetConnection();
             db.Open();
-            if ((temp = db.Query<Proposal>("SELECT * FROM Proposal Where ProposalId = @propId", new {propId = proposalId})
+            if ((temp = db.Query<Proposal>("SELECT * FROM Proposal Where ProposalId = @propId",
+                    new {propId = proposalId})
                 .FirstOrDefault()) == null)
             {
                 Console.WriteLine("FEEEEEHLER DAS PROPOSAL JIBT ES NICHT");
@@ -207,13 +192,81 @@ namespace AVATI.Data
             }
             else
             {
+                foreach (string hardskill in db.Query<string>(
+                    "SELECT Hardskill FROM Proposal_Hardskill where ProposalId = @propId",
+                    new {propId = proposalId}).ToList())
+                {
+                    temp.Hardskills.Add(new Hardskill() {Description = hardskill});
+                }
+
+                foreach (var employeeId in db.Query<int>(
+                    "SELECT EmployeeID from EmployeeDetail WHERE ProposalId = @propId", new {propId = proposalId}))
+                {
+                    temp.Employees.Add(db.QuerySingle<Employee>("SELECT * FROM Employee WHERE EmployeeID = @empId",
+                        new {empId = employeeId}));
+                }
+
+                temp.Softskills = new List<string>(db
+                    .Query<string>("SELECT SOFTSKILL FROM Proposal_Softskill where ProposalId = @propId",
+                        new {propId = proposalId}).ToList());
+                temp.Fields = new List<string>(db.Query<string>(
+                    "SELECT Field from Proposal_Fields where ProposalId = @propId", new {propId = proposalId}));
                 return temp;
             }
         }
 
         public List<Proposal> GetAllProposals()
         {
-            return Proposals;
+            using DbConnection db = GetConnection();
+            db.Open();
+            List<Proposal> proposals = new List<Proposal>(db.Query<Proposal>("SELECT * FROM Proposal"));
+            foreach (var proposal in proposals)
+            {
+                foreach (string hardskill in db.Query<string>(
+                    "SELECT Hardskill FROM Proposal_Hardskill where ProposalId = @propId",
+                    new {propId = proposal.ProposalID}).ToList())
+                {
+                    proposal.Hardskills.Add(new Hardskill() {Description = hardskill});
+                }
+
+                foreach (var employeeId in db.Query<int>(
+                    "SELECT EmployeeID from EmployeeDetail WHERE ProposalId = @propId",
+                    new {propId = proposal.ProposalID}))
+                {
+                    proposal.Employees.Add(db.QuerySingle<Employee>("SELECT * FROM Employee WHERE EmployeeID = @empId",
+                        new {empId = employeeId}));
+                    proposal.AltRc.Add(employeeId,
+                        db.QuerySingle<int>(
+                            "SELECT AltRC from EmployeeDetail WHERE EmployeeID = @emp and ProposalID = @prop",
+                            new {emp = employeeId, prop = proposal.ProposalID}));
+                }
+
+                proposal.Softskills = new List<string>(db
+                    .Query<string>("SELECT SOFTSKILL FROM Proposal_Softskill where ProposalId = @propId",
+                        new {propId = proposal.ProposalID}).ToList());
+                proposal.Fields = new List<string>(db.Query<string>(
+                    "SELECT Field from Proposal_Fields where ProposalId = @propId",
+                    new {propId = proposal.ProposalID}));
+            }
+
+            return proposals;
+        }
+
+        public bool UpdateAltRc(int proposalId, int empId, int newRc)
+        {
+            using DbConnection db = GetConnection();
+            db.Open();
+            if (db.Execute(
+                "Update EmployeeDetail SET AltRC = @newRCLevel Where ProposalID = @propId and EmployeeId = @employeeId",
+                new {newRCLevel = newRc, propId = proposalId, employeeId = empId}) != 1)
+            {
+                Console.WriteLine("Fehler beim ändern des RC-Levels");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }

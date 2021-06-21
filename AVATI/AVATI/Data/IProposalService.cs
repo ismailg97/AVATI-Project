@@ -23,5 +23,7 @@ namespace AVATI.Data
         public Proposal GetProposal(int proposalId);
 
         public List<Proposal> GetAllProposals();
+
+        public bool UpdateAltRc(int proposalId, int empId, int newRc);
     }
 }
