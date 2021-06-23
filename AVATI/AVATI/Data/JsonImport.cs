@@ -11,7 +11,10 @@ namespace AVATI.Data
         {
             JSonStructure.Rootclass jSonContainer =
                 JsonSerializer.Deserialize<JSonStructure.Rootclass>(File.ReadAllText("Data\\datenbasis.json"));
-            
+            foreach (var VARIABLE in jSonContainer.skills.BetriebssystemeCloudPlattformenHardware.Hardware)
+            {
+                Console.WriteLine(VARIABLE);
+            }
             return jSonContainer;
         }
     }

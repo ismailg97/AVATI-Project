@@ -87,7 +87,7 @@ namespace AVATI.Data
 
             public List<string> Datenbanken { get; set; }
 
-            [JsonPropertyName("Betriebssysteme/Cloud/Plattformen/Hardware")]
+            [JsonPropertyName("Betriebssysteme/Cloud/Plattformen/Hardware ")]
             public BetriebssystemeCloudPlattformenHardware BetriebssystemeCloudPlattformenHardware { get; set; }
 
             [JsonPropertyName("Schnittstellen und Protokolle")]
