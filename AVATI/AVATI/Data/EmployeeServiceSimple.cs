@@ -1,16 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Runtime.InteropServices;
 using DocumentFormat.OpenXml.Office2016.Excel;
+using Microsoft.Extensions.Configuration;
 
 
 namespace AVATI.Data
 {
-    public class EmployeeServiceSimple : IEmployeeService
+    public class EmployeeServiceSimple 
     {
+        //private readonly IConfiguration _configuration;
         public List<Employee> Employees { get; set; }
+        
+        //public DbConnection GetConnection()
+        //{
+        //    return new SqlConnection
+        //        (_configuration.GetConnectionString("DatenbankIsmail"));
+        //}
+        
         public EmployeeServiceSimple()
         {
+            //IConfiguration configuration(als Parameter für Konstruktor)
+            //_configuration = configuration;
             Employees = new List<Employee>()
             {
                 new Employee()
@@ -49,7 +62,9 @@ namespace AVATI.Data
                         Tuple.Create<string,LanguageLevel>("Deutsch",LanguageLevel.A1), 
                         Tuple.Create<string, LanguageLevel>("Französisch", LanguageLevel.B2)
                        
-                    }, Rc = 6
+                    }, 
+                    Rc = 6,
+                    IsActive = true,
                 },
 
                 new Employee()
@@ -140,7 +155,11 @@ namespace AVATI.Data
                         Tuple.Create<string,LanguageLevel>("Englisch", LanguageLevel.B2),
                         Tuple.Create<string,LanguageLevel>("Deutsch",LanguageLevel.A1),
                         Tuple.Create<string, LanguageLevel>("Französisch", LanguageLevel.B2)
-                    }, Rc = 3
+                    }, Rc = 3,
+                    
+                    HardSkillLevel = new List<Tuple<Hardskill, int>>(),
+                    LanguageName = new List<string>(),
+                    IsActive = false,
                 },
                 new Employee()
                 {
@@ -170,11 +189,17 @@ namespace AVATI.Data
 
         public bool CreateEmployeeProfile(Employee emp)
         {
+            
+            
             Employee employee = new Employee();
             employee.Field = emp.Field;
-            employee.FirstName = employee.LastName;
+            employee.FirstName = employee.FirstName;
             employee.LastName = emp.LastName;
             employee.Language = emp.Language;
+            employee.LanguageName = emp.LanguageName;
+            employee.HardSkillLevel = emp.HardSkillLevel;
+            employee.IsActive = emp.IsActive;
+            employee.ProjectActivities = emp.ProjectActivities;
             employee.Roles = emp.Roles;
             employee.EmploymentTime = emp.EmploymentTime;
             employee.EmpType = emp.EmpType;
@@ -196,6 +221,11 @@ namespace AVATI.Data
                     employee.FirstName = employee.FirstName;
                     employee.LastName = emp.LastName;
                     employee.Language = emp.Language;
+                    employee.Image = emp.Image;
+                    employee.LanguageName = emp.LanguageName;
+                    employee.HardSkillLevel = emp.HardSkillLevel;
+                    employee.IsActive = emp.IsActive;
+                    employee.ProjectActivities = emp.ProjectActivities;
                     employee.Roles = emp.Roles;
                     employee.EmploymentTime = emp.EmploymentTime;
                     employee.EmpType = emp.EmpType;

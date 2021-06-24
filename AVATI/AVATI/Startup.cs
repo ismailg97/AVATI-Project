@@ -11,7 +11,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AVATI.Data;
-using AVATI.Data.DatabaseConnection;
 using AVATI.Data.EmployeeDetailFiles;
 using AVATI.Pages;
 using AVATI.Pages.Project;
@@ -45,7 +44,8 @@ namespace AVATI
             services.AddSingleton<Projectedit>();
             services.AddSingleton<ILoginService,LoginServiceSimple>();
             services.AddSingleton<IProposalService, ProposalService>();
-            services.AddSingleton<IEmployeeService, EmployeeServiceSimple>();
+            services.AddSingleton<SearchService>();
+            services.AddSingleton<IEmployeeService, EmployeeService>();
             services.AddBlazorDownloadFile();
             services.AddSingleton<IEmployeeDetailService, EmployeeDetailService>();
             services.AddSingleton<IProjectActivityService, ProjectActivityServiceSimple>();

@@ -4,6 +4,7 @@
 @using AVATI.Data
 @using Microsoft.AspNetCore.Components
 @using System.Linq
+@using Microsoft.Extensions.Configuration
 @inject SearchService _searchService
 @inject IHardskillService _hard
 @inject JsonImport _import
@@ -262,7 +263,7 @@
     protected override void OnInitialized()
     {
         _searchService.EmptyQuery();
-        _employee = new EmployeeServiceSimple();
+        //_employee = new EmployeeService();
         AllEmployees = _employee.GetAllEmployees();
         JSonStructure.Rootclass root = _import.ImportJsonFile();
         PseudoHardskills = new List<Hardskill>();

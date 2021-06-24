@@ -118,7 +118,7 @@ namespace AVATI.Data
 
         public void InitAttributes(List<string> softskills, List<string> roles, List<Hardskill> hardskills)
         {
-            EmployeeService = new EmployeeServiceSimple();
+            //EmployeeService = new EmployeeService();
             EmployeeList = EmployeeService.GetAllEmployees();
             Hardskills = new List<Hardskill>(hardskills);
             Softskills = new List<string>(softskills);
