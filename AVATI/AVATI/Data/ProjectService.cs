@@ -47,10 +47,6 @@ namespace AVATI.Data
                 
             }
 
-            foreach (var softskill in project.Softskills)
-            {
-                
-            }
             return true;
         }
 
@@ -69,11 +65,15 @@ namespace AVATI.Data
             Project temp;
             IDbConnection db = GetConnection();
             db.Open();
-            temp = db.Query<Project>("SELECT * from Project where ProjectID = @proId", new {proId = projectID}).FirstOrDefault();
-            if (temp == null)
-            {
-                Console.WriteLine("Project existiert nicht");
-            }
+            temp = new Project();
+            temp.Projecttitel = temp.Projectdescription = db.QuerySingle<string>("SELECT Projecttitle from Project WHERE ProjectId = @proId",
+                new {proId = projectID});
+            temp.Projectdescription = db.QuerySingle<string>("SELECT Projectdescription from Project WHERE ProjectId = @proId",
+                new {proId = projectID});
+            temp.Projectbeginning = db.QuerySingle<DateTime>("SELECT Projectbegin from Project WHERE ProjectId = @proId",
+                new {proId = projectID});
+            temp.Projectend = db.QuerySingle<DateTime>("SELECT Projectend from Project WHERE ProjectId = @proId",
+                new {proId = projectID});
             return temp;
         }
 
@@ -86,8 +86,7 @@ namespace AVATI.Data
             {
                 project.Employees = new List<Employee>();
                 project.Fields = new List<string>();
-                project.Hardskills = new List<Hardskill>();
-                
+
             }
 
             return Projects;

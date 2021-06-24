@@ -40,13 +40,11 @@ namespace AVATI
             services.AddSingleton<SearchService>();
             services.AddSingleton<IHardskillService, HardskillServiceSimple>();
             services.AddSingleton<IBasicDataService, BasicDataServiceSimple>();
-            services.AddSingleton<ProjectServiceSimple>();
-            services.AddSingleton<IProjektService, ProjectServiceSimple>();
+            services.AddSingleton<IProjektService, ProjectService>();
             services.AddSingleton<JsonImport>();
             services.AddSingleton<Projectedit>();
             services.AddSingleton<ILoginService,LoginServiceSimple>();
             services.AddSingleton<IProposalService, ProposalService>();
-            services.AddSingleton<SearchService>();
             services.AddSingleton<IEmployeeService, EmployeeServiceSimple>();
             services.AddBlazorDownloadFile();
             services.AddSingleton<IEmployeeDetailService, EmployeeDetailService>();
@@ -54,6 +52,7 @@ namespace AVATI
             services.AddSingleton<ProjectActivityServiceSimple>();
             services.AddSingleton<EmployeeServiceSimple>();
             services.AddSingleton<ProjectActivityServiceSimple>();
+            services.AddSingleton<DatabaseUtils>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
