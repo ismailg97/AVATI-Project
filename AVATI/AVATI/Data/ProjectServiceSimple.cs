@@ -40,8 +40,7 @@ namespace AVATI.Data
                         proj.Employees = project.Employees;
                         proj.Projectend = project.Projectend;
                         proj.ProjectActivities = project.ProjectActivities;
-                        proj.Softskills = project.Softskills;
-                        proj.Hardskills = project.Hardskills;
+                       
                     }
                 }
             }
@@ -52,6 +51,7 @@ namespace AVATI.Data
         public bool DeleteProject(int projectID)
         {
             Project temp = _projects.Find(x => x.ProjectID.Equals(projectID));
+            _projects.Remove(temp);
             return true;
         }
 

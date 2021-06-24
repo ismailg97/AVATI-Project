@@ -378,7 +378,7 @@
         if (_project.CreateProject(new Project()
         {
             Employees = Temp.Employees, Fields = Temp.Fields, Projectdescription = Temp.AdditionalInfo,
-            Projectbeginning = DateTime.Now, Softskills = new List<string>(Temp.Softskills), Hardskills = new List<Hardskill>(Temp.Hardskills), Projecttitel = Temp.ProposalTitle
+            Projectbeginning = DateTime.Now, Projecttitel = Temp.ProposalTitle
         }))
         {
             if (_proposal.DeleteProposal(Temp.ProposalID))

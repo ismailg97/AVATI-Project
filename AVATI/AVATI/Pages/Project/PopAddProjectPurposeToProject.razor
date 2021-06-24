@@ -1,0 +1,96 @@
+﻿@page "/PopAddProjectPurposeToProject/{ID:int}"
+
+@using AVATI.Data
+@using System.Net
+@using System.Threading
+@using Blazorise
+@using Microsoft.AspNetCore.Http.Extensions
+
+@inject Projectedit _projectedit
+@inject JsonImport _jsonImport
+@inject IProjektService _projectService
+@inject NavigationManager _navigationManager
+@inject ProjectPurposeService _projectPurpose
+
+@if (_show)
+{
+    <div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
+        <div class="modal-dialog modal-dialog-scrollable modal-xl">
+            <div class="modal-content bg-light">
+                <div class="modal-header">
+                    <h3 class="modal-title">Konfiguration von Projektzwecken</h3>
+                    <button type="button" class="close" data-dismiss="modal" @onclick=@Close>
+                        <span aria-hidden="true">x</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="min-width: 100%">
+                    <InputText id="Purpose" class="form-control" @bind-Value="@temp"></InputText>
+                    
+
+
+
+
+
+
+
+
+
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group ml-5">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                        <button type="button" class="btn btn-success" ><span class="oi oi-document" aria-hidden="true"></span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+}
+
+@if (_show)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+
+    [Parameter]
+    public int ID { get; set; }
+    
+    private bool _show = false;
+
+    public string temp { get; set; }
+    ProjectPurpose NewProjectPurpose { get; set; }
+
+
+    public void Showing(int projectID)
+    {
+        ID = projectID;
+        _show = !_show;
+        StateHasChanged();
+    }
+    
+    
+    public void Close()
+    {
+        _show = !_show;
+        StateHasChanged();
+    }
+    
+    
+    public void Submit(int ID)
+    {
+        
+        
+        
+        
+        
+        _navigationManager.NavigateTo("/Projektübersicht/Projektedit/" + ID);
+        StateHasChanged();
+    }
+    
+
+
+}
