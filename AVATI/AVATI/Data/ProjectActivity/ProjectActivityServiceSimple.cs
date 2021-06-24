@@ -19,6 +19,7 @@ namespace AVATI.Data
                 new ProjectActivity() {Description = "test2", EmployeeID = 1, ProjectID = 1},
                 new ProjectActivity() {Description = "test1", EmployeeID = 1, ProjectID = 2}
             };
+            EmpList = new List<ProjectActivity>();
         }
 
 
