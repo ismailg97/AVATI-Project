@@ -40,9 +40,7 @@ namespace AVATI.Data
                         proj.Employees = project.Employees;
                         proj.Projectend = project.Projectend;
                         proj.ProjectActivities = project.ProjectActivities;
-                        proj.Softskills = project.Softskills;
-                        proj.Hardskills = project.Hardskills;
-                        
+                       
                     }
                 }
             }
