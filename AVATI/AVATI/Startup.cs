@@ -53,6 +53,7 @@ namespace AVATI
             services.AddSingleton<ProjectActivityServiceSimple>();
             services.AddSingleton<EmployeeServiceSimple>();
             services.AddSingleton<ProjectActivityServiceSimple>();
+            services.AddSingleton<ProjectPurposeService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

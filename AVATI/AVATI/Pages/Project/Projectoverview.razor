@@ -33,11 +33,11 @@
                 <td>@String.Join(" | ", project.Fields)</td>
                 <td>
                     <a href="/Projektübersicht/Projektedit/@project.ProjectID">
-                        <button type="button" class="btn btn-primary">Edit</button>
+                        <button type="button" class="btn btn-primary"><span class="oi oi-pencil" aria-hidden="true"></span></button>
                     </a>
                     
                     <a href="/Projektübersicht/ProjectDetailedView/@project.ProjectID">
-                        <button type="button" class="btn btn-info">Detaillierte Ansicht</button>
+                        <button type="button" class="btn btn-info"><span class="oi oi-project" aria-hidden="true"></span></button>
                     </a>
                 </td>
             </tr>
@@ -45,7 +45,6 @@
     }
     </tbody>
 </table>
-
 
 @code{
     public string Input { get; set; }
