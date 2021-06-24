@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Globalization;
 using System.Linq;
 using AVATI.Data.EmployeeDetailFiles;
 using Dapper;
@@ -72,6 +73,7 @@ namespace AVATI.Data
             {
                 Console.WriteLine("Damn Bro");
             }
+
             db.Execute("INSERT INTO EmployeeDetail VALUES(@prop, @emp, @oldRc)",
                 new {prop = propId, emp = empl, oldRc = rc});
             foreach (var field in tempEmp.Field)
@@ -79,26 +81,31 @@ namespace AVATI.Data
                 db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@prop, @emp, @value)",
                     new {prop = propId, emp = empl, value = field});
             }
+
             foreach (var hardskill in tempEmp.Hardskills)
             {
                 db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@prop, @emp, @value)",
                     new {prop = propId, emp = empl, value = hardskill.Description});
             }
+
             foreach (var language in tempEmp.Language)
             {
                 db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@prop, @emp, @value)",
                     new {prop = propId, emp = empl, value = language});
             }
+
             foreach (var role in tempEmp.Roles)
             {
                 db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@prop, @emp, @value)",
                     new {prop = propId, emp = empl, value = role});
             }
+
             foreach (var softskill in tempEmp.Softskills)
             {
                 db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@prop, @emp, @value)",
                     new {prop = propId, emp = empl, value = softskill});
             }
+
             return true;
         }
 
@@ -111,11 +118,13 @@ namespace AVATI.Data
                 new {propId = id});
             if (result.FirstOrDefault() == null)
             {
-                db.Execute("INSERT INTO Proposal VALUES(@proposalTitle, @Info)",
+                db.Execute("INSERT INTO Proposal VALUES(@proposalTitle, @Info, @beg, @end)",
                     new
                     {
                         proposalTitle = proposal.ProposalTitle ?? "LEER",
-                        Info = proposal.AdditionalInfo ?? "[Keine Zusatzinformationen]"
+                        Info = proposal.AdditionalInfo ?? "[Keine Zusatzinformationen]",
+                        beg = proposal.Start.ToString("d", DateTimeFormatInfo.InvariantInfo),
+                        end = proposal.End.ToString("d", DateTimeFormatInfo.InvariantInfo)
                     });
                 idToUSe = db.QueryFirst<int>("SELECT max(ProposalID) from Proposal");
             }
@@ -203,8 +212,18 @@ namespace AVATI.Data
             }
             else
             {
-                db.Execute("INSERT INTO Proposal VALUES(@titleCopy, @addInfo)",
-                    new {titleCopy = temp.ProposalTitle + " [Kopie]", addInfo = temp.AdditionalInfo});
+                temp.Start = db.QuerySingle<DateTime>("SELECT ProposalBegin from Proposal WHERE ProposalId = @proId",
+                    new {proId = proposalId});
+                temp.End = db.QuerySingle<DateTime>("SELECT ProposalEnd from Proposal WHERE ProposalId = @proId",
+                    new {proId = proposalId});
+                db.Execute("INSERT INTO Proposal VALUES(@proposalTitle, @Info, @beg, @end)",
+                    new
+                    {
+                        proposalTitle = temp.ProposalTitle ?? "LEER"  + "[KOPIE]",
+                        Info = temp.AdditionalInfo ?? "[Keine Zusatzinformationen]",
+                        beg = temp.Start.ToString("d", DateTimeFormatInfo.InvariantInfo),
+                        end = temp.End.ToString("d", DateTimeFormatInfo.InvariantInfo)
+                    });
                 int newId = db.Query<int>("SELECT max(ProposalID) from Proposal").First();
                 foreach (var hardskill in db.Query<string>(
                     "SELECT Hardskill FROM Proposal_Hardskill WHERE ProposalID = @propId", new {propId = proposalId}))
@@ -276,7 +295,10 @@ namespace AVATI.Data
                         new {propId = proposalId}).ToList());
                 temp.Fields = new List<string>(db.Query<string>(
                     "SELECT Field from Proposal_Fields where ProposalId = @propId", new {propId = proposalId}));
-
+                temp.Start = db.QuerySingle<DateTime>("SELECT ProposalBegin from Proposal WHERE ProposalId = @proId",
+                    new {proId = proposalId});
+                temp.End = db.QuerySingle<DateTime>("SELECT ProposalEnd from Proposal WHERE ProposalId = @proId",
+                    new {proId = proposalId});
                 return temp;
             }
         }
@@ -313,6 +335,11 @@ namespace AVATI.Data
                 proposal.Fields = new List<string>(db.Query<string>(
                     "SELECT Field from Proposal_Fields where ProposalId = @propId",
                     new {propId = proposal.ProposalID}));
+                proposal.Start = db.QuerySingle<DateTime>(
+                    "SELECT ProposalBegin from Proposal WHERE ProposalId = @proId",
+                    new {proId = proposal.ProposalID});
+                proposal.End = db.QuerySingle<DateTime>("SELECT ProposalEnd from Proposal WHERE ProposalId = @proId",
+                    new {proId = proposal.ProposalID});
             }
 
             return proposals;

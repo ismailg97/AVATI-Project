@@ -52,7 +52,24 @@ namespace AVATI.Data
 
         public bool UpdateProject(Project project)
         {
-            throw new System.NotImplementedException();
+            IDbConnection db = GetConnection();
+            db.Open();
+            var result = db.Query<Project>("SELECT * FROM Project WHERE ProjectId = @propId",
+                new {propId = project.ProjectID});
+            if (result.FirstOrDefault() == null)
+            {
+                Console.WriteLine("we have a problem");
+                return false;
+            }
+            db.Execute("update Project set ProjectTitle = @propTitle, Projectdescription = @addInfo, Projectbegin = @beg, Projectend = @end where ProjectID = @propId",
+            new
+            {
+                propTitle = project.Projecttitel ?? "Leer",
+                addInfo = project.Projectdescription ?? "[Keine Zusatzinformationen", propId = project.ProjectID,
+                beg = project.Projectbeginning.ToString("d", DateTimeFormatInfo.InvariantInfo),
+                end = project.Projectend.ToString("d", DateTimeFormatInfo.InvariantInfo)
+            });
+            return true;
         }
 
         public bool DeleteProject(int projectID)
@@ -66,7 +83,7 @@ namespace AVATI.Data
             IDbConnection db = GetConnection();
             db.Open();
             temp = new Project();
-            temp.Projecttitel = temp.Projectdescription = db.QuerySingle<string>("SELECT Projecttitle from Project WHERE ProjectId = @proId",
+            temp.Projecttitel = db.QuerySingle<string>("SELECT Projecttitle from Project WHERE ProjectId = @proId",
                 new {proId = projectID});
             temp.Projectdescription = db.QuerySingle<string>("SELECT Projectdescription from Project WHERE ProjectId = @proId",
                 new {proId = projectID});
@@ -74,6 +91,7 @@ namespace AVATI.Data
                 new {proId = projectID});
             temp.Projectend = db.QuerySingle<DateTime>("SELECT Projectend from Project WHERE ProjectId = @proId",
                 new {proId = projectID});
+            temp.Fields = new List<string>();
             return temp;
         }
 
@@ -82,10 +100,16 @@ namespace AVATI.Data
             IDbConnection db = GetConnection();
             db.Open();
             Projects = new List<Project>(db.Query<Project>("SELECT * from Project"));
-            foreach (var project in Projects)
+            foreach (var temp in Projects)
             {
-                project.Employees = new List<Employee>();
-                project.Fields = new List<string>();
+                temp.Projecttitel = temp.Projectdescription = db.QuerySingle<string>("SELECT Projecttitle from Project WHERE ProjectId = @proId",
+                    new {proId = temp.ProjectID});
+                temp.Projectdescription = db.QuerySingle<string>("SELECT Projectdescription from Project WHERE ProjectId = @proId",
+                    new {proId = temp.ProjectID});
+                temp.Projectbeginning = db.QuerySingle<DateTime>("SELECT Projectbegin from Project WHERE ProjectId = @proId",
+                    new {proId = temp.ProjectID});
+                temp.Projectend = db.QuerySingle<DateTime>("SELECT Projectend from Project WHERE ProjectId = @proId",
+                    new {proId = temp.ProjectID});
 
             }
 
@@ -102,8 +126,11 @@ namespace AVATI.Data
 
         public List<string> GetAllFieldsFromOneProject(int ProjectID)
         {
-            //
-            return null;
+            IDbConnection db = GetConnection();
+            db.Open();
+            //TODO List fehlt
+            List<string> fields = new List<string>();
+            return fields;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace AVATI.Data
         public DbConnection GetConnection()
         {
             return new SqlConnection
-                (_configuration.GetConnectionString("DatenbankIsmail"));
+                (_configuration.GetConnectionString("AVATI-Database"));
         }
 
 

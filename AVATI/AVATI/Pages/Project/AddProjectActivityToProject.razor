@@ -69,8 +69,8 @@
     private string Activity { get; set; }
 
 
-    public List<ProjectActivity> ActivitiesNotInProject { get; set; }
-    public List<ProjectActivity> ActivitiesInProject { get; set; }
+    public List<ProjectActivity> ActivitiesNotInProject { get; set; } = new List<ProjectActivity>();
+    public List<ProjectActivity> ActivitiesInProject { get; set; } = new List<ProjectActivity>();
 
 
     public void Showing(int Id)
@@ -105,18 +105,7 @@
 
     protected override void OnInitialized()
     {
-        ActivitiesNotInProject = new List<ProjectActivity>(_projectActivity.GetProjectActivitiesList());
-        foreach (var variable in ActivitiesNotInProject)
-        {
-            if (_projectService.GetProject(ID).ProjectActivities.Contains(variable))
-            {
-                ActivitiesNotInProject.Remove(variable);
-            }
-        }
         
-        ActivitiesInProject = new List<ProjectActivity>(_projectService.GetProject(ID).ProjectActivities);
-
-
     }
 
     public void ReverseActivity(ProjectActivity activity)

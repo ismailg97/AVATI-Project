@@ -46,8 +46,8 @@
                 </div>
                 <div class="modal-footer">
                     <div class="form-group ml-5">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
-                        <button type="button" class="btn btn-success" @onclick="(() => { Showing(); Submit(ID); })"><span class="oi oi-document" aria-hidden="true"></span></button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Close"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                        <button type="button" class="btn btn-success" @onclick="(() => { Showing(ID); Submit(ID); })"><span class="oi oi-document" aria-hidden="true"></span></button>
                     </div>
                 </div>
             </div>
@@ -77,8 +77,9 @@
 
     JSonStructure.Rootclass jsonFields;
 
-    public void Showing()
+    public void Showing(int id)
     {
+        ID = id;
         _show = !_show;
         StateHasChanged();
     }
@@ -87,7 +88,7 @@
     {
         jsonFields = _jsonImport.ImportJsonFile();
         AttributestoDisplay = new List<string>(jsonFields.fields);
-        AttributestoSearch = new List<string>(_projectService.GetProject(ID).Fields);
+
     }
 
     public void UpdateSearch(string field)

@@ -1,13 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace AVATI.Data
 {
     //This class serves as a temporary storage of all Search-Related attributes
     public class SearchService
     {
-        //This list will recieve all Employes from the Database
+        private readonly IConfiguration _configuration;
+
+        public DbConnection GetConnection()
+        {
+            return new SqlConnection
+                (_configuration.GetConnectionString("AVATI-Database"));
+        }
+
+        public SearchService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+        
         public List<Employee> EmployeeList { get; set; }
         public IEmployeeService EmployeeService { get; set; }
 
@@ -47,6 +62,7 @@ namespace AVATI.Data
         public List<Employee> AlreadyAddedEmployees { get; set; } = new List<Employee>();
 
         //All Functions
+        
 
         public void AddSoftSearch(string softskill)
         {
@@ -118,7 +134,7 @@ namespace AVATI.Data
 
         public void InitAttributes(List<string> softskills, List<string> roles, List<Hardskill> hardskills)
         {
-            //EmployeeService = new EmployeeService();
+            EmployeeService = new EmployeeService(_configuration);
             EmployeeList = EmployeeService.GetAllEmployees();
             Hardskills = new List<Hardskill>(hardskills);
             Softskills = new List<string>(softskills);
@@ -175,7 +191,7 @@ namespace AVATI.Data
 
                 if (numberOfMatches != 0)
                 {
-                    TempEmployee.Add(new SearchService() {Employee = employee, Priority = numberOfMatches});
+                    TempEmployee.Add(new SearchService(_configuration) {Employee = employee, Priority = numberOfMatches});
                 }
 
                 if (numberOfMatches == Hardskill.Count + Softskill.Count + Rolle.Count + ((name == null) ? 0 : 1))

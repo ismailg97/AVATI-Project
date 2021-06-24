@@ -226,12 +226,13 @@
 
     private void Save()
     {
+        Project.ProjectID = ID;
         _projectService.UpdateProject(Project);
     }
 
     public void PopAddFieldToProject()
     {
-        _addFieldToProject.Showing();
+        _addFieldToProject.Showing(ID);
     }
 
     public void PopAddProjectActivity(int ID)
@@ -242,8 +243,6 @@
     protected override void OnInitialized()
     {
         Activitieslist = _projectActivity.ReturnListProjectActivities(ID);
-        Project temp = _projectService.GetProject(ID);
-        temp.ProjectActivities = Activitieslist;
         Project = _projectService.GetProject(ID);
     }
 

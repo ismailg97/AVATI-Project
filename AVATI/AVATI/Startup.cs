@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AVATI.Data;
+using AVATI.Data.DatabaseConnection;
 using AVATI.Data.EmployeeDetailFiles;
 using AVATI.Pages;
 using AVATI.Pages.Project;
@@ -53,6 +54,7 @@ namespace AVATI
             services.AddSingleton<EmployeeServiceSimple>();
             services.AddSingleton<ProjectActivityServiceSimple>();
             services.AddSingleton<DatabaseUtils>();
+            services.AddSingleton<ProjectPurposeService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
