@@ -3,49 +3,68 @@
 @inject ILoginService _login
 @inject NavigationManager _navManager
 
-<link href="css/Login.razor.css" rel="stylesheet" />
-<img style="alignment: center" src="https://xitaso.com/wp-content/uploads/Office_Austrasse.jpg" alt="" />
-<!------ SideBar ---------->
-<div style="text-align:left">
-    <div style="width: 30%" class="sidenav">
-        <div style="margin-top: 10px" class="login-main-text">
-            <h3>Login</h3>
-            <p>Melde dich von hier aus an, um dein Mitarbeiterprofil zu sehen</p>
-            <!------ Binds inputted Username and Password to log and calls "LoginCheck" on Valid Submit ---------->
-            <EditForm Model="Log" OnValidSubmit="@LoginCheck">
-                <div class="main">
-                    <div class="col-md-6 col-sm-12">
-                        <div class="login-form">
-                             
-                            <p class="@(_boolean ? "" : "collapse") " style=" color: #ff0000"><div class="alert alert-danger">Falscher Benutzername oder falsches Passwort eingegeben.<br/> Bitte versuchen Sie erneut.</div></p>
-                             
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<!------ Include the above in your HEAD tag ---------->
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+
+<div id="bg-img" class="container">
+    <div style="margin-left: 400px;" class="container">
+        <br>
+        <hr>
+        <div class="row">
+            <aside class="col-sm-4">
+                <div style="margin-top: 50%" class="card">
+                    <article class="card-body">
+                        <h4 class="card-title text-center mb-4 mt-1">Anmelden</h4>
+                        <hr>
+                        <p class=" text-center">Bitte geben Sie hier ihre Nutzerdaten ein</p>
+                        <p class="@(_boolean ? "" : "collapse") " style=" color: #ff0000">
+                            <div class="alert alert-danger">Falscher Benutzername oder falsches Passwort eingegeben.<br/> Bitte versuchen Sie erneut.</div>
+                        </p>
+                        <EditForm Model="Log" OnValidSubmit="@LoginCheck">
                             <div class="form-group">
-                                <label>Benutzername</label>
-                                <InputText type="username" id="username" @bind-Value="Log.Username" placeholder="Max Mustermann"></InputText>
-                            </div>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-user"></i>
+                                        </span>
+                                    </div>
+                                    <InputText name="" class="form-control" id="username" placeholder="Max Mustermann" @bind-Value="Log.Username" ></InputText>
+                                </div> <!-- input-group.// -->
+                            </div> <!-- form-group// -->
                             <div class="form-group">
-                                <label>Passwort</label>
-                                <InputText type="password" id="password" @bind-Value="Log.Password" placeholder="123456"></InputText>
-                            </div>
-                            <button type="submit" class="btn btn-secondary">Login</button>
-                        </div>
-                    </div>
-                </div>
-            </EditForm>
-            <!------  ---------->
-        </div>     
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-lock"></i>
+                                        </span>
+                                    </div>
+                                    <InputText class="form-control" @bind-Value="Log.Password"  placeholder="123456" type="password"></InputText>
+                                </div> <!-- input-group.// -->
+                            </div> <!-- form-group// -->
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary btn-block"> Login </button>
+                            </div> <!-- form-group// -->
+                        </EditForm>
+                    </article>
+                </div> <!-- card.// -->
+
+            </aside> <!-- col.// -->
+        </div> <!-- row.// -->
     </div>
-   <!------ <text class style="margin-left: 200px">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</text>  ---------->
 </div>
+<!--container end.//-->
+
+
 @code {
     private bool _boolean = false;
     LoginClass Log = new LoginClass();
-    
+
     private void LoginCheck()
     {
         if (_login.LogIn(Log.Username, Log.Password))
         {
-           
             _navManager.NavigateTo("/profile/4");
         }
         else
@@ -53,5 +72,7 @@
             _boolean = true;
         }
     }
+
+
 
 }

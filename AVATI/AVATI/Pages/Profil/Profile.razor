@@ -15,7 +15,13 @@
         <div class="row">
             <div class="col-md-4">
                 <div style="margin-top: -5%; border-radius: 80%" class="profile-img">
+                    @if(Emp.Image == null){
                     <img class="rounded" src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" style="margin-left: -45px" width="300" height="200" alt=""/>
+                    }
+                    else
+                    {
+                        <img class="rounded" src="@Emp.Image" style="margin-left: -45px" width="300" height="200" alt=""/>
+                    }
                 </div>
             </div>
             <div class="col-md-6">
@@ -218,18 +224,7 @@
     public List<ProjectActivity> ActivityList { get; set; }
 
 
-    Employee Emp = new Employee()
-    {
-        FirstName = "Ismail", LastName = "Gürsöz", Roles = new List<string>() {"Programming"}, Hardskills = new List<Hardskill>()
-        {
-            new Hardskill
-            {
-                Description = "JavaScript", Subcat = null, Uppercat = null, Height = 0
-            },
-            new Hardskill {Description = "CSS", Subcat = null, Uppercat = null, Height = 0}
-        },
-        Softskills = new List<string>() {"Teamleading"}
-    };
+    Employee Emp = new Employee();
 
     protected override void OnInitialized()
     {
