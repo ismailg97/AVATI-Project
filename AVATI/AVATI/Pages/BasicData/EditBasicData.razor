@@ -57,7 +57,7 @@
   }
 
 
-  private void Update()
+  private async Task Update()
   {
     switch (Type)
     {
@@ -71,7 +71,7 @@
         _basicDataService.UpdateRole(NewDescription, OldDescription);
         break;
     }
-    Abstract.UpdateLists();
+    await Abstract.UpdateLists();
     Showing();
     //_navigationManager.NavigateTo(_navigationManager.Uri, true);
   }

@@ -1,6 +1,5 @@
 ﻿@page "/BasicDataAbstract"
 @using AVATI.Data
-@using DocumentFormat.OpenXml.Drawing
 
 @inject IBasicDataService _basicDataService
 @inject IHardskillService _hardskillService
@@ -13,7 +12,7 @@
 <CreateBasicData @ref="_createBasicData" Type="@Type" Abstract="@this"/>
 
 <CreateHardskill @ref="_createHardskill" Abstract="@this"/>
-<EditHardskill @ref="_editHardskill" OldHardskill="@_hardskillService.GetHardskill(Description)" Abstract="@this"/>
+<EditHardskill @ref="_editHardskill" OldHardskill="@Hardskill" Abstract="@this"/>
 
 <AddHardskills @ref="_createCat" Description="" Abstract="@this"/>
 
@@ -58,7 +57,7 @@
                @bind="Filter[1]"
                @bind:event="oninput">
     </div>
-    @if (_hardskills.Any(x => IsVisible(x.Description, 1)))
+    @if (_hardskills != null && _hardskills.Any(x => IsVisible(x.Description, 1)))
     {
         <tr>
             <th>Bezeichnung</th>
@@ -103,7 +102,7 @@
                @bind="Filter[2]"
                @bind:event="oninput">
     </div>
-    @if (_hardskillCats.Any(x => IsVisible(x.Description, 2)))
+    @if (_hardskillCats != null && _hardskillCats.Any(x => IsVisible(x.Description, 2)))
     {
         <tr>
             <th>Bezeichnung</th>
@@ -117,15 +116,15 @@
 
             if (hardskillcat.IsRoot())
             {
-                if (!_showEditCat.ContainsKey(hardskillcat.Description))
+                if (!ShowEditCat.ContainsKey(hardskillcat.Description))
                 {
-                    _showEditCat.Add(hardskillcat.Description, false);
+                    ShowEditCat.Add(hardskillcat.Description, false);
                 }
 
                 <tr class="showcat">
                     <td>@hardskillcat.Description</td>
                     <td class="smalltd">
-                        @if (_showEditCat[hardskillcat.Description])
+                        @if (ShowEditCat[hardskillcat.Description])
                         {
                             <button class="btn btn-primary" @onclick="() => ShowingEditCat(hardskillcat.Description)">Abgeschlossen</button>
                         }
@@ -136,16 +135,16 @@
                     </td>
                 </tr>
 
-                if (_showEditCat[hardskillcat.Description])
+                if (ShowEditCat[hardskillcat.Description])
                 {
                     <div>
-                        <EditTreeElement Hardskills="@(new List<Hardskill>() {hardskillcat})" Abstract="@this"/>
+                        <EditTreeElement Hardskills="@(new List<string>() {hardskillcat.Description})" Abstract="@this"/>
                     </div>
                 }
                 else
                 {
                     <div class="hidecat">
-                        <TreeElement Hardskills="@(new List<Hardskill>() {hardskillcat})"/>
+                        <TreeElement Descriptions="@(new List<string>() {hardskillcat.Description})"/>
                     </div>
                 }
 
@@ -251,28 +250,30 @@
     //3: Filter for Field, 4: Filter for Role
     private string[] Filter { get; set; } = new string[5];
 
-    public Dictionary<string, bool> _showEditCat = new();
+    public Dictionary<string, bool> ShowEditCat = new();
 
     private string Description { get; set; }
+    
+    private Hardskill Hardskill { get; set; }
 
     private BasicDataType Type { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         _softskills = _basicDataService.GetAllSoftSkills();
         _fields = _basicDataService.GetAllFields();
         _roles = _basicDataService.GetAllRoles();
-        _hardskills = _hardskillService.GetAllHardskills();
-        _hardskillCats = _hardskillService.GetAllHardskillCategorys();
+        _hardskills = await _hardskillService.GetAllHardskills();
+        _hardskillCats = await _hardskillService.GetAllHardskillCategorys();
     }
 
-    public void UpdateLists()
+    public async Task UpdateLists()
     {
         _softskills = _basicDataService.GetAllSoftSkills();
         _fields = _basicDataService.GetAllFields();
         _roles = _basicDataService.GetAllRoles();
-        _hardskills = _hardskillService.GetAllHardskills();
-        _hardskillCats = _hardskillService.GetAllHardskillCategorys();
+        _hardskills = await _hardskillService.GetAllHardskills();
+        _hardskillCats = await _hardskillService.GetAllHardskillCategorys();
         StateHasChanged();
     }
 
@@ -283,11 +284,11 @@
 
     private void ShowingEditCat(string cat)
     {
-        if(!_showEditCat.ContainsKey(cat))
+        if(!ShowEditCat.ContainsKey(cat))
         {
-            _showEditCat.Add(cat, true);
+            ShowEditCat.Add(cat, true);
         }
-        _showEditCat[cat] = !_showEditCat[cat];
+        ShowEditCat[cat] = !ShowEditCat[cat];
     }
 
     void PopCreateBasicData(BasicDataType type)
@@ -310,15 +311,15 @@
         _deleteConfirmation.Showing();
     }
 
-    void PopCreateHardskill()
+    async Task PopCreateHardskill()
     {
         _createHardskill.Showing();
-        _hardskills = _hardskillService.GetAllHardskills();
+        _hardskills = await _hardskillService.GetAllHardskills();
     }
 
-    void PopEditHardskill(string description)
+    async Task PopEditHardskill(string description)
     {
-        Description = description;
+        Hardskill = await _hardskillService.GetHardskill(description);
         _editHardskill.Showing();
     }
 

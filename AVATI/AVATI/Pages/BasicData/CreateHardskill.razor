@@ -17,9 +17,12 @@
                        <label class="form-label">Oberkategorie:</label>
                        <InputSelect class="form-control" @bind-Value="@UpperCat">
                          <option value="">Keine Oberkategorie</option>
-                         @foreach (var hardskillcat in _hardskillService.GetAllHardskillCategorys())
+                         @if (_allCategorys != null)
                          {
-                           <option value="@hardskillcat.Description">@hardskillcat.Description</option>
+                           @foreach (var hardskillcat in _allCategorys)
+                           {
+                             <option value="@hardskillcat.Description">@hardskillcat.Description</option>
+                           }
                          }
                        </InputSelect>
                      </div>
@@ -46,20 +49,26 @@
 
   private Hardskill _hardskill = new();
 
-  private void Create()
+  private List<Hardskill> _allCategorys;
+
+  protected override async Task OnInitializedAsync()
+  {
+    _allCategorys = await _hardskillService.GetAllHardskillCategorys();
+  }
+
+  private async Task Create()
   {
     var hardskill = new Hardskill
     {
       Description = _hardskill.Description,
-      Uppercat = string.IsNullOrEmpty(UpperCat) ? null : _hardskillService.GetHardskillCategory(UpperCat),
-      Subcat = null,
-      Height = 0
+      Uppercat = string.IsNullOrEmpty(UpperCat) ? new List<string>() : new List<string>(){ UpperCat },
+      Subcat = null
     };
 
-    _hardskillService.CreateHardskill(hardskill);
+    await _hardskillService.CreateHardskill(hardskill);
     UpperCat = "";
     _hardskill.Description = "";
-    Abstract.UpdateLists();
+    await Abstract.UpdateLists();
     Showing();
     //_navigationManager.NavigateTo(_navigationManager.Uri, true);
   }

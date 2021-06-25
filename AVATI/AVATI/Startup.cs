@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -16,16 +17,20 @@ using AVATI.Data.EmployeeDetailFiles;
 using AVATI.Pages;
 using AVATI.Pages.Project;
 using BlazorDownloadFile;
+using Dapper;
+using Microsoft.Data.SqlClient;
 
 namespace AVATI
 {
     public class Startup
     {
         private JsonImport _import = new JsonImport();
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
             _import.ImportJsonFile();
+            _import.JsonFileToDatabase(configuration);
         }
 
         public IConfiguration Configuration { get; }
@@ -38,8 +43,8 @@ namespace AVATI
             services.AddServerSideBlazor();
             services.AddBlazorContextMenu();
             services.AddSingleton<SearchService>();
-            services.AddSingleton<IHardskillService, HardskillServiceSimple>();
-            services.AddSingleton<IBasicDataService, BasicDataServiceSimple>();
+            services.AddSingleton<IHardskillService, HardskillService>();
+            services.AddSingleton<IBasicDataService, BasicDataService>();
             services.AddSingleton<ProjectServiceSimple>();
             services.AddSingleton<IProjektService, ProjectServiceSimple>();
             services.AddSingleton<JsonImport>();
