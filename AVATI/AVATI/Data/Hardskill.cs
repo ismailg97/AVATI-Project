@@ -11,37 +11,15 @@ namespace AVATI.Data
         [NotNull]
         public string Description { get; set; }
         
-        public Hardskill Uppercat { get; set; }
+        public List<string> Uppercat { get; set; }
 
-        public List<Hardskill> Subcat { get; set; }
-        
-        //if height != 0, the so called "hardskill" is a hardskill category
-        [Required]
-        [NotNull]
-        public int Height { get; set; }
+        public List<string> Subcat { get; set; }
 
         public bool IsHardskill { get; set; } = true;
 
-        //returns the root of the tree in which the object is contained
-        public Hardskill GetRoot()
-        {
-            return Uppercat == null ? this : Uppercat.GetRoot();
-        }
-
-        public bool ContainsHardskills()
-        {
-            return Subcat != null && Subcat.Any() && Subcat[0].IsHardskill;
-        }
-
-        public bool ContainsAnyHardskills()
-        {
-            if (Subcat == null || !Subcat.Any()) return false;
-            return Subcat.Any(hardskill => hardskill.IsHardskill);
-        }
-
         public bool IsRoot()
         {
-            return (!IsHardskill && Uppercat == null);
+            return !IsHardskill && (Uppercat == null || !Uppercat.Any());
         }
     }
 }

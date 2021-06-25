@@ -1,23 +1,27 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AVATI.Data
 {
     public interface IHardskillService
     {
-        public bool CreateHardskill( Hardskill hardskill );
-        public bool UpdateHardskill( Hardskill newHardskill, Hardskill oldHardskill );
-        public bool DeleteHardskill( string description );
+        public Task<Hardskill> GetHardskillOrCategory(string description);
+        public Task<bool> CreateHardskill( Hardskill hardskill );
+        public Task<bool> UpdateHardskill( Hardskill newHardskill, Hardskill oldHardskill );
+        public Task<bool> DeleteHardskill( string description );
 
-        public Hardskill GetHardskill( string description );
-        public List<Hardskill> GetAllHardskills();
+        public Task<Hardskill> GetHardskill( string description );
+        public Task<List<Hardskill>> GetAllHardskills();
         
-        public bool CreateHardskillCategory( Hardskill hardskillcat );
-        public bool UpdateHardskillCategory(string oldDescription, string newDescription);
+        public Task<bool> CreateHardskillCategory( Hardskill hardskillcat );
+        public Task<bool> UpdateHardskillCategory(string oldDescription, string newDescription);
 
-        public bool EditHardskillsCategory(string hardskillcat, List<Hardskill> hardskills);
-        public bool DeleteHardskillCategory( string description );
+        public Task<bool> EditHardskillsCategory(string hardskillcat, List<string> hardskills);
+        public Task<bool> DeleteHardskillCategory( string description );
+
+        public Task<bool> ContainsAnyHardskills( string description );
         
-        public Hardskill GetHardskillCategory( string description );
-        public List<Hardskill> GetAllHardskillCategorys();
+        public Task<Hardskill> GetHardskillCategory( string description );
+        public Task<List<Hardskill>> GetAllHardskillCategorys();
     }
 }

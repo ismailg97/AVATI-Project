@@ -19,9 +19,12 @@
                        <label class="form-label">Oberkategorie:</label>
                        <InputSelect class="form-control" @bind-Value="@UpperCat">
                          <option value="">Keine Oberkategorie</option>
-                         @foreach (var hardskillcat in _hardskillService.GetAllHardskillCategorys())
+                         @if (_allCategorys != null)
                          {
-                           <option value="@hardskillcat.Description">@hardskillcat.Description</option>
+                           @foreach (var hardskillcat in _allCategorys)
+                           {
+                             <option value="@hardskillcat.Description">@hardskillcat.Description</option>
+                           }
                          }
                        </InputSelect>
                      </div>
@@ -49,25 +52,31 @@
   string UpperCat { get; set; }
 
   private Hardskill NewHardskill { get; set; } = new();
+  
+  private List<Hardskill> _allCategorys;
+
+  protected override async Task OnInitializedAsync()
+  {
+    _allCategorys = await _hardskillService.GetAllHardskillCategorys();
+  }
 
   protected override void OnParametersSet()
   {
     NewHardskill.Description = OldHardskill?.Description;
     if (OldHardskill != null)
     {
-      UpperCat = OldHardskill.Uppercat == null ? "" : OldHardskill.Uppercat.Description;
+      UpperCat = OldHardskill.Uppercat[0] ?? "";
     }
   }
 
-  private void Update()
+  private async Task Update()
   {
-    NewHardskill.Height = 0;
     NewHardskill.Subcat = null;
+
+    NewHardskill.Uppercat = string.IsNullOrEmpty(UpperCat) ? new List<string>() : new List<string>() {UpperCat};
     
-    NewHardskill.Uppercat = string.IsNullOrEmpty(UpperCat) ? null : _hardskillService.GetHardskillCategory(UpperCat);
-    
-    _hardskillService.UpdateHardskill(NewHardskill, OldHardskill);
-    Abstract.UpdateLists();
+    await _hardskillService.UpdateHardskill(NewHardskill, OldHardskill);
+    await Abstract.UpdateLists();
     Showing();
     //_navigationManager.NavigateTo(_navigationManager.Uri, true);
   }

@@ -5,22 +5,22 @@
 
 @inject IHardskillService _hardskillService
 
-@if (Hardskills[0].IsRoot())
+@if (_isRoot)
     {
         <div class="container">
             <ul class="tree">
-                @foreach (var hardskillcat in Hardskills) {
-            
+                @foreach (var hardskillcat in Hardskills.Keys)
+                {
                     if (!Show.ContainsKey(hardskillcat.Description))
                     {
-                        Show.Add(hardskillcat.Description, !hardskillcat.ContainsHardskills());
+                        Show.Add(hardskillcat.Description, Hardskills[hardskillcat]);
                     }
                 
                     <li><a class="@(hardskillcat.IsHardskill ? "hardskill":"cat")" type="button" @onclick="() => Showing(hardskillcat.Description)">@hardskillcat.Description</a>
                     
                         @if (Show[hardskillcat.Description] && hardskillcat.Subcat != null && hardskillcat.Subcat.Any())
                         {
-                            <TreeElement Hardskills = "@hardskillcat.Subcat"/>
+                            <TreeElement Descriptions = "@hardskillcat.Subcat"/>
                         }
                     </li>
                 }
@@ -30,18 +30,19 @@
     else
     {
         <ul>
-            @foreach (var hardskillcat in Hardskills) {
-            
+            @foreach (var hardskillcat in Hardskills.Keys)
+            {
+
                 if (!Show.ContainsKey(hardskillcat.Description))
                 {
-                    Show.Add(hardskillcat.Description, !hardskillcat.ContainsHardskills());
+                    Show.Add(hardskillcat.Description, Hardskills[hardskillcat]);
                 }
                 
                 <li><a class="@(hardskillcat.IsHardskill ? "hardskill":"cat")" type="button" @onclick="() => Showing(hardskillcat.Description)">@hardskillcat.Description</a>
                     
                     @if (Show[hardskillcat.Description] && hardskillcat.Subcat != null && hardskillcat.Subcat.Any())
                     {
-                        <TreeElement Hardskills = "@hardskillcat.Subcat"/>
+                        <TreeElement Descriptions = "@hardskillcat.Subcat"/>
                     }
                 </li>
             
@@ -53,9 +54,30 @@
 
 @code {
     [Parameter]
-    public List<Hardskill> Hardskills { get; set; }
+    public List<string> Descriptions { get; set; }
+
+    private bool _isRoot = false;
+
+    private Dictionary<Hardskill, bool> Hardskills { get; set; } = new();
 
     private Dictionary<string, bool> Show { get; set; } = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Descriptions.Any())
+        {
+            var first = await _hardskillService.GetHardskillOrCategory(Descriptions[0]);
+            if(first != null)
+                _isRoot = first.IsRoot();
+        }
+        
+        foreach (var description in Descriptions)
+        {
+            var skillOrCat = await _hardskillService.GetHardskillOrCategory(description);
+            var containsHardskill = await _hardskillService.ContainsAnyHardskills(description);
+            Hardskills.Add(skillOrCat, containsHardskill);
+        }
+    }
 
     private void Showing(string hardskill)
     {

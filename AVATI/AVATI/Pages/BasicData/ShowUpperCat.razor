@@ -1,12 +1,22 @@
 ﻿@using AVATI.Data
 
-@if (Hardskill.Uppercat != null)
+@inject IHardskillService _hardskillService
+
+@if (Hardskill != null && Hardskill.Uppercat != null && Hardskill.Uppercat.Any())
 {
-    <ShowUpperCat Hardskill="@Hardskill.Uppercat"/><a>@Hardskill.Uppercat.Description &rarr; </a>
+    <ShowUpperCat Hardskill="@Uppercat"/><a>@Hardskill.Uppercat &rarr; </a>
 }
 
 @code {
     [Parameter]
     public Hardskill Hardskill { get; set; }
+    
+    private Hardskill Uppercat { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Hardskill != null && Hardskill.Uppercat != null && Hardskill.Uppercat.Any())
+            Uppercat = await _hardskillService.GetHardskillCategory(Hardskill.Uppercat[0]);
+    }
 
 }
