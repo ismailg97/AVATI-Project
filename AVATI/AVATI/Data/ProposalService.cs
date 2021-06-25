@@ -342,6 +342,7 @@ namespace AVATI.Data
                     new {proId = proposal.ProposalID});
             }
 
+            proposals.Reverse();
             return proposals;
         }
 

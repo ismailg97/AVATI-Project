@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using Dapper;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
@@ -32,29 +34,79 @@ namespace AVATI.Data.EmployeeDetailFiles
 
         public bool UpdateEmployeeDetail(int employeeId, int proposalId, EmployeeDetail employeeDetail)
         {
-            EmployeeDetail temp;
-            if ((temp = EmployeeDetails.Find(e => e.ProposalId == proposalId && e.EmployeeId == employeeId)) == null)
+            using DbConnection db = GetConnection();
+            db.Open();
+            foreach (var soft in employeeDetail.Softskills)
             {
-                EmployeeDetails.Add(new EmployeeDetail()
+                if (db.Query<string>(
+                    "SELECT Softskill from EmployeeDetail_Softskill WHERE ProposalId = @pro and EmployeeId = @emp and Softskill = @softskill",
+                    new
+                    {
+                        pro = proposalId, emp = employeeId, softskill = soft
+                    }).FirstOrDefault() == null)
                 {
-                    EmployeeId = employeeId, ProposalId = proposalId, Rc = employeeDetail.Rc,
-                    Softskills = employeeDetail.Softskills,
-                    Hardskills = employeeDetail.Hardskills, Fields = employeeDetail.Fields,
-                    Languages = employeeDetail.Languages,
-                    Roles = employeeDetail.Roles
-                });
-                return true;
+                    db.Execute("INSERT INTO EmployeeDetail_Softskill VALUES(@proId, @empId, @softskill)",
+                        new {proId = proposalId, empId = employeeId, softskill = soft});
+                }
             }
-            else
+
+            foreach (var hard in employeeDetail.Hardskills)
             {
-                temp.Fields = employeeDetail.Fields;
-                temp.Roles = employeeDetail.Roles;
-                temp.Hardskills = employeeDetail.Hardskills;
-                temp.Languages = employeeDetail.Languages;
-                temp.Rc = employeeDetail.Rc;
-                temp.Softskills = employeeDetail.Softskills;
-                return true;
+                if (db.Query<string>(
+                    "SELECT Hardskill from EmployeeDetail_Hardskill WHERE ProposalId = @pro and EmployeeId = @emp and Hardskill = @hardskill",
+                    new
+                    {
+                        pro = proposalId, emp = employeeId, hardskill = hard
+                    }).FirstOrDefault() == null)
+                {
+                    db.Execute("INSERT INTO EmployeeDetail_Hardskill VALUES(@proId, @empId, @hardskill)",
+                        new {proId = proposalId, empId = employeeId, hardskill = hard});
+                }
             }
+
+            foreach (var lang in employeeDetail.Languages)
+            {
+                if (db.Query<string>(
+                    "SELECT Language from EmployeeDetail_Language WHERE ProposalId = @pro and EmployeeId = @emp and Language = @language",
+                    new
+                    {
+                        pro = proposalId, emp = employeeId, language = lang
+                    }).FirstOrDefault() == null)
+                {
+                    db.Execute("INSERT INTO EmployeeDetail_Language VALUES(@proId, @empId, @language)",
+                        new {proId = proposalId, empId = employeeId, language = lang});
+                }
+            }
+
+            foreach (var field in employeeDetail.Fields)
+            {
+                if (db.Query<string>(
+                    "SELECT Field from EmployeeDetail_Field WHERE ProposalId = @pro and EmployeeId = @emp and Field = @fieldd",
+                    new
+                    {
+                        pro = proposalId, emp = employeeId, fieldd = field
+                    }).FirstOrDefault() == null)
+                {
+                    db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@proId, @empId, @fieldd)",
+                        new {proId = proposalId, empId = employeeId, fieldd = field});
+                }
+            }
+
+            foreach (var role in employeeDetail.Roles)
+            {
+                if (db.Query<string>(
+                    "SELECT Role from EmployeeDetail_Role WHERE ProposalId = @pro and EmployeeId = @emp and Role = @Role",
+                    new
+                    {
+                        pro = proposalId, emp = employeeId, Role = role
+                    }).FirstOrDefault() == null)
+                {
+                    db.Execute("INSERT INTO EmployeeDetail_Role VALUES(@proId, @empId, @Role)",
+                        new {proId = proposalId, empId = employeeId, Role = role});
+                }
+            }
+
+            return true;
         }
 
         public bool CopyDetail(int proposalId, int newId, int emp)
@@ -165,67 +217,43 @@ namespace AVATI.Data.EmployeeDetailFiles
 
         public List<EmployeeDetail> GetAllEmployeeDetail()
         {
-            return EmployeeDetails;
-        }
+            using DbConnection db = GetConnection();
+            db.Open();
+            List<EmployeeDetail> employeeList =
+                new List<EmployeeDetail>(db.Query<EmployeeDetail>("SELECT * FROM EmployeeDetail"));
+            foreach (var temp in employeeList)
+            {
+                temp.Fields =
+                    new List<string>(db.Query<string>(
+                        "SELECT Field from EmployeeDetail_Field WHERE EmployeeId = @empId and ProposalId = @propId",
+                        new {empId = temp.EmployeeId, propId = temp.ProposalId}));
+                temp.Softskills = new List<string>(db.Query<string>(
+                    "SELECT Softskill from EmployeeDetail_Softskill WHERE EmployeeId = @empId and ProposalId = @propId",
+                    new {empId = temp.EmployeeId, propId = temp.ProposalId}));
+                temp.Languages = new List<Tuple<string, LanguageLevel>>();
+                foreach (var language in db.Query<string>(
+                    "SELECT Language from EmployeeDetail_Language  WHERE EmployeeId = @empId and ProposalId = @propId",
+                    new {empId = temp.EmployeeId, propId = temp.ProposalId}))
+                {
+                    temp.Languages.Add(new Tuple<string, LanguageLevel>(language,
+                        db.QuerySingle<LanguageLevel>(
+                            "SELECT Level from Employee_Language WHERE EmployeeId = @emp and Language = @lang",
+                            new {emp = temp.EmployeeId, lang = language})));
+                }
 
-        public void DeleteRc(EmployeeDetail input)
-        {
-            input.Rc = 0;
-        }
+                temp.Rc = db.QuerySingle<int>(
+                    "SELECT AltRC from EmployeeDetail WHERE EmployeeId = @empId and ProposalId = @propId",
+                    new {empId = temp.EmployeeId, propId = temp.ProposalId});
+                temp.Hardskills = new List<Hardskill>();
+                foreach (var hardskill in db.Query<string>(
+                    "SELECT Hardskill from EmployeeDetail_Hardskill WHERE EmployeeId = @empId and ProposalId = @propId",
+                    new {empId = temp.EmployeeId, propId = temp.ProposalId}))
+                {
+                    temp.Hardskills.Add(new Hardskill() {Description = hardskill});
+                }
+            }
 
-        public void DeleteField(EmployeeDetail input, string field)
-        {
-            input.Fields.Remove(field);
-        }
-
-        public void DeleteHard(EmployeeDetail input, Hardskill hardskill)
-        {
-            input.Hardskills.Remove(hardskill);
-        }
-
-        public void DeleteSoft(EmployeeDetail input, string softskill)
-        {
-            input.Softskills.Remove(softskill);
-        }
-
-        public void DeleteLang(EmployeeDetail input, Tuple<string, LanguageLevel> lang)
-        {
-            input.Languages.Remove(lang);
-        }
-
-        public void DeleteRole(EmployeeDetail input, string role)
-        {
-            input.Roles.Remove(role);
-        }
-
-        public void AddRc(EmployeeDetail input, int rc)
-        {
-            input.Rc = rc;
-        }
-
-        public void AddField(EmployeeDetail input, string field)
-        {
-            input.Fields.Add(field);
-        }
-
-        public void AddHard(EmployeeDetail input, Hardskill hardskill)
-        {
-            input.Hardskills.Add(hardskill);
-        }
-
-        public void AddSoft(EmployeeDetail input, string softskill)
-        {
-            input.Softskills.Add(softskill);
-        }
-
-        public void AddLang(EmployeeDetail input, Tuple<string, LanguageLevel> lang)
-        {
-            input.Languages.Add(lang);
-        }
-
-        public void AddRole(EmployeeDetail input, string role)
-        {
-            input.Roles.Add(role);
+            return employeeList;
         }
     }
 }

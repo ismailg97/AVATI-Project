@@ -25,8 +25,7 @@
     {
         foreach (var project in _projectService.GetAllProjects())
         {
-            @if (!IsVisible(project.Projecttitel))
-                continue;
+            
             <tr>
                 <td>@project.Projecttitel</td>
                 <td>@project.Projectdescription</td>
@@ -52,14 +51,7 @@
 
     private string Filter { get; set; }
 
-    public bool IsVisible(string titel)
-    {
-        if (string.IsNullOrEmpty(Filter))
-        {
-            return true;
-        }
-        return titel.Contains(Filter, StringComparison.OrdinalIgnoreCase);
-    }
+ 
 
     public void ProjectSuche()
     {

@@ -7,7 +7,7 @@
 @inject IProjektService _projektService
 @inject IEmployeeService _employee
 @inject NavigationManager _navManager
-@inject ProjectServiceSimple _projectServiceSimple
+@inject IProjektService _projectService
 @inject IBasicDataService _basicDataService
 @inject IHardskillService _hardskillService
 @inject IProjectActivityService _projctActivityService;
@@ -201,7 +201,7 @@
         }
     }
 </div>
-@foreach (var hardskill in _hardskillService.GetAllHardskills())
+@foreach (var hardskill in _hardskillService.GetAllHardskills().Result)
 {
     if (!Emp.Hardskills.Contains(hardskill))
     {

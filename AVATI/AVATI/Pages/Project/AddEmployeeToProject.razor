@@ -348,7 +348,7 @@
         PseudoHardskills = PseudoHardskills.OrderBy(e => e.Description).ToList();
         _searchService.InitAttributes
             (root.Softskills, root.roles,
-                PseudoHardskills);
+                PseudoHardskills, new List<Hardskill>());
         EmployeesNotInProject = _employee.GetAllEmployees();
         foreach (var elem in EmployeesNotInProject)
         {
@@ -367,7 +367,7 @@
 
     public void CallSearch()
     {
-        SelectEmployees = _searchService.SearchEmployee(_searchService.EmployeeName, _searchService.SoftskillsToSearch, _searchService.HardskillsToSearch, _searchService.RolesToSearch);
+        SelectEmployees = _searchService.SearchEmployee(_searchService.EmployeeName, _searchService.SoftskillsToSearch, _searchService.HardskillsToSearch, _searchService.RolesToSearch, _searchService.CategoriesToSearch);
 
         foreach (var employee in SelectEmployees)
         {

@@ -99,10 +99,10 @@ namespace AVATI.Data
         {
             IDbConnection db = GetConnection();
             db.Open();
-            Projects = new List<Project>(db.Query<Project>("SELECT * from Project"));
+            Projects = new List<Project>(db.Query<Project>("SELECT ProjectID from Project"));
             foreach (var temp in Projects)
             {
-                temp.Projecttitel = temp.Projectdescription = db.QuerySingle<string>("SELECT Projecttitle from Project WHERE ProjectId = @proId",
+                temp.Projecttitel = db.QuerySingle<string>("SELECT Projecttitle from Project WHERE ProjectId = @proId",
                     new {proId = temp.ProjectID});
                 temp.Projectdescription = db.QuerySingle<string>("SELECT Projectdescription from Project WHERE ProjectId = @proId",
                     new {proId = temp.ProjectID});

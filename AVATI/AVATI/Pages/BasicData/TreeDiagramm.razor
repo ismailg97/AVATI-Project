@@ -4,7 +4,7 @@
 @inject IHardskillService _hardskillService
 <h3>TreeDiagramm</h3>
 
-@foreach (Hardskill hardskillcat in _hardskillService.GetAllHardskillCategorys())
+@foreach (Hardskill hardskillcat in _hardskillService.GetAllHardskillCategorys().Result)
 {
     @if (hardskillcat.IsRoot())
     {
