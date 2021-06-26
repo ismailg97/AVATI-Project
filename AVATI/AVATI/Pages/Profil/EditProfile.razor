@@ -7,7 +7,7 @@
 @inject IProjektService _projektService
 @inject IEmployeeService _employee
 @inject NavigationManager _navManager
-@inject IProjektService _projectService
+@inject ProjectService _projectServiceSimple
 @inject IBasicDataService _basicDataService
 @inject IHardskillService _hardskillService
 @inject IProjectActivityService _projctActivityService;
@@ -201,7 +201,7 @@
         }
     }
 </div>
-@foreach (var hardskill in _hardskillService.GetAllHardskills().Result)
+@foreach (var hardskill in hardskillList)
 {
     if (!Emp.Hardskills.Contains(hardskill))
     {
@@ -344,7 +344,7 @@
 
 <div style="margin-top: 20px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
 
-<!------ Projects 
+ Projects 
 <div class="form-group col-8">
     <label class="mr-3 mt-2">Projekte: </label>
     <table align="left" style="text-align: left" class="table align-middle">
@@ -379,7 +379,7 @@
             </tr>
         }
     </table>
-</div> ---------->
+</div> 
 </div>
 </form>
 </EditForm>
@@ -397,6 +397,7 @@
     public Employee Emp;
     public Employee TEmp;
     public string workExperience;
+    public List<Hardskill> hardskillList;
 
 
     private bool _booleanProj = false;
@@ -404,9 +405,9 @@
     //private bool _booleanName;
 
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        
+        hardskillList = await _hardskillService.GetAllHardskills();
         Emp = _employee.GetEmployeeProfile(Id);
 
     }
