@@ -176,10 +176,10 @@
                                 <th class="text-left">Projekt</th>
                                 <th class="text-left">Projekttätigkeit</th>
                             </tr>
-                        @if (_projctActivityService.GetProjectActivityListEmployee(Id).Any())
+                        @if (_projctActivityService.GetProjectActivitiesEmployee(Id).Any())
                         {
                             
-                                foreach (var activity in _projctActivityService.GetProjectActivityListEmployee(Id))
+                                foreach (var activity in _projctActivityService.GetProjectActivitiesEmployee(Id))
                                 {
                                     @if( activity.EmployeeID == Id)
                                     {

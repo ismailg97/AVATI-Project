@@ -5,14 +5,15 @@ namespace AVATI.Data
     public interface IProjectActivityService
     {
         public bool SetProjectActivity(int EmployeeId, int ProjectId, string Description);
-        public bool DeleteProjectActivity(int EmployeeId, int ProjectId);
-     
-        public List<ProjectActivity> GetProjectActivities(int EmployeeId, int ProjectId);
-        public List<ProjectActivity> ReturnListProjectActivities(int ProjectID);
-        //Fehler im Designklassendiagramm
-        public List<ProjectActivity> GetProjectActivitiesList();
-        public List<ProjectActivity> GetProjectActivityListEmployee(int EmployeeId);
-        public List<ProjectActivity> GetProjectActivityListProject(int ProjectId);
+        public bool DeleteProjectActivityEmployee(int EmployeeId, int ProjectId);
+
+        public bool DeleteProjectActivity(string Description);
+        public List<ProjectActivity> GetEmployeeProjectActivities(int EmployeeId, int ProjectId);
+        public List<ProjectActivity> GetProjectActivitiesProject(int ProjectID);
+
+        public List<ProjectActivity> GetAllProjectActivities();
+        public List<ProjectActivity> GetProjectActivitiesEmployee(int EmployeeId);
+  
 
     }
 }

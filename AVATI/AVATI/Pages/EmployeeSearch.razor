@@ -290,7 +290,6 @@ else
     protected override async Task OnInitializedAsync()
     {
         _searchService.EmptyQuery();
-        //_employee = new EmployeeService();
         Task<List<Hardskill>> TempHard = _hard.GetAllHardskills();
         Task<List<Hardskill>> TempKat = _hard.GetAllHardskillCategorys();
         _hardskillCategory = await TempKat;

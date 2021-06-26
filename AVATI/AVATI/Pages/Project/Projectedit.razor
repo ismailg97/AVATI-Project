@@ -121,7 +121,7 @@
                         </th>
                         </thead>
                         <tbody>
-                        @if (!_projectActivity.ReturnListProjectActivities(ID).Any())
+                        @if (!_projectActivity.GetProjectActivitiesProject(ID).Any())
                         {
                             <tr>
                                 <td>[Weisen Sie passende Projekttätigkeiten dem Projekt zu!]</td>
@@ -129,7 +129,7 @@
                                 <td></td>
                             </tr>
                         }
-                        @foreach (var activ in _projectActivity.ReturnListProjectActivities(ID))
+                        @foreach (var activ in _projectActivity.GetProjectActivitiesProject(ID))
                         {
                             <tr>
                                 <td>@activ.Description</td>
@@ -242,7 +242,7 @@
 
     protected override void OnInitialized()
     {
-        Activitieslist = _projectActivity.ReturnListProjectActivities(ID);
+        Activitieslist = _projectActivity.GetProjectActivitiesProject(ID);
         Project = _projectService.GetProject(ID);
     }
 

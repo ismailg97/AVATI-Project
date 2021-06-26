@@ -29,9 +29,9 @@
     </tr>
     </thead>
     <tbody>
-    @if (_projctActivityService.GetProjectActivityListEmployee(Id).Any())
+    @if (_projctActivityService.GetProjectActivitiesEmployee(Id).Any())
     {
-        @foreach (var activity in _projctActivityService.GetProjectActivityListEmployee(Id))
+        @foreach (var activity in _projctActivityService.GetProjectActivitiesEmployee(Id))
         {
             //int projId = activity.ProjectID;
             Project proj = _projektService.GetProject(activity.ProjectID);
@@ -139,7 +139,7 @@
     public void deleteProjectActivity(int empId, int projId)
     {
         
-        _projctActivityService.DeleteProjectActivity(empId, projId);
+        _projctActivityService.DeleteProjectActivityEmployee(empId, projId);
         _navManager.NavigateTo("/employeeProject/" + Emp.EmployeeID, forceLoad: true);
     }
 

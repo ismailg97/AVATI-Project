@@ -44,7 +44,7 @@ namespace AVATI.Data
         }
 
 
-        public bool DeleteProjectActivity(int EmployeeId, int ProjectId)
+        public bool DeleteProjectActivityEmployee(int EmployeeId, int ProjectId)
         {
             foreach (var activity in pALIst)
             {
@@ -61,12 +61,12 @@ namespace AVATI.Data
             return false;
         }
 
-        List<ProjectActivity> IProjectActivityService.GetProjectActivities(int EmployeeId, int ProjectId)
+        List<ProjectActivity> IProjectActivityService.GetEmployeeProjectActivities(int EmployeeId, int ProjectId)
         {
             return pALIst.FindAll(x => x.ProjectID == ProjectId && x.EmployeeID == EmployeeId);
         }
 
-        public List<ProjectActivity> ReturnListProjectActivities(int ProjectID)
+        public List<ProjectActivity> GetProjectActivitiesProject(int ProjectID)
         {
             return pALIst.FindAll(x => x.ProjectID == ProjectID);
         }
@@ -88,12 +88,12 @@ namespace AVATI.Data
             return null;
         }
 
-        public List<ProjectActivity> GetProjectActivitiesList()
+        public List<ProjectActivity> GetAllProjectActivities()
         {
             return pALIst;
         }
 
-        public List<ProjectActivity> GetProjectActivityListEmployee(int EmpId)
+        public List<ProjectActivity> GetProjectActivitiesEmployee(int EmpId)
         {
             EmpList = new List<ProjectActivity>();
 
