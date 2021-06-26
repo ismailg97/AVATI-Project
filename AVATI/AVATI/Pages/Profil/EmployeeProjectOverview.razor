@@ -43,7 +43,7 @@
                     </td>
                     <td>
                         <button type="button" @onclick="(() => { setProjectActivity(Id, proj.ProjectID, activity.Description); })" class="btn btn-secondary">Bearbeiten</button>
-                        <button type="button" @onclick="(() => { deleteProjectActivity(Id, proj.ProjectID); })" class="btn btn-danger">Löschen</button>
+                        <button type="button" @onclick="(() => { deleteProjectActivity(Id, proj.ProjectID, proj.Projectdescription); })" class="btn btn-danger">Löschen</button>
                     </td>
                 </tr>
         }
@@ -136,10 +136,10 @@
         _navManager.NavigateTo("/employeeProject/" + Emp.EmployeeID, forceLoad: true);
     }
 
-    public void deleteProjectActivity(int empId, int projId)
+    public void deleteProjectActivity(int empId, int projId, string desc)
     {
         
-        _projctActivityService.DeleteProjectActivityEmployee(empId, projId);
+        _projctActivityService.DeleteProjectActivityEmployee(empId, projId, desc);
         _navManager.NavigateTo("/employeeProject/" + Emp.EmployeeID, forceLoad: true);
     }
 

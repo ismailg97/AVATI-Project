@@ -44,32 +44,19 @@
 
     [Parameter]
     public int ID { get; set; }
-
-    public Employee EmployeeToProject { get; set; } = new Employee();
-
-    public List<Employee> EmployeesAddedToProject { get; set; } = new List<Employee>();
-    public List<Employee> EmployeesNotInProject { get; set; } = new List<Employee>();
-
-    private List<Hardskill> _hardskills = new List<Hardskill>();
-    private List<string> _roles = new List<string>();
-    private List<string> _softskills = new List<string>();
-    private List<Hardskill> _hardskillCategory = new List<Hardskill>();
-    private bool PageIsLoaded = false;
-
+    
     private bool _show = false;
 
     public void Showing(int Id)
     {
         ID = Id;
         _show = !_show;
-        PageIsLoaded = true;
         StateHasChanged();
     }
 
     public void Close()
     {
         _show = !_show;
-        PageIsLoaded = false;
         StateHasChanged();
     }
 
@@ -79,94 +66,6 @@
         StateHasChanged();
     }
 
-    public void EmployeesInProject(Employee e)
-    {
-        if (EmployeesNotInProject.Contains(e))
-        {
-            EmployeesNotInProject.Remove(e);
-            EmployeesAddedToProject.Add(e);
-        }
-    }
-
-    public void EmployessOutOfProject(Employee e)
-    {
-        if (EmployeesAddedToProject.Contains(e))
-        {
-            EmployeesAddedToProject.Remove(e);
-            EmployeesNotInProject.Add(e);
-        }
-    }
-
-    public string TempHardskill { get; set; }
-
-    public List<Hardskill> PseudoHardskills { get; set; }
-
-    public List<Employee> AllEmployees { get; set; }
-
-    public List<Employee> SelectEmployees { get; set; }
-
-
-    protected override async Task OnInitializedAsync()
-    {
-        _searchService.EmptyQuery();
-    //_employee = new EmployeeService();
-        Task<List<Hardskill>> TempHard = _hard.GetAllHardskills();
-        Task<List<Hardskill>> TempKat = _hard.GetAllHardskillCategorys();
-        _hardskillCategory = await TempKat;
-        _hardskills = await TempHard;
-        AllEmployees = _employee.GetAllEmployees();
-        _roles = _basic.GetAllRoles();
-        _softskills = _basic.GetAllSoftSkills();
-        _searchService.InitAttributes(_softskills, _roles, _hardskills, _hardskillCategory);
-        PageIsLoaded = true;
-    }
-
-    public void CallSearch()
-    {
-        SelectEmployees = _searchService.SearchEmployee(_searchService.EmployeeName, _searchService.SoftskillsToSearch, _searchService.HardskillsToSearch, _searchService.RolesToSearch, _searchService.CategoriesToSearch);
-
-        foreach (var employee in SelectEmployees)
-        {
-            foreach (var emp in _projectService.GetProject(ID).Employees)
-            {
-                if (employee.EmployeeID == emp.EmployeeID)
-                {
-                    Console.WriteLine(("geht der nealsdjfnl"));
-                    SelectEmployees.Remove(emp);
-                }
-                else
-                {
-                }
-            }
-        }
-
-
-        _searchService.EmptyQuery();
-    }
-
-    public void AddToProject(Employee emp)
-    {
-        if (_projectService.GetProject(ID).Employees.Find(e => e.EmployeeID == emp.EmployeeID) == null)
-        {
-            _projectService.GetProject(ID).Employees.Add(emp);
-        }
-        else
-        {
-        }
-    }
-
-
-    public void RemoveFromProposal(Employee emp)
-    {
-        _proposal.GetProposal(ID).Employees.Remove(emp);
-        _proposal.GetProposal(ID).AltRc.Remove(emp.EmployeeID);
-    }
-
-    private void ReturnToProject(int projectID)
-    {
-        _navigationManager.NavigateTo("/Projektübersicht/Projektedit/" + ID);
-        StateHasChanged();
-    }
-
+    
 
 }
