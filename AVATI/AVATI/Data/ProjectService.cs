@@ -74,7 +74,18 @@ namespace AVATI.Data
 
         public bool DeleteProject(int projectID)
         {
-            throw new System.NotImplementedException();
+            IDbConnection db = GetConnection();
+            db.Open();
+            var result = db.Query<Project>("SELECT * FROM Project WHERE ProjectId = @propId",
+                new {propId = projectID});
+            if (result.FirstOrDefault() == null)
+            {
+                Console.WriteLine("we have a problem");
+                return false;
+            }
+            //TODO Victoria fragen, ob hier cascade ist?
+            db.Execute("DELETE FROM Project WHERE ProjectID = @proId", new {proId = projectID});
+            return true;
         }
 
         public Project GetProject(int projectID)

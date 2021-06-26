@@ -16,9 +16,9 @@
 @inject IHardskillService _hard
 
 <div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
-<div class="modal-dialog modal-xl" style="height: 800px">
-<div class="modal-content">
-<div class="body header">
+<div class="modal-dialog modal-xl col" style="height: 800px">
+<div class="modal-content col">
+
 <div class="modal-header">
     <h5 class="modal-title">Mitarbeiter hinzufügen</h5>
     <button type="button" class="close" data-dismiss="modal" @onclick=@Close>
@@ -27,13 +27,13 @@
 </div>
 
 
-<div class="modal-body " style="height: 800px; overflow-y: auto">
-<EmployeeSearch></EmployeeSearch>
+<div class="modal-body col" style="height: 800px; overflow-y: auto">
+<EmployeeSearch IsProject="@_show" Id="@ID"></EmployeeSearch>
 </div>
 </div>
 </div>
 </div>
-</div>
+
 
 @if (_show)
 {
