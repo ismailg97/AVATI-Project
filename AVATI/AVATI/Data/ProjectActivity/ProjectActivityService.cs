@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -99,10 +100,15 @@ namespace AVATI.Data
         {
             IDbConnection db = GetConnection();
             db.Open();
-            List<ProjectActivity> tempList = new List<ProjectActivity>(db.Query<ProjectActivity>(
+            List<ProjectActivity> toReturn = new List<ProjectActivity>();
+            List<string> tempList = new List<string>(db.Query<string>(
                 "SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectId = @pro",
                 new {pro = ProjectID}));
-            return tempList;
+            foreach (var act in tempList)
+            {
+                toReturn.Add(new ProjectActivity() {Description = act});
+            }
+            return toReturn;
         }
 
         public List<ProjectActivity> GetAllProjectActivities()
@@ -110,7 +116,7 @@ namespace AVATI.Data
             IDbConnection db = GetConnection();
             db.Open();
             List<ProjectActivity> tempList = new List<ProjectActivity>(db.Query<ProjectActivity>(
-                "SELECT ProjectActivity FROM ProjectActivity_Project_Employee"));
+                "SELECT * FROM ProjectActivity"));
             return tempList;
         }
 
@@ -164,6 +170,43 @@ namespace AVATI.Data
             db.Execute(
                 "INSERT INTO ProjectActivity VALUES(@newDes)",
                 new {newDes = description});
+            return true;
+        }
+
+        public bool UpdateProjectActivity(int proposalId, List<ProjectActivity> activities)
+        {
+            IDbConnection db = GetConnection();
+            db.Open();
+            foreach (var activity in activities)
+            {
+                Console.WriteLine("Do we enter here1");
+                var returnVal =
+                    db.Query<string>(
+                        "Select ProjectActivity from ProjectActivity_Project_Employee WHERE ProjectActivity = @desc AND ProjectID = @proId",
+                        new {desc = activity.Description, proId = proposalId});
+                if (returnVal.FirstOrDefault() == null)
+                {
+                    Console.WriteLine("Do we enter here2");
+                    db.Execute(
+                        "INSERT INTO ProjectActivity_Project_Employee VALUES(@proId, NULL, @newDes)",
+                        new {newDes = activity.Description, proId = proposalId});
+                }
+            }
+            var tempList = new List<string>(db.Query<string>("SELECT ProjectActivity from ProjectActivity_Project_Employee WHERE  ProjectID = @proId",
+                new { proId = proposalId}));
+            foreach (var description in tempList)
+            {
+                Console.WriteLine("Do we enter here3");
+
+                if (activities.Find(e => e.Description == description) == null)
+                {
+                    Console.WriteLine("Do we enter here4");
+
+                    db.Execute("DELETE FROM ProjectActivity_Project_Employee WHERE ProjectActivity = @desc AND ProjectID = @proId",
+                        new {desc = description,  proId = proposalId});
+                }
+            }
+
             return true;
         }
     }

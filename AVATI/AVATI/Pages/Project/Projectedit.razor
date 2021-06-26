@@ -7,10 +7,10 @@
 @inject IProjectActivityService _projectActivity
 @inject EmployeeServiceSimple _employeeService
 
-<AddFieldToProject              @ref="_addFieldToProject">              </AddFieldToProject>
-<AddProjectActivityToProject   @ref="_addProjectActivityToProject">   </AddProjectActivityToProject>
-<AddEmployeeToProject           @ref="_addEmployeeToProject">           </AddEmployeeToProject>
-<PopAddProjectPurposeToProject  @ref="_popAddProjectPurpose">           </PopAddProjectPurposeToProject>
+<AddFieldToProject              @ref="_addFieldToProject" Abstract="@this"/>             
+<AddProjectActivityToProject   @ref="_addProjectActivityToProject" Abstract="@this"/> 
+<AddEmployeeToProject           @ref="_addEmployeeToProject" Abstract="@this"/>          
+<PopAddProjectPurposeToProject  @ref="_popAddProjectPurpose" Abstract="@this"/>           
 
 @if (Loading)
 {
@@ -223,15 +223,16 @@ else
 
 @code {
     private Project Project { get; set; } = new Project();
-
+    
     AddFieldToProject _addFieldToProject;
     AddProjectActivityToProject _addProjectActivityToProject;
     AddEmployeeToProject _addEmployeeToProject;
     PopAddProjectPurposeToProject _popAddProjectPurpose;
 
     public List<ProjectActivity> Activitieslist { get; set; } = new List<ProjectActivity>();
-    
 
+
+    
     [Parameter]
     public int ID { get; set; }
 
@@ -268,9 +269,11 @@ else
 
     public async void PopAddEmployeeToProject(int ID)
     {
-        
+        Loading = true;
         await _addEmployeeToProject.Showing(ID);
-        
+        Loading = false;
+        StateHasChanged();
+
     }
 
     public void DeleteFromProject(Employee emp)
@@ -283,7 +286,12 @@ else
         _popAddProjectPurpose.Showing(ID);
     }
     
-    
+    public void Update()
+    {
+        Activitieslist = _projectActivity.GetProjectActivitiesProject(ID);
+        Project = _projectService.GetProject(ID);
+        StateHasChanged();
+    }
     
     
     

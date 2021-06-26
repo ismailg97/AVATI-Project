@@ -50,34 +50,78 @@ namespace AVATI.Data.EmployeeDetailFiles
                 }
             }
 
+            foreach (var softskill in db.Query<string>(
+                "SELECT Softskill from EmployeeDetail_Softskill WHERE ProposalId = @pro and EmployeeId = @emp",
+                new
+                {pro = proposalId, emp = employeeId, 
+                }))
+            {
+                if (!employeeDetail.Softskills.Contains(softskill))
+                {
+                    db.Execute("DELETE FROM EmployeeDetail_Softskill WHERE ProposalID = @pro and EmployeeID = @emp AND Softskill = @soft", new
+                    {
+                        pro = proposalId, emp = employeeId, soft = softskill
+                    });
+                }
+            }
             foreach (var hard in employeeDetail.Hardskills)
             {
                 if (db.Query<string>(
                     "SELECT Hardskill from EmployeeDetail_Hardskill WHERE ProposalId = @pro and EmployeeId = @emp and Hardskill = @hardskill",
                     new
                     {
-                        pro = proposalId, emp = employeeId, hardskill = hard
+                        pro = proposalId, emp = employeeId, hardskill = hard.Description
                     }).FirstOrDefault() == null)
                 {
                     db.Execute("INSERT INTO EmployeeDetail_Hardskill VALUES(@proId, @empId, @hardskill)",
-                        new {proId = proposalId, empId = employeeId, hardskill = hard});
+                        new {proId = proposalId, empId = employeeId, hardskill = hard.Description});
                 }
             }
 
+            foreach (var hardskill in db.Query<string>(
+                "SELECT Hardskill from EmployeeDetail_Hardskill WHERE ProposalId = @pro and EmployeeId = @emp",
+                new
+                {pro = proposalId, emp = employeeId, 
+                }))
+            {
+                if (employeeDetail.Hardskills.Find(e => e.Description.Equals(hardskill)) == null)
+                {
+                    db.Execute("DELETE FROM EmployeeDetail_Hardskill WHERE ProposalID = @pro and EmployeeID = @emp and Hardskill = @hard", new
+                    {
+                        pro = proposalId, emp = employeeId, hard = hardskill
+                    });
+                }
+            }
+            
             foreach (var lang in employeeDetail.Languages)
             {
                 if (db.Query<string>(
                     "SELECT Language from EmployeeDetail_Language WHERE ProposalId = @pro and EmployeeId = @emp and Language = @language",
                     new
                     {
-                        pro = proposalId, emp = employeeId, language = lang
+                        pro = proposalId, emp = employeeId, language = lang.Item1
                     }).FirstOrDefault() == null)
                 {
                     db.Execute("INSERT INTO EmployeeDetail_Language VALUES(@proId, @empId, @language)",
-                        new {proId = proposalId, empId = employeeId, language = lang});
+                        new {proId = proposalId, empId = employeeId, language = lang.Item1});
                 }
             }
 
+            foreach (var language in db.Query<string>(
+                "SELECT Language from EmployeeDetail_Language WHERE ProposalId = @pro and EmployeeId = @emp",
+                new
+                {pro = proposalId, emp = employeeId, 
+                }))
+            {
+                if (employeeDetail.Languages.Find(e => e.Item1.Equals(language)) == null)
+                {
+                    db.Execute("DELETE FROM EmployeeDetail_Language WHERE ProposalID = @pro and EmployeeID = @emp and Language = @lang", new
+                    {
+                        pro = proposalId, emp = employeeId, lang = language
+                    });
+                }
+            }
+            
             foreach (var field in employeeDetail.Fields)
             {
                 if (db.Query<string>(
@@ -91,7 +135,22 @@ namespace AVATI.Data.EmployeeDetailFiles
                         new {proId = proposalId, empId = employeeId, fieldd = field});
                 }
             }
-
+            
+            foreach (var field in db.Query<string>(
+                "SELECT Field from EmployeeDetail_Field WHERE ProposalId = @pro and EmployeeId = @emp",
+                new
+                {pro = proposalId, emp = employeeId, 
+                }))
+            {
+                if (employeeDetail.Fields.Find(e => e.Equals(field)) == null)
+                {
+                    db.Execute("DELETE FROM EmployeeDetail_Field WHERE ProposalID = @pro and EmployeeID = @emp and  Field = @lang", new
+                    {
+                        pro = proposalId, emp = employeeId, lang = field
+                    });
+                }
+            }
+            
             foreach (var role in employeeDetail.Roles)
             {
                 if (db.Query<string>(
@@ -105,7 +164,20 @@ namespace AVATI.Data.EmployeeDetailFiles
                         new {proId = proposalId, empId = employeeId, Role = role});
                 }
             }
-
+            foreach (var role in db.Query<string>(
+                "SELECT Role from EmployeeDetail_Role WHERE ProposalId = @pro and EmployeeId = @emp",
+                new
+                {pro = proposalId, emp = employeeId, 
+                }))
+            {
+                if (employeeDetail.Roles.Find(e => e.Equals(role)) == null)
+                {
+                    db.Execute("DELETE FROM EmployeeDetail_Role WHERE ProposalID = @pro and EmployeeID = @emp and  Role = @lang", new
+                    {
+                        pro = proposalId, emp = employeeId, lang = role
+                    });
+                }
+            }
             return true;
         }
 
@@ -166,6 +238,9 @@ namespace AVATI.Data.EmployeeDetailFiles
             EmployeeDetail temp = new EmployeeDetail();
             using DbConnection db = GetConnection();
             db.Open();
+            temp.Roles = new List<string>(db.Query<string>(
+                "SELECT Role from EmployeeDetail_Role WHERE EmployeeId = @empId and ProposalId = @propId",
+                new {empId = employeeId, propId = proposalId}));
             temp.Fields =
                 new List<string>(db.Query<string>(
                     "SELECT Field from EmployeeDetail_Field WHERE EmployeeId = @empId and ProposalId = @propId",
@@ -178,10 +253,12 @@ namespace AVATI.Data.EmployeeDetailFiles
                 "SELECT Language from EmployeeDetail_Language  WHERE EmployeeId = @empId and ProposalId = @propId",
                 new {empId = employeeId, propId = proposalId}))
             {
-                temp.Languages.Add(new Tuple<string, LanguageLevel>(language,
-                    db.QuerySingle<LanguageLevel>(
-                        "SELECT Level from Employee_Language WHERE EmployeeId = @emp and Language = @lang",
-                        new {emp = employeeId, lang = language})));
+                var level = db.Query<string>(
+                    "SELECT Employee_Language.Level from Employee_Language WHERE EmployeeId = @emp and Language = @lang",
+                    new {emp = employeeId, lang = language}).ToList();
+                string langaugeLevel = level.ToString();
+
+                temp.Languages.Add(new Tuple<string, LanguageLevel>(language, GetLanguageLevel(level.First())));
             }
 
             temp.Rc = db.QuerySingle<int>(
@@ -254,6 +331,31 @@ namespace AVATI.Data.EmployeeDetailFiles
             }
 
             return employeeList;
+        }
+
+        public LanguageLevel GetLanguageLevel(string s)
+        {
+            if (s == "A1")
+            {
+                return LanguageLevel.A1;
+            }
+            else if (s == "A2")
+            {
+                return LanguageLevel.A2;
+            }
+            else if (s == "B1")
+            {
+                return LanguageLevel.B1;
+            }
+            else if (s == "B2")
+            {
+                return LanguageLevel.B2;
+            }
+            else if (s == "C1")
+            {
+                return LanguageLevel.C1;
+            }
+            else return LanguageLevel.C2;
         }
     }
 }

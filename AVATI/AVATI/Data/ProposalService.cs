@@ -76,35 +76,7 @@ namespace AVATI.Data
 
             db.Execute("INSERT INTO EmployeeDetail VALUES(@prop, @emp, @oldRc)",
                 new {prop = propId, emp = empl, oldRc = rc});
-            foreach (var field in tempEmp.Field)
-            {
-                db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@prop, @emp, @value)",
-                    new {prop = propId, emp = empl, value = field});
-            }
-
-            foreach (var hardskill in tempEmp.Hardskills)
-            {
-                db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@prop, @emp, @value)",
-                    new {prop = propId, emp = empl, value = hardskill.Description});
-            }
-
-            foreach (var language in tempEmp.Language)
-            {
-                db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@prop, @emp, @value)",
-                    new {prop = propId, emp = empl, value = language});
-            }
-
-            foreach (var role in tempEmp.Roles)
-            {
-                db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@prop, @emp, @value)",
-                    new {prop = propId, emp = empl, value = role});
-            }
-
-            foreach (var softskill in tempEmp.Softskills)
-            {
-                db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@prop, @emp, @value)",
-                    new {prop = propId, emp = empl, value = softskill});
-            }
+            
 
             return true;
         }

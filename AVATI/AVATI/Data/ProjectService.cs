@@ -69,6 +69,15 @@ namespace AVATI.Data
                 beg = project.Projectbeginning.ToString("d", DateTimeFormatInfo.InvariantInfo),
                 end = project.Projectend.ToString("d", DateTimeFormatInfo.InvariantInfo)
             });
+            foreach (var emp in project.Employees)
+            {
+                //TODO Brauchen wir hier noch eine Tabelle???
+            }
+
+            foreach (var field in project.Fields)
+            {
+                //TODO Wir haben noch keine Fields - Tabelle
+            }
             return true;
         }
 
