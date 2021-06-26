@@ -201,7 +201,7 @@
         }
     }
 </div>
-@foreach (var hardskill in _hardskillService.GetAllHardskills())
+@foreach (var hardskill in _hardskillService.GetAllHardskills().Result)
 {
     if (!Emp.Hardskills.Contains(hardskill))
     {
