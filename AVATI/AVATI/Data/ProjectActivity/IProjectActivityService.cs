@@ -13,7 +13,8 @@ namespace AVATI.Data
 
         public List<ProjectActivity> GetAllProjectActivities();
         public List<ProjectActivity> GetProjectActivitiesEmployee(int EmployeeId);
-  
+        public bool UpdateActivity(string oldDescription, string newDescription);
+        public bool AddActivity(string description);
 
     }
 }
