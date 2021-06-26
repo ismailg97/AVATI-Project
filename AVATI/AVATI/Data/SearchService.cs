@@ -29,6 +29,7 @@ namespace AVATI.Data
         public Employee Employee { get; set; }
         public int Priority { get; set; }
 
+        private int EmployeeId;
         public bool PerfectMatch { get; set; }
 
         public bool TableIsVisible = false;
@@ -174,7 +175,10 @@ namespace AVATI.Data
         )
         {
             PerfectMatch = false;
-           
+            HardskillsToSearchTemp = new List<Hardskill>(Hardskill);
+            CategoriesToSearchTemp = new List<Hardskill>(Categories);
+            RolesToSearchTemp = new List<string>(Rolle);
+            SoftskillsToSearchTemp = new List<string>(Softskill);
             EmployeeNameTemp = name;
             List<SearchService> TempEmployee = new List<SearchService>();
             List<Employee> EmployeeListToReturn = new List<Employee>();
@@ -204,11 +208,7 @@ namespace AVATI.Data
 
                 foreach (var category in Categories)
                 {
-                    if (employee.Hardskills.Exists(e =>
-                        e.IsHardskill != true && e.Description.Equals(category.Description)))
-                    {
-                        ++numberOfMatches;
-                    }
+                    //
                 }
                 foreach (var role in Rolle)
                 {
@@ -220,7 +220,7 @@ namespace AVATI.Data
 
                 if (numberOfMatches != 0)
                 {
-                    TempEmployee.Add(new SearchService(_configuration) {Employee = employee, Priority = numberOfMatches});
+                    TempEmployee.Add(new SearchService(_configuration) {Employee = employee, EmployeeId = employee.EmployeeID, Priority = numberOfMatches});
                 }
 
                 if (numberOfMatches == Hardskill.Count + Softskill.Count + Rolle.Count + ((name == null) ? 0 : 1))
@@ -234,10 +234,13 @@ namespace AVATI.Data
 
             foreach (var service in TempEmployee)
             {
-                EmployeeListToReturn.Add(service.Employee);
+                EmployeeListToReturn.Add(EmployeeList.Find(e => e.EmployeeID == service.EmployeeId));
             }
 
-
+            foreach (var emp in EmployeeListToReturn)
+            {
+                Console.WriteLine(emp.Roles.First());
+            }
             return EmployeeListToReturn;
         }
     }

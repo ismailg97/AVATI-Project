@@ -230,7 +230,7 @@
                         <td style="width: 10%" class="text-center">
 
 
-                            @if (ProjectToAlter.Employees.Find(e => e.EmployeeID == employee.EmployeeID) != null)
+                            @if (ProjectToAlter.Employees.Find(e => e.EmployeeID == employee.EmployeeID) == null)
                             {
                                 <button class="btn btn-sm btn-outline-success" @onclick=@(() => { ProjectToAlter.Employees.Add(employee); })>Hinzufügen</button>
                             }

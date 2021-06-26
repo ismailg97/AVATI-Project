@@ -143,7 +143,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { ShowPop = !ShowPop; })">Abbrechen</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { _proposal.UpdateAltRc(RcToEdit.ProposalID, EmpEdit, _changeValue); ShowPop = !ShowPop;})">Speichern</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { _proposal.UpdateAltRc(RcToEdit.ProposalID, EmpEdit, _changeValue); ShowPop = !ShowPop; _proposals = _proposal.GetAllProposals();;})">Speichern</button>
                 </div>
             </div>
         </div>
