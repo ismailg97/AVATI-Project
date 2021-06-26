@@ -12,6 +12,7 @@
 @inject JsonImport _jsonImport
 @inject IProjektService _projectService
 @inject NavigationManager _navigationManager
+@inject IBasicDataService _basic
 
 @if (_show)
 {
@@ -27,27 +28,27 @@
                 <div class="modal-body" style="min-width: 100%">
                     <label class="font-weight-bold">Branchen zur Auswahl stehend:</label>
                     <div class="list-group col overflow-auto border-dark" style="height: 250px">
-                        @foreach (var field in AttributestoDisplay)
+                        @foreach (var field in fields)
                         {
-                            if (!AttributestoSearch.Contains(field))
+                            if (!_projectToEdit.Fields.Contains(field))
                             {
-                                <button type="button" class="btn btn-outline-dark" @onclick=@(() => { UpdateSearch(field); })>@field</button>
+                                <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _projectToEdit.Fields.Add(field); })>@field</button>
                             }
                         }
                     </div>
                     <hr class="mx-2"/>                                                                                  <!--line divider -->
                     <label class="font-weight-bold ">Branchen im Projekt:</label>
                     <div class="list-group col overflow-auto text-center border-dark" style="height: 250px">
-                        @foreach (var field in AttributestoSearch)
+                        @foreach (var field in _projectToEdit.Fields)
                         {
-                            <button type="button" class="btn btn-outline-dark" @onclick=@(() => { UpdateContains(field); })>@field</button>
+                            <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _projectToEdit.Fields.Remove(field); })>@field</button>
                         }
                     </div>
                 </div>
                 <div class="modal-footer">
                     <div class="form-group ml-5">
                         <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Close"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
-                        <button type="button" class="btn btn-success" @onclick="(() => { Showing(ID); Submit(ID); })"><span class="oi oi-document" aria-hidden="true"></span></button>
+                        <button type="button" class="btn btn-success" @onclick="(() => { Submit(ID); })"><span class="oi oi-document" aria-hidden="true"></span></button>
                     </div>
                 </div>
             </div>
@@ -67,47 +68,23 @@
     [Parameter]
     public int ID { get; set; }
 
-    
+    Project _projectToEdit;
     private bool _show;
 
+    private List<string> fields;
+    
     public string temp { get; set; }
-
-    public List<string> AttributestoDisplay { get; set; } = new List<string>();
-    public List<string> AttributestoSearch { get; set; } = new List<string>();
-
-    JSonStructure.Rootclass jsonFields;
+    
 
     public void Showing(int id)
     {
         ID = id;
         _show = !_show;
+        _projectToEdit = _projectService.GetProject(id);
+        fields = _basic.GetAllFields();
         StateHasChanged();
     }
-
-    protected override void OnInitialized()
-    {
-        jsonFields = _jsonImport.ImportJsonFile();
-        AttributestoDisplay = new List<string>(jsonFields.fields);
-
-    }
-
-    public void UpdateSearch(string field)
-    {
-        if (AttributestoDisplay.Contains(field))
-        {
-            AttributestoDisplay.Remove(field);
-            AttributestoSearch.Add(field);
-        }
-    }
-
-    public void UpdateContains(string field)
-    {
-        if (AttributestoSearch.Contains(field))
-        {
-            AttributestoSearch.Remove(field);
-            AttributestoDisplay.Add(field);
-        }
-    }
+    
 
     public void Close()
     {
@@ -115,21 +92,12 @@
         StateHasChanged();
     }
 
-    public void AddField(string field)
-    {
-        if (field == null)
-        {
-        }
-        else
-        {
-            AttributestoDisplay.Add(field);
-        }
-    }
-
+    
     public void Submit(int ID)
     {
-        Project temp = _projectService.GetProject(ID);
-        temp.Fields = AttributestoSearch;
+        _show = !_show;
+        //Currently not implemented => Does nothing!!
+        _projectService.UpdateProject(_projectToEdit);
         _navigationManager.NavigateTo("/Projektübersicht/Projektedit/" + ID);
         StateHasChanged();
     }
