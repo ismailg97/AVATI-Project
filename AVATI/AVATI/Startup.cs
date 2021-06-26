@@ -53,10 +53,8 @@ namespace AVATI
             services.AddSingleton<IEmployeeService, EmployeeService>();
             services.AddBlazorDownloadFile();
             services.AddSingleton<IEmployeeDetailService, EmployeeDetailService>();
-            services.AddSingleton<IProjectActivityService, ProjectActivityServiceSimple>();
-            services.AddSingleton<ProjectActivityServiceSimple>();
+            services.AddSingleton<IProjectActivityService, ProjectActivityService>();
             services.AddSingleton<EmployeeServiceSimple>();
-            services.AddSingleton<ProjectActivityServiceSimple>();
             services.AddSingleton<DatabaseUtils>();
             services.AddSingleton<IProjektService, ProjectService>();
             services.AddSingleton<ProjectPurposeService>();
