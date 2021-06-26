@@ -5,7 +5,7 @@ namespace AVATI.Data
     public interface IProjectActivityService
     {
         public bool SetProjectActivity(int EmployeeId, int ProjectId, string Description);
-        public bool DeleteProjectActivityEmployee(int EmployeeId, int ProjectId);
+        public bool DeleteProjectActivityEmployee(int EmployeeId, int ProjectId, string Description);
 
         public bool DeleteProjectActivity(string Description);
         public List<ProjectActivity> GetEmployeeProjectActivities(int EmployeeId, int ProjectId);
