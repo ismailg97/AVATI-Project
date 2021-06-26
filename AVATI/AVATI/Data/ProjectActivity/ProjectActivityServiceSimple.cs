@@ -61,6 +61,11 @@ namespace AVATI.Data
             return false;
         }
 
+        public bool DeleteProjectActivity(string Description)
+        {
+            throw new System.NotImplementedException();
+        }
+
         List<ProjectActivity> IProjectActivityService.GetEmployeeProjectActivities(int EmployeeId, int ProjectId)
         {
             return pALIst.FindAll(x => x.ProjectID == ProjectId && x.EmployeeID == EmployeeId);
@@ -106,6 +111,16 @@ namespace AVATI.Data
             }
 
             return EmpList;
+        }
+
+        public bool UpdateActivity(string oldDescription, string newDescription)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool AddActivity(string description)
+        {
+            throw new System.NotImplementedException();
         }
 
         public List<ProjectActivity> GetProjectActivityListProject(int ProjectId)

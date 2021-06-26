@@ -20,7 +20,7 @@
                 </div>
                 <div class="modal-body" style="min-width: 100%">
                     <label class="font-weight-bold">Tätigkeiten zur Auswahl stehend:</label>
-                    <div class="list-group col overflow-auto border-dark" style="height: 250px">
+                    <div class="list-group col overflow-auto border-dark" style="height: 325px">
                         @if (ActivitiesNotInProject == null)
                         {
                             <label type="button" class="btn btn-outline-info">[keine Tätigkeiten vorhanden]</label>
@@ -35,7 +35,7 @@
                     </div>
                     <hr class="mx-2"/> <!--line divider -->
                     <label class="font-weight-bold ">Tätigkeiten im Projekt:</label>
-                    <div class="list-group col overflow-auto text-center border-dark" style="height: 250px">
+                    <div class="list-group col overflow-auto text-center border-dark" style="height: 325px">
                         @foreach (var activity in ActivitiesInProject)
                         {
                             <button type="button" class="btn btn-outline-dark" @onclick=@(() => { UpdateActivity(activity); })>@activity.Description</button>
@@ -101,11 +101,6 @@
             ActivitiesInProject.Remove(activity);
             ActivitiesNotInProject.Add(activity);
         }
-    }
-
-    protected override void OnInitialized()
-    {
-        
     }
 
     public void ReverseActivity(ProjectActivity activity)

@@ -32,12 +32,13 @@
                 <td>@String.Join(" | ", project.Fields)</td>
                 <td>
                     <a href="/Projektübersicht/Projektedit/@project.ProjectID">
-                        <button type="button" class="btn btn-primary"><span class="oi oi-pencil" aria-hidden="true"></span></button>
+                        <button type="button" class="btn btn-primary"><span class="oi oi-pencil" aria-hidden="true"></span> Bearbeiten</button>
                     </a>
                     
                     <a href="/Projektübersicht/ProjectDetailedView/@project.ProjectID">
-                        <button type="button" class="btn btn-info"><span class="oi oi-project" aria-hidden="true"></span></button>
+                        <button type="button" class="btn btn-info"><span class="oi oi-project" aria-hidden="true"></span> Details</button>
                     </a>
+                    <button type="button" class="btn btn-danger" @onclick=@(() => { DeleteProject(project.ProjectID); })><span class="oi oi-delete" aria-hidden="true"></span> Löschen</button>
                 </td>
             </tr>
         }
@@ -58,6 +59,12 @@
         Clicked = true;
         List<Project> projects = _projectService.GetAllProjects();
         _projectService.SearchProject(projects, Input);
+    }
+
+    public void DeleteProject(int ID)
+    {
+        _projectService.DeleteProject(ID);
+        StateHasChanged();
     }
 
 }

@@ -22,7 +22,8 @@ namespace AVATI.Data
         {
             IDbConnection db = GetConnection();
             db.Open();
-            var returnVal = db.Query<string>("Select Description from ProjectActivity_Pro")
+            var returnVal = db.Query<string>("Select Description from ProjectActivity_Pro");
+            return true;
         }
 
         public bool DeleteProjectActivityEmployee(int EmployeeId, int ProjectId)
@@ -51,6 +52,16 @@ namespace AVATI.Data
         }
 
         public List<ProjectActivity> GetProjectActivitiesEmployee(int EmployeeId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool UpdateActivity(string oldDescription, string newDescription)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool AddActivity(string description)
         {
             throw new System.NotImplementedException();
         }
