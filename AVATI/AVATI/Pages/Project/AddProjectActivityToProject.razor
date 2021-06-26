@@ -7,11 +7,11 @@
 @inject IProjektService _projectService
 @inject NavigationManager _navigationManager
 
-
-<div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
-    <div class="modal modal-dialog-scrollable modal-dialog col">
-        <div class="modal-content">
-            <div class="body header">
+@if (_show)
+{
+    <div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
+        <div class="modal modal-dialog-scrollable modal-dialog col">
+            <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Auswahl Projekttätigkeiten</h5>
                     <button type="button" class="close" data-dismiss="modal" @onclick=@Close>
@@ -21,37 +21,40 @@
                 <div class="modal-body" style="min-width: 100%">
                     <label class="font-weight-bold">Tätigkeiten zur Auswahl stehend:</label>
                     <div class="list-group col overflow-auto border-dark" style="height: 325px">
-                        @if (ActivitiesNotInProject == null)
+                        @if (!_activities.Any())
                         {
                             <label type="button" class="btn btn-outline-info">[keine Tätigkeiten vorhanden]</label>
                         }
                         else
                         {
-                            @foreach (var activity in ActivitiesNotInProject)
+                            @foreach (var activity in _activities)
                             {
-                                <button type="button" class="btn btn-outline-dark" @onclick=@(() => { ReverseActivity(activity); })>@activity.Description</button>
+                                if (_activitiesInProject.Find(e => e.Description.Equals(activity.Description)) == null)
+                                {
+                                    <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _activitiesInProject.Add(activity); })>@activity.Description</button>
+                                }
                             }
                         }
                     </div>
                     <hr class="mx-2"/> <!--line divider -->
                     <label class="font-weight-bold ">Tätigkeiten im Projekt:</label>
                     <div class="list-group col overflow-auto text-center border-dark" style="height: 325px">
-                        @foreach (var activity in ActivitiesInProject)
+                        @foreach (var activity in _activitiesInProject)
                         {
-                            <button type="button" class="btn btn-outline-dark" @onclick=@(() => { UpdateActivity(activity); })>@activity.Description</button>
+                            <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _activitiesInProject.Remove(activity); })>@activity.Description</button>
                         }
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <div class="form-group">
+                    <div class="div float-right">
                         <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { Showing(ID); })">Abbrechen</button>
-                        <button type="button" class="btn btn-success" @onclick="(() => { Showing(ID); Submit(ID);})">Speichern</button>
+                        <button type="button" class="btn btn-success" @onclick="(() => { Submit(ID);})">Speichern</button>
                     </div>
                 </div>
+               
+
+            </div>
             </div>
         </div>
-    </div>
-</div>
+}
 
 @if (_show)
 {
@@ -65,18 +68,20 @@
 
     public int EmployeeID { get; set; }
 
+    private List<ProjectActivity> _activities;
+    private List<ProjectActivity> _activitiesInProject;
     private bool _show = false;
     private string Activity { get; set; }
-
-
-    public List<ProjectActivity> ActivitiesNotInProject { get; set; } = new List<ProjectActivity>();
-    public List<ProjectActivity> ActivitiesInProject { get; set; } = new List<ProjectActivity>();
-
-
+    
+    [Parameter]
+    public Projectedit Abstract { get; set; }
+    
     public void Showing(int Id)
     {
         ID = Id;
         _show = !_show;
+        _activitiesInProject = _projectActivity.GetProjectActivitiesProject(Id);
+        _activities = _projectActivity.GetAllProjectActivities();
         StateHasChanged();
     }
 
@@ -88,30 +93,12 @@
 
     public void Submit(int ID)
     {
-        Project temp = _projectService.GetProject(ID);
-        temp.ProjectActivities = ActivitiesNotInProject;
-        _navigationManager.NavigateTo("/Projektübersicht/Projektedit/" + ID);
+        _show = !_show;
+        _projectActivity.UpdateProjectActivity(ID, _activitiesInProject);
+        Abstract.Update();
         StateHasChanged();
     }
-
-    public void UpdateActivity(ProjectActivity activity)
-    {
-        if (ActivitiesInProject.Contains(activity))
-        {
-            ActivitiesInProject.Remove(activity);
-            ActivitiesNotInProject.Add(activity);
-        }
-    }
-
-    public void ReverseActivity(ProjectActivity activity)
-    {
-        if (ActivitiesNotInProject.Contains(activity))
-        {
-            ActivitiesNotInProject.Remove(activity);
-            ActivitiesInProject.Add(activity);
-        }
-    }
-
+    
 
 
 }

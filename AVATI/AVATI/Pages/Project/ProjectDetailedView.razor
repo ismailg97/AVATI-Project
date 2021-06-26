@@ -1,7 +1,7 @@
 ﻿@page "/Projektübersicht/ProjectDetailedView"
 @page "/Projektübersicht/ProjectDetailedView/{ID:int}"
 @using AVATI.Data
-
+@inject IProjectActivityService _activity
 @inject IProjektService _projectService
 
 <div class="container">
@@ -167,6 +167,7 @@
     protected override void OnInitialized()
     {
         _project = _projectService.GetProject(ID);
+        _project.ProjectActivities = _activity.GetProjectActivitiesProject(ID);
     }
 
 }

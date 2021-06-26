@@ -87,6 +87,10 @@ namespace AVATI.Data
                     employee.Roles.Add(role);
                 }
 
+                var rc = db.Query<int>("SELECT RCLevel from Employee WHERE EmployeeId = @ID",
+                    new {ID = emp.EmployeeID}).FirstOrDefault();
+                employee.Rc = rc;
+                
                 empList.Add(employee);
             }
 
@@ -269,6 +273,7 @@ namespace AVATI.Data
                 .ToList();
             foreach (var role in roles)
             {
+                Console.WriteLine(role);
                 employee.Roles.Add(role);
             }
 

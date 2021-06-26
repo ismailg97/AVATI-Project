@@ -57,6 +57,9 @@
 @code {
 
     [Parameter]
+    public Projectedit Abstract { get; set; }
+    
+    [Parameter]
     public int ID { get; set; }
     
     private bool _show = false;
@@ -84,10 +87,7 @@
     {
         
         
-        
-        
-        
-        _navigationManager.NavigateTo("/Projektübersicht/Projektedit/" + ID);
+        Abstract.Update();
         StateHasChanged();
     }
     

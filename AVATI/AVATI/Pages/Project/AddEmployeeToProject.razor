@@ -252,7 +252,7 @@
     {
         <div class="float-right mb-4">
             <button class="btn btn-danger mt-2" @onclick=@(() => { Close();})>Abbrechen</button>
-            <button class="btn btn-success mt-2" @onclick=@(() => { _projectService.UpdateProject(ProjectToAlter); Close(); })>Speichern</button>
+            <button class="btn btn-success mt-2" @onclick=@(() => { _projectService.UpdateProject(ProjectToAlter); Abstract.Update(); Close(); })>Speichern</button>
         </div>
     }
     </div>
@@ -291,7 +291,10 @@ else
 
     public static bool _show = false;
 
-
+    [Parameter]
+    public Projectedit Abstract { get; set; }
+    
+    
     [Parameter]
     public int ProjectId { get; set; }
 

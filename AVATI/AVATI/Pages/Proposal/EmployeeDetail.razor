@@ -42,7 +42,7 @@
                                             Branchen:
                                             @foreach (var field in EmployeeAttributes.Field)
                                                 {
-                                                    if (EmployeeDetailView.Fields.Contains(field))
+                                                    if (EmployeeDetailView.Fields.Find(e => e.Equals(field)) != null)
                                                     {
                                                         <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => { EmployeeDetailView.Fields.Remove(field);})>@field</button>
                                                     }
@@ -61,9 +61,9 @@
                                         <div class="card-body text-left">
                                             @foreach (var hardSkill in EmployeeAttributes.Hardskills)
                                             {
-                                                if (EmployeeDetailView.Hardskills.Contains(hardSkill))
+                                                if (EmployeeDetailView.Hardskills.Find(e => e.Description.Equals(hardSkill.Description)) != null)
                                                 {
-                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {EmployeeDetailView.Hardskills.Remove(hardSkill);})>@hardSkill.Description</button>    
+                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {EmployeeDetailView.Hardskills.RemoveAll(e => e.Description == hardSkill.Description);})>@hardSkill.Description</button>    
                                                 }
                                                 else
                                                 {
@@ -78,7 +78,7 @@
                                         <div class="card-body text-left">
                                             @foreach (var lang in EmployeeAttributes.Language)
                                             {
-                                                if (EmployeeDetailView.Languages.Contains(lang))
+                                                if (EmployeeDetailView.Languages.Find(e => e.Item1.Equals(lang.Item1)) != null)
                                                 {
                                                     <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {EmployeeDetailView.Languages.Remove(lang);})>@lang.Item1 @lang.Item2</button>
                                                 }
@@ -112,7 +112,7 @@
                                             <div class="card-body text-left">
                                                 @foreach (var role in EmployeeAttributes.Roles)
                                                 {
-                                                    if (EmployeeDetailView.Roles.Contains(role))
+                                                    if (EmployeeDetailView.Roles.Find(e => e.Equals(role)) != null)
                                                     {
                                                         <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => { EmployeeDetailView.Roles.Remove(role);})>@role</button>
                                                     }
@@ -165,8 +165,8 @@
         ShowBackdrop = !ShowBackdrop;
         EmpId = employeeId;
         PropId = proposalId;
-        EmployeeDetailView = _employeeDetailService.GetEmployeeDetail(EmpId, PropId);
-        EmployeeAttributes = _employeeService.Employees.First();
+        EmployeeDetailView = _employeeDetailService.GetEmployeeDetail(employeeId, proposalId);
+        EmployeeAttributes = _employeeService.GetEmployeeProfile(EmpId);
         Console.WriteLine(EmpId.ToString() + PropId.ToString());
         StateHasChanged();
     }
