@@ -4,6 +4,7 @@
 @using AVATI.Data
 @using Microsoft.AspNetCore.Components
 @using System.Linq
+@using AVATI.Pages.Project
 @using Microsoft.Extensions.Configuration
 @inject SearchService _searchService
 @inject IHardskillService _hard
@@ -21,9 +22,9 @@
     <div class="row h-100 justify-content-center align-items-center">
     <div class="@(IsProject ? "col" : "col-12") text-left">
     <EditForm Model="_searchService">
-        @if (Id != 0 && (_proposal.GetProposal(Id) != null || ProjectToAlter != null))
+        @if (Id != 0)
         {
-            <h1 class="mb-4">Mitarbeitersuche für <br><strong>(@IsProject ? @_project.GetProject(Id).Projecttitel : @_proposal.GetProposal(Id).ProposalTitle)</strong>:</h1>
+            <h1 class="mb-4">Mitarbeitersuche für <br><strong>@_proposal.GetProposal(Id).ProposalTitle</strong>:</h1>
         }
         else
         {
@@ -253,20 +254,17 @@
                 }
                 </tbody>
             </table>
-            @if (Id != 0)
-            {
-                <button class="btn btn-info mt-2" @onclick=@(() => { ReturnToProposal(Id); })>Zum Angebot zurück</button>
-            }
         }
     }
 
+            @if (Id != 0 && _searchService.TableIsVisible)
+            {
+                <button class="btn btn-info mt-2" @onclick=@(() => { ReturnToProposal(Id); })>Zum Angebot zurück</button>
+            } 
     </div>
     </div>
     </div>
-    @if (IsProject)
-    {
-        <button class="btn-danger">OK</button>
-    }
+    
 }
 else
 {
@@ -286,12 +284,14 @@ else
     
     [Parameter]
     public int Id { get; set; }
-
+    
     [Parameter]
-    public bool IsProject { get; set; } = false;
-
+    public int ProjectId { get; set; }
+    
     private bool PageIsLoaded = false;
 
+    private bool IsProject = false;
+    
     private Data.Project ProjectToAlter;
     
     public string TempHardskill { get; set; }
@@ -319,9 +319,14 @@ else
         _roles = _basic.GetAllRoles();
         _softskills = _basic.GetAllSoftSkills();
         _searchService.InitAttributes(_softskills, _roles, _hardskills, _hardskillCategory);
-        if (IsProject)
+        if (Id == 0 && ProjectId != 0)
         {
-            ProjectToAlter = _project.GetProject(Id);
+            IsProject = true;
+            ProjectToAlter = _project.GetProject(ProjectId);
+        }
+        else
+        {
+            IsProject = false;
         }
         PageIsLoaded = true;
     }
@@ -332,6 +337,8 @@ else
         _searchService.EmptyQuery();
     }
 
+    
+    
     public void AddToProposal(Employee emp)
     {
         _proposal.GetProposal(Id).Employees.Add(emp);
