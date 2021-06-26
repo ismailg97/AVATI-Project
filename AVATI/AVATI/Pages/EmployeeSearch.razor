@@ -18,9 +18,9 @@
 @if (PageIsLoaded)
 {
     
-    <div class="container h-100 @(IsProject ? "col" : "col-10")">
+    <div class="container h-100 col-10">
     <div class="row h-100 justify-content-center align-items-center">
-    <div class="@(IsProject ? "col" : "col-12") text-left">
+    <div class="col-12 text-left">
     <EditForm Model="_searchService">
         @if (Id != 0)
         {
@@ -58,13 +58,13 @@
         </div>
 
         <div class="form-group row">
-            <div class="@(IsProject ? "col-5" : "col-4") mr-4">
+            <div class="col-4 mr-4">
                 <label for="suche">Filter <small class="text-muted">(Nach individuellen Hardskills suchen)</small></label>
                 <input type="search" class="col form-control" id="suche" @bind-value="TempHardskill" @bind-value:event="oninput" placeholder="Hardskill..."/>
                 <div class="form-group row col">
 
                 </div>
-                <div class="list-group overflow-auto" style="height: 200px;  border: 3px solid lightgreen; border-radius: 6px; min-width:@(IsProject ? 100 : 90)%">
+                <div class="list-group overflow-auto" style="height: 200px;  border: 3px solid lightgreen; border-radius: 6px; min-width:90%">
                     @foreach (var hardskill in _searchService.HardskillsToDisplay)
                     {
                         @if (TempHardskill == null || hardskill.Description.Contains(TempHardskill, StringComparison.OrdinalIgnoreCase))
@@ -74,7 +74,7 @@
                     }
                 </div>
             </div>
-            <div class="@(IsProject ? "col-5" : "col-4") mr-4">
+            <div class="col-4 mr-4">
                 <label for="suche">Filter <small class="text-muted">(Nach Hardskillkategorien suchen)</small></label>
                 <input type="search" class="col form-control" id="suche" @bind-value="TempHardskill" @bind-value:event="oninput" placeholder="Hardskillkategorie..."/>
                 <div class="form-group row col">
@@ -230,17 +230,7 @@
                             else if (Id != 0 && _proposal.GetProposal(Id).Employees.Find(e => e.EmployeeID == employee.EmployeeID) != null)
                             {
                                 <button class="btn btn-sm btn-outline-danger" @onclick=@(() => { _proposal.RemoveEmployee(Id, employee.EmployeeID); })>Löschen</button>
-                            } else if (IsProject)
-                            {
-                                if (ProjectToAlter.Employees.Find(e => e.EmployeeID == employee.EmployeeID) != null)
-                                {
-                                    <button class="btn btn-sm btn-outline-success" @onclick=@(() => { ProjectToAlter.Employees.Add(employee); })>Hinzufügen</button>
-                                }
-                                else
-                                {
-                                    <button class="btn btn-sm btn-outline-danger" @onclick=@(() => { ProjectToAlter.Employees.Remove(employee);})>Löschen</button>
-                                }
-                            }
+                            } 
                             else if (employee.IsActive)
                             {
                                 <button class="btn btn-sm btn-success" @onclick=@(() => { employee.IsActive = !employee.IsActive; })>Aktiv</button>
@@ -289,10 +279,7 @@ else
     public int ProjectId { get; set; }
     
     private bool PageIsLoaded = false;
-
-    private bool IsProject = false;
     
-    private Data.Project ProjectToAlter;
     
     public string TempHardskill { get; set; }
 
@@ -319,15 +306,6 @@ else
         _roles = _basic.GetAllRoles();
         _softskills = _basic.GetAllSoftSkills();
         _searchService.InitAttributes(_softskills, _roles, _hardskills, _hardskillCategory);
-        if (Id == 0 && ProjectId != 0)
-        {
-            IsProject = true;
-            ProjectToAlter = _project.GetProject(ProjectId);
-        }
-        else
-        {
-            IsProject = false;
-        }
         PageIsLoaded = true;
     }
 

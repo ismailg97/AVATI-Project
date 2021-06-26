@@ -235,6 +235,7 @@ else
     [Parameter]
     public int ID { get; set; }
 
+    private bool Loading = false;
     public DateTime time { get; set; }
     public string field { get; set; }
     public List<string> FieldstoDisplay { get; set; }
