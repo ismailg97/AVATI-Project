@@ -30,12 +30,12 @@
                                             Rate Card Level:
                                             @if (EmployeeAttributes.Rc != 0)
                                             {
-                                                <button class="btn btn-sm btn-outline-success" @onclick=@(() => { EmployeeDetailView.Rc = 0; })>@_employeeDetailService.GetEmployeeDetail(EmpId, PropId).Rc</button>
+                                                <button class="btn btn-sm btn-outline-success" @onclick=@(() => { EmployeeDetailView.Rc = 0; })>@_employeeDetailService.GetEmployeeDetail(EmpId, PropId).Result.Rc</button>
                                                                                                                                                                                                                  
                                             }
                                             else
                                             {
-                                                <button class="btn btn-sm btn-outline-dark" @onclick=@(() => {EmployeeDetailView.Rc = EmployeeAttributes.Rc;})>@_employeeDetailService.GetEmployeeDetail(EmpId, PropId).Rc</button>
+                                                <button class="btn btn-sm btn-outline-dark" @onclick=@(() => {EmployeeDetailView.Rc = EmployeeAttributes.Rc;})>@_employeeDetailService.GetEmployeeDetail(EmpId, PropId).Result.Rc</button>
                                             }
                                         </div>
                                         <div class="card-text text-left">
@@ -159,13 +159,14 @@
     public bool ShowEdit { get; set; }
     public bool ShowBackdrop { get; private set; }
 
-    public void Show(int employeeId, int proposalId)
+    public async Task Show(int employeeId, int proposalId)
     {
         ShowEdit = !ShowEdit;
         ShowBackdrop = !ShowBackdrop;
         EmpId = employeeId;
         PropId = proposalId;
-        EmployeeDetailView = _employeeDetailService.GetEmployeeDetail(employeeId, proposalId);
+        Task<Data.EmployeeDetailFiles.EmployeeDetail> detail = _employeeDetailService.GetEmployeeDetail(employeeId, proposalId);
+        EmployeeDetailView =  await detail;
         EmployeeAttributes = _employeeService.GetEmployeeProfile(EmpId);
         Console.WriteLine(EmpId.ToString() + PropId.ToString());
         StateHasChanged();

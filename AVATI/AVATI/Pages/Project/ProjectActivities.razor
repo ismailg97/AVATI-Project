@@ -1,6 +1,7 @@
 ﻿@page "/ProjectActivities"
 @using AVATI.Data
 @using System.Diagnostics
+@using DocumentFormat.OpenXml.InkML
 
 @inject IProjectActivityService _projectActivityService
 @if (Loading)
@@ -62,10 +63,10 @@ else
                                         <td>@activity.Description</td>
                                         <td> </td>
                                         <td>
-                                            <button type="button" class="btn btn-info text-right" @onclick="() => { }">
+                                            <button type="button" class="btn btn-info text-right" @onclick="() => { ShowUpdate(activity.Description); }">
                                                 <span class="oi oi-pencil"></span>
                                             </button>
-                                            <button type="button" class="btn btn-danger text-right" @onclick="(() => { ShowDelete(Description); })">
+                                            <button type="button" class="btn btn-danger text-right" @onclick="(() => { ShowDelete(activity.Description); })">
                                                 <span class="oi oi-trash"></span>
                                             </button>
                                         </td>
@@ -114,11 +115,13 @@ else
                     <h4 class="modal-title col-12 text-center">Update Aktivität</h4>
                 </div>
                 <div class="modal-body text-center">
-                    <label class="col-sm-3 col-form-label font-weight-bold" value="@Description"></label>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { ShowPopUpdate = !ShowPopUpdate; })">Abbrechen</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { /*UpdateActivity()*/; ShowPopUpdate = !ShowPopUpdate;})">Löschen</button>
+
+                        <input class="form-control mb-2" @bind=@Description>
+                        <div class="float-right">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { ShowPopUpdate = !ShowPopUpdate; })">Abbrechen</button>
+                        <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { UpdateActivity(OldDescription, Description); ShowPopUpdate = !ShowPopUpdate;})">Speichern</button>
+                        </div>
+
                 </div>
             </div>
         </div>
@@ -131,10 +134,10 @@ else
     public string Description { get; set; }
     private ProjectActivity Activity { get; set; } = new ProjectActivity();
     private bool Loading = false;
-
+    private string OldDescription;
     public bool ShowPopDelete { get; set; }
     public bool ShowPopUpdate { get; set; }
-    
+
     private string filterSearch { get; set; }
 
     public void AddProjectActivity(string description)
@@ -164,6 +167,7 @@ else
         if (!ShowPopUpdate)
         {
             Description = description;
+            OldDescription = description;
         }
 
         ShowPopUpdate = !ShowPopUpdate;

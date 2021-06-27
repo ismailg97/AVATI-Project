@@ -17,113 +17,129 @@
 <EmployeeDetail @ref="_employeeDetail" Abstract="@this"/>
 <EditProposal @ref="_editProposal" Abstract="@this"/>
 
+@if (Loading)
+{
+    <div class="d-flex flex-column align-items-center justify-content-center">
+        <div class="row">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <div class="row">
+            <strong>Lade...</strong>
+        </div>
+    </div>
+}
+else
+{
 
-<button class="btn btn-success float-right mr-2" @onclick=@(() => { ShowEdit(0); })>Neues Angebot</button>
-<div class="form-group row justify-content-center mr-5">
-    <label for="sucheprop" class="col-form-label mr-2 font-weight-bold">Suche:</label>
-    <input type="search" class="col-6 form-control" id="sucheprop" @bind-value="filterSearch" @bind-value:event="oninput"/>
-</div>
-<div class="container col-10">
-    <div class="row row-cols-1 row-cols-md-1">
-        @foreach (var proposal in _proposals)
-        {
-            @if (proposal.ProposalTitle.Contains(filterSearch, StringComparison.OrdinalIgnoreCase))
+
+    <button class="btn btn-success float-right mr-2" @onclick=@(() => { ShowEdit(0); })>Neues Angebot</button>
+    <div class="form-group row justify-content-center mr-5">
+        <label for="sucheprop" class="col-form-label mr-2 font-weight-bold">Suche:</label>
+        <input type="search" class="col-6 form-control" id="sucheprop" @bind-value="filterSearch" @bind-value:event="oninput"/>
+    </div>
+    <div class="container col-10">
+        <div class="row row-cols-1 row-cols-md-1">
+            @foreach (var proposal in _proposals)
             {
-                <div class="col-4 mb-4">
-                    <div class="card border-dark h-100">
-                        <div class="card-header text-center">
-                            <p class="font-weight-bolder">Angebot: @proposal.ProposalID.ToString()</p>
-                            <p>
-                                <button class="btn btn-outline-dark btn-sm" @onclick=@(async () => { await CreateDocument(proposal.ProposalID); })>Dokument erzeugen</button>
-                                <button class="btn btn-outline-success btn-sm ml-2" @onclick=@(() => { CallConfirmation(proposal.ProposalID); })>Projekt erzeugen</button>
-                            </p>
-                            <button class="btn btn-outline-secondary btn-sm" @onclick=@(() => { ShowEdit(proposal.ProposalID); })> Editieren</button>
-                            <button class="btn btn-outline-info btn-sm" @onclick=@(() => { CallCopy(proposal.ProposalID); })>Kopieren</button>
-                            <button class="btn btn-outline-danger btn-sm" @onclick=@(() => { CallDelete(proposal.ProposalID); })>Löschen</button>
-                        </div>
-                        <div class="card-body text-center">
-                            <h5 class="card-title text-center">@proposal.ProposalTitle</h5>
-                            <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(1, proposal.ProposalID); })">
-                                Mitarbeiterprofile
-                            </button>
-                            <div class="card-text @(_showEmployee[proposal.ProposalID] ? "collapse" : "")">
-                                @if (_promptDelete[proposal.ProposalID])
-                                {
-                                    <button class="btn btn-danger btn-sm mr-3 mb-3" @onclick=@(() => { OpenDeletePrompt(proposal.ProposalID); })>Entfernen</button>
-                                    <button class="btn btn-success btn-sm  mb-3" @onclick=@(() => { CallSearch(proposal.ProposalID); })>Hinzufügen</button>
-                                }
-                                else
-                                {
-                                    <button class="btn btn-outline-danger btn-sm mb-3" @onclick=@(() => { OpenDeletePrompt(proposal.ProposalID); })>Abbrechen</button>
-                                }
-                                <ul class="list-group mb-3 text-left">
-                                    @foreach (var employee in proposal.Employees)
+                @if (proposal.ProposalTitle.Contains(filterSearch, StringComparison.OrdinalIgnoreCase))
+                {
+                    <div class="col-4 mb-4">
+                        <div class="card border-dark h-100">
+                            <div class="card-header text-center">
+                                <p class="font-weight-bolder">Angebot: @proposal.ProposalID.ToString()</p>
+                                <p>
+                                    <button class="btn btn-outline-dark btn-sm" @onclick=@(async () => { await CreateDocument(proposal.ProposalID); })>Dokument erzeugen</button>
+                                    <button class="btn btn-outline-success btn-sm ml-2" @onclick=@(() => { CallConfirmation(proposal.ProposalID); })>Projekt erzeugen</button>
+                                </p>
+                                <button class="btn btn-outline-secondary btn-sm" @onclick=@(() => { ShowEdit(proposal.ProposalID); })> Editieren</button>
+                                <button class="btn btn-outline-info btn-sm" @onclick=@(() => { CallCopy(proposal.ProposalID); })>Kopieren</button>
+                                <button class="btn btn-outline-danger btn-sm" @onclick=@(() => { CallDelete(proposal.ProposalID); })>Löschen</button>
+                            </div>
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-center">@proposal.ProposalTitle</h5>
+                                <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(1, proposal.ProposalID); })">
+                                    Mitarbeiterprofile
+                                </button>
+                                <div class="card-text @(_showEmployee[proposal.ProposalID] ? "collapse" : "")">
+                                    @if (_promptDelete[proposal.ProposalID])
                                     {
-                                        @if (_promptDelete[proposal.ProposalID])
-                                        {
-                                            <li class="list-group-item border-dark bg-light font-weight-bold text-black">
-                                                <span>@employee.FirstName @employee.LastName</span>
-                                                <div class="btn-group float-right">
-                                                    <button class="btn btn-info btn-sm mr-2" @onclick=@(() => { ShowDetail(employee.EmployeeID, proposal.ProposalID); })>Details</button>
-                                                    <button class="btn btn-primary btn-sm " @onclick=@(() => { ShowRcEdit(proposal, employee.EmployeeID, 3); })>RC: @proposal.AltRc[employee.EmployeeID] </button>
-                                                </div>
-
-                                            </li>
-                                        }
-                                        else
-                                        {
-                                            <li class="list-group-item border-danger bg-light text-left font-weight-bold text-black">
-                                                <span class="align-middle d-inline-block">@employee.FirstName @employee.LastName</span>
-                                                <button type="button" class="btn float-right btn-sm" @onclick=@(() => { _proposal.RemoveEmployee(proposal.ProposalID, employee.EmployeeID); })>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
-                                                    </svg>
-                                                </button>
-                                            </li>
-                                        }
+                                        <button class="btn btn-danger btn-sm mr-3 mb-3" @onclick=@(() => { OpenDeletePrompt(proposal.ProposalID); })>Entfernen</button>
+                                        <button class="btn btn-success btn-sm  mb-3" @onclick=@(() => { CallSearch(proposal.ProposalID); })>Hinzufügen</button>
                                     }
-                                </ul>
-                            </div>
+                                    else
+                                    {
+                                        <button class="btn btn-outline-danger btn-sm mb-3" @onclick=@(() => { OpenDeletePrompt(proposal.ProposalID); })>Abbrechen</button>
+                                    }
+                                    <ul class="list-group mb-3 text-left">
+                                        @foreach (var employee in proposal.Employees)
+                                        {
+                                            @if (_promptDelete[proposal.ProposalID])
+                                            {
+                                                <li class="list-group-item border-dark bg-light font-weight-bold text-black">
+                                                    <span>@employee.FirstName @employee.LastName</span>
+                                                    <div class="btn-group float-right">
+                                                        <button class="btn btn-info btn-sm mr-2" @onclick=@(async () => { await ShowDetail(employee.EmployeeID, proposal.ProposalID); })>Details</button>
+                                                        <button class="btn btn-primary btn-sm " @onclick=@(() => { ShowRcEdit(proposal, employee.EmployeeID, 3); })>RC: @proposal.AltRc[employee.EmployeeID] </button>
+                                                    </div>
 
-                            <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(2, proposal.ProposalID); })">
-                                Branchen, Hard- und Softskills
-                            </button>
-                            <div class=@(_showAttributes[proposal.ProposalID] ? "collapse" : "")>
-                                <ul class="list-group mb-3 text-left">
-                                    <li class="list-group-item border-dark bg-light text-left text-black mb-1">
-                                        <b>Hardskills:</b> @string.Join(" | ", proposal.Hardskills.Select(e => e.Description))
-                                    </li>
-                                    <li class="list-group-item border-dark bg-light text-left text-black mb-1">
-                                        <b>Softskills:</b> @string.Join(" | ", proposal.Softskills)
-                                    </li>
-                                    <li class="list-group-item border-dark bg-light text-left text-black mb-1">
-                                        <b>Branchen:</b> @string.Join(" | ", proposal.Fields)
-                                    </li>
-                                </ul>
+                                                </li>
+                                            }
+                                            else
+                                            {
+                                                <li class="list-group-item border-danger bg-light text-left font-weight-bold text-black">
+                                                    <span class="align-middle d-inline-block">@employee.FirstName @employee.LastName</span>
+                                                    <button type="button" class="btn float-right btn-sm" @onclick=@(() => { _proposal.RemoveEmployee(proposal.ProposalID, employee.EmployeeID); })>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                                        </svg>
+                                                    </button>
+                                                </li>
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+
+                                <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(2, proposal.ProposalID); })">
+                                    Branchen, Hard- und Softskills
+                                </button>
+                                <div class=@(_showAttributes[proposal.ProposalID] ? "collapse" : "")>
+                                    <ul class="list-group mb-3 text-left">
+                                        <li class="list-group-item border-dark bg-light text-left text-black mb-1">
+                                            <b>Hardskills:</b> @string.Join(" | ", proposal.Hardskills.Select(e => e.Description))
+                                        </li>
+                                        <li class="list-group-item border-dark bg-light text-left text-black mb-1">
+                                            <b>Softskills:</b> @string.Join(" | ", proposal.Softskills)
+                                        </li>
+                                        <li class="list-group-item border-dark bg-light text-left text-black mb-1">
+                                            <b>Branchen:</b> @string.Join(" | ", proposal.Fields)
+                                        </li>
+                                    </ul>
+                                </div>
+                                <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(3, proposal.ProposalID); })">
+                                    Zusatzinformationen
+                                </button>
+                                <li class="list-group-item border-dark bg-light text-left text-black mb-1 @(_showAdditionalInfo[proposal.ProposalID] ? "collapse" : "")">
+                                    @proposal.AdditionalInfo
+                                </li>
                             </div>
-                            <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(3, proposal.ProposalID); })">
-                                Zusatzinformationen
-                            </button>
-                            <li class="list-group-item border-dark bg-light text-left text-black mb-1 @(_showAdditionalInfo[proposal.ProposalID] ? "collapse" : "")">
-                                @proposal.AdditionalInfo
-                            </li>
-                        </div>
-                        <div class="card-footer">
-                            <div class="float-left">
-                                Start: <b> @proposal.Start.ToString("dd.MM.yy") </b>
-                            </div>
-                            <div class="float-right">
-                                Ende: <b> @proposal.End.ToString("dd.MM.yy") </b>
+                            <div class="card-footer">
+                                <div class="float-left">
+                                    Start: <b> @proposal.Start.ToString("dd.MM.yy") </b>
+                                </div>
+                                <div class="float-right">
+                                    Ende: <b> @proposal.End.ToString("dd.MM.yy") </b>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                }
             }
-        }
 
+        </div>
     </div>
-</div>
-
+}
 <!-- RC - Level Pop-Up -->
 @if (ShowPop)
 {
@@ -254,6 +270,7 @@
     [Parameter]
     public int Open { get; set; }
 
+    private bool Loading = false;
     private List<Proposal> _proposals;
     private string filterSearch = "";
     EditProposal _editProposal;
@@ -325,9 +342,12 @@
     }
 
 
-    private void ShowDetail(int employeeId, int proposalId)
+    private async Task ShowDetail(int employeeId, int proposalId)
     {
-        _employeeDetail.Show(employeeId, proposalId);
+        Loading = true;    
+        await _employeeDetail.Show(employeeId, proposalId);
+        Loading = false;
+        
     }
 
     private void ShowRcEdit(Proposal prop, int employeeId, int response)

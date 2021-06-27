@@ -76,7 +76,7 @@ namespace AVATI.Data
                     {
                         desc = Description
                     });
-            if (returnVal.FirstOrDefault() != null)
+            if (returnVal.FirstOrDefault() == null)
             {
                 return false;
             }
