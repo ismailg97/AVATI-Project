@@ -10,7 +10,7 @@
 <AddFieldToProject              @ref="_addFieldToProject" Abstract="@this"/>             
 <AddProjectActivityToProject   @ref="_addProjectActivityToProject" Abstract="@this"/> 
 <AddEmployeeToProject           @ref="_addEmployeeToProject" Abstract="@this"/>          
-<PopAddProjectPurposeToProject  @ref="_popAddProjectPurpose" Abstract="@this"/>           
+<PopAddProjectPurposeToProject  @ref="_popAddProjectPurpose" Abstract="@this"/>
 
 @if (Loading)
 {
@@ -151,6 +151,7 @@ else
                                 @if (Project.Employees.Find(x => x.EmployeeID == activ.EmployeeID) == null)
                                 {
                                     <td class="text-center">[kein zugewiesener Mitarbeiter]</td>
+                                    <button type="button" class="btn btn-info" @onclick="(() => { /*PopAddEmployeetoActivity(); */})"></button>
                                 }
                                 else
                                 {
@@ -228,6 +229,7 @@ else
     AddProjectActivityToProject _addProjectActivityToProject;
     AddEmployeeToProject _addEmployeeToProject;
     PopAddProjectPurposeToProject _popAddProjectPurpose;
+    
 
     public List<ProjectActivity> Activitieslist { get; set; } = new List<ProjectActivity>();
 
@@ -273,9 +275,8 @@ else
         await _addEmployeeToProject.Showing(ID);
         Loading = false;
         StateHasChanged();
-
     }
-
+    
     public void DeleteFromProject(Employee emp)
     {
         Project.Employees.Remove(emp);

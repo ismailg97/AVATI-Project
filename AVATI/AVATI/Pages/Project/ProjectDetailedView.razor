@@ -7,17 +7,17 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-6 mb-4 align-content-center">
-            <div class="card mb-4 border-dark" style="width: auto; background-color: #ed969e">
+            <div class="card mb-4 border-dark" style="width: auto; background-color: #138496">
                 <div class="card-body">
                     <h4 class="card-title text-xl-center">@_project.Projecttitel</h4>
-                    <label class="text text-center">@_project.Projectdescription</label>
+                    <label class="text text-xl-center">@_project.Projectdescription</label>
                 </div>
             </div>
             <div class="card mb-4 border-dark " style="width: auto">
                 <div class="card-body">
                     <h4 class="card-title text-xl-center">Mitarbeiter</h4>
                     <table class="table table-hover">
-                        <thead style="background-color: #eacea9;">
+                        <thead style="background-color: #86cfda;">
                         <tr>
                             <th scope="col">Vorname</th>
                             <th scope="col">Nachname</th>
@@ -43,38 +43,9 @@
             </div>
             <div class="card mb-4 border-dark " style="width: auto">
                 <div class="card-body">
-                    <h4 class="card-title text-xl-center">Branchen</h4>
-                    <table class="table table-hover text-center">
-                        <thead style="background-color: #eacea9;">
-                        <tr>
-                            <th scope="col">Branchentitel</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @if (!_project.Fields.Any())
-                        {
-                            <tr>
-                                <td>[Keine Branchen dem Projekt zugewiesen]</td>
-                                <td></td>
-                            </tr>
-                        }
-                        @foreach (var field in _project.Fields)
-                        {
-                            <tr>
-                                <td>@field</td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 mb-4 align-content-center">
-            <div class="card mb-4 border-dark" style="width:auto;">
-                <div class="card-body">
                     <h4 class="card-title text-xl-center">Projekttätigkeiten</h4>
                     <table class="table table-hover">
-                        <thead style="background-color: #eacea9;">
+                        <thead style="background-color: #86cfda;">
                         <tr>
                             <th scope="col">Tätigkeit</th>
                             <th scope="col">Vorname</th>
@@ -108,22 +79,52 @@
                         }
                         </tbody>
                     </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 mb-4 align-content-center">
+            <div class="card mb-4 border-dark" style="width:auto;">
+                <div class="card-body">
+                    <h4 class="card-title text-xl-center">Branchen</h4>
+                                        <table class="table table-hover text-center">
+                                            <thead style="background-color: #86cfda;">
+                                            <tr>
+                                                <th scope="col">Branchentitel</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            @if (!_project.Fields.Any())
+                                            {
+                                                <tr>
+                                                    <td>[Keine Branchen dem Projekt zugewiesen]</td>
+                                                    <td></td>
+                                                </tr>
+                                            }
+                                            @foreach (var field in _project.Fields)
+                                            {
+                                                <tr>
+                                                    <td>@field</td>
+                                                </tr>
+                                            }
+                                            </tbody>
+                                        </table>
                 </div>
             </div>
             <div class="card mb-4 border-dark" style="width: auto;">
                 <div class="card-body">
-                    <h4 class="card-title text-xl-center">Projekt-eck-zeiten</h4>
+                    <h4 class="card-title text-xl-center">Projektlaufzeit</h4>
                     <table class="table border-dark">
-                        <thead style="background-color: #eacea9;">
+                        <thead style="background-color: #86cfda;">
                         <tr>
-                            <th scope="col">Projektanfang</th>
-                            <th scope="col">Projektende</th>
+                            <th scope="col" class="text-center">Projektanfang</th>
+                            <th scope="col" class="text-center">Projektende</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr>
-                            <td>@_project.Projectbeginning.ToString("dd.MM.yy")</td>
-                            <td>@_project.Projectend.ToString("dd.MM.yy")</td>
+                            <td class="text-center">@_project.Projectbeginning.ToString("dd.MM.yy")</td>
+                            <td class="text-center">@_project.Projectend.ToString("dd.MM.yy")</td>
                         </tr>
                         </tbody>
                     </table>
@@ -133,7 +134,7 @@
                 <div class="card-body">
                     <h4 class="card-title text-xl-center">Projektzwecke</h4>
                     <table class="table table-hover text-center">
-                        <thead style="background-color: #eacea9;">
+                        <thead style="background-color: #86cfda;">
                         <tr>
                             <th scope="col">Zweck</th>
                             <th scope="col">Lösung durch folgende Tätigkeit</th>
@@ -153,6 +154,13 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="form-group text-right">
+        <a href="/Projektübersicht" class="sm form-label">
+            <button type="button" class="btn btn-success">
+                <span class="oi oi-document" aria-hidden="true"></span> Zurück zur Übersicht
+            </button>
+        </a>
     </div>
 </div>
 

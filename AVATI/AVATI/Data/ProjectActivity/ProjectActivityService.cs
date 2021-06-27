@@ -60,7 +60,7 @@ namespace AVATI.Data
             }
 
             db.Execute(
-                "Delete from ProjectActivity_Project_Employee WHERE ProjectId = @pro AND EmployeeId = @emp AND ProjectActivity = @desc",
+                "8 from ProjectActivity_Project_Employee WHERE ProjectId = @pro AND EmployeeId = @emp AND ProjectActivity = @desc",
                 new {emp = EmployeeId, pro = ProjectId, desc = Description});
             return true;
         }
@@ -76,7 +76,7 @@ namespace AVATI.Data
                     {
                         desc = Description
                     });
-            if (returnVal.FirstOrDefault() != null)
+            if (returnVal.FirstOrDefault() == null)
             {
                 return false;
             }
@@ -136,7 +136,7 @@ namespace AVATI.Data
             db.Open();
             var returnVal =
                 db.Query<string>(
-                    "Select ProjectActivity from ProjectActivity WHERE Description = @desc",
+                    "Select Description from ProjectActivity WHERE Description = @desc",
                     new
                     {
                         desc = oldDescription
@@ -147,7 +147,7 @@ namespace AVATI.Data
             }
 
             db.Execute(
-                "Update ProjectActivity SET Description = @newDes WHERE ProjectActivity = @old",
+                "Update ProjectActivity SET Description = @newDes WHERE Description = @old",
                 new {newDes = newDescription, old = oldDescription});
             return true;
         }
@@ -158,7 +158,7 @@ namespace AVATI.Data
             db.Open();
             var returnVal =
                 db.Query<string>(
-                    "Select ProjectActivity from ProjectActivity WHERE Description = @desc",
+                    "Select Description from ProjectActivity WHERE Description = @desc",
                     new
                     {
                         desc = description

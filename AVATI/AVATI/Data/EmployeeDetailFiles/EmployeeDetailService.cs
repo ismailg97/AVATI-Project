@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Data.SqlClient;
@@ -32,10 +33,10 @@ namespace AVATI.Data.EmployeeDetailFiles
             throw new System.NotImplementedException();
         }
 
-        public bool UpdateEmployeeDetail(int employeeId, int proposalId, EmployeeDetail employeeDetail)
+        public async Task<bool> UpdateEmployeeDetail(int employeeId, int proposalId, EmployeeDetail employeeDetail)
         {
-            using DbConnection db = GetConnection();
-            db.Open();
+            await using DbConnection db = GetConnection();
+            await db.OpenAsync();
             foreach (var soft in employeeDetail.Softskills)
             {
                 if (db.Query<string>(
@@ -45,7 +46,7 @@ namespace AVATI.Data.EmployeeDetailFiles
                         pro = proposalId, emp = employeeId, softskill = soft
                     }).FirstOrDefault() == null)
                 {
-                    db.Execute("INSERT INTO EmployeeDetail_Softskill VALUES(@proId, @empId, @softskill)",
+                    await db.ExecuteAsync("INSERT INTO EmployeeDetail_Softskill VALUES(@proId, @empId, @softskill)",
                         new {proId = proposalId, empId = employeeId, softskill = soft});
                 }
             }
@@ -58,7 +59,7 @@ namespace AVATI.Data.EmployeeDetailFiles
             {
                 if (!employeeDetail.Softskills.Contains(softskill))
                 {
-                    db.Execute("DELETE FROM EmployeeDetail_Softskill WHERE ProposalID = @pro and EmployeeID = @emp AND Softskill = @soft", new
+                    await db.ExecuteAsync("DELETE FROM EmployeeDetail_Softskill WHERE ProposalID = @pro and EmployeeID = @emp AND Softskill = @soft", new
                     {
                         pro = proposalId, emp = employeeId, soft = softskill
                     });
@@ -86,7 +87,7 @@ namespace AVATI.Data.EmployeeDetailFiles
             {
                 if (employeeDetail.Hardskills.Find(e => e.Description.Equals(hardskill)) == null)
                 {
-                    db.Execute("DELETE FROM EmployeeDetail_Hardskill WHERE ProposalID = @pro and EmployeeID = @emp and Hardskill = @hard", new
+                    await db.ExecuteAsync("DELETE FROM EmployeeDetail_Hardskill WHERE ProposalID = @pro and EmployeeID = @emp and Hardskill = @hard", new
                     {
                         pro = proposalId, emp = employeeId, hard = hardskill
                     });
@@ -102,7 +103,7 @@ namespace AVATI.Data.EmployeeDetailFiles
                         pro = proposalId, emp = employeeId, language = lang.Item1
                     }).FirstOrDefault() == null)
                 {
-                    db.Execute("INSERT INTO EmployeeDetail_Language VALUES(@proId, @empId, @language)",
+                    await db.ExecuteAsync("INSERT INTO EmployeeDetail_Language VALUES(@proId, @empId, @language)",
                         new {proId = proposalId, empId = employeeId, language = lang.Item1});
                 }
             }
@@ -115,7 +116,7 @@ namespace AVATI.Data.EmployeeDetailFiles
             {
                 if (employeeDetail.Languages.Find(e => e.Item1.Equals(language)) == null)
                 {
-                    db.Execute("DELETE FROM EmployeeDetail_Language WHERE ProposalID = @pro and EmployeeID = @emp and Language = @lang", new
+                    SqlMapper.Execute(db, "DELETE FROM EmployeeDetail_Language WHERE ProposalID = @pro and EmployeeID = @emp and Language = @lang", new
                     {
                         pro = proposalId, emp = employeeId, lang = language
                     });
@@ -131,7 +132,7 @@ namespace AVATI.Data.EmployeeDetailFiles
                         pro = proposalId, emp = employeeId, fieldd = field
                     }).FirstOrDefault() == null)
                 {
-                    db.Execute("INSERT INTO EmployeeDetail_Field VALUES(@proId, @empId, @fieldd)",
+                    await db.ExecuteAsync("INSERT INTO EmployeeDetail_Field VALUES(@proId, @empId, @fieldd)",
                         new {proId = proposalId, empId = employeeId, fieldd = field});
                 }
             }
@@ -144,7 +145,7 @@ namespace AVATI.Data.EmployeeDetailFiles
             {
                 if (employeeDetail.Fields.Find(e => e.Equals(field)) == null)
                 {
-                    db.Execute("DELETE FROM EmployeeDetail_Field WHERE ProposalID = @pro and EmployeeID = @emp and  Field = @lang", new
+                    await db.ExecuteAsync("DELETE FROM EmployeeDetail_Field WHERE ProposalID = @pro and EmployeeID = @emp and  Field = @lang", new
                     {
                         pro = proposalId, emp = employeeId, lang = field
                     });
@@ -160,7 +161,7 @@ namespace AVATI.Data.EmployeeDetailFiles
                         pro = proposalId, emp = employeeId, Role = role
                     }).FirstOrDefault() == null)
                 {
-                    db.Execute("INSERT INTO EmployeeDetail_Role VALUES(@proId, @empId, @Role)",
+                    await db.ExecuteAsync("INSERT INTO EmployeeDetail_Role VALUES(@proId, @empId, @Role)",
                         new {proId = proposalId, empId = employeeId, Role = role});
                 }
             }
@@ -172,7 +173,7 @@ namespace AVATI.Data.EmployeeDetailFiles
             {
                 if (employeeDetail.Roles.Find(e => e.Equals(role)) == null)
                 {
-                    db.Execute("DELETE FROM EmployeeDetail_Role WHERE ProposalID = @pro and EmployeeID = @emp and  Role = @lang", new
+                    await db.ExecuteAsync("DELETE FROM EmployeeDetail_Role WHERE ProposalID = @pro and EmployeeID = @emp and  Role = @lang", new
                     {
                         pro = proposalId, emp = employeeId, lang = role
                     });
@@ -233,11 +234,11 @@ namespace AVATI.Data.EmployeeDetailFiles
             return true;
         }
 
-        public EmployeeDetail GetEmployeeDetail(int employeeId, int proposalId)
+        public async Task<EmployeeDetail> GetEmployeeDetail(int employeeId, int proposalId)
         {
             EmployeeDetail temp = new EmployeeDetail();
-            using DbConnection db = GetConnection();
-            db.Open();
+            await using DbConnection db = GetConnection();
+            await db.OpenAsync();
             temp.Roles = new List<string>(db.Query<string>(
                 "SELECT Role from EmployeeDetail_Role WHERE EmployeeId = @empId and ProposalId = @propId",
                 new {empId = employeeId, propId = proposalId}));
