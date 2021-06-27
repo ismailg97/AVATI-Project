@@ -192,7 +192,7 @@ namespace AVATI.Data
                 db.Execute("INSERT INTO Proposal VALUES(@proposalTitle, @Info, @beg, @end)",
                     new
                     {
-                        proposalTitle = temp.ProposalTitle ?? "LEER"  + "[KOPIE]",
+                        proposalTitle = (temp.ProposalTitle == null) ? "LEER" :  temp.ProposalTitle + " [KOPIE]",
                         Info = temp.AdditionalInfo ?? "[Keine Zusatzinformationen]",
                         beg = temp.Start.ToString("d", DateTimeFormatInfo.InvariantInfo),
                         end = temp.End.ToString("d", DateTimeFormatInfo.InvariantInfo)
