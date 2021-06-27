@@ -1,6 +1,179 @@
 ﻿@page "/ProjectActivities"
-<h3>ProjectActivities</h3>
+@using AVATI.Data
+@using System.Diagnostics
+
+@inject IProjectActivityService _projectActivityService
+@if (Loading)
+{
+    <div class="d-flex flex-column align-items-center justify-content-center">
+        <div class="row">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <div class="row">
+            <strong>Lade...</strong>
+        </div>
+    </div>
+}
+else
+{
+    <EditForm Model="@Activity">
+        <DataAnnotationsValidator/>
+        <h3>Tätigkeiten</h3>
+        <div class="container">
+            <div class="row text-left mb-3">
+                <div class="col-sm mb-3">
+                    <div class="form-group row">
+                        <label class="col-form-label mx-1 font-weight-bold" value="@Description">Beschreibung:</label>
+                        <InputText class="form-control" style="width: auto"@bind-Value="Description"></InputText>
+                        <button type="button" class="btn btn-success mx-1" @onclick="(() => { AddProjectActivity(Description); })"> + Aktivität</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row text-left mb-3">
+                <div class="col-sm mb-3">
+                    <div class="form-group row">
+                        <table class="table table-hover ">
+                            <thead>
+                            <div class="form-group">
+                                <input class="form-control" type="text" placeholder="Suche Aktivität..."
+                                       @bind="filterSearch"
+                                       @bind:event="oninput">
+                            </div>
+                            <tr>
+                                <th scope="col">Beschreibung</th>
+                                <th scope="col">Assoziierte Projekte</th>
+                                <th scope="col"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @if (!_projectActivityService.GetAllProjectActivities().Any())
+                            {
+                                <tr>
+                                    <td>[Keine Aktivitäten hinzugefügt!]</td>
+                                </tr>
+                            }
+                            @foreach (var activity in _projectActivityService.GetAllProjectActivities())
+                            {
+                                @if (filterSearch == null || activity.Description.Contains(filterSearch, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <tr>
+                                        <td>@activity.Description</td>
+                                        <td> </td>
+                                        <td>
+                                            <button type="button" class="btn btn-info text-right" @onclick="() => { }">
+                                                <span class="oi oi-pencil"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-danger text-right" @onclick="(() => { ShowDelete(Description); })">
+                                                <span class="oi oi-trash"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </EditForm>
+}
+@if (ShowPopDelete)
+{
+    <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
+        <div class="modal-dialog border-dark">
+            <div class="modal-content">
+                <div class="modal-header flex-column">
+                    <h4 class="modal-title col-12 text-center">Sind Sie sicher?</h4>
+                </div>
+                <div class="modal-body text-center">
+                    <p>Wollen Sie das Aktivität wirklich löschen? Der Prozess kann nicht rückgängig gemacht werden!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { ShowPopDelete = !ShowPopDelete; })">
+                        <span class="oi oi-circle-x"></span> Abbrechen
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { DeleteActivity(Description); ShowPopDelete = !ShowPopDelete;})">
+                        <span class="oi oi-trash"></span>Löschen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+@if (ShowPopUpdate)
+{
+    <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
+        <div class="modal-dialog border-dark">
+            <div class="modal-content">
+                <div class="modal-header flex-column">
+                    <h4 class="modal-title col-12 text-center">Update Aktivität</h4>
+                </div>
+                <div class="modal-body text-center">
+                    <label class="col-sm-3 col-form-label font-weight-bold" value="@Description"></label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { ShowPopUpdate = !ShowPopUpdate; })">Abbrechen</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { /*UpdateActivity()*/; ShowPopUpdate = !ShowPopUpdate;})">Löschen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
 
 @code {
+
+    public string Description { get; set; }
+    private ProjectActivity Activity { get; set; } = new ProjectActivity();
+    private bool Loading = false;
+
+    public bool ShowPopDelete { get; set; }
+    public bool ShowPopUpdate { get; set; }
     
+    private string filterSearch { get; set; }
+
+    public void AddProjectActivity(string description)
+    {
+        _projectActivityService.AddActivity(description);
+        StateHasChanged();
+    }
+
+    public void UpdateActivity(string old, string newstring)
+    {
+        _projectActivityService.UpdateActivity(old, newstring);
+        StateHasChanged();
+    }
+
+    private void ShowDelete(string description)
+    {
+        if (!ShowPopDelete)
+        {
+            Description = description;
+        }
+
+        ShowPopDelete = !ShowPopDelete;
+    }
+
+    private void ShowUpdate(string description)
+    {
+        if (!ShowPopUpdate)
+        {
+            Description = description;
+        }
+
+        ShowPopUpdate = !ShowPopUpdate;
+    }
+
+    public void DeleteActivity(string description)
+    {
+        _projectActivityService.DeleteProjectActivity(description);
+        StateHasChanged();
+    }
+
+
 }
