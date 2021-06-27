@@ -60,6 +60,7 @@ namespace AVATI.Data
                 new {prop = propId, emp = empId});
             db.Execute("Delete FROM EmployeeDetail WHERE ProposalId = @prop and EmployeeId = @emp",
                 new {prop = propId, emp = empId});
+            Console.WriteLine("We out here");
             return true;
         }
 

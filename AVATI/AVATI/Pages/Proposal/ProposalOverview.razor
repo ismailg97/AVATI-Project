@@ -89,16 +89,30 @@ else
                                             else
                                             {
                                                 <li class="list-group-item border-danger bg-light text-left font-weight-bold text-black">
-                                                    <span class="align-middle d-inline-block">@employee.FirstName @employee.LastName</span>
-                                                    <button type="button" class="btn float-right btn-sm" @onclick=@(() => { _proposal.RemoveEmployee(proposal.ProposalID, employee.EmployeeID); })>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
-                                                        </svg>
-                                                    </button>
+                                                    @if (_tempEmpList.Exists(e => e.EmployeeID == employee.EmployeeID))
+                                                    {
+                                                        <span class="align-middle d-inline-block">@employee.FirstName @employee.LastName</span>
+                                                        <button type="button" class="btn float-right btn-sm" @onclick=@(() => { _tempEmpList.RemoveAll(e => e.EmployeeID == employee.EmployeeID); })>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                                            </svg>
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="align-middle d-inline-block font-weight-bolder" style="color: red">@employee.FirstName @employee.LastName</span>
+                                                        <button type="button" class="btn float-right btn-sm" @onclick=@(() => { _tempEmpList.Add(employee); })>
+                                                            <span class="oi oi-action-redo"></span>
+                                                        </button>
+                                                    }
                                                 </li>
                                             }
                                         }
                                     </ul>
+                                    @if (!_promptDelete[proposal.ProposalID])
+                                    {
+                                        <button class="btn btn-success btn-sm mb-3" @onclick=@(() => { RemoveEmpFromProposal(proposal.ProposalID); })>Speichern</button>
+                                    }
                                 </div>
 
                                 <button class="btn btn-outline-dark btn-block mb-3" @onclick="(() => { ChangeVisible(2, proposal.ProposalID); })">
@@ -286,6 +300,8 @@ else
     public Proposal Temp { get; set; }
     private static int _changeValue;
 
+    private List<Employee> _tempEmpList;
+
     protected override void OnInitialized()
     {
         _proposals = _proposal.GetAllProposals();
@@ -341,7 +357,22 @@ else
         _editProposal.Show(propId);
     }
 
-
+    private void RemoveEmpFromProposal(int propId)
+    {
+        var proposalTemporary = _proposal.GetProposal(propId);
+        foreach (var emp in proposalTemporary.Employees)
+        {
+            if (!_tempEmpList.Exists(e => e.EmployeeID == emp.EmployeeID))
+            {
+                Console.WriteLine("GEHEN WIR HIER REIN");
+                _proposal.RemoveEmployee(propId, emp.EmployeeID);
+            }
+        }
+        _proposals = _proposal.GetAllProposals();
+        _promptDelete[propId] = !_promptDelete[propId];
+        StateHasChanged();
+    }
+    
     private async Task ShowDetail(int employeeId, int proposalId)
     {
         Loading = true;    
@@ -392,7 +423,7 @@ else
 
     public void OpenDeletePrompt(int Id)
     {
-        Console.WriteLine("this function is being called");
+        _tempEmpList = _proposal.GetProposal(Id).Employees;
         _promptDelete[Id] = !_promptDelete[Id];
     }
 
