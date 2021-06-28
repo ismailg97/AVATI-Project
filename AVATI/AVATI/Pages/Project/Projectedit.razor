@@ -112,7 +112,7 @@ else
                             <tr>
                                 <td>@emp.FirstName @emp.LastName</td>
                                 <td>
-                                    <button type="button" class="btn btn-danger" @onclick="() => { DeleteFromProject(emp); }">
+                                    <button type="button" class="btn btn-danger" @onclick="() => { DeleteFromProject(Project.ProjectID ,emp); Update(); }">
                                         <span class="oi oi-trash" aria-hidden="true"></span>
                                     </button>
                                 </td>
@@ -147,11 +147,11 @@ else
                         @foreach (var activ in _projectActivity.GetProjectActivitiesProject(ID))
                         {
                             <tr>
-                                <td>@activ.Description</td>
                                 @if (Project.Employees.Find(x => x.EmployeeID == activ.EmployeeID) == null)
                                 {
+                                    <td>@activ.Description</td>
                                     <td class="text-center">[kein zugewiesener Mitarbeiter]</td>
-                                    <button type="button" class="btn btn-info" @onclick="(() => { /*PopAddEmployeetoActivity(); */})"></button>
+                                    <td><button type="button" class="btn btn-info" @onclick="(() => { /*PopAddEmployeetoActivity(); */})"></button></td> 
                                 }
                                 else
                                 {
@@ -277,9 +277,9 @@ else
         StateHasChanged();
     }
     
-    public void DeleteFromProject(Employee emp)
+    public void DeleteFromProject(int ProjectId, Employee emp)
     {
-        Project.Employees.Remove(emp);
+        _projectService.DeleteEmployeeFromProject(ProjectId, emp.EmployeeID);
     }
 
     public void AddProjectPurposeToProject(int ProjectID)

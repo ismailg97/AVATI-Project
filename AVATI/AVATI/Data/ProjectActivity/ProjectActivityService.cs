@@ -102,7 +102,7 @@ namespace AVATI.Data
             db.Open();
             List<ProjectActivity> toReturn = new List<ProjectActivity>();
             List<string> tempList = new List<string>(db.Query<string>(
-                "SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectId = @pro",
+                "SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectId = @pro AND ProjectActivity IS NOT NULL",
                 new {pro = ProjectID}));
             foreach (var act in tempList)
             {
