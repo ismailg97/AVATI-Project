@@ -5,10 +5,13 @@
 @using AVATI.Data
 @using BlazorDownloadFile
 @using DocumentFormat.OpenXml
-@using DocumentFormat.OpenXml.InkML
 @using DocumentFormat.OpenXml.Packaging
 @using DocumentFormat.OpenXml.Wordprocessing
-@using Table = DocumentFormat.OpenXml.InkML.Table
+@using Paragraph = DocumentFormat.OpenXml.Wordprocessing.Paragraph
+@using Run = DocumentFormat.OpenXml.Wordprocessing.Run
+@using Text = DocumentFormat.OpenXml.Wordprocessing.Text
+@using ParagraphProperties = DocumentFormat.OpenXml.Wordprocessing.ParagraphProperties
+@using RunProperties = DocumentFormat.OpenXml.Wordprocessing.RunProperties
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject IProjektService _project
 @inject IProposalService _proposal
@@ -374,31 +377,95 @@
         }
         return false;
     }
+    public static Paragraph GenerateHardskillListItem(string text)
+    {
+        var element = new Paragraph(
+            new ParagraphProperties(new ParagraphStyleId() { Val = "Listenabsatz" },  new NumberingProperties(new NumberingLevelReference() { Val = 0 }, new NumberingId() { Val = 3 })),
+            new Run(new RunProperties(new RunFonts() {ComplexScriptTheme = ThemeFontValues.MinorHighAnsi}, new FontSize() {Val = "28"}), new Text(text))) {RsidRunAdditionDefault = "008C3DD7", RsidParagraphAddition = "008C3DD7", RsidParagraphProperties = "001D367B", RsidParagraphMarkRevision = "008C3DD7", ParagraphId = "66D57D28", TextId = "5066FE5B"};
+        return element;
+    }
+
+    public static Paragraph GenerateSoftskillListItem(string text)
+    {
+        var element = new Paragraph(
+            new ParagraphProperties(new ParagraphStyleId() { Val = "Listenabsatz" },  new NumberingProperties(new NumberingLevelReference() { Val = 0 }, new NumberingId() { Val = 3 })),
+            new Run(new RunProperties(new RunFonts() {ComplexScriptTheme = ThemeFontValues.MinorHighAnsi}, new FontSize() {Val = "28"}), new Text(text))) {RsidRunAdditionDefault = "001D367B", RsidParagraphAddition = "001D367B", RsidParagraphProperties = "00DC35F6", RsidParagraphMarkRevision = "00DC35F6", ParagraphId = "0FC777E4", TextId = "43F5F574"};
+        return element;
+    }
+
+    public static Paragraph GenerateFieldListItem(string text)
+    {
+        var element = new Paragraph(
+            new ParagraphProperties(new ParagraphStyleId() { Val = "Listenabsatz" },  new NumberingProperties(new NumberingLevelReference() { Val = 0 }, new NumberingId() { Val = 3 })),
+            new Run(new RunProperties(new RunFonts() {ComplexScriptTheme = ThemeFontValues.MinorHighAnsi}, new FontSize() {Val = "28"}), new Text(text))) {RsidRunAdditionDefault = "001D367B", RsidParagraphAddition = "00147E2B", RsidParagraphProperties = "00DC35F6", RsidParagraphMarkRevision = "00DC35F6", ParagraphId = "41A90976", TextId = "7230A5BB"};
+        return element;
+    }
 
     public async Task CreateDocument(int id)
     {
-        using (MemoryStream mem = new MemoryStream())
+        string templatePath = "E:\\Users\\Tobi\\Desktop\\AvatiProposalDoc.docx";
+        MemoryStream memStream = new MemoryStream();
+        using (FileStream fileStream = new FileStream(templatePath, FileMode.Open, FileAccess.Read))
+            await fileStream.CopyToAsync(memStream);
+        using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(memStream, true))
         {
-            using (WordprocessingDocument wordDocument =
-                WordprocessingDocument.Create(mem, WordprocessingDocumentType.Document))
+            wordDoc.ChangeDocumentType(WordprocessingDocumentType.Document);
+            if (wordDoc.MainDocumentPart != null)
             {
-    //Grundstruktur des Dokuments erzeugen (Document und Rumpf des Dokuments)
-                MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
-                Document document1 = new Document();
-                Body body1 = document1.AppendChild(new Body());
-    //Document zeilenweise befüllen
-                Paragraph para1 = body1.AppendChild(new Paragraph());
-                Run run1 = para1.AppendChild(new Run());
-                run1.AppendChild(new Text("Projekt: " + id.ToString()));
-
-    //Das erstellte Dokument übergeben
-                mainPart.Document = document1;
+                Body body = wordDoc.MainDocumentPart.Document.Body;
+                var paragraphs = body.Descendants<Paragraph>();
+                foreach (var par in paragraphs)
+                {
+                    foreach (var run in par.Descendants<Run>())
+                    {
+                        foreach (var element in run.Descendants<Text>())
+                        {
+                            Console.WriteLine(element.Text);
+                            switch (element.Text)
+                            {
+                                case "Angebotstitel":
+                                    element.Text = element.Text.Replace("Angebotstitel", _proposal.GetProposal(id).ProposalTitle);
+                                    break;
+                                case "Beschreibungstext":
+                                    element.Text = element.Text.Replace("Beschreibungstext", _proposal.GetProposal(id).AdditionalInfo);
+                                    break;
+                                case "Hardskill":
+                                {
+                                    foreach (var hardskill in _proposal.GetHardskills(id))
+                                    {
+                                        par.InsertAfterSelf(GenerateHardskillListItem(hardskill.Description));
+                                    }
+                                    //par.Remove();
+                                    break;
+                                }
+                                case "Softskill":
+                                    foreach (var softskill in _proposal.GetSoftskills(id))
+                                    {
+                                        par.InsertAfterSelf(GenerateSoftskillListItem(softskill));
+                                    }
+                                    //par.Remove();
+                                    break;
+                                case "Branche":
+                                    foreach (var field in _proposal.GetFields(id))
+                                    {
+                                        par.InsertAfterSelf(GenerateFieldListItem(field));
+                                    }
+                                    //par.Remove();
+                                    break;
+                                case "Tätigkeitsbereiche":
+                                    //TODO insert and fill Table:    Mitarbeiter | Role
+                                    break;
+                            }
+                        }
+                    }
+                }
             }
-
-
-            var task = await _blazorDownloadFileService.DownloadFile("test.docx", mem, "application/octet-stream");
+            //TODO After inserting the table, fill 'Mitarbeiterprofile' manually; one profile per side; use body.append...()
+            //TODO After filling the Profiles, KOSTENMIXKALKULATION   DAMM DAMM DAMM
+            Console.WriteLine(wordDoc.ToFlatOpcString());
+            wordDoc.Save();
+            wordDoc.Close();
         }
+        var task = await _blazorDownloadFileService.DownloadFile("test.docx", memStream, "application/octet-stream");
     }
-
-
 }
