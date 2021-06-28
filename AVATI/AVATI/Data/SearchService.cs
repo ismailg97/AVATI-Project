@@ -171,7 +171,7 @@ namespace AVATI.Data
 
 
         public List<Employee> SearchEmployee(string name, List<string> Softskill, List<Hardskill> Hardskill,
-            List<string> Rolle, List<Hardskill> Categories
+            List<string> Rolle, List<Hardskill> Categories, List<Tuple<string, int>> foundCats
         )
         {
             PerfectMatch = false;
@@ -206,9 +206,9 @@ namespace AVATI.Data
                     }
                 }
 
-                foreach (var category in Categories)
+                foreach (var category in foundCats.FindAll(e => e.Item2 == employee.EmployeeID))
                 {
-                    //
+                    ++numberOfMatches;
                 }
                 foreach (var role in Rolle)
                 {
@@ -223,7 +223,7 @@ namespace AVATI.Data
                     TempEmployee.Add(new SearchService(_configuration) {Employee = employee, EmployeeId = employee.EmployeeID, Priority = numberOfMatches});
                 }
 
-                if (numberOfMatches == Hardskill.Count + Softskill.Count + Rolle.Count + ((name == null) ? 0 : 1))
+                if (numberOfMatches == Hardskill.Count + Softskill.Count + Rolle.Count + Categories.Count + ((name == null) ? 0 : 1))
                 {
                     PerfectMatch = true;
                 }
