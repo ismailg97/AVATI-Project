@@ -10,9 +10,9 @@ namespace AVATI.Data.ValidationAttributes
             if (value is DateTime time)
             {
 
-                if (DateTime.Compare(time, DateTime.Now) < 0)
+                if (DateTime.Compare(time, DateTime.Now.AddDays(-1)) < 0)
                 {
-                    Console.WriteLine("DAMMMMM");
+
                     return new ValidationResult("Das Datum kann nicht vor dem aktuellen Datum liegen! (" +
                                                 DateTime.Now.ToString("dd.MM.yy") + ")");
                 }

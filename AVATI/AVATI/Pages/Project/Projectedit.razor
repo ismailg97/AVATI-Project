@@ -53,18 +53,18 @@ else
                         <label class="col-sm-3 col-form-label font-weight-bold">Branchen</label>
                         <div class="col-sm-6 col-form-label">
                             <div class="list-group border-dark border overflow-auto mr-3" style="max-height: 200px">
-                                @if (!_projectService.GetAllFieldsFromOneProject(ID).Any())
+                                @if (!Project.Fields.Any())
                                 {
                                     <button class="btn btn-outline-dark">[Keine Branche dem Projekt zugewiesen]</button>
                                 }
-                                @foreach (var branche in _projectService.GetAllFieldsFromOneProject(ID))
+                                @foreach (var branche in Project.Fields)
                                 {
                                     <button class="btn btn-outline-dark">@branche</button>
                                 }
-                                <button class="btn btn-info" @onclick="() => PopAddFieldToProject()">
+                            </div>
+                                <button class="btn btn-info col" @onclick="() => PopAddFieldToProject()">
                                     <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span>
                                 </button>
-                            </div>
                         </div>
                     </div>
 

@@ -140,7 +140,8 @@ namespace AVATI.Data
                 new {proId = projectID});
             temp.Projectend = db.QuerySingle<DateTime>("SELECT Projectend from Project WHERE ProjectId = @proId",
                 new {proId = projectID});
-            temp.Fields = new List<string>();
+            temp.Fields = db.Query<string>("SELECT Field from Project_FIeld WHERE ProjectID = @pro",
+                new {pro = projectID}).ToList();
             temp.ProjectID = projectID;
             List<int> employeeIds = 
                 db.Query<int>("SELECT EmployeeId FROM ProjectActivity_Project_Employee WHERE ProjectID = @pro AND EmployeeID IS NOT NULL",
@@ -169,6 +170,8 @@ namespace AVATI.Data
                     new {proId = temp.ProjectID});
                 temp.Projectend = db.QuerySingle<DateTime>("SELECT Projectend from Project WHERE ProjectId = @proId",
                     new {proId = temp.ProjectID});
+                temp.Fields = db.Query<string>("SELECT Field from Project_FIeld WHERE ProjectID = @pro",
+                    new {pro = temp.ProjectID}).ToList();
             }
 
             return Projects;
@@ -196,6 +199,31 @@ namespace AVATI.Data
             db.Open();
             db.Execute("DELETE FROM ProjectActivity_Project_Employee WHERE ProjectID = @pro AND EmployeeID = @emp",
                 new {pro = ProjectID, emp = EmployeeID});
+            return true;
+        }
+
+        public bool UpdateFieldsFromProject(int ProjectID, List<string> fields)
+        {
+            IDbConnection db = GetConnection();
+            db.Open();
+            var listInProject = db.Query<string>("SELECT Field from Project_Field WHERE ProjectID = @pro",
+                new {pro = ProjectID}).ToList();
+            foreach (var pro in listInProject)
+            {
+                if (!fields.Exists(e => e.Equals(pro)))
+                {
+                    db.Execute("Delete FROM Project_Field WHERE Field = @f", new {f = pro});
+                }
+            }
+
+            foreach (var fieldAdd in fields)
+            {
+                if (!listInProject.Exists(e => e.Equals(fieldAdd)))
+                {
+                    db.Execute("INSERT INTO Project_Field VALUES(@pro, @f)", new {f = fieldAdd, pro = ProjectID});
+                }
+            }
+
             return true;
         }
     }
