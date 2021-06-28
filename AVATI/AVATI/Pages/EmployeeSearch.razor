@@ -77,13 +77,13 @@
             </div>
             <div class="@(IsProject ? "col-5" : "col-4") mr-4">
                 <label for="suche">Filter <small class="text-muted">(Nach Hardskillkategorien suchen)</small></label>
-                <input type="search" class="col form-control" id="suche" @bind-value="TempHardskill" @bind-value:event="oninput" placeholder="Hardskillkategorie..."/>
+                <input type="search" class="col form-control" id="suche" @bind-value="TempCategory" @bind-value:event="oninput" placeholder="Hardskillkategorie..."/>
                 <div class="form-group row col">
                 </div>
                 <div class="list-group overflow-auto" style="height: 200px;  border: 3px solid lightblue; border-radius: 6px; min-width:90%">
                     @foreach (var hardskill in _searchService.CategoriesToDisplay)
                     {
-                        @if (TempHardskill == null || hardskill.Description.Contains(TempHardskill, StringComparison.OrdinalIgnoreCase))
+                        @if (TempCategory == null || hardskill.Description.Contains(TempCategory, StringComparison.OrdinalIgnoreCase))
                         {
                             <button class="btn btn-outline-dark" @onclick=@(() => { _searchService.AddCategorySearch(hardskill); })>@hardskill.Description</button>
                         }
@@ -193,8 +193,12 @@
                                     if (_searchService.HardskillsToSearchTemp.Exists(e => e.Description.Equals(hardskill.Description)))
                                     {
                                         <button class="btn btn-success btn-sm mr-1 mb-1">@hardskill.Description</button>
+                                    Console.WriteLine("Der Hardskill: " + hardskill.Description);
+                                    if (hardskill.Uppercat == null)
+                                    {
+                                        Console.WriteLine("Der Hardskill hat keine Elternknoten ");
                                     }
-                                    
+                                    }
                                 }
 
                             </div>
@@ -281,6 +285,7 @@ else
 
     public string TempHardskill { get; set; }
 
+    public string TempCategory { get; set; }
     public List<Hardskill> PseudoHardskills { get; set; }
 
     public List<Employee> AllEmployees { get; set; }
