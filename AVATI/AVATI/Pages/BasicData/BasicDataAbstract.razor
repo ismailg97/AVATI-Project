@@ -78,9 +78,9 @@
                 </td>
             </tr>
 
-            @if (hardskill.Uppercat != null)
+            @if (hardskill.Uppercat != null && hardskill.Uppercat.Any())
             {
-                <div class="hideskill"><ShowUpperCat Hardskill="@hardskill"/><a>@hardskill.Description</a></div>
+                <div class="hideskill"><ShowUpperCat Hardskill="@hardskill"/></div>
             }
             else
             {
@@ -107,6 +107,7 @@
         <tr>
             <th>Bezeichnung</th>
             <th></th>
+            <th></th>
         </tr>
         
         @foreach (Hardskill hardskillcat in _hardskillCats)
@@ -120,9 +121,27 @@
                 {
                     ShowEditCat.Add(hardskillcat.Description, false);
                 }
+                
+                if (!ShowCat.ContainsKey(hardskillcat.Description))
+                {
+                    ShowCat.Add(hardskillcat.Description, false);
+                }
 
-                <tr class="showcat">
+                <tr>
                     <td>@hardskillcat.Description</td>
+                    <td class="smalltd">
+                        @if (!ShowEditCat[hardskillcat.Description])
+                        {
+                            if (!ShowCat[hardskillcat.Description])
+                            {
+                                <button class="btn btn-success" @onclick="() => ShowingCat(hardskillcat.Description)">View</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-outline-success" @onclick="() => ShowingCat(hardskillcat.Description)">Stop View</button>
+                            }
+                        }
+                    </td>
                     <td class="smalltd">
                         @if (ShowEditCat[hardskillcat.Description])
                         {
@@ -138,14 +157,17 @@
                 if (ShowEditCat[hardskillcat.Description])
                 {
                     <div>
-                        <EditTreeElement Hardskills="@(new List<string>() {hardskillcat.Description})" Abstract="@this"/>
+                        <EditTreeElement Descriptions="@(new List<string>() {hardskillcat.Description})" Abstract="@this"/>
                     </div>
                 }
                 else
                 {
-                    <div class="hidecat">
-                        <TreeElement Descriptions="@(new List<string>() {hardskillcat.Description})"/>
-                    </div>
+                    if (ShowCat[hardskillcat.Description])
+                    {
+                        <div>
+                            <TreeElement Descriptions="@(new List<string>() {hardskillcat.Description})"/>
+                        </div>
+                    }
                 }
 
             }
@@ -251,6 +273,8 @@
     private string[] Filter { get; set; } = new string[5];
 
     public Dictionary<string, bool> ShowEditCat = new();
+    
+    public Dictionary<string, bool> ShowCat = new();
 
     private string Description { get; set; }
     
@@ -267,13 +291,8 @@
         _hardskillCats = await _hardskillService.GetAllHardskillCategorys();
     }
 
-    public async Task UpdateLists()
+    public void UpdateLists()
     {
-        _softskills = _basicDataService.GetAllSoftSkills();
-        _fields = _basicDataService.GetAllFields();
-        _roles = _basicDataService.GetAllRoles();
-        _hardskills = await _hardskillService.GetAllHardskills();
-        _hardskillCats = await _hardskillService.GetAllHardskillCategorys();
         StateHasChanged();
     }
 
@@ -284,11 +303,16 @@
 
     private void ShowingEditCat(string cat)
     {
-        if(!ShowEditCat.ContainsKey(cat))
+        /*if(!ShowEditCat.ContainsKey(cat))
         {
-            ShowEditCat.Add(cat, true);
-        }
+            ShowEditCat.Add(cat, false);
+        }*/
         ShowEditCat[cat] = !ShowEditCat[cat];
+    }
+
+    private void ShowingCat(string cat)
+    {
+        ShowCat[cat] = !ShowCat[cat];
     }
 
     void PopCreateBasicData(BasicDataType type)
