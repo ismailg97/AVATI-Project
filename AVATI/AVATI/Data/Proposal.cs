@@ -6,10 +6,10 @@ using AVATI.Data.ValidationAttributes;
 
 namespace AVATI.Data
 {
+    [DateTimeValidationAttribute]
     public class Proposal
     {
-        [Required]
-        [NotNull]
+        [Required(ErrorMessage = "Name ist erforderlich")]
         [StringLength(70, ErrorMessage = "Angebotstitel ist zu lang (70 Zeichen)")]
         public string ProposalTitle { get; set; }
         
@@ -24,12 +24,8 @@ namespace AVATI.Data
 
         public Dictionary<int, int> AltRc = new Dictionary<int, int>();
         
-        [ProjectDateTimeValidation]
         public DateTime Start{ get; set; } = DateTime.Now;
         
-        
-        [ProjectDateTimeValidation]
-
         public DateTime End { get; set; } = DateTime.Now;
     }
 }

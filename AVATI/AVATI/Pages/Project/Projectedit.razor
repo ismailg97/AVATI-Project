@@ -36,7 +36,7 @@ else
                 <div class="column">
                     <h3 class="text-lg-left font-weight-bold">Projekt Bearbeiten</h3>
                     <div class="form-group row">
-                        <label class="col-sm-3 col-form-label font-weight-bold" value="@Project.Projecttitel">Projekttitel</label>
+                        <label class="col-sm-3 col-form-label font-weight-bold">Projekttitel</label>
                         <div class="col-sm-9">
                             <InputText id="projekttitel" class="form-control" @bind-Value="Project.Projecttitel"></InputText>
                         </div>
@@ -45,7 +45,7 @@ else
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label font-weight-bold">Projektbeschreibung</label>
                         <div class="col-sm-9">
-                            <textarea id="projektbeschreibung" class="form-control" rows="3" @bind="Project.Projectdescription"></textarea>
+                            <textarea id="projektbeschreibung" class="form-control" @bind="Project.Projectdescription"></textarea>
                         </div>
                     </div>
 
@@ -209,11 +209,10 @@ else
                             <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
                         </button>
                     </a>
-                    <a href="/Projektübersicht" class="sm form-label">
-                        <button type="button" class="btn btn-success" @onclick="(() => { Save(); })">
+
+                        <button type="submit" class="btn btn-success">
                             <span class="oi oi-document" aria-hidden="true"></span> Speichern
                         </button>
-                    </a>
                 </div>
             </div>
         </div>
@@ -246,6 +245,7 @@ else
     {
         Project.ProjectID = ID;
         _projectService.UpdateProject(Project);
+        _navigationManager.NavigateTo("/Projektübersicht");
     }
 
     public void PopAddFieldToProject()
