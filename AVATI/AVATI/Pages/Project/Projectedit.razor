@@ -7,10 +7,10 @@
 @inject IProjectActivityService _projectActivity
 @inject EmployeeServiceSimple _employeeService
 
-<AddFieldToProject              @ref="_addFieldToProject" Abstract="@this"/>             
-<AddProjectActivityToProject   @ref="_addProjectActivityToProject" Abstract="@this"/> 
-<AddEmployeeToProject           @ref="_addEmployeeToProject" Abstract="@this"/>          
-<PopAddProjectPurposeToProject  @ref="_popAddProjectPurpose" Abstract="@this"/>
+<AddFieldToProject @ref="_addFieldToProject" Abstract="@this"/>
+<AddProjectActivityToProject @ref="_addProjectActivityToProject" Abstract="@this"/>
+<AddEmployeeToProject @ref="_addEmployeeToProject" Abstract="@this"/>
+<PopAddProjectPurposeToProject @ref="_popAddProjectPurpose" Abstract="@this"/>
 
 @if (Loading)
 {
@@ -28,12 +28,12 @@
 else
 {
     <EditForm Model="@Project" OnValidSubmit="@Save">
-    <DataAnnotationsValidator/>
-
-    <div class="container col h-100">
+        
+       <DataAnnotationsValidator/>
         <div class="row col h-100">
             <div class="text-left col">
                 <div class="column">
+                <ValidationSummary/>
                     <h3 class="text-lg-left font-weight-bold">Projekt Bearbeiten</h3>
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label font-weight-bold">Projekttitel</label>
@@ -62,9 +62,9 @@ else
                                     <button class="btn btn-outline-dark">@branche</button>
                                 }
                             </div>
-                                <button class="btn btn-info col" @onclick="() => PopAddFieldToProject()">
-                                    <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span>
-                                </button>
+                            <button class="btn btn-info col" @onclick="() => PopAddFieldToProject()">
+                                <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span>
+                            </button>
                         </div>
                     </div>
 
@@ -112,7 +112,7 @@ else
                             <tr>
                                 <td>@emp.FirstName @emp.LastName</td>
                                 <td>
-                                    <button type="button" class="btn btn-danger" @onclick="() => { DeleteFromProject(Project.ProjectID ,emp); Update(); }">
+                                    <button type="button" class="btn btn-danger" @onclick="() => { DeleteFromProject(Project.ProjectID, emp); Update(); }">
                                         <span class="oi oi-trash" aria-hidden="true"></span>
                                     </button>
                                 </td>
@@ -151,7 +151,9 @@ else
                                 {
                                     <td>@activ.Description</td>
                                     <td class="text-center">[kein zugewiesener Mitarbeiter]</td>
-                                    <td><button type="button" class="btn btn-info" @onclick="(() => { /*PopAddEmployeetoActivity(); */})"></button></td> 
+                                    <td>
+                                        <button type="button" class="btn btn-info" @onclick="(() => { /*PopAddEmployeetoActivity(); */})"></button>
+                                    </td>
                                 }
                                 else
                                 {
@@ -171,7 +173,7 @@ else
                         <th class="text-center" scope="col">Gelöst durch...</th>
                         <th scope="col">
                             <div class="form-group text-right">
-                                <button type="button" class="btn btn-info text-right" @onclick="(() => {  })">+ Projektzweck</button>
+                                <button type="button" class="btn btn-info text-right" @onclick="(() => { })">+ Projektzweck</button>
                             </div>
                         </th>
                         </thead>
@@ -202,7 +204,6 @@ else
                     </table>
                 </div>
 
-
                 <div class="form-group text-right">
                     <a href="/Projektübersicht" class="sm form-label">
                         <button type="button" class="btn btn-danger" data-dismiss="container">
@@ -210,30 +211,29 @@ else
                         </button>
                     </a>
 
-                        <button type="submit" class="btn btn-success">
-                            <span class="oi oi-document" aria-hidden="true"></span> Speichern
-                        </button>
+                    <button type="submit" class="btn btn-success">
+                        <span class="oi oi-document" aria-hidden="true"></span> Speichern
+                    </button>
                 </div>
             </div>
         </div>
-        </div>
-</EditForm>
+
+    </EditForm>
 }
 
 
 @code {
     private Project Project { get; set; } = new Project();
-    
+
     AddFieldToProject _addFieldToProject;
     AddProjectActivityToProject _addProjectActivityToProject;
     AddEmployeeToProject _addEmployeeToProject;
     PopAddProjectPurposeToProject _popAddProjectPurpose;
-    
+
 
     public List<ProjectActivity> Activitieslist { get; set; } = new List<ProjectActivity>();
 
 
-    
     [Parameter]
     public int ID { get; set; }
 
@@ -241,6 +241,7 @@ else
     public DateTime time { get; set; }
     public string field { get; set; }
     public List<string> FieldstoDisplay { get; set; }
+
     private void Save()
     {
         Project.ProjectID = ID;
@@ -276,7 +277,7 @@ else
         Loading = false;
         StateHasChanged();
     }
-    
+
     public void DeleteFromProject(int ProjectId, Employee emp)
     {
         _projectService.DeleteEmployeeFromProject(ProjectId, emp.EmployeeID);
@@ -286,15 +287,15 @@ else
     {
         _popAddProjectPurpose.Showing(ID);
     }
-    
+
     public void Update()
     {
         Activitieslist = _projectActivity.GetProjectActivitiesProject(ID);
         Project = _projectService.GetProject(ID);
         StateHasChanged();
     }
-    
-    
-    
+
+
+
 
 }
