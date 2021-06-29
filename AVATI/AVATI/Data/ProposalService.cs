@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using AVATI.Data.EmployeeDetailFiles;
 using Dapper;
 using Microsoft.Data.SqlClient;
@@ -276,10 +277,10 @@ namespace AVATI.Data
             }
         }
 
-        public List<Proposal> GetAllProposals()
+        public async Task<List<Proposal>> GetAllProposals()
         {
-            using DbConnection db = GetConnection();
-            db.Open();
+            await using DbConnection db = GetConnection();
+            await db.OpenAsync();
             List<Proposal> proposals = new List<Proposal>(db.Query<Proposal>("SELECT * FROM Proposal"));
             foreach (var proposal in proposals)
             {

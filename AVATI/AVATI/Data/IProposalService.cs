@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AVATI.Data
 {
@@ -26,7 +27,7 @@ namespace AVATI.Data
         
         public Proposal GetProposal(int proposalId);
 
-        public List<Proposal> GetAllProposals();
+        public Task<List<Proposal>> GetAllProposals();
 
         public bool UpdateAltRc(int proposalId, int empId, int newRc);
     }
