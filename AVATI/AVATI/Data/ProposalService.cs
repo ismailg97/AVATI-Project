@@ -281,12 +281,12 @@ namespace AVATI.Data
         {
             await using DbConnection db = GetConnection();
             await db.OpenAsync();
-            List<Proposal> proposals = new List<Proposal>(db.Query<Proposal>("SELECT * FROM Proposal"));
+            List<Proposal> proposals = new List<Proposal>(await db.QueryAsync<Proposal>("SELECT * FROM Proposal"));
             foreach (var proposal in proposals)
             {
-                foreach (string hardskill in db.Query<string>(
+                foreach (string hardskill in await db.QueryAsync<string>(
                     "SELECT Hardskill FROM Proposal_Hardskill where ProposalId = @propId",
-                    new {propId = proposal.ProposalID}).ToList())
+                    new {propId = proposal.ProposalID}))
                 {
                     proposal.Hardskills.Add(new Hardskill() {Description = hardskill});
                 }
