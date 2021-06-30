@@ -6,6 +6,7 @@
 @inject NavigationManager _navigationManager
 @inject IProjectActivityService _projectActivity
 @inject EmployeeServiceSimple _employeeService
+@inject ProjectPurposeService _projectPurposeService
 
 <AddFieldToProject @ref="_addFieldToProject" Abstract="@this"/>
 <AddProjectActivityToProject @ref="_addProjectActivityToProject" Abstract="@this"/>
@@ -28,13 +29,13 @@
 else
 {
     <EditForm Model="@Project" OnValidSubmit="@Save">
-        
-       <DataAnnotationsValidator/>
+
+        <DataAnnotationsValidator/>
         <div class="row col h-100">
             <div class="text-left col">
                 <div class="column">
-                <ValidationSummary/>
-                    <h3 class="text-lg-left font-weight-bold">Projekt Bearbeiten</h3>
+                    <ValidationSummary/>
+                    <h3 class="text-lg-left font-weight-bold"><em>@Project.Projecttitel</em> editieren!</h3>
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label font-weight-bold">Projekttitel</label>
                         <div class="col-sm-9">
@@ -49,10 +50,12 @@ else
                         </div>
                     </div>
 
+                    <!-- BRANCHEN -------------------------------------------------->
+
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label font-weight-bold">Branchen</label>
                         <div class="col-sm-6 col-form-label">
-                            <div class="list-group border-dark border overflow-auto mr-3" style="max-height: 200px">
+                            <div class="list-group border-dark border overflow-auto" style="max-height: 200px">
                                 @if (!Project.Fields.Any())
                                 {
                                     <button class="btn btn-outline-dark">[Keine Branche dem Projekt zugewiesen]</button>
@@ -62,11 +65,13 @@ else
                                     <button class="btn btn-outline-dark">@branche</button>
                                 }
                             </div>
-                            <button class="btn btn-info col" @onclick="() => PopAddFieldToProject()">
-                                <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span>
+                            <button class="btn btn-info col" @onclick="() => { PopAddFieldToProject(); }">
+                                <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span> Edit Branchen
                             </button>
                         </div>
                     </div>
+
+                    <!-- ZEITEN -------------------------------------------------->
 
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label font-weight-bold">Projektanfang</label>
@@ -85,6 +90,8 @@ else
                         </div>
                     </div>
                 </div>
+
+                <!-- Mitarbeiter -------------------------------------------------->
 
                 <div class="form-group row">
                     <label class="col-sm-3 col-form-label font-weight-bold">Mitarbeiter</label>
@@ -122,6 +129,7 @@ else
                     </table>
                 </div>
 
+                <!-- Projekttätigkeiten ------------------------------------------------------------>
 
                 <div class="form-group row">
                     <label class="col-sm-3 col-form-label font-weight-bold">Projekttätigkeiten</label>
@@ -131,7 +139,7 @@ else
                         <th class="text-center" scope="col">Zugewiesene Mitarbeiter</th>
                         <th scope="col">
                             <div class="form-group text-right">
-                                <button type="button" class="btn btn-info text-right" @onclick="(() => { PopAddActivity(ID); })">+ Projekttätigkeit</button>
+                                <button type="button" class="btn btn-info text-right" @onclick="(() => { PopAddActivity(ID); })">Edit Projekttätigkeit</button>
                             </div>
                         </th>
                         </thead>
@@ -150,10 +158,8 @@ else
                                 @if (Project.Employees.Find(x => x.EmployeeID == activ.EmployeeID) == null)
                                 {
                                     <td>@activ.Description</td>
-                                    <td class="text-center">[kein zugewiesener Mitarbeiter]</td>
-                                    <td>
-                                        <button type="button" class="btn btn-info" @onclick="(() => { /*PopAddEmployeetoActivity(); */})"></button>
-                                    </td>
+                                    <!--- liste an mitarbeitern -->
+                                    <td class="text-center">[Keine zugewiesene Mitarbeiter!]</td>
                                 }
                                 else
                                 {
@@ -165,6 +171,8 @@ else
                     </table>
                 </div>
 
+                <!-- PROJEKTZWECKE -------------------------------------------------->
+
                 <div class="form-group row">
                     <label class="col-sm-3 col-form-label font-weight-bold">Projektzwecke</label>
                     <table class="table border-primary col">
@@ -173,12 +181,12 @@ else
                         <th class="text-center" scope="col">Gelöst durch...</th>
                         <th scope="col">
                             <div class="form-group text-right">
-                                <button type="button" class="btn btn-info text-right" @onclick="(() => { })">+ Projektzweck</button>
+                                <button type="button" class="btn btn-info text-right" @onclick="(() => { AddProjectPurposeToProject(ID); })">+ Projektzweck</button>
                             </div>
                         </th>
                         </thead>
                         <tbody>
-                        @if (!Project.Projectpurpose.Any())
+                        @if (!_projectPurposeService.GettAllPurposesFromProject(ID).Any())
                         {
                             <tr>
                                 <td>[Fügen Sie neue Projektzwecke hinzu!]</td>
@@ -186,7 +194,7 @@ else
                                 <td></td>
                             </tr>
                         }
-                        @foreach (var purpose in Project.Projectpurpose)
+                        @foreach (var purpose in _projectPurposeService.GettAllPurposesFromProject(ID)) /*THEY GIVE ME MEDICINE*/
                         {
                             <tr>
                                 <td>@purpose.Purpose</td>
@@ -205,15 +213,11 @@ else
                 </div>
 
                 <div class="form-group text-right">
-                    <a href="/Projektübersicht" class="sm form-label">
-                        <button type="button" class="btn btn-danger" data-dismiss="container">
-                            <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
+                    <a href="/Projektübersicht">
+                        <button type="submit" class="btn btn-info" @onclick="() => { Save(); }">
+                            <span class="oi oi-document" aria-hidden="true"></span> Zurück zur Übersicht
                         </button>
                     </a>
-
-                    <button type="submit" class="btn btn-success">
-                        <span class="oi oi-document" aria-hidden="true"></span> Speichern
-                    </button>
                 </div>
             </div>
         </div>
@@ -246,7 +250,7 @@ else
     {
         Project.ProjectID = ID;
         _projectService.UpdateProject(Project);
-        _navigationManager.NavigateTo("/Projektübersicht");
+        StateHasChanged();
     }
 
     public void PopAddFieldToProject()

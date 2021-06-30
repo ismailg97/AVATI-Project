@@ -15,37 +15,38 @@
 @if (_show)
 {
     <div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
-        <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content bg-light">
                 <div class="modal-header">
-                    <h3 class="modal-title">Konfiguration von Projektzwecken</h3>
+                    <h3 class="modal-title">Projektzweck hinzufügen</h3>
                     <button type="button" class="close" data-dismiss="modal" @onclick=@Close>
                         <span aria-hidden="true">x</span>
                     </button>
                 </div>
                 <div class="modal-body" style="min-width: 100%">
-                    <InputText id="Purpose" class="form-control" @bind-Value="@temp"></InputText>
-                    
-
-
-
-
-
-
-
-
-
+                    <p>Hier können Sie Projektzwecke dem Projekt hinzufügen.</p>
+                    <p>
+                        Projektzwecke erläutern über die Projektbeschreibung hinaus für welchen Zweck,
+                        zu welchem Ziel oder welches Problem mit einer speziellen Tätigkeit gelöst wurde
+                    </p>
+                    <div class="col">
+                        <div class="row">
+                            <input id="Purpose" class="form-control" @bind-value="@Description"/>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <div class="form-group ml-5">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
-                        <button type="button" class="btn btn-success" ><span class="oi oi-document" aria-hidden="true"></span></button>
+                        <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="() => { Close(); }">
+                            <span class="oi oi-circle-x" aria-hidden="true"></span>Abbrechen
+                        </button>
+                        <button type="button" class="btn btn-success" @onclick="(() => {  Close(); Submit(ID);})">
+                            <span class="oi oi-document" aria-hidden="true"></span>Speichern
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-
-
     </div>
 }
 
@@ -57,16 +58,13 @@
 @code {
 
     [Parameter]
-    public Projectedit Abstract { get; set; }
-    
+    public Projectedit Abstract { get; set; } = new Projectedit();
+
     [Parameter]
     public int ID { get; set; }
     
+    public string Description { get; set; }
     private bool _show = false;
-
-    public string temp { get; set; }
-    ProjectPurpose NewProjectPurpose { get; set; }
-
 
     public void Showing(int projectID)
     {
@@ -75,22 +73,19 @@
         StateHasChanged();
     }
     
-    
     public void Close()
     {
         _show = !_show;
         StateHasChanged();
     }
-    
-    
+
     public void Submit(int ID)
     {
-        
-        
-        Abstract.Update();
+        ProjectPurpose temp = new ProjectPurpose();
+        temp.Purpose = Description;
+        temp.ProjectID = ID;
+        _projectPurpose.AddProjectActivityToPurpose(temp);
         StateHasChanged();
     }
-    
-
 
 }

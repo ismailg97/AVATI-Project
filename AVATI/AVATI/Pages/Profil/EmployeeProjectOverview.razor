@@ -123,13 +123,6 @@
         return titel.Contains(Filter, StringComparison.OrdinalIgnoreCase);
     }
 
-    public void ProjectSuche()
-    {
-        Clicked = true;
-        List<Project> projects = _projektService.GetAllProjects();
-        _projektService.SearchProject(projects, Input);
-    }
-
     public void setProjectActivity(int empId, int projId, string description)
     {
         _projctActivityService.SetProjectActivity(empId, projId, description);
