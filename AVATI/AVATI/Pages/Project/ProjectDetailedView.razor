@@ -1,23 +1,26 @@
 ﻿@page "/Projektübersicht/ProjectDetailedView"
 @page "/Projektübersicht/ProjectDetailedView/{ID:int}"
+
 @using AVATI.Data
+
+@inject ProjectPurposeService _projectPurpose
 @inject IProjectActivityService _activity
 @inject IProjektService _projectService
 
 <div class="container">
     <div class="row">
         <div class="col-sm-6 mb-4 align-content-center">
-            <div class="card mb-4 border-dark" style="width: auto; background-color: #138496">
-                <div class="card-body">
-                    <h4 class="card-title text-xl-center">@_project.Projecttitel</h4>
-                    <label class="text text-xl-center">@_project.Projectdescription</label>
+            <div class="card mb-4 border-dark" style="width: auto; background-color: #86cfda">
+                <div class="card-body text-center">
+                    <h4 class="card-title">@_project.Projecttitel</h4>
+                    <label class="text">@_project.Projectdescription</label>
                 </div>
             </div>
             <div class="card mb-4 border-dark " style="width: auto">
                 <div class="card-body">
                     <h4 class="card-title text-xl-center">Mitarbeiter</h4>
                     <table class="table table-hover">
-                        <thead style="background-color: #86cfda;">
+                        <thead style="background-color: #c3e6cb;">
                         <tr>
                             <th scope="col">Vorname</th>
                             <th scope="col">Nachname</th>
@@ -28,6 +31,7 @@
                         {
                             <tr>
                                 <td>[Kein Mitarbeiter vorhanden]</td>
+                                <td></td>
                             </tr>
                         }
                         @foreach (var emp in _project.Employees)
@@ -45,11 +49,10 @@
                 <div class="card-body">
                     <h4 class="card-title text-xl-center">Projekttätigkeiten</h4>
                     <table class="table table-hover">
-                        <thead style="background-color: #86cfda;">
+                        <thead style="background-color: #c3e6cb;">
                         <tr>
                             <th scope="col">Tätigkeit</th>
-                            <th scope="col">Vorname</th>
-                            <th scope="col">Nachname</th>
+                            <th scope="col">Zugewiesener Mitarbeiter</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -57,7 +60,6 @@
                         {
                             <tr>
                                 <td>[Keine Tätigkeiten vorhanden]</td>
-                                <td></td>
                                 <td></td>
                             </tr>
                         }
@@ -72,8 +74,10 @@
                                 }
                                 else
                                 {
-                                    <td>@_project.Employees.Find(x => x.EmployeeID == field.EmployeeID).FirstName</td>
-                                    <td>@_project.Employees.Find(x => x.EmployeeID == field.EmployeeID).LastName</td>
+                                    <td>
+                                        @_project.Employees.Find(x => x.EmployeeID == field.EmployeeID).FirstName
+                                        @_project.Employees.Find(x => x.EmployeeID == field.EmployeeID).LastName
+                                    </td>
                                 }
                             </tr>
                         }
@@ -87,35 +91,34 @@
             <div class="card mb-4 border-dark" style="width:auto;">
                 <div class="card-body">
                     <h4 class="card-title text-xl-center">Branchen</h4>
-                                        <table class="table table-hover text-center">
-                                            <thead style="background-color: #86cfda;">
-                                            <tr>
-                                                <th scope="col">Branchentitel</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            @if (!_project.Fields.Any())
-                                            {
-                                                <tr>
-                                                    <td>[Keine Branchen dem Projekt zugewiesen]</td>
-                                                    <td></td>
-                                                </tr>
-                                            }
-                                            @foreach (var field in _project.Fields)
-                                            {
-                                                <tr>
-                                                    <td>@field</td>
-                                                </tr>
-                                            }
-                                            </tbody>
-                                        </table>
+                    <table class="table table-hover text-center">
+                        <thead style="background-color: #c3e6cb;">
+                        <tr>
+                            <th scope="col">Branchentitel</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @if (!_project.Fields.Any())
+                        {
+                            <tr>
+                                <td>[Keine Branchen dem Projekt zugewiesen]</td>
+                            </tr>
+                        }
+                        @foreach (var field in _project.Fields)
+                        {
+                            <tr>
+                                <td>@field</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="card mb-4 border-dark" style="width: auto;">
                 <div class="card-body">
                     <h4 class="card-title text-xl-center">Projektlaufzeit</h4>
                     <table class="table border-dark">
-                        <thead style="background-color: #86cfda;">
+                        <thead style="background-color: #c3e6cb;">
                         <tr>
                             <th scope="col" class="text-center">Projektanfang</th>
                             <th scope="col" class="text-center">Projektende</th>
@@ -134,20 +137,36 @@
                 <div class="card-body">
                     <h4 class="card-title text-xl-center">Projektzwecke</h4>
                     <table class="table table-hover text-center">
-                        <thead style="background-color: #86cfda;">
+                        <thead style="background-color: #c3e6cb;">
                         <tr>
                             <th scope="col">Zweck</th>
                             <th scope="col">Lösung durch folgende Tätigkeit</th>
                         </tr>
                         </thead>
                         <tbody>
-                        @if (!_project.Projectpurpose.Any())
+                        @if (!_projectPurpose.GettAllPurposesFromProject(ID).Any())
                         {
                             <tr>
                                 <td>[Keine Projektzwecke vorhanden]</td>
                                 <td></td>
-                                <td></td>
                             </tr>
+                        }
+                        else
+                        {
+                            @foreach (var purpose in _projectPurpose.GettAllPurposesFromProject(ID))
+                            {
+                                <tr>
+                                    <td>@purpose.Purpose</td>
+                                    @if (purpose.AssignedProjectActivity == null)
+                                    {
+                                        <td>[Keine Tätigkeit zugewiesen!]</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@purpose.AssignedProjectActivity</td>
+                                    }
+                                </tr>
+                            }
                         }
                         </tbody>
                     </table>

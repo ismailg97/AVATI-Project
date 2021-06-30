@@ -233,7 +233,7 @@
     @if (_searchService.TableIsVisible)
     {
         <div class="float-right mb-4">
-            <button class="btn btn-danger mt-2" @onclick=@(() => { Close();})>Abbrechen</button>
+            <button class="btn btn-info mt-2" @onclick=@(() => { Close();})>Abbrechen</button>
             <button class="btn btn-success mt-2" @onclick=@(() => { _projectService.UpdateProject(ProjectToAlter); Abstract.Update(); Close(); })>Speichern</button>
         </div>
     }

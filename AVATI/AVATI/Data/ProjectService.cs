@@ -39,7 +39,8 @@ namespace AVATI.Data
             db.Execute("INSERT INTO Project VALUES(@title, @description, @dateBeg , @dateEnd)",
                 new
                 {
-                    title = project.Projecttitel, description = project.Projectdescription,
+                    title = project.Projecttitel, 
+                    description = project.Projectdescription,
                     dateBeg = project.Projectbeginning.ToString("d", DateTimeFormatInfo.InvariantInfo),
                     dateEnd = project.Projectend.ToString("d", DateTimeFormatInfo.InvariantInfo)
                 });
@@ -52,10 +53,6 @@ namespace AVATI.Data
 
         public bool UpdateProject(Project project)
         {
-            foreach (var emp in project.Employees)
-            {
-                Console.WriteLine(emp.FirstName);
-            }
             IDbConnection db = GetConnection();
             db.Open();
             var result = db.Query<Project>("SELECT * FROM Project WHERE ProjectId = @propId",
@@ -71,7 +68,7 @@ namespace AVATI.Data
                 new
                 {
                     propTitle = project.Projecttitel ?? "Leer",
-                    addInfo = project.Projectdescription ?? "[Keine Zusatzinformationen", propId = project.ProjectID,
+                    addInfo = project.Projectdescription ?? "[Keine Zusatzinformationen]", propId = project.ProjectID,
                     beg = project.Projectbeginning.ToString("d", DateTimeFormatInfo.InvariantInfo),
                     end = project.Projectend.ToString("d", DateTimeFormatInfo.InvariantInfo)
                 });
@@ -97,8 +94,6 @@ namespace AVATI.Data
                         new {ProID = project.ProjectID, EmplId = pro.EmployeeID});
                 }
             }
-
-
             foreach (var field in project.Fields)
             {
                 //TODO Wir haben noch keine Fields - Tabelle
@@ -175,13 +170,6 @@ namespace AVATI.Data
             }
 
             return Projects;
-        }
-
-        public List<Project> SearchProject(List<Project> projects, string input)
-        {
-            //Was soll das machen?
-
-            return null;
         }
 
         public List<string> GetAllFieldsFromOneProject(int ProjectID)
