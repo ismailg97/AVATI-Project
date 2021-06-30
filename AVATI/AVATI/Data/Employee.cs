@@ -8,7 +8,7 @@ namespace AVATI.Data
 {
     public class Employee
     {
-        public int EmployeeId { get; set; }
+        public int EmployeeID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Image;
@@ -17,7 +17,7 @@ namespace AVATI.Data
         public int Rc { get; set; }
         public List<string> Softskills { get; set; } = new List<string>();
         public List<Hardskill> Hardskills { get; set; } = new List<Hardskill>();
-        public List<Tuple<Hardskill,int>> HardSkillLevel { get; set; }
+        public List<Tuple<Hardskill, int>> HardSkillLevel { get; set; } = new List<Tuple<Hardskill, int>>();
         public List<string> Field { get; set; } = new List<string>();
         public List<string> Roles { get; set; } = new List<string>();
         public List<string> LanguageName { get; set; } = new List<string>();

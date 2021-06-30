@@ -19,15 +19,18 @@
                        <label class="form-label">Oberkategorie:</label>
                        <InputSelect class="form-control" @bind-Value="@UpperCat">
                          <option value="">Keine Oberkategorie</option>
-                         @foreach (var hardskillcat in _hardskillService.GetAllHardskillCategorys())
+                         @if (_allCategorys != null)
                          {
-                           <option value="@hardskillcat.Description">@hardskillcat.Description</option>
+                           @foreach (var hardskillcat in _allCategorys)
+                           {
+                             <option value="@hardskillcat.Description">@hardskillcat.Description</option>
+                           }
                          }
                        </InputSelect>
                      </div>
                    <div class="modal-footer">
-                     <button type="submit" class="btn btn-success">Speichern</button>
                      <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">Abbrechen</button>
+                     <button type="submit" class="btn btn-success">Speichern</button>
                    </div>
                    </EditForm>
                  </div>
@@ -49,24 +52,30 @@
   string UpperCat { get; set; }
 
   private Hardskill NewHardskill { get; set; } = new();
+  
+  private List<Hardskill> _allCategorys;
+
+  protected override async Task OnInitializedAsync()
+  {
+    _allCategorys = await _hardskillService.GetAllHardskillCategorys();
+  }
 
   protected override void OnParametersSet()
   {
     NewHardskill.Description = OldHardskill?.Description;
     if (OldHardskill != null)
     {
-      UpperCat = OldHardskill.Uppercat == null ? "" : OldHardskill.Uppercat.Description;
+      UpperCat = OldHardskill.Uppercat.Any() ? OldHardskill.Uppercat[0] : "";
     }
   }
 
-  private void Update()
+  private async Task Update()
   {
-    NewHardskill.Height = 0;
     NewHardskill.Subcat = null;
+
+    NewHardskill.Uppercat = string.IsNullOrEmpty(UpperCat) ? new List<string>() : new List<string>() {UpperCat};
     
-    NewHardskill.Uppercat = string.IsNullOrEmpty(UpperCat) ? null : _hardskillService.GetHardskillCategory(UpperCat);
-    
-    _hardskillService.UpdateHardskill(NewHardskill, OldHardskill);
+    await _hardskillService.UpdateHardskill(NewHardskill, OldHardskill);
     Abstract.UpdateLists();
     Showing();
     //_navigationManager.NavigateTo(_navigationManager.Uri, true);

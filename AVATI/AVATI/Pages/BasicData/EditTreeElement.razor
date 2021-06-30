@@ -9,7 +9,6 @@
 @inject IHardskillService _hardskillService
 
 <AddHardskills @ref="_addHardskills" Description="@_hardskills"/>
-<DeleteConfirmation @ref="_deleteConfirmation" Description="@_delete" Type="@BasicDataType.HardSkill"/>
 
 @if(!Hardskills.Any())
 {
@@ -25,12 +24,12 @@
         }
     </ul>
 } 
-else if (Hardskills[0].IsRoot()) 
+else if (_isRoot) 
 {
     <div class="container">
         <ul class="tree">
-            @foreach (var hardskillcat in Hardskills){
-                
+            @foreach (var hardskillcat in Hardskills.Keys)
+            {
                 AddDictionary(hardskillcat);
                 
                 <li>
@@ -38,14 +37,14 @@ else if (Hardskills[0].IsRoot())
                     {
                         <ContextMenu Id="@hardskillcat.Description">
                             @if (hardskillcat.IsHardskill) {
-                                <Item OnClick="() => PopUpDelete(hardskillcat.Description)">Löschen <span class="oi oi-trash"></span></Item>
+                                <Item OnClick="() => DeleteHardskill(hardskillcat.Description)">Aus Kategorie löschen <span class="oi oi-trash"></span></Item>
                             } else {
-                                <Item OnClick="() => Delete(hardskillcat)">Löschen <span class="oi oi-trash"></span></Item>
+                                <Item OnClick="() => DeleteCategory(hardskillcat)">Löschen <span class="oi oi-trash"></span></Item>
                             }
                             <Item OnClick="() => ShowingRename(hardskillcat.Description)">Umbenennen <span class="oi oi-pencil"></span></Item>
                             @if (!hardskillcat.IsHardskill)
                             {
-                                <Item OnClick="() => ShowingHardskills(hardskillcat.Description)">Hardskills hinzufügen/löschen</Item>
+                                <Item OnClick="() => ShowingHardskills(hardskillcat.Description)">Hardskills hinzufügen <span class="oi oi-plus"></span></Item>
                             }
                         </ContextMenu>
                         <ContextMenuTrigger MenuId="@hardskillcat.Description">
@@ -59,7 +58,7 @@ else if (Hardskills[0].IsRoot())
 
                     @if (ShowUnder[hardskillcat.Description] && hardskillcat.Subcat != null)
                     {
-                        <EditTreeElement Hardskills = "@hardskillcat.Subcat" Uppercat="@hardskillcat" Abstract="@Abstract"/>
+                        <EditTreeElement Descriptions = "@hardskillcat.Subcat" Uppercat="@hardskillcat.Description" Abstract="@Abstract"/>
                     }
                 </li>
             }
@@ -72,23 +71,23 @@ else
     {
         <div class="between"><button type="button" class="plus" @onclick="ShowingNew">+</button></div>
         <ul>
-            @foreach (var hardskillcat in Hardskills){
-                
+            @foreach (var hardskillcat in Hardskills.Keys)
+            {
                 AddDictionary(hardskillcat);
                 <li>
                     @if(!ShowRename[hardskillcat.Description])
                     {
                         <ContextMenu Id="@hardskillcat.Description">
-                                @if (hardskillcat.IsHardskill) {
-                                    <Item OnClick="() => PopUpDelete(hardskillcat.Description)">Löschen <span class="oi oi-trash"></span></Item>
-                                } else {
-                                    <Item OnClick="() => Delete(hardskillcat)">Löschen <span class="oi oi-trash"></span></Item>
-                                }
-                                <Item OnClick="() => ShowingRename(hardskillcat.Description)">Umbenennen <span class="oi oi-pencil"></span></Item>
-                                @if (!hardskillcat.IsHardskill)
-                                {
-                                    <Item OnClick="() => ShowingHardskills(hardskillcat.Description)">Hardskills hinzufügen/löschen</Item>
-                                }
+                            @if (hardskillcat.IsHardskill) {
+                                <Item OnClick="() => DeleteHardskill(hardskillcat.Description)">Aus Kategorie löschen <span class="oi oi-trash"></span></Item>
+                            } else {
+                                <Item OnClick="() => DeleteCategory(hardskillcat)">Löschen <span class="oi oi-trash"></span></Item>
+                            }
+                            <Item OnClick="() => ShowingRename(hardskillcat.Description)">Umbenennen <span class="oi oi-pencil"></span></Item>
+                            @if (!hardskillcat.IsHardskill)
+                            {
+                                <Item OnClick="() => ShowingHardskills(hardskillcat.Description)">Hardskills hinzufügen <span class="oi oi-plus"></span></Item>
+                            }
                         </ContextMenu>    
                         <ContextMenuTrigger MenuId="@hardskillcat.Description">
                             <a class="@(hardskillcat.IsHardskill ? "hardskill":"cat")" type="button" @onclick="() => ShowingUnder(hardskillcat.Description)">@hardskillcat.Description</a>
@@ -102,7 +101,7 @@ else
                     
                     @if (ShowUnder[hardskillcat.Description] && hardskillcat.Subcat != null)
                     {
-                        <EditTreeElement Hardskills = "@hardskillcat.Subcat" Uppercat="@hardskillcat" Abstract="@Abstract"/>
+                        <EditTreeElement Descriptions = "@hardskillcat.Subcat" Uppercat="@hardskillcat.Description" Abstract="@Abstract"/>
                     }
                 </li>
             }
@@ -113,17 +112,17 @@ else
                 <button type="button" class="check inline" @onclick="CreateCat">&#10003;</button>
                 <button type="button" class="stop inline" @onclick="ShowingNew">&#10005;</button>
                 <ul>
-                    @foreach (var hardskillcat in Hardskills) {
+                    @foreach (var hardskillcat in Hardskills.Keys) {
                         
                         AddDictionary(hardskillcat);
 
-                        <li><button class="@(IsInList(hardskillcat.Description) ? "btn btn-primary" : "btn btn-secondary")" type="button" @onclick="() => AddList(hardskillcat)">
+                        <li><button class="@(IsInList(hardskillcat.Description) ? "btn btn-primary" : "btn btn-secondary")" type="button" @onclick="() => AddList(hardskillcat.Description)">
                                 <a style="border: none !important;" class="@(IsInList(hardskillcat.Description) ? "showRemove" : "")">@hardskillcat.Description</a> <a class="remove"><span class="oi oi-x"></span></a>
                             </button>
                     
                             @if (ShowUnder[hardskillcat.Description] && hardskillcat.Subcat != null)
                             {
-                                <EditTreeElement Hardskills = "@hardskillcat.Subcat" Uppercat="@hardskillcat" Abstract="@Abstract"/>
+                                <EditTreeElement Descriptions = "@hardskillcat.Subcat" Uppercat="@hardskillcat.Description" Abstract="@Abstract"/>
                             }
                         </li>
                     }
@@ -141,10 +140,14 @@ else
     public BasicDataAbstract Abstract { get; set; }
 
     [Parameter]
-    public List<Hardskill> Hardskills { get; set; }
+    public List<string> Descriptions { get; set; }
 
     [Parameter]
-    public Hardskill Uppercat { get; set; }
+    public string Uppercat { get; set; }
+    
+    public Hardskill HardskillUppercat { get; set; }
+
+    private Dictionary<Hardskill, bool> Hardskills { get; set; } = new();
 
     public Dictionary<string, bool> ShowUnder { get; set; } = new();
 
@@ -152,27 +155,39 @@ else
 
     private Dictionary<string, string> Rename { get; set; } = new();
 
-    private List<Hardskill> SubcatChoose { get; set; } = new();
+    private List<string> SubcatChoose { get; set; } = new();
 
     private bool ShowNew { get; set; } = false;
+
+    private bool _isRoot;
 
     private string _new;
 
     private string _hardskills;
 
-    private string _delete;
-
     AddHardskills _addHardskills;
 
-    DeleteConfirmation _deleteConfirmation;
-
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        if (Hardskills == null) return;
-        foreach (var skill in Hardskills)
+        HardskillUppercat = await _hardskillService.GetHardskillCategory(Uppercat);
+        
+        _isRoot = false;
+        if (Descriptions.Any())
         {
-            if (!Rename.ContainsKey(skill.Description))
-                Rename.Add(skill.Description, skill.Description);
+            var first = await _hardskillService.GetHardskillOrCategory(Descriptions[0]);
+            if(first != null)
+                _isRoot = first.IsRoot();
+        }
+        
+        if (Hardskills == null) return;
+        foreach (var skill in Descriptions)
+        {
+            var skillOrCat = await _hardskillService.GetHardskillOrCategory(skill);
+            var containsHardskill = await _hardskillService.ContainsAnyHardskills(skill);
+            if(skillOrCat != null)
+                Hardskills.Add(skillOrCat, containsHardskill);
+            if (!Rename.ContainsKey(skill))
+                Rename.Add(skill, skill);
         }
     }
     
@@ -181,7 +196,7 @@ else
     {
         if (!ShowUnder.ContainsKey(hardskillcat.Description))
         {
-            ShowUnder.Add(hardskillcat.Description, !hardskillcat.ContainsHardskills());
+            ShowUnder.Add(hardskillcat.Description, !Hardskills[hardskillcat]);
         }
                 
         if (!ShowRename.ContainsKey(hardskillcat.Description))
@@ -196,9 +211,9 @@ else
         SubcatChoose.Clear();
         if (Hardskills != null)
         {
-            foreach (var hardskill in Hardskills)
+            foreach (var hardskill in Descriptions)
             {
-                ShowUnder[hardskill.Description] = false;
+                ShowUnder[hardskill] = false;
             }
         }
     }
@@ -219,67 +234,65 @@ else
         _addHardskills.Showing();
     }
 
-    private void PopUpDelete(string description)
+    private async Task DeleteHardskill(string description)
     {
-        _delete = description;
-        _deleteConfirmation.Showing();
+        var deleteSub = new List<string>(HardskillUppercat.Subcat);
+        deleteSub.Remove(description);
+        await _hardskillService.EditHardskillsCategory(Uppercat, deleteSub);
+        //await Abstract.UpdateLists();
     }
 
     private bool IsInList(string description)
     {
-        return SubcatChoose.Exists(x => x.Description == description);
+        return SubcatChoose.Exists(x => x == description);
     }
 
-    private void AddList(Hardskill hardskill)
+    private void AddList(string hardskill)
     {
         if (SubcatChoose.Contains(hardskill))
             SubcatChoose.Remove(hardskill);
         else
             SubcatChoose.Add(hardskill);
-        ShowingUnder(hardskill.Description);
+        ShowingUnder(hardskill);
     }
 
-    private void CreateCat()
+    private async Task CreateCat()
     {
         Hardskill hardskillcat = new()
         {
             Description = _new,
-            Uppercat = Hardskills.Any() ? Hardskills[0].Uppercat : Uppercat,
-            Subcat = new List<Hardskill>(SubcatChoose),
-            Height = 2,
+            Uppercat = new List<string>(){Uppercat},
+            Subcat = new List<string>(SubcatChoose),
             IsHardskill = false
         };
         SubcatChoose.Clear();
-        _hardskillService.CreateHardskillCategory(hardskillcat);
-        Abstract.UpdateLists();
+        await _hardskillService.CreateHardskillCategory(hardskillcat);
+        //await Abstract.UpdateLists();
         ShowingNew();
     }
 
-    private void Delete(Hardskill hardskillcat)
+    private async Task DeleteCategory(Hardskill hardskillcat)
     {
-        _hardskillService.DeleteHardskillCategory(hardskillcat.Description);
-        Abstract.UpdateLists();
+        await _hardskillService.DeleteHardskillCategory(hardskillcat.Description);
+        //await Abstract.UpdateLists();
     }
 
-    private void Update(string oldDescription)
+    private async Task Update(string oldDescription)
     {
-        var oldHardskill = _hardskillService.GetHardskillCategory(oldDescription) ?? _hardskillService.GetHardskill(oldDescription);
+        var oldHardskill = await _hardskillService.GetHardskillOrCategory(oldDescription);
         if (oldHardskill.IsHardskill)
         {
             var newHardskill = new Hardskill()
             {
                 Description = Rename[oldDescription],
                 Uppercat = oldHardskill.Uppercat,
-                Subcat = null,
-                Height = 0,
+                Subcat = null
             };
-            _hardskillService.UpdateHardskill(newHardskill, oldHardskill);
+            await _hardskillService.UpdateHardskill(newHardskill, oldHardskill);
         }
         else
-            _hardskillService.UpdateHardskillCategory(oldDescription, Rename[oldDescription]);
-        Abstract.UpdateLists();
+            await _hardskillService.UpdateHardskillCategory(oldDescription, Rename[oldDescription]);
+        //await Abstract.UpdateLists();
         ShowingRename(oldDescription);
     }
-
-    //@bind:event="oninput" style="width: @((Rename[hardskillcat.Description].Length + 1) * 8)px !important;"
 }

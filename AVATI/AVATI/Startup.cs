@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -10,20 +12,25 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AVATI.Data;
+using AVATI.Data.DatabaseConnection;
 using AVATI.Data.EmployeeDetailFiles;
 using AVATI.Pages;
 using AVATI.Pages.Project;
 using BlazorDownloadFile;
+using Dapper;
+using Microsoft.Data.SqlClient;
 
 namespace AVATI
 {
     public class Startup
     {
         private JsonImport _import = new JsonImport();
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
             _import.ImportJsonFile();
+            _import.JsonFileToDatabase(configuration);
         }
 
         public IConfiguration Configuration { get; }
@@ -36,20 +43,21 @@ namespace AVATI
             services.AddServerSideBlazor();
             services.AddBlazorContextMenu();
             services.AddSingleton<SearchService>();
-            services.AddSingleton<IHardskillService, HardskillServiceSimple>();
-            services.AddSingleton<IBasicDataService, BasicDataServiceSimple>();
-            services.AddSingleton<ProjectServiceSimple>();
-            services.AddSingleton<IProjektService, ProjectServiceSimple>();
+            services.AddSingleton<IHardskillService, HardskillService>();
+            services.AddSingleton<IBasicDataService, BasicDataService>();
             services.AddSingleton<JsonImport>();
             services.AddSingleton<Projectedit>();
             services.AddSingleton<ILoginService,LoginServiceSimple>();
             services.AddSingleton<IProposalService, ProposalService>();
             services.AddSingleton<SearchService>();
-            services.AddSingleton<IEmployeeService, EmployeeServiceSimple>();
+            services.AddSingleton<IEmployeeService, EmployeeService>();
             services.AddBlazorDownloadFile();
             services.AddSingleton<IEmployeeDetailService, EmployeeDetailService>();
-            services.AddSingleton<IProjectActivityService, ProjectActivityServiceSimple>();
-
+            services.AddSingleton<IProjectActivityService, ProjectActivityService>();
+            services.AddSingleton<EmployeeServiceSimple>();
+            services.AddSingleton<DatabaseUtils>();
+            services.AddSingleton<IProjektService, ProjectService>();
+            services.AddSingleton<ProjectPurposeService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

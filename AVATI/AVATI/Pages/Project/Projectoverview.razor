@@ -11,13 +11,13 @@
     <thead>
     <div class="form-group">
         <input class="form-control" type="text" placeholder="Suche Projekt..."
-               @bind="Filter"
+               @bind="filterSearch"
                @bind:event="oninput">
     </div>
     <tr>
         <th scope="col">Projekttitel</th>
         <th scope="col">Projektbeschreibung</th>
-        <th scope="col">Branchen</th>
+        <th scope="col"></th>
     </tr>
     </thead>
     <tbody>
@@ -25,48 +25,77 @@
     {
         foreach (var project in _projectService.GetAllProjects())
         {
-            @if (!IsVisible(project.Projecttitel))
-                continue;
-            <tr>
-                <td>@project.Projecttitel</td>
-                <td>@project.Projectdescription</td>
-                <td>@String.Join(" | ", project.Fields)</td>
-                <td>
-                    <a href="/Projektübersicht/Projektedit/@project.ProjectID">
-                        <button type="button" class="btn btn-secondary">Edit</button>
-                    </a>
-                    
-                    <a href="/Projektübersicht/ProjectDetailedView/@project.ProjectID">
-                        <button type="button" class="btn btn-secondary">Detaillierte Ansicht</button>
-                    </a>
-                </td>
-            </tr>
+            @if (filterSearch == null || project.Projecttitel.Contains(filterSearch, StringComparison.OrdinalIgnoreCase))
+            {
+                <tr>
+                    <td>@project.Projecttitel</td>
+                    <td>@project.Projectdescription</td>
+                    <td class="text-right">
+                        <a href="/Projektübersicht/Projektedit/@project.ProjectID">
+                            <button type="button" class="btn btn-primary"><span class="oi oi-pencil" aria-hidden="true"></span> Bearbeiten</button>
+                        </a>
+
+                        <a href="/Projektübersicht/ProjectDetailedView/@project.ProjectID">
+                            <button type="button" class="btn btn-info"><span class="oi oi-project" aria-hidden="true"></span> Details</button>
+                        </a>
+                        <button type="button" class="btn btn-danger"
+                                @onclick=@(() => { ShowDelete(project.ProjectID); })>
+                            <span class="oi oi-delete" aria-hidden="true"></span> Löschen
+                        </button>
+                    </td>
+                </tr>
+            }
         }
     }
     </tbody>
 </table>
 
+@if (ShowPop)
+{
+    <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
+        <div class="modal-dialog border-dark">
+            <div class="modal-content">
+                <div class="modal-header flex-column">
+                    <h4 class="modal-title col-12 text-center">Sind Sie sicher?</h4>
+                </div>
+                <div class="modal-body text-center">
+                    <p>Wollen Sie das Projekt wirklich löschen? Der Prozess kann nicht rückgängig gemacht werden!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { ShowPop = !ShowPop; })">Abbrechen</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { DeleteProject(tempID); ShowPop = !ShowPop;})">Löschen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
 
 @code{
     public string Input { get; set; }
     public bool Clicked { get; set; } = false;
 
-    private string Filter { get; set; }
+    public bool ShowPop { get; set; }
+    private string filterSearch { get; set; }
 
-    public bool IsVisible(string titel)
+    public int tempID { get; set; }
+
+    
+
+    public void DeleteProject(int ID)
     {
-        if (string.IsNullOrEmpty(Filter))
-        {
-            return true;
-        }
-        return titel.Contains(Filter, StringComparison.OrdinalIgnoreCase);
+        _projectService.DeleteProject(ID);
+        StateHasChanged();
     }
 
-    public void ProjectSuche()
+    private void ShowDelete(int ID)
     {
-        Clicked = true;
-        List<Project> projects = _projectService.GetAllProjects();
-        _projectService.SearchProject(projects, Input);
+        if (!ShowPop)
+        {
+            tempID = ID;
+        }
+
+        ShowPop = !ShowPop;
     }
 
 }

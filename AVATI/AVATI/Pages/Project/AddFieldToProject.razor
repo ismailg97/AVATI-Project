@@ -5,63 +5,58 @@
 @using AVATI.Data
 @using System.Net
 @using System.Threading
+@using Blazorise
 @using Microsoft.AspNetCore.Http.Extensions
 
 @inject Projectedit _projectedit
 @inject JsonImport _jsonImport
-@inject ProjectServiceSimple _projectServiceSimple
+@inject IProjektService _projectService
 @inject NavigationManager _navigationManager
+@inject IBasicDataService _basic
 
-<div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
-    <div class="modal-dialog modal-dialog-scrollable ">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="body header">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Auswahl Branchen</h5>
-                        <button type="button" class="close" data-dismiss="modal" @onclick=@Close>
-                            <span aria-hidden="true">x</span>
-                        </button>
+@if (_show)
+{
+    <div class="modal fade show d-block" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content bg-light">
+                <div class="modal-header">
+                    <h3 class="modal-title">Auswahl Branchen</h3>
+                    <button type="button" class="close" data-dismiss="modal" @onclick=@Close>
+                        <span aria-hidden="true">x</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="min-width: 100%">
+                    <label class="font-weight-bold">Branchen zur Auswahl stehend:</label>
+                    <div class="list-group col overflow-auto border-dark" style="height: 250px">
+                        @foreach (var field in fields)
+                        {
+                            if (!_projectToEdit.Fields.Exists(e => e.Equals(field)))
+                            {
+                                <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _projectToEdit.Fields.Add(field); })>@field</button>
+                            }
+                        }
                     </div>
-                    <div class="modal-body">
-                        <div class="container ">
-                            <div class="form-group row col overflow-auto border" style="height: 250px">
-                                @foreach (var field in AttributestoDisplay)
-                                {
-                                    <div class="mb-3 col-sm">
-                                        <button type="button" class="btn btn-sm btn-outline-info btn-lg btn-block col" @onclick=@(() => { UpdateSearch(field); })>@field</button>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                        <div class="container">
-                            <div class="form-group row col overflow-auto border" style="height: 250px">
-                                @foreach (var field in AttributestoSearch)
-                                {
-                                    <div class="mb-3 col-sm">
-                                        <button type="button" class="btn btn-sm btn-outline-info col btn-block" @onclick=@(() => { UpdateContains(field); })>@field</button>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                        <div class="container col row">
-                            <input type="text" class="form-control col" placeholder="Branche..." @bind="@temp"/>
-                            <button type="button" class="btn btn-success col-sm-3" @onclick="(() => { AddField(temp); })">Add</button>
-                        </div>
+                    <hr class="mx-2"/>                                                                                  <!--line divider -->
+                    <label class="font-weight-bold ">Branchen im Projekt:</label>
+                    <div class="list-group col overflow-auto text-center border-dark" style="height: 250px">
+                        @foreach (var field in _projectToEdit.Fields)
+                        {
+                            <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _projectToEdit.Fields.Remove(field); })>@field</button>
+                        }
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer" style="border-bottom: 0 none">
-                <div class="form-group mb-3">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">Cancel</button>
-                    <button type="button" class="btn btn-success" @onclick="(() => { Showing(); Submit(ID); })">Save</button>
+                <div class="modal-footer">
+                    <div class="form-group ml-5">
+                        <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="Close"><span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen</button>
+                        <button type="button" class="btn btn-success" @onclick="(() => { Submit(ID); })"><span class="oi oi-document" aria-hidden="true"></span> Speichern</button>
+                    </div>
                 </div>
             </div>
         </div>
+
+
     </div>
-</div>
-
-
+}
 
 @if (_show)
 {
@@ -71,47 +66,28 @@
 @code {
 
     [Parameter]
+    public Projectedit Abstract { get; set; }
+    
+    [Parameter]
     public int ID { get; set; }
 
-    private bool _show = false;
+    Project _projectToEdit;
+    private bool _show;
 
+    private List<string> fields;
+    
     public string temp { get; set; }
-    Project currentProject = new Project();
+    
 
-    public List<string> AttributestoDisplay { get; set; } = new List<string>();
-    public List<string> AttributestoSearch { get; set; } = new List<string>();
-
-    JSonStructure.Rootclass jsonFields;
-
-    public void Showing()
+    public void Showing(int id)
     {
+        ID = id;
         _show = !_show;
+        _projectToEdit = _projectService.GetProject(id);
+        fields = _basic.GetAllFields();
         StateHasChanged();
     }
-
-
-    protected override void OnInitialized()
-    {
-        jsonFields = _jsonImport.ImportJsonFile();
-        AttributestoDisplay = new List<string>(jsonFields.fields);
-    }
-    public void UpdateSearch(string field)
-    {
-        if (AttributestoDisplay.Contains(field))
-        {
-            AttributestoDisplay.Remove(field);
-            AttributestoSearch.Add(field);
-        }
-    }
-
-    public void UpdateContains(string field)
-    {
-        if (AttributestoSearch.Contains(field))
-        {
-            AttributestoSearch.Remove(field);
-            AttributestoDisplay.Add(field);
-        }
-    }
+    
 
     public void Close()
     {
@@ -119,29 +95,14 @@
         StateHasChanged();
     }
 
-    public void AddField(string field)
-    {
-        if (field == null)
-        {
-        }
-        else
-        {
-            AttributestoDisplay.Add(field);
-        }
-    }
-
+    
     public void Submit(int ID)
     {
-        foreach (var project in _projectServiceSimple._projects)
-        {
-            if (ID == project.ProjectID)
-            {
-                currentProject = project;
-            }
-        }
-        currentProject.Fields = AttributestoSearch;
-        _projectServiceSimple.DeleteProject(ID);
-        _navigationManager.NavigateTo("/Projektübersicht/Projektedit/" + currentProject.ProjectID);
+        _show = !_show;
+    //Currently not implemented => Does nothing!!
+        _projectService.UpdateFieldsFromProject(_projectToEdit.ProjectID, _projectToEdit.Fields);
+        Abstract.Update();
+        StateHasChanged();
     }
 
 

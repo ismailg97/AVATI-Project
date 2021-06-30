@@ -1,23 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Runtime.InteropServices;
 using DocumentFormat.OpenXml.Office2016.Excel;
+using Microsoft.Extensions.Configuration;
 
 
 namespace AVATI.Data
 {
-    public class EmployeeServiceSimple : IEmployeeService
+    public class EmployeeServiceSimple 
     {
+        //private readonly IConfiguration _configuration;
         public List<Employee> Employees { get; set; }
-
+        
+        //public DbConnection GetConnection()
+        //{
+        //    return new SqlConnection
+        //        (_configuration.GetConnectionString("DatenbankIsmail"));
+        //}
+        
         public EmployeeServiceSimple()
         {
+            //IConfiguration configuration(als Parameter für Konstruktor)
+            //_configuration = configuration;
             Employees = new List<Employee>()
             {
                 new Employee()
                 {
                     
-                    EmployeeId = 1,FirstName = "Ismail", LastName = "Gürsöz", Roles = new List<string>()
+                    EmployeeID = 1,FirstName = "Ismail", LastName = "Gürsöz", Roles = new List<string>()
                     {
                         "Software Developer",
                         "Agile Coach",
@@ -50,13 +62,15 @@ namespace AVATI.Data
                         Tuple.Create<string,LanguageLevel>("Deutsch",LanguageLevel.A1), 
                         Tuple.Create<string, LanguageLevel>("Französisch", LanguageLevel.B2)
                        
-                    }, Rc = 6
+                    }, 
+                    Rc = 6,
+                    IsActive = true,
                 },
 
                 new Employee()
                 {
                     
-                    EmployeeId = 6,FirstName = "Anton", LastName = "Huber", Roles = new List<string>()
+                    EmployeeID = 6,FirstName = "Anton", LastName = "Huber", Roles = new List<string>()
                     {
                         "Agile Coach",
                         "UI/UX-Designer",
@@ -81,7 +95,7 @@ namespace AVATI.Data
                 new Employee()
                 {
                     
-                    EmployeeId = 2,FirstName = "Victoria", LastName = "Kuch", Roles = new List<string>()
+                    EmployeeID = 2,FirstName = "Victoria", LastName = "Kuch", Roles = new List<string>()
                     {
                         "Software Developer",
                         "Agile Coach",
@@ -104,7 +118,7 @@ namespace AVATI.Data
                 new Employee()
                 {
                     
-                    EmployeeId = 3,FirstName = "Alex", LastName = "Xela", Roles = new List<string>() {"Product Owner"}, Hardskills =
+                    EmployeeID = 3,FirstName = "Alex", LastName = "Xela", Roles = new List<string>() {"Product Owner"}, Hardskills =
                         new List<Hardskill>()
                         {
                             new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
@@ -116,7 +130,7 @@ namespace AVATI.Data
                 new Employee()
                 {
                     
-                    EmployeeId = 4,FirstName = "Victoria", LastName = "Airotciv", Roles = new List<string>() {"Product Owner"}, 
+                    EmployeeID = 4,FirstName = "Victoria", LastName = "Airotciv", Roles = new List<string>() {"Product Owner"}, 
                     Hardskills = new List<Hardskill>()
                     {
                         new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
@@ -141,12 +155,16 @@ namespace AVATI.Data
                         Tuple.Create<string,LanguageLevel>("Englisch", LanguageLevel.B2),
                         Tuple.Create<string,LanguageLevel>("Deutsch",LanguageLevel.A1),
                         Tuple.Create<string, LanguageLevel>("Französisch", LanguageLevel.B2)
-                    }, Rc = 3
+                    }, Rc = 3,
+                    
+                    HardSkillLevel = new List<Tuple<Hardskill, int>>(),
+                    LanguageName = new List<string>(),
+                    IsActive = false,
                 },
                 new Employee()
                 {
                     
-                    EmployeeId = 5,FirstName = "Tobi", LastName = "Ibot", Roles = new List<string>() {"UI/UX-Designer"}, Hardskills =
+                    EmployeeID = 5,FirstName = "Tobi", LastName = "Ibot", Roles = new List<string>() {"UI/UX-Designer"}, Hardskills =
                         new List<Hardskill>()
                         {
                             new Hardskill {Description = "Java"}, new Hardskill() {Description = "JavaScript"},
@@ -171,11 +189,17 @@ namespace AVATI.Data
 
         public bool CreateEmployeeProfile(Employee emp)
         {
+            
+            
             Employee employee = new Employee();
             employee.Field = emp.Field;
-            employee.FirstName = employee.LastName;
+            employee.FirstName = employee.FirstName;
             employee.LastName = emp.LastName;
             employee.Language = emp.Language;
+            employee.LanguageName = emp.LanguageName;
+            employee.HardSkillLevel = emp.HardSkillLevel;
+            employee.IsActive = emp.IsActive;
+            employee.ProjectActivities = emp.ProjectActivities;
             employee.Roles = emp.Roles;
             employee.EmploymentTime = emp.EmploymentTime;
             employee.EmpType = emp.EmpType;
@@ -191,12 +215,17 @@ namespace AVATI.Data
         {
             foreach (Employee employee in Employees)
             {
-                if (emp.EmployeeId == employee.EmployeeId)
+                if (emp.EmployeeID == employee.EmployeeID)
                 {
                     employee.Field = emp.Field;
                     employee.FirstName = employee.FirstName;
                     employee.LastName = emp.LastName;
                     employee.Language = emp.Language;
+                    employee.Image = emp.Image;
+                    employee.LanguageName = emp.LanguageName;
+                    employee.HardSkillLevel = emp.HardSkillLevel;
+                    employee.IsActive = emp.IsActive;
+                    employee.ProjectActivities = emp.ProjectActivities;
                     employee.Roles = emp.Roles;
                     employee.EmploymentTime = emp.EmploymentTime;
                     employee.EmpType = emp.EmpType;
@@ -215,7 +244,7 @@ namespace AVATI.Data
         {
             foreach (Employee emp in Employees)
             {
-                if (emp.EmployeeId == employeeId)
+                if (emp.EmployeeID == employeeId)
                 {
                     return emp;
                 }
@@ -228,7 +257,7 @@ namespace AVATI.Data
         {
             foreach (Employee emp in Employees)
             {
-                if (emp.EmployeeId == employeeId)
+                if (emp.EmployeeID == employeeId)
                 {
                     emp.IsActive = status;
                     return true;
@@ -242,7 +271,7 @@ namespace AVATI.Data
         {
             foreach (Employee emp in Employees)
             {
-                if (emp.EmployeeId == employeeId)
+                if (emp.EmployeeID == employeeId)
                 {
                     return emp.IsActive;
                 }

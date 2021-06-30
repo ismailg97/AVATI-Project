@@ -1,0 +1,193 @@
+﻿@page "/ProjectActivities"
+@using AVATI.Data
+@using System.Diagnostics
+@using DocumentFormat.OpenXml.InkML
+
+@inject IProjectActivityService _projectActivityService
+@inject IProjektService _projektService
+
+@if (Loading)
+{
+    <div class="d-flex flex-column align-items-center justify-content-center">
+        <div class="row">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <div class="row">
+            <strong>Lade...</strong>
+        </div>
+    </div>
+}
+else
+{
+    <EditForm Model="@Activity">
+        <DataAnnotationsValidator/>
+
+        <div class="container col">
+            <h2 class="mb-3">Globale Projekttätigkeiten</h2>
+            <p>Hier können Sie Tätigkeiten im Projekt hinzufügen, verwalten, editieren und löschen. Diese stehen als Auswahlmöglichkeit für alle Projekte zur Verfügung. </p>
+            <div class="row">
+                <div class="col-8">
+                    <div class="form-group">
+                        <table class="table table-hover">
+                            <thead>
+                            <div class="form-group">
+                                <input class="form-control" type="text" placeholder="Suche Aktivität..."
+                                       @bind="filterSearch"
+                                       @bind:event="oninput">
+                            </div>
+                            <tr>
+                                <th scope="col">Beschreibung</th>
+                                <th scope="col"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @if (!_projectActivityService.GetAllProjectActivities().Any())
+                            {
+                                <tr>
+                                    <td>[Keine Aktivitäten hinzugefügt!]</td>
+                                </tr>
+                            }
+                            @foreach (var activity in _projectActivityService.GetAllProjectActivities())
+                            {
+                                @if (filterSearch == null || activity.Description.Contains(filterSearch, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <tr>
+                                        <td>@activity.Description</td>
+                                        <td>
+                                            <button type="button" class="btn btn-info text-right" @onclick="() => { ShowUpdate(activity.Description); }">
+                                                <span class="oi oi-pencil"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-danger text-right" @onclick="(() => { ShowDelete(activity.Description); })">
+                                                <span class="oi oi-trash"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="col-auto">
+                        <div class="form-group row">
+                            <label class="col-form-label mr-2 font-weight-bold" value="@Description">Neue Tätigkeit anlegen:</label>
+                            <input type="text" class="form-group form-control" style="width: auto" @bind-value="Description"/>
+                            <button type="button" class="form-group btn btn-success mx-1" @onclick="(() => { AddProjectActivity(Description); })">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </EditForm>
+}
+@if (ShowPopDelete)
+{
+    <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
+        <div class="modal-dialog border-dark">
+            <div class="modal-content">
+                <div class="modal-header flex-column">
+                    <h4 class="modal-title col-12 text-center">Sind Sie sicher?</h4>
+                </div>
+                <div class="modal-body text-center">
+                    <p>Wollen Sie das Aktivität wirklich löschen? Der Prozess kann nicht rückgängig gemacht werden!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { ShowPopDelete = !ShowPopDelete; })">
+                        <span class="oi oi-circle-x"></span> Abbrechen
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { DeleteActivity(Description); ShowPopDelete = !ShowPopDelete;})">
+                        <span class="oi oi-trash"></span>Löschen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+@if (ShowPopUpdate)
+{
+    <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
+        <div class="modal-dialog border-dark">
+            <div class="modal-content">
+                <div class="modal-header flex-column">
+                    <h4 class="modal-title col-12 text-center">Aktivität bearbeiten</h4>
+                </div>
+                <div class="modal-body text-center">
+                    <p>Hier können Sie eine bereits vorhandene Tätigkeiten umbenennen.</p>
+                    <p>
+                        <text class="font-weight-bold">Achtung!</text>
+                    </p>
+                    <p>Die Tätigkeit, die hier geändert wird, verbleibt im Projekt, kann aber nicht mehr gelöscht und dann wieder hinzugefügt werden.</p>
+                    <input class="form-control mb-2" @bind=@Description>
+                    <div class="float-right">
+                        <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { ShowPopUpdate = !ShowPopUpdate; })">
+                            <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
+                        </button>
+                        <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { UpdateActivity(OldDescription, Description); ShowPopUpdate = !ShowPopUpdate;})">
+                            <span class="oi oi-document" aria-hidden="true"></span> Speichern
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+
+    public string Description { get; set; }
+    private ProjectActivity Activity { get; set; } = new ProjectActivity();
+    private bool Loading = false;
+    private string OldDescription;
+    public bool ShowPopDelete { get; set; }
+    public bool ShowPopUpdate { get; set; }
+
+    private string filterSearch { get; set; }
+
+    public void AddProjectActivity(string description)
+    {
+        _projectActivityService.AddActivity(description);
+        StateHasChanged();
+    }
+
+    public void UpdateActivity(string old, string newstring)
+    {
+        _projectActivityService.UpdateActivity(old, newstring);
+        StateHasChanged();
+    }
+
+    private void ShowDelete(string description)
+    {
+        if (!ShowPopDelete)
+        {
+            Description = description;
+        }
+
+        ShowPopDelete = !ShowPopDelete;
+    }
+
+    private void ShowUpdate(string description)
+    {
+        if (!ShowPopUpdate)
+        {
+            Description = description;
+            OldDescription = description;
+        }
+
+        ShowPopUpdate = !ShowPopUpdate;
+    }
+
+    public void DeleteActivity(string description)
+    {
+        _projectActivityService.DeleteProjectActivity(description);
+        StateHasChanged();
+    }
+
+
+}

@@ -29,25 +29,23 @@
     </tr>
     </thead>
     <tbody>
-    @if (_projctActivityService.GetProjectActivityListEmployee(Id).Any())
+    @if (_projctActivityService.GetProjectActivitiesEmployee(Id).Any())
     {
-        @foreach (var activity in _projctActivityService.GetProjectActivitiesList())
+        @foreach (var activity in _projctActivityService.GetProjectActivitiesEmployee(Id))
         {
-            
-            @if (activity.EmployeeID == Id)
-            {
+            //int projId = activity.ProjectID;
+            Project proj = _projektService.GetProject(activity.ProjectID);
                 <tr>
-                    <td>@activity.ProjectID</td>
-                    <td>@activity.Description</td>
+                    <td>@proj.Projecttitel</td>
+                    <td>@proj.Projectdescription</td>
                     <td>
-                        <input class="rounded" type="text" @bind="projActivity.Description" placeholder="@activity.Description">
+                        <input class="rounded form-control" type="text" @bind="activity.Description" placeholder="@activity.Description">
                     </td>
                     <td>
-                        <button type="button" @onclick="(() => { setProjectActivity(Id, project.ProjectID, projActivity.Description); })" class="btn btn-secondary">Bearbeiten</button>
-                        <button type="button" @onclick="(() => { deleteProjectActivity(Id, project.ProjectID); })" class="btn btn-danger">Löschen</button>
+                        <button type="button" @onclick="(() => { setProjectActivity(Id, proj.ProjectID, activity.Description); })" class="btn btn-secondary">Bearbeiten</button>
+                        <button type="button" @onclick="(() => { deleteProjectActivity(Id, proj.ProjectID, proj.Projectdescription); })" class="btn btn-danger">Löschen</button>
                     </td>
                 </tr>
-            }
         }
     }
     else
@@ -63,24 +61,23 @@
         { 
             @if (!IsVisible(projects.Projecttitel))
                                  continue;
-            @foreach (var activities in _projctActivityService.GetProjectActivityListEmployee(1))
-            {
-                if (projects.ProjectID != activities.ProjectID)
+            
+                if (projects.Employees.Find(x => x.EmployeeID == Id) == null )
                 {
                    
                     <tr>
                         <td>@projects.Projecttitel</td>
                         <td>@projects.Projectdescription</td>
                         <td>
-                            <input class="rounded" type="text" @bind="projActivity.Description" placeholder="">
+                            <input class="rounded form-control" type="text" @bind="projActivity.Description" placeholder="">
                         </td>
                         <td>
-                            <button type="button" @onclick="(() => { setProjectActivity(Id, projects.ProjectID, projActivity.Description); })" class="btn btn-warning">Hinzufügen</button>
+                            <button type="button" @onclick="(() => { setProjectActivity(Id, projects.ProjectID, projActivity.Description); })" class="btn btn-success">Hinzufügen</button>
 
                         </td>
                     </tr>
                 }
-            }
+            
         }
     }
     else
@@ -126,23 +123,17 @@
         return titel.Contains(Filter, StringComparison.OrdinalIgnoreCase);
     }
 
-    public void ProjectSuche()
-    {
-        Clicked = true;
-        List<Project> projects = _projektService.GetAllProjects();
-        _projektService.SearchProject(projects, Input);
-    }
-
     public void setProjectActivity(int empId, int projId, string description)
     {
         _projctActivityService.SetProjectActivity(empId, projId, description);
-        _navManager.NavigateTo("/employeeProject/" + Emp.EmployeeId, forceLoad: true);
+        _navManager.NavigateTo("/employeeProject/" + Emp.EmployeeID, forceLoad: true);
     }
 
-    public void deleteProjectActivity(int empId, int projId)
+    public void deleteProjectActivity(int empId, int projId, string desc)
     {
-        _projctActivityService.DeleteProjectActivity(empId, projId);
-        _navManager.NavigateTo("/employeeProject/" + Emp.EmployeeId, forceLoad: true);
+        
+        _projctActivityService.DeleteProjectActivityEmployee(empId, projId, desc);
+        _navManager.NavigateTo("/employeeProject/" + Emp.EmployeeID, forceLoad: true);
     }
 
 

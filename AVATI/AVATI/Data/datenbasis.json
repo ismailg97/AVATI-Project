@@ -108,7 +108,6 @@
             "Apache Spark",
             "ARKit",
             "ARCore",
-            "Apache Spark",
             "CNTK",
             "Entity Framework",
             "Enzyme",
@@ -359,7 +358,7 @@
 		 "MariaDB Server",
          "Redis"
       ],
-      "Betriebssysteme/Cloud/Plattformen/Hardware ":{
+      "Betriebssysteme/Cloud/Plattformen/Hardware":{
          "Betriebssysteme":[
             "Windows",
             "Linux",
@@ -444,7 +443,7 @@
          "IT Consulting",
          "Blockchain",
          "Bildverarbeitung",
-         "Projektmanagement",
+         "Projektleitung",
          "Icondesign",
          "Typographie",
          "Grafikdesign",

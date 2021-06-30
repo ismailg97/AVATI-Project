@@ -10,7 +10,7 @@
 
 @inject Projectedit _projectedit
 @inject JsonImport _jsonImport
-@inject ProjectServiceSimple _projectServiceSimple
+@inject IProjektService _projekt
 @inject NavigationManager _navigationManager
 @inject IEmployeeService _employee
 
@@ -122,7 +122,7 @@
     public void Submit(Employee emp)
     {
         Project temp = currentProject;
-        foreach (var project in _projectServiceSimple._projects)
+        foreach (var project in _projekt.GetAllProjects())
         {
             if (ID == project.ProjectID)
             {
@@ -130,7 +130,7 @@
             }
         }
         emp.Field = AttributestoSearch;
-        _navigationManager.NavigateTo("/profile/update/" + emp.EmployeeId);
+        _navigationManager.NavigateTo("/profile/update/" + emp.EmployeeID);
     }
 
 }

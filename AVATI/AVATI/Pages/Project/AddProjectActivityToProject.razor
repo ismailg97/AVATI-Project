@@ -1,0 +1,104 @@
+﻿@page "/Projektübersicht/Projektedit/AddProjectActivityToProject/{ID:int}"
+@page "/Projektübersicht/Projektedit/AddProjectActivityToProject"
+
+@using AVATI.Data
+
+@inject IProjectActivityService _projectActivity
+@inject IProjektService _projectService
+@inject NavigationManager _navigationManager
+
+@if (_show)
+{
+    <div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
+        <div class="modal modal-dialog-scrollable modal-dialog col">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Auswahl Projekttätigkeiten</h5>
+                    <button type="button" class="close" data-dismiss="modal" @onclick=@Close>
+                        <span aria-hidden="true">x</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="min-width: 100%">
+                    <label class="font-weight-bold">Tätigkeiten zur Auswahl stehend:</label>
+                    <div class="list-group col overflow-auto border-dark" style="height: 325px">
+                        @if (!_activities.Any())
+                        {
+                            <label type="button" class="btn btn-outline-info">[keine Tätigkeiten vorhanden]</label>
+                        }
+                        else
+                        {
+                            @foreach (var activity in _activities)
+                            {
+                                if (_activitiesInProject.Find(e => e.Description.Equals(activity.Description)) == null)
+                                {
+                                    <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _activitiesInProject.Add(activity); })>@activity.Description</button>
+                                }
+                            }
+                        }
+                    </div>
+                    <hr class="mx-2"/> <!--line divider -->
+                    <label class="font-weight-bold ">Tätigkeiten im Projekt:</label>
+                    <div class="list-group col overflow-auto text-center border-dark" style="height: 325px">
+                        @foreach (var activity in _activitiesInProject)
+                        {
+                            <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _activitiesInProject.Remove(activity); })>@activity.Description</button>
+                        }
+                    </div>
+                    <div class="div float-right">
+                        <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { Showing(ID); })">Abbrechen</button>
+                        <button type="button" class="btn btn-success" @onclick="(() => { Submit(ID);})">Speichern</button>
+                    </div>
+                </div>
+               
+
+            </div>
+            </div>
+        </div>
+}
+
+@if (_show)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code{
+
+    [Parameter]
+    public int ID { get; set; }
+
+    public int EmployeeID { get; set; }
+
+    private List<ProjectActivity> _activities;
+    private List<ProjectActivity> _activitiesInProject;
+    private bool _show = false;
+    private string Activity { get; set; }
+    
+    [Parameter]
+    public Projectedit Abstract { get; set; }
+    
+    public void Showing(int Id)
+    {
+        ID = Id;
+        _show = !_show;
+        _activitiesInProject = _projectActivity.GetProjectActivitiesProject(Id);
+        _activities = _projectActivity.GetAllProjectActivities();
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        _show = !_show;
+        StateHasChanged();
+    }
+
+    public void Submit(int ID)
+    {
+        _show = !_show;
+        _projectActivity.UpdateProjectActivity(ID, _activitiesInProject);
+        Abstract.Update();
+        StateHasChanged();
+    }
+    
+
+
+}

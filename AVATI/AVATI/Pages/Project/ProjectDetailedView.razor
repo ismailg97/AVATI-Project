@@ -1,69 +1,186 @@
 ﻿@page "/Projektübersicht/ProjectDetailedView"
 @page "/Projektübersicht/ProjectDetailedView/{ID:int}"
+
 @using AVATI.Data
 
-@inject ProjectServiceSimple _projectServiceSimple
+@inject ProjectPurposeService _projectPurpose
+@inject IProjectActivityService _activity
+@inject IProjektService _projectService
 
-<div class="form-group">
-    <div class="table">
-        <thead class="thead-dark">
-        <tr>
-            <th style="width: 10%">Projekttitel</th>
-            <th>Projektbeschreibung</th>
-            <th style="width: 10%">Branchen</th>           <!-- as to not intervene with css file and other styling -->
-            <th style="width: 10%">Mitarbeiter</th>
-            <th style="width: 10%">Projektlaufzeit</th>
-            <th style="width: 10%">Projekaktivitäten</th>
-            <th style="width: 10%">Projektzweck</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>@_project.Projecttitel</td>
-            <td style="height: 100%">@_project.Projectdescription</td>
-            <td style="height: 100%">
-                <div class="col-form-label">
-                    <ul>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 mb-4 align-content-center">
+            <div class="card mb-4 border-dark" style="width: auto; background-color: #86cfda">
+                <div class="card-body text-center">
+                    <h4 class="card-title">@_project.Projecttitel</h4>
+                    <label class="text">@_project.Projectdescription</label>
+                </div>
+            </div>
+            <div class="card mb-4 border-dark " style="width: auto">
+                <div class="card-body">
+                    <h4 class="card-title text-xl-center">Mitarbeiter</h4>
+                    <table class="table table-hover">
+                        <thead style="background-color: #c3e6cb;">
+                        <tr>
+                            <th scope="col">Vorname</th>
+                            <th scope="col">Nachname</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @if (!_project.Employees.Any())
+                        {
+                            <tr>
+                                <td>[Kein Mitarbeiter vorhanden]</td>
+                                <td></td>
+                            </tr>
+                        }
+                        @foreach (var emp in _project.Employees)
+                        {
+                            <tr>
+                                <td>@emp.FirstName</td>
+                                <td>@emp.LastName</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card mb-4 border-dark " style="width: auto">
+                <div class="card-body">
+                    <h4 class="card-title text-xl-center">Projekttätigkeiten</h4>
+                    <table class="table table-hover">
+                        <thead style="background-color: #c3e6cb;">
+                        <tr>
+                            <th scope="col">Tätigkeit</th>
+                            <th scope="col">Zugewiesener Mitarbeiter</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @if (!_project.ProjectActivities.Any())
+                        {
+                            <tr>
+                                <td>[Keine Tätigkeiten vorhanden]</td>
+                                <td></td>
+                            </tr>
+                        }
+                        @foreach (var field in _project.ProjectActivities)
+                        {
+                            <tr>
+                                <td>@field.Description</td>
+                                @if (_project.Employees.Find(x => x.EmployeeID == field.EmployeeID) == null)
+                                {
+                                    <td>[Kein zugewiesener Mitarbeiter]</td>
+                                    <td></td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        @_project.Employees.Find(x => x.EmployeeID == field.EmployeeID).FirstName
+                                        @_project.Employees.Find(x => x.EmployeeID == field.EmployeeID).LastName
+                                    </td>
+                                }
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 mb-4 align-content-center">
+            <div class="card mb-4 border-dark" style="width:auto;">
+                <div class="card-body">
+                    <h4 class="card-title text-xl-center">Branchen</h4>
+                    <table class="table table-hover text-center">
+                        <thead style="background-color: #c3e6cb;">
+                        <tr>
+                            <th scope="col">Branchentitel</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @if (!_project.Fields.Any())
+                        {
+                            <tr>
+                                <td>[Keine Branchen dem Projekt zugewiesen]</td>
+                            </tr>
+                        }
                         @foreach (var field in _project.Fields)
                         {
-                            <li>
-                                @field
-                            </li>
+                            <tr>
+                                <td>@field</td>
+                            </tr>
                         }
-                    </ul>
+                        </tbody>
+                    </table>
                 </div>
-            </td>
-            <td>
-                <div class="col-form-label">
-                    <ul>
-                        @foreach (var empl in _project.Employees)
+            </div>
+            <div class="card mb-4 border-dark" style="width: auto;">
+                <div class="card-body">
+                    <h4 class="card-title text-xl-center">Projektlaufzeit</h4>
+                    <table class="table border-dark">
+                        <thead style="background-color: #c3e6cb;">
+                        <tr>
+                            <th scope="col" class="text-center">Projektanfang</th>
+                            <th scope="col" class="text-center">Projektende</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="text-center">@_project.Projectbeginning.ToString("dd.MM.yy")</td>
+                            <td class="text-center">@_project.Projectend.ToString("dd.MM.yy")</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card mb-4 border-dark" style="width:auto;">
+                <div class="card-body">
+                    <h4 class="card-title text-xl-center">Projektzwecke</h4>
+                    <table class="table table-hover text-center">
+                        <thead style="background-color: #c3e6cb;">
+                        <tr>
+                            <th scope="col">Zweck</th>
+                            <th scope="col">Lösung durch folgende Tätigkeit</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @if (!_projectPurpose.GettAllPurposesFromProject(ID).Any())
                         {
-                            <li>
-                                @empl
-                            </li>
+                            <tr>
+                                <td>[Keine Projektzwecke vorhanden]</td>
+                                <td></td>
+                            </tr>
                         }
-                    </ul>
-                </div>
-            </td>
-            <td>@_project.Projectbeginning</td>
-            <td>
-                <div class="col-form-label">
-                    <ul>
-                        @foreach (var purpose in _project.Projectpurpose)
+                        else
                         {
-                            <li>
-                                @purpose
-                            </li>
+                            @foreach (var purpose in _projectPurpose.GettAllPurposesFromProject(ID))
+                            {
+                                <tr>
+                                    <td>@purpose.Purpose</td>
+                                    @if (purpose.AssignedProjectActivity == null)
+                                    {
+                                        <td>[Keine Tätigkeit zugewiesen!]</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@purpose.AssignedProjectActivity</td>
+                                    }
+                                </tr>
+                            }
                         }
-                    </ul>
+                        </tbody>
+                    </table>
                 </div>
-            </td>
-            
-            
-        </tr>
-        </tbody>
+            </div>
+        </div>
     </div>
-
+    <div class="form-group text-right">
+        <a href="/Projektübersicht" class="sm form-label">
+            <button type="button" class="btn btn-success">
+                <span class="oi oi-document" aria-hidden="true"></span> Zurück zur Übersicht
+            </button>
+        </a>
+    </div>
 </div>
 
 
@@ -76,7 +193,8 @@
 
     protected override void OnInitialized()
     {
-        _project = _projectServiceSimple.GetProject(ID);
+        _project = _projectService.GetProject(ID);
+        _project.ProjectActivities = _activity.GetProjectActivitiesProject(ID);
     }
 
 }

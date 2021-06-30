@@ -63,7 +63,7 @@
     Employee.LanguageName.Remove(languageName);
     _show = !_show;
     StateHasChanged();
-    _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+    _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
   }
   //<EditForm Model="@_newHardskill" OnValidSubmit="Update"></EditForm>
 
@@ -81,7 +81,7 @@
       Employee.Language.Add(new Tuple<string, LanguageLevel>(languageName, LanguageLevel.A1));
       _show = !_show;
       StateHasChanged();
-      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
     }
     if (buttonId == 2)
     {
@@ -95,7 +95,7 @@
       Employee.Language.Add(new Tuple<string, LanguageLevel>(languageName, LanguageLevel.A2));
       _show = !_show;
       StateHasChanged();
-      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
     }
     if (buttonId == 3)
     {
@@ -109,7 +109,7 @@
       Employee.Language.Add(new Tuple<string, LanguageLevel>(languageName, LanguageLevel.B1));
       _show = !_show;
       StateHasChanged();
-      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
     }
     if (buttonId == 4)
     {
@@ -123,7 +123,7 @@
       Employee.Language.Add(new Tuple<string, LanguageLevel>(languageName, LanguageLevel.B2));
       _show = !_show;
       StateHasChanged();
-      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
     }
     if (buttonId == 5)
     {
@@ -137,7 +137,7 @@
       Employee.Language.Add(new Tuple<string, LanguageLevel>(languageName, LanguageLevel.C1));
       _show = !_show;
       StateHasChanged();
-      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
     }
     if (buttonId == 6)
     {
@@ -151,7 +151,7 @@
       Employee.Language.Add(new Tuple<string, LanguageLevel>(languageName, LanguageLevel.C2));
       _show = !_show;
       StateHasChanged();
-      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeId, forceLoad:true);
+      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
     }
     
   }

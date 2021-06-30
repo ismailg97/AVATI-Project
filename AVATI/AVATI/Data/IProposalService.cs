@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AVATI.Data
 {
@@ -11,8 +12,6 @@ namespace AVATI.Data
         public List<Hardskill> GetHardskills(int proposalId);
 
         public List<string> GetFields(int proposalId);
-                
-        public bool CreateProposal(string title, List<string> Softskills, List<string> Fields, List<Hardskill> Hardskills, List<Employee> Employees);
 
         public bool UpdateProposal(int Id, Proposal proposal);
 
@@ -22,8 +21,14 @@ namespace AVATI.Data
 
         public bool GenerateDocument(int proposalId);
 
+        public bool RemoveEmployee(int propId, int emp);
+
+        public bool AddEmployee(int propId, int emp, int rc);
+        
         public Proposal GetProposal(int proposalId);
 
-        public List<Proposal> GetAllProposals();
+        public Task<List<Proposal>> GetAllProposals();
+
+        public bool UpdateAltRc(int proposalId, int empId, int newRc);
     }
 }
