@@ -24,8 +24,7 @@ namespace AVATI.Data
 
         public bool SetProjectActivity(int EmployeeId, int ProjectId, string Description)
         {
-            IDbConnection db = GetConnection();
-            db.Open();
+            using IDbConnection db = GetConnection();
             var returnVal =
                 db.Query<string>(
                     "Select ProjectActivity from ProjectActivity_Project_Employee WHERE ProjectId = @pro AND EmployeeId = @emp AND ProjectActivity = @desc",
@@ -45,8 +44,7 @@ namespace AVATI.Data
 
         public bool DeleteProjectActivityEmployee(int EmployeeId, int ProjectId, string Description)
         {
-            IDbConnection db = GetConnection();
-            db.Open();
+            using IDbConnection db = GetConnection();
             var returnVal =
                 db.Query<string>(
                     "Select ProjectActivity from ProjectActivity_Project_Employee WHERE ProjectId = @pro AND EmployeeId = @emp AND ProjectActivity = @desc",
@@ -67,8 +65,7 @@ namespace AVATI.Data
 
         public bool DeleteProjectActivity(string Description)
         {
-            IDbConnection db = GetConnection();
-            db.Open();
+            using IDbConnection db = GetConnection();
             var returnVal =
                 db.Query<string>(
                     "Select * from ProjectActivity WHERE Description = @desc",
@@ -88,8 +85,7 @@ namespace AVATI.Data
 
         public List<ProjectActivity> GetEmployeeProjectActivities(int EmployeeId, int ProjectId)
         {
-            IDbConnection db = GetConnection();
-            db.Open();
+            using IDbConnection db = GetConnection();
             List<ProjectActivity> tempList = new List<ProjectActivity>(db.Query<ProjectActivity>(
                 "SELECT * FROM ProjectActivity_Project_Employee WHERE EmployeeId = @emp AND ProjectId = @pro",
                 new {emp = EmployeeId, pro = ProjectId}));
@@ -98,8 +94,7 @@ namespace AVATI.Data
 
         public List<ProjectActivity> GetProjectActivitiesProject(int ProjectID)
         {
-            IDbConnection db = GetConnection();
-            db.Open();
+            using IDbConnection db = GetConnection();
             List<ProjectActivity> toReturn = new List<ProjectActivity>();
             List<string> tempList = new List<string>(db.Query<string>(
                 "SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectId = @pro AND ProjectActivity IS NOT NULL",
@@ -113,8 +108,7 @@ namespace AVATI.Data
 
         public List<ProjectActivity> GetAllProjectActivities()
         {
-            IDbConnection db = GetConnection();
-            db.Open();
+            using IDbConnection db = GetConnection();
             List<ProjectActivity> tempList = new List<ProjectActivity>(db.Query<ProjectActivity>(
                 "SELECT * FROM ProjectActivity"));
             return tempList;
@@ -122,8 +116,7 @@ namespace AVATI.Data
 
         public List<ProjectActivity> GetProjectActivitiesEmployee(int EmployeeId)
         {
-            IDbConnection db = GetConnection();
-            db.Open();
+            using IDbConnection db = GetConnection();
             List<ProjectActivity> tempList = new List<ProjectActivity>(db.Query<ProjectActivity>(
                 "SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE EmployeeID = @emp",
                 new {emp = EmployeeId}));
@@ -132,8 +125,7 @@ namespace AVATI.Data
 
         public bool UpdateActivity(string oldDescription, string newDescription)
         {
-            IDbConnection db = GetConnection();
-            db.Open();
+            using IDbConnection db = GetConnection();
             var returnVal =
                 db.Query<string>(
                     "Select Description from ProjectActivity WHERE Description = @desc",
@@ -154,8 +146,7 @@ namespace AVATI.Data
 
         public bool AddActivity(string description)
         {
-            IDbConnection db = GetConnection();
-            db.Open();
+            using IDbConnection db = GetConnection();
             var returnVal =
                 db.Query<string>(
                     "Select Description from ProjectActivity WHERE Description = @desc",
@@ -175,8 +166,7 @@ namespace AVATI.Data
 
         public bool UpdateProjectActivity(int proposalId, List<ProjectActivity> activities)
         {
-            IDbConnection db = GetConnection();
-            db.Open();
+            using IDbConnection db = GetConnection();
             foreach (var activity in activities)
             {
                 Console.WriteLine("Do we enter here1");
