@@ -7,7 +7,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
 
-namespace Komponententests
+namespace Tests
 {
     [TestFixture(typeof(FirefoxDriver))]
     [TestFixture(typeof(ChromeDriver))]
