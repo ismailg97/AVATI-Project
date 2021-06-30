@@ -401,6 +401,29 @@
         return element;
     }
 
+    public static Table GenerateRoleTable(int id)
+    {
+        var table = new Table();
+        var tableProp = new TableProperties(
+            new TableStyle() {Val = "EinfacheTabelle4"}, new TableLook() /*,new TableBorders(    //Borders maybe not needed, depending on style
+                new TopBorder() { Val = 
+                    new EnumValue<BorderValues>(BorderValues.Dashed), Size = 24 },
+                new BottomBorder() { Val = 
+                    new EnumValue<BorderValues>(BorderValues.Dashed), Size = 24 },
+                new LeftBorder() { Val = 
+                    new EnumValue<BorderValues>(BorderValues.Dashed), Size = 24 },
+                new RightBorder() { Val = 
+                    new EnumValue<BorderValues>(BorderValues.Dashed), Size = 24 },
+                new InsideHorizontalBorder() { Val = 
+                    new EnumValue<BorderValues>(BorderValues.Dashed), Size = 24 },
+                new InsideVerticalBorder() { Val = 
+                    new EnumValue<BorderValues>(BorderValues.Dashed), Size = 24 }
+                )*/);
+        table.AppendChild<TableProperties>(tableProp);
+        
+        return table;
+    }
+    
     public async Task CreateDocument(int id)
     {
         string templatePath = "E:\\Users\\Tobi\\Desktop\\AvatiProposalDoc.docx";
@@ -413,12 +436,12 @@
             if (wordDoc.MainDocumentPart != null)
             {
                 Body body = wordDoc.MainDocumentPart.Document.Body;
-                var paragraphs = body.Descendants<Paragraph>();
+                var paragraphs = body.Descendants<Paragraph>().ToList();
                 foreach (var par in paragraphs)
                 {
-                    foreach (var run in par.Descendants<Run>())
+                    foreach (var run in par.Descendants<Run>().ToList())
                     {
-                        foreach (var element in run.Descendants<Text>())
+                        foreach (var element in run.Descendants<Text>().ToList())
                         {
                             Console.WriteLine(element.Text);
                             switch (element.Text)
@@ -429,38 +452,38 @@
                                 case "Beschreibungstext":
                                     element.Text = element.Text.Replace("Beschreibungstext", _proposal.GetProposal(id).AdditionalInfo);
                                     break;
-                                case "Hardskill":
+                                case "Hard":
                                 {
                                     foreach (var hardskill in _proposal.GetHardskills(id))
                                     {
                                         par.InsertAfterSelf(GenerateHardskillListItem(hardskill.Description));
                                     }
-                                    //par.Remove();
+                                    par.Remove();
                                     break;
                                 }
-                                case "Softskill":
+                                case "Soft":
                                     foreach (var softskill in _proposal.GetSoftskills(id))
                                     {
                                         par.InsertAfterSelf(GenerateSoftskillListItem(softskill));
                                     }
-                                    //par.Remove();
+                                    par.Remove();
                                     break;
-                                case "Branche":
+                                case "Field":
                                     foreach (var field in _proposal.GetFields(id))
                                     {
                                         par.InsertAfterSelf(GenerateFieldListItem(field));
                                     }
-                                    //par.Remove();
+                                    par.Remove();
                                     break;
                                 case "Tätigkeitsbereiche":
-                                    //TODO insert and fill Table:    Mitarbeiter | Role
+                                    par.InsertAfterSelf(GenerateRoleTable(id));
                                     break;
                             }
                         }
                     }
                 }
             }
-            //TODO After inserting the table, fill 'Mitarbeiterprofile' manually; one profile per side; use body.append...()
+            //TODO After inserting the table, fill 'Mitarbeiterprofile' from another template if possible
             //TODO After filling the Profiles, KOSTENMIXKALKULATION   DAMM DAMM DAMM
             Console.WriteLine(wordDoc.ToFlatOpcString());
             wordDoc.Save();
