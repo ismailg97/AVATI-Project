@@ -48,7 +48,6 @@ namespace AVATI.Data
         public bool RemoveEmployee(int propId, int empId)
         {
             using DbConnection db = GetConnection();
-            db.Open();
             db.Execute("Delete FROM EmployeeDetail_Softskill WHERE ProposalId = @prop and EmployeeId = @emp",
                 new {prop = propId, emp = empId});
             db.Execute("Delete FROM EmployeeDetail_Hardskill WHERE ProposalId = @prop and EmployeeId = @emp",
@@ -68,12 +67,11 @@ namespace AVATI.Data
         public bool AddEmployee(int propId, int empl, int rc)
         {
             using DbConnection db = GetConnection();
-            db.Open();
             Employee tempEmp =
                 db.QuerySingle<Employee>("SELECT * FROM Employee WHERE EmployeeID = @emp", new {emp = empl});
             if (tempEmp == null)
             {
-                Console.WriteLine("Damn Bro");
+                Console.WriteLine("Employee doesnt exist");
             }
 
             db.Execute("INSERT INTO EmployeeDetail VALUES(@prop, @emp, @oldRc)",
@@ -86,7 +84,6 @@ namespace AVATI.Data
         public bool UpdateProposal(int id, Proposal proposal)
         {
             using DbConnection db = GetConnection();
-            db.Open();
             int idToUSe = id;
             var result = db.Query<Proposal>("SELECT * FROM Proposal WHERE ProposalID = @propId",
                 new {propId = id});
@@ -153,7 +150,6 @@ namespace AVATI.Data
         public bool DeleteProposal(int proposalId)
         {
             using DbConnection db = GetConnection();
-            db.Open();
             foreach (var empId in db.Query<int>("SELECT EmployeeID from EmployeeDetail WHERE ProposalID = @prop",
                 new {prop = proposalId}))
             {
@@ -177,7 +173,6 @@ namespace AVATI.Data
         {
             using DbConnection db = GetConnection();
             Proposal temp;
-            db.Open();
             if ((temp = db.Query<Proposal>("SELECT * FROM Proposal WHERE ProposalId = @propId",
                     new {propId = proposalId})
                 .FirstOrDefault()) == null)
@@ -236,7 +231,6 @@ namespace AVATI.Data
         {
             Proposal temp;
             using DbConnection db = GetConnection();
-            db.Open();
             if ((temp = db.Query<Proposal>("SELECT * FROM Proposal Where ProposalId = @propId",
                     new {propId = proposalId})
                 .FirstOrDefault()) == null)
@@ -280,7 +274,6 @@ namespace AVATI.Data
         public async Task<List<Proposal>> GetAllProposals()
         {
             await using DbConnection db = GetConnection();
-            await db.OpenAsync();
             List<Proposal> proposals = new List<Proposal>(await db.QueryAsync<Proposal>("SELECT * FROM Proposal"));
             foreach (var proposal in proposals)
             {
@@ -323,7 +316,6 @@ namespace AVATI.Data
         public bool UpdateAltRc(int proposalId, int empId, int newRc)
         {
             using DbConnection db = GetConnection();
-            db.Open();
             if (db.Execute(
                 "Update EmployeeDetail SET AltRC = @newRCLevel Where ProposalID = @propId and EmployeeId = @employeeId",
                 new {newRCLevel = newRc, propId = proposalId, employeeId = empId}) != 1)

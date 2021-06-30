@@ -9,7 +9,7 @@ namespace AVATI.Data
         public bool DeleteProject(int projectID);
         public Project GetProject(int projectID);
         public List<Project> GetAllProjects();
-        public List<Project> SearchProject(List<Project> projects, string input);
+        
         public List<string> GetAllFieldsFromOneProject(int ProjectID);
 
         public bool DeleteEmployeeFromProject(int ProjectID, int EmployeeID);

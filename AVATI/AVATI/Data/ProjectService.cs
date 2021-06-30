@@ -35,7 +35,6 @@ namespace AVATI.Data
             }
 
             using DbConnection db = GetConnection();
-            db.Open();
             db.Execute("INSERT INTO Project VALUES(@title, @description, @dateBeg , @dateEnd)",
                 new
                 {
@@ -56,8 +55,7 @@ namespace AVATI.Data
             {
                 Console.WriteLine(emp.FirstName);
             }
-            IDbConnection db = GetConnection();
-            db.Open();
+            using IDbConnection db = GetConnection();
             var result = db.Query<Project>("SELECT * FROM Project WHERE ProjectId = @propId",
                 new {propId = project.ProjectID});
             if (result.FirstOrDefault() == null)
@@ -109,8 +107,7 @@ namespace AVATI.Data
 
         public bool DeleteProject(int projectID)
         {
-            IDbConnection db = GetConnection();
-            db.Open();
+            using IDbConnection db = GetConnection();
             var result = db.Query<Project>("SELECT * FROM Project WHERE ProjectId = @propId",
                 new {propId = projectID});
             if (result.FirstOrDefault() == null)
@@ -127,8 +124,7 @@ namespace AVATI.Data
         public Project GetProject(int projectID)
         {
             Project temp;
-            IDbConnection db = GetConnection();
-            db.Open();
+            using IDbConnection db = GetConnection();
             temp = new Project();
             temp.Projecttitel = db.QuerySingle<string>("SELECT Projecttitle from Project WHERE ProjectId = @proId",
                 new {proId = projectID});
@@ -155,8 +151,7 @@ namespace AVATI.Data
 
         public List<Project> GetAllProjects()
         {
-            IDbConnection db = GetConnection();
-            db.Open();
+            using IDbConnection db = GetConnection();
             Projects = new List<Project>(db.Query<Project>("SELECT ProjectID from Project"));
             foreach (var temp in Projects)
             {
@@ -176,13 +171,7 @@ namespace AVATI.Data
 
             return Projects;
         }
-
-        public List<Project> SearchProject(List<Project> projects, string input)
-        {
-            //Was soll das machen?
-
-            return null;
-        }
+        
 
         public List<string> GetAllFieldsFromOneProject(int ProjectID)
         {
