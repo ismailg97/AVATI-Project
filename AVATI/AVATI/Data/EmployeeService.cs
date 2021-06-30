@@ -29,8 +29,7 @@ namespace AVATI.Data
 
         public List<Employee> GetAllEmployees()
         {
-            DbConnection db = GetConnection();
-            db.Open();
+            using DbConnection db = GetConnection();
             List<Employee> empList = new List<Employee>();
             var employees = db.Query<Employee>("select * from Employee").ToList();
             foreach (var emp in employees)
@@ -101,8 +100,7 @@ namespace AVATI.Data
 
         public bool CreateEmployeeProfile(Employee emp)
         {
-            DbConnection db = GetConnection();
-            db.Open();
+            using DbConnection db = GetConnection();
             db.Query(
                 "INSERT INTO Employee VALUES (Employee ID = @ID, @Firstname ,@Lastname , NULL , @RWE, @EmpTime, @Rc, @EmpType, @IA)",
                 new
@@ -146,8 +144,7 @@ namespace AVATI.Data
 
         public bool EditEmployeeProfile(Employee emp)
         {
-            DbConnection db = GetConnection();
-            db.Open();
+            using DbConnection db = GetConnection();
             db.Query(
                 "UPDATE Employee SET Firstname= @Firstname ,Lastname = @Lastname , Image = NULL , WorkExperience = @RWE, EmploymentTime = @EmpTime,RCLevel = @RC, IsActive = @IA WHERE EmployeeID = @ID",
                 new
@@ -212,8 +209,7 @@ namespace AVATI.Data
 
         public Employee GetEmployeeProfile(int employeeId)
         {
-            DbConnection db = GetConnection();
-            db.Open();
+            using DbConnection db = GetConnection();
 
             Employee employee = new Employee();
 
@@ -284,8 +280,7 @@ namespace AVATI.Data
 
         public bool EditStatus(int employeeId, bool status)
         {
-            DbConnection db = GetConnection();
-            db.Open();
+            using DbConnection db = GetConnection();
             db.Query<Employee>("update Employee set IsActive=@active where EmployeeID = @ID",
                 new {ID = employeeId, active = status});
             return true;
@@ -293,8 +288,7 @@ namespace AVATI.Data
 
         public bool? GetSatus(int employeeId)
         {
-            DbConnection db = GetConnection();
-            db.Open();
+            using DbConnection db = GetConnection();
             var status = db.Query<byte>("select IsActive from Employee where EmployeeId = @ID", new {ID = employeeId})
                 .ToList();
             if (status[0] == 1)

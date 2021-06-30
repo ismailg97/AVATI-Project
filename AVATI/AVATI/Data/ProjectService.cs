@@ -35,12 +35,10 @@ namespace AVATI.Data
             }
 
             using DbConnection db = GetConnection();
-            db.Open();
             db.Execute("INSERT INTO Project VALUES(@title, @description, @dateBeg , @dateEnd)",
                 new
                 {
-                    title = project.Projecttitel, 
-                    description = project.Projectdescription,
+                    title = project.Projecttitel, description = project.Projectdescription,
                     dateBeg = project.Projectbeginning.ToString("d", DateTimeFormatInfo.InvariantInfo),
                     dateEnd = project.Projectend.ToString("d", DateTimeFormatInfo.InvariantInfo)
                 });
@@ -53,8 +51,11 @@ namespace AVATI.Data
 
         public bool UpdateProject(Project project)
         {
-            IDbConnection db = GetConnection();
-            db.Open();
+            foreach (var emp in project.Employees)
+            {
+                Console.WriteLine(emp.FirstName);
+            }
+            using IDbConnection db = GetConnection();
             var result = db.Query<Project>("SELECT * FROM Project WHERE ProjectId = @propId",
                 new {propId = project.ProjectID});
             if (result.FirstOrDefault() == null)
@@ -68,7 +69,7 @@ namespace AVATI.Data
                 new
                 {
                     propTitle = project.Projecttitel ?? "Leer",
-                    addInfo = project.Projectdescription ?? "[Keine Zusatzinformationen]", propId = project.ProjectID,
+                    addInfo = project.Projectdescription ?? "[Keine Zusatzinformationen", propId = project.ProjectID,
                     beg = project.Projectbeginning.ToString("d", DateTimeFormatInfo.InvariantInfo),
                     end = project.Projectend.ToString("d", DateTimeFormatInfo.InvariantInfo)
                 });
@@ -94,6 +95,8 @@ namespace AVATI.Data
                         new {ProID = project.ProjectID, EmplId = pro.EmployeeID});
                 }
             }
+
+
             foreach (var field in project.Fields)
             {
                 //TODO Wir haben noch keine Fields - Tabelle
@@ -104,8 +107,7 @@ namespace AVATI.Data
 
         public bool DeleteProject(int projectID)
         {
-            IDbConnection db = GetConnection();
-            db.Open();
+            using IDbConnection db = GetConnection();
             var result = db.Query<Project>("SELECT * FROM Project WHERE ProjectId = @propId",
                 new {propId = projectID});
             if (result.FirstOrDefault() == null)
@@ -122,8 +124,7 @@ namespace AVATI.Data
         public Project GetProject(int projectID)
         {
             Project temp;
-            IDbConnection db = GetConnection();
-            db.Open();
+            using IDbConnection db = GetConnection();
             temp = new Project();
             temp.Projecttitel = db.QuerySingle<string>("SELECT Projecttitle from Project WHERE ProjectId = @proId",
                 new {proId = projectID});
@@ -150,8 +151,7 @@ namespace AVATI.Data
 
         public List<Project> GetAllProjects()
         {
-            IDbConnection db = GetConnection();
-            db.Open();
+            using IDbConnection db = GetConnection();
             Projects = new List<Project>(db.Query<Project>("SELECT ProjectID from Project"));
             foreach (var temp in Projects)
             {
@@ -171,6 +171,7 @@ namespace AVATI.Data
 
             return Projects;
         }
+        
 
         public List<string> GetAllFieldsFromOneProject(int ProjectID)
         {
