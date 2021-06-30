@@ -37,7 +37,7 @@
                          <h6>Bereits enthaltene Hardskills</h6>
                          <hr/>
 
-                         foreach (var hardskill in SubHardskills[Uppercat])
+                         foreach (var hardskill in Uppercat.Subcat)
                             {
                               <button type="button" class="@(IsInList(hardskill) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">
                                       <a><a class="@(IsInList(hardskill) ? "showRemove" : "")">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a></a>
@@ -83,21 +83,18 @@
                        @if (_showCat)
                        {
                          <div class="list-group border-dark overflow-auto mr-3 col-9" style="height: 200px">
-                              @foreach (var hardskillcat in _hardskillCats)
+                              @foreach (var hardskillcat in SubHardskills.Keys.Where(x => x.Description != Description))
                               {
-                                  if (AllContains[hardskillcat] && hardskillcat.Description != Description)
+                                <div class="container">
+                                  <h6>@hardskillcat.Description</h6>
+                                  <hr/>
+                                  @foreach (var description in SubHardskills[hardskillcat])
                                   {
-                                    <div class="container">
-                                      <h6>@hardskillcat.Description</h6>
-                                      <hr/>
-                                      @foreach (var description in SubHardskills[hardskillcat])
-                                      {
-                                        <button type="button" class="@(IsInList(description) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(description)">
-                                          <a><a class="@(IsInList(description) ? "showRemove" : "")">@description</a> <a class="remove"><span class="oi oi-x"></span></a></a>
-                                        </button>
-                                      }
-                                    </div>
+                                    <button type="button" class="@(IsInList(description) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(description)">
+                                      <a><a class="@(IsInList(description) ? "showRemove" : "")">@description</a> <a class="remove"><span class="oi oi-x"></span></a></a>
+                                    </button>
                                   }
+                                </div>
                               }
                          </div>
                        }
@@ -125,8 +122,6 @@
   private List<string> Subcat { get; set; } = new();
   
   private Dictionary<Hardskill, List<string>> SubHardskills { get; set; } = new ();
-
-  private Dictionary<Hardskill, bool> AllContains { get; set; } = new();
   
   private Hardskill Uppercat { get; set; }
 
@@ -156,10 +151,14 @@
 
   protected override async Task OnParametersSetAsync()
   {
-    if(_hardskillCats != null)
-      ShowCreateCat = !_hardskillCats.Exists(x => x.Description == Description);
+    if (_hardskillCats == null) return;
+    ShowCreateCat = !_hardskillCats.Exists(x => x.Description == Description);
     Uppercat = await _hardskillService.GetHardskillCategory(Description);
-    _containsH = await _hardskillService.ContainsAnyHardskills(Description);
+
+    if (Uppercat == null) 
+      _containsH = false;
+    else
+      _containsH = await _hardskillService.ContainsAnyHardskills(Description);
     
     if (Uppercat != null)
     {
@@ -171,24 +170,21 @@
       }
     }
 
-    if (_hardskillCats != null)
+    foreach (var cat in _hardskillCats)
     {
-      foreach (var cat in _hardskillCats)
-      {
-        if(!AllContains.ContainsKey(cat))
-          AllContains.Add(cat, await _hardskillService.ContainsAnyHardskills(cat.Description));
-        var subCats = new List<string>();
+      if (!await _hardskillService.ContainsAnyHardskills(cat.Description)) continue;
+      
+      var subCats = new List<string>();
 
-        foreach (var subcat in cat.Subcat)
-        {
-          var hardskill = await _hardskillService.GetHardskill(subcat);
-          if (hardskill != null)
-            subCats.Add(hardskill.Description);
-        }
-        
-        if(!SubHardskills.ContainsKey(cat))
-          SubHardskills.Add(cat, new List<string>(subCats));
+      foreach (var subcat in cat.Subcat)
+      {
+        var hardskill = await _hardskillService.GetHardskill(subcat);
+        if (hardskill != null)
+          subCats.Add(hardskill.Description);
       }
+
+      if (!SubHardskills.ContainsKey(cat))
+        SubHardskills.Add(cat, new List<string>(subCats));
     }
   }
 
@@ -227,7 +223,7 @@
           IsHardskill = false
       };
       await _hardskillService.CreateHardskillCategory(cat);
-      await Abstract.UpdateLists();
+      Abstract.UpdateLists();
     } 
     else 
       await _hardskillService.EditHardskillsCategory(Description, Subcat);

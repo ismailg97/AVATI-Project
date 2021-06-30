@@ -56,7 +56,7 @@
     [Parameter]
     public List<string> Descriptions { get; set; }
 
-    private bool _isRoot = false;
+    private bool _isRoot;
 
     private Dictionary<Hardskill, bool> Hardskills { get; set; } = new();
 
@@ -64,6 +64,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
+        _isRoot = false;
         if (Descriptions.Any())
         {
             var first = await _hardskillService.GetHardskillOrCategory(Descriptions[0]);
@@ -75,7 +76,8 @@
         {
             var skillOrCat = await _hardskillService.GetHardskillOrCategory(description);
             var containsHardskill = await _hardskillService.ContainsAnyHardskills(description);
-            Hardskills.Add(skillOrCat, containsHardskill);
+            if(skillOrCat != null && !Hardskills.ContainsKey(skillOrCat))
+                Hardskills.Add(skillOrCat, containsHardskill);
         }
     }
 

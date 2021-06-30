@@ -17,33 +17,18 @@
 <EmployeeDetail @ref="_employeeDetail" Abstract="@this"/>
 <EditProposal @ref="_editProposal" Abstract="@this"/>
 
-@if (Loading)
+@if (_isLoaded)
 {
-    <div class="d-flex flex-column align-items-center justify-content-center">
-        <div class="row">
-            <div class="spinner-border" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-        </div>
-        <div class="row">
-            <strong>Lade...</strong>
-        </div>
-    </div>
-}
-else
-{
-
-
     <button class="btn btn-success float-right mr-2" @onclick=@(() => { ShowEdit(0); })>Neues Angebot</button>
     <div class="form-group row justify-content-center mr-5">
         <label for="sucheprop" class="col-form-label mr-2 font-weight-bold">Suche:</label>
-        <input type="search" class="col-6 form-control" id="sucheprop" @bind-value="filterSearch" @bind-value:event="oninput"/>
+        <input type="search" class="col-6 form-control" id="sucheprop" @bind-value="_filterSearch" @bind-value:event="oninput"/>
     </div>
     <div class="container col-10">
         <div class="row row-cols-1 row-cols-md-1">
             @foreach (var proposal in _proposals)
             {
-                @if (proposal.ProposalTitle.Contains(filterSearch, StringComparison.OrdinalIgnoreCase))
+                @if (proposal.ProposalTitle.Contains(_filterSearch, StringComparison.OrdinalIgnoreCase))
                 {
                     <div class="col-4 mb-4">
                         <div class="card border-dark h-100">
@@ -54,8 +39,8 @@ else
                                     <button class="btn btn-outline-success btn-sm ml-2" @onclick=@(() => { CallConfirmation(proposal.ProposalID); })>Projekt erzeugen</button>
                                 </p>
                                 <button class="btn btn-outline-secondary btn-sm" @onclick=@(() => { ShowEdit(proposal.ProposalID); })> Editieren</button>
-                                <button class="btn btn-outline-info btn-sm" @onclick=@(() => { CallCopy(proposal.ProposalID); })>Kopieren</button>
-                                <button class="btn btn-outline-danger btn-sm" @onclick=@(() => { CallDelete(proposal.ProposalID); })>Löschen</button>
+                                <button class="btn btn-outline-info btn-sm" @onclick=@(async () => { await CallCopy(proposal.ProposalID); })>Kopieren</button>
+                                <button class="btn btn-outline-danger btn-sm" @onclick=@(async () => { await CallDelete(proposal.ProposalID); })>Löschen</button>
                             </div>
                             <div class="card-body text-center">
                                 <h5 class="card-title text-center">@proposal.ProposalTitle</h5>
@@ -109,7 +94,7 @@ else
                                             }
                                         }
                                     </ul>
-                                    @if (!_promptDelete[proposal.ProposalID])
+                                    @if (!_promptDelete[proposal.ProposalID] && (_tempEmpList.Count != proposal.Employees.Count))
                                     {
                                         <button class="btn btn-success btn-sm mb-3" @onclick=@(() => { RemoveEmpFromProposal(proposal.ProposalID); })>Speichern</button>
                                     }
@@ -154,6 +139,19 @@ else
         </div>
     </div>
 }
+@if(!_isLoaded)
+{
+    <div class="d-flex flex-column align-items-center justify-content-center">
+                        <div class="row">
+                            <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <strong>Lade...</strong>
+                        </div>
+                    </div>
+}
 <!-- RC - Level Pop-Up -->
 @if (ShowPop)
 {
@@ -173,7 +171,7 @@ else
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { ShowPop = !ShowPop; })">Abbrechen</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { _proposal.UpdateAltRc(RcToEdit.ProposalID, EmpEdit, _changeValue); ShowPop = !ShowPop; _proposals = _proposal.GetAllProposals();;})">Speichern</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(async () => { _proposal.UpdateAltRc(RcToEdit.ProposalID, EmpEdit, _changeValue); ShowPop = !ShowPop; Open = RcToEdit.ProposalID;  await Update();})">Speichern</button>
                 </div>
             </div>
         </div>
@@ -258,8 +256,8 @@ else
                     <div class=" border border-dark bg-light mb-3">
                         <div class="form-row col mt-2">
                             <div class="col-8">
-                            <label class="font-weight-bold" for="start">Vsl. Start: </label>
-                            @Temp.Start.ToString("dd.MM.yyyy")
+                                <label class="font-weight-bold" for="start">Vsl. Start: </label>
+                                @Temp.Start.ToString("dd.MM.yyyy")
                             </div>
                             <div class="col-4">
                                 <label class="font-weight-bold" for="ende">Vsl. Ende: </label>
@@ -284,9 +282,9 @@ else
     [Parameter]
     public int Open { get; set; }
 
-    private bool Loading = false;
+    private bool _isLoaded = false;
     private List<Proposal> _proposals;
-    private string filterSearch = "";
+    private string _filterSearch = "";
     EditProposal _editProposal;
     EmployeeDetail _employeeDetail;
     Dictionary<int, bool> _showEmployee;
@@ -302,30 +300,37 @@ else
 
     private List<Employee> _tempEmpList;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        _proposals = _proposal.GetAllProposals();
+        var tempValue = _proposal.GetAllProposals();
+        _proposals = await tempValue;
         _promptDelete = new Dictionary<int, bool>();
         _showEmployee = new Dictionary<int, bool>();
         _showAttributes = new Dictionary<int, bool>();
         _showAdditionalInfo = new Dictionary<int, bool>();
-        foreach (var proposal in _proposal.GetAllProposals())
+        foreach (var proposal in _proposals)
         {
             _promptDelete.Add(proposal.ProposalID, true);
             _showEmployee.Add(proposal.ProposalID, Open != proposal.ProposalID);
             _showAttributes.Add(proposal.ProposalID, true);
             _showAdditionalInfo.Add(proposal.ProposalID, true);
         }
+        _isLoaded = true;
+        StateHasChanged();
     }
 
-    public void Update()
+    public async Task Update()
     {
-        _proposals = _proposal.GetAllProposals();
+        _isLoaded = false;
+        Console.WriteLine("We do enter here");
+        var tempValue = _proposal.GetAllProposals();
+        _proposals = await tempValue;
+        _isLoaded = true;
         _promptDelete = new Dictionary<int, bool>();
         _showEmployee = new Dictionary<int, bool>();
         _showAttributes = new Dictionary<int, bool>();
         _showAdditionalInfo = new Dictionary<int, bool>();
-        foreach (var proposal in _proposal.GetAllProposals())
+        foreach (var proposal in  _proposals)
         {
             _promptDelete.Add(proposal.ProposalID, true);
             _showEmployee.Add(proposal.ProposalID, Open != proposal.ProposalID);
@@ -357,7 +362,7 @@ else
         _editProposal.Show(propId);
     }
 
-    private void RemoveEmpFromProposal(int propId)
+    private async void RemoveEmpFromProposal(int propId)
     {
         var proposalTemporary = _proposal.GetProposal(propId);
         foreach (var emp in proposalTemporary.Employees)
@@ -368,17 +373,15 @@ else
                 _proposal.RemoveEmployee(propId, emp.EmployeeID);
             }
         }
-        _proposals = _proposal.GetAllProposals();
+        var tempValue = _proposal.GetAllProposals();
+        _proposals = await tempValue;
         _promptDelete[propId] = !_promptDelete[propId];
-        StateHasChanged();
+        _isLoaded = true;
     }
-    
+
     private async Task ShowDetail(int employeeId, int proposalId)
     {
-        Loading = true;    
         await _employeeDetail.Show(employeeId, proposalId);
-        Loading = false;
-        
     }
 
     private void ShowRcEdit(Proposal prop, int employeeId, int response)
@@ -391,28 +394,25 @@ else
         }
 
         ShowPop = !ShowPop;
+        StateHasChanged();
     }
 
 
-    private void CallCopy(int id)
+    private async Task CallCopy(int id)
     {
-        int temp;
-        if ((temp = _proposal.CopyProposal(id)) != 0)
+        if ((_proposal.CopyProposal(id)) != 0)
         {
-            Update();
-        }
-        else
-        {
-      
+            await Update();
         }
     }
 
-    private void CallDelete(int id)
+    private async Task CallDelete(int id)
     {
         if (_proposal.GetProposal(id) != null)
         {
             _proposal.DeleteProposal(id);
-            OnInitialized();
+            _isLoaded = true;
+            await Update();
         }
     }
 

@@ -44,7 +44,7 @@
 
   private string Description { get; set; } 
 
-  private async Task Create()
+  private void Create()
   {
     switch (Type)
     {
@@ -59,7 +59,7 @@
         break;
     }
     Description = "";
-    await Abstract.UpdateLists();
+    Abstract.UpdateLists();
     Showing();
   //_navigationManager.NavigateTo(_navigationManager.Uri, true);
   }

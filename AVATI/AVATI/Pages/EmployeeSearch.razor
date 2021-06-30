@@ -77,13 +77,13 @@
             </div>
             <div class="@(IsProject ? "col-5" : "col-4") mr-4">
                 <label for="suche">Filter <small class="text-muted">(Nach Hardskillkategorien suchen)</small></label>
-                <input type="search" class="col form-control" id="suche" @bind-value="TempHardskill" @bind-value:event="oninput" placeholder="Hardskillkategorie..."/>
+                <input type="search" class="col form-control" id="suche" @bind-value="TempCategory" @bind-value:event="oninput" placeholder="Hardskillkategorie..."/>
                 <div class="form-group row col">
                 </div>
                 <div class="list-group overflow-auto" style="height: 200px;  border: 3px solid lightblue; border-radius: 6px; min-width:90%">
                     @foreach (var hardskill in _searchService.CategoriesToDisplay)
                     {
-                        @if (TempHardskill == null || hardskill.Description.Contains(TempHardskill, StringComparison.OrdinalIgnoreCase))
+                        @if (TempCategory == null || hardskill.Description.Contains(TempCategory, StringComparison.OrdinalIgnoreCase))
                         {
                             <button class="btn btn-outline-dark" @onclick=@(() => { _searchService.AddCategorySearch(hardskill); })>@hardskill.Description</button>
                         }
@@ -145,7 +145,7 @@
                 <button class="btn btn-sm btn-outline-info  mb-1 mr-1" @onclick=@(() => { _searchService.AddRoleSearch(role); })>@role</button>
             }
         </div>
-        <button type="submit" @onclick=@(() => {CallSearch(); _searchService.TableIsVisible = true;}) class="btn btn-success col-2 text-center mb-5">Suchen</button>
+        <button type="submit" @onclick=@(async () => {await CallSearch(); _searchService.TableIsVisible = true;}) class="btn btn-success col-2 text-center mb-5">Suchen</button>
     </EditForm>
     @if (_searchService.TableIsVisible)
     {
@@ -194,7 +194,10 @@
                                     {
                                         <button class="btn btn-success btn-sm mr-1 mb-1">@hardskill.Description</button>
                                     }
-                                    
+                                }
+                                @foreach (var tuple in employeesWithCategories.FindAll(e => e.Item2 == employee.EmployeeID))
+                                {
+                                    <button class="btn btn-info btn-sm mr-1 mb-1">@tuple.Item1</button>
                                 }
 
                             </div>
@@ -279,8 +282,11 @@ else
 
     private Data.Project ProjectToAlter;
 
+    private List<Tuple<string, int>> employeesWithCategories;
+
     public string TempHardskill { get; set; }
 
+    public string TempCategory { get; set; }
     public List<Hardskill> PseudoHardskills { get; set; }
 
     public List<Employee> AllEmployees { get; set; }
@@ -316,10 +322,37 @@ else
         PageIsLoaded = true;
     }
 
-    public void CallSearch()
+    public async Task CallSearch()
     {
-        SelectEmployees = _searchService.SearchEmployee(_searchService.EmployeeName, _searchService.SoftskillsToSearch, _searchService.HardskillsToSearch, _searchService.RolesToSearch, _searchService.CategoriesToSearch);
+        PageIsLoaded = false;
+        employeesWithCategories = new List<Tuple<string, int>>();
+        foreach (var emp in AllEmployees)
+        {
+            foreach (var hard in emp.Hardskills)
+            {
+                foreach (var cat in _searchService.CategoriesToSearch)
+                {
+                    Console.WriteLine(cat.Description);
+                    Task<List<string>> placeholder = _hard.GetHardskillsOfCategory(cat.Description);
+                    var resultedList = await placeholder;
+                    if ((resultedList.Find(e => e.Equals(hard.Description))) != null)
+                    {
+                        Console.WriteLine("Gefundene Kategorie: " + cat.Description + "\nBei dem Hardskill: " + hard.Description + "und bei dem Angestellten: " + emp.FirstName + emp.LastName);
+                        if (employeesWithCategories.Find(e => e.Item1.Equals(cat.Description) && e.Item2 == emp.EmployeeID) == null)
+                        {
+                            employeesWithCategories.Add(new Tuple<string, int>(cat.Description, emp.EmployeeID));
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Die Kategoire konnte nicht gefunden werden");
+                    }
+                }
+            }
+        }
+        SelectEmployees = _searchService.SearchEmployee(_searchService.EmployeeName, _searchService.SoftskillsToSearch, _searchService.HardskillsToSearch, _searchService.RolesToSearch, _searchService.CategoriesToSearch, employeesWithCategories);
         _searchService.EmptyQuery();
+        PageIsLoaded = true;
     }
 
 

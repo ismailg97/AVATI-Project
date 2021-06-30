@@ -203,7 +203,7 @@
         StateHasChanged();
     }
 
-    public void HandleValidSubmit()
+    public async Task HandleValidSubmit()
     {
         if (Id != 0)
         {
@@ -214,7 +214,7 @@
             _proposal.UpdateProposal(0, Proposal);
         }
         Console.WriteLine("The submit was handeled");
-        Abstract.Update();
+        await Abstract.Update();
         _finishedLoading = false;
         Close();
     }

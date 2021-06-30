@@ -23,5 +23,11 @@ namespace AVATI.Data
         
         public Task<Hardskill> GetHardskillCategory( string description );
         public Task<List<Hardskill>> GetAllHardskillCategorys();
+        
+        public Task<List<string>> GetAllDesCategorys();
+        
+        public Task<List<string>> GetAllDesHardskills();
+
+        public Task<List<string>> GetHardskillsOfCategory(string description);
     }
 }

@@ -6,11 +6,12 @@
 @inject NavigationManager _navigationManager
 @inject IProjectActivityService _projectActivity
 @inject EmployeeServiceSimple _employeeService
+@inject ProjectPurposeService _projectPurposeService
 
-<AddFieldToProject              @ref="_addFieldToProject" Abstract="@this"/>             
-<AddProjectActivityToProject   @ref="_addProjectActivityToProject" Abstract="@this"/> 
-<AddEmployeeToProject           @ref="_addEmployeeToProject" Abstract="@this"/>          
-<PopAddProjectPurposeToProject  @ref="_popAddProjectPurpose" Abstract="@this"/>
+<AddFieldToProject @ref="_addFieldToProject" Abstract="@this"/>
+<AddProjectActivityToProject @ref="_addProjectActivityToProject" Abstract="@this"/>
+<AddEmployeeToProject @ref="_addEmployeeToProject" Abstract="@this"/>
+<PopAddProjectPurposeToProject @ref="_popAddProjectPurpose" Abstract="@this"/>
 
 @if (Loading)
 {
@@ -28,15 +29,15 @@
 else
 {
     <EditForm Model="@Project" OnValidSubmit="@Save">
-    <DataAnnotationsValidator/>
 
-    <div class="container col h-100">
+        <DataAnnotationsValidator/>
         <div class="row col h-100">
             <div class="text-left col">
                 <div class="column">
-                    <h3 class="text-lg-left font-weight-bold">Projekt Bearbeiten</h3>
+                    <ValidationSummary/>
+                    <h3 class="text-lg-left font-weight-bold"><em>@Project.Projecttitel</em> editieren!</h3>
                     <div class="form-group row">
-                        <label class="col-sm-3 col-form-label font-weight-bold" value="@Project.Projecttitel">Projekttitel</label>
+                        <label class="col-sm-3 col-form-label font-weight-bold">Projekttitel</label>
                         <div class="col-sm-9">
                             <InputText id="projekttitel" class="form-control" @bind-Value="Project.Projecttitel"></InputText>
                         </div>
@@ -45,28 +46,32 @@ else
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label font-weight-bold">Projektbeschreibung</label>
                         <div class="col-sm-9">
-                            <textarea id="projektbeschreibung" class="form-control" rows="3" @bind="Project.Projectdescription"></textarea>
+                            <textarea id="projektbeschreibung" class="form-control" @bind="Project.Projectdescription"></textarea>
                         </div>
                     </div>
+
+                    <!-- BRANCHEN -------------------------------------------------->
 
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label font-weight-bold">Branchen</label>
                         <div class="col-sm-6 col-form-label">
-                            <div class="list-group border-dark border overflow-auto mr-3" style="max-height: 200px">
-                                @if (!_projectService.GetAllFieldsFromOneProject(ID).Any())
+                            <div class="list-group border-dark border overflow-auto" style="max-height: 200px">
+                                @if (!Project.Fields.Any())
                                 {
                                     <button class="btn btn-outline-dark">[Keine Branche dem Projekt zugewiesen]</button>
                                 }
-                                @foreach (var branche in _projectService.GetAllFieldsFromOneProject(ID))
+                                @foreach (var branche in Project.Fields)
                                 {
                                     <button class="btn btn-outline-dark">@branche</button>
                                 }
-                                <button class="btn btn-info" @onclick="() => PopAddFieldToProject()">
-                                    <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span>
-                                </button>
                             </div>
+                            <button class="btn btn-info col" @onclick="() => { PopAddFieldToProject(); }">
+                                <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span> Edit Branchen
+                            </button>
                         </div>
                     </div>
+
+                    <!-- ZEITEN -------------------------------------------------->
 
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label font-weight-bold">Projektanfang</label>
@@ -85,6 +90,8 @@ else
                         </div>
                     </div>
                 </div>
+
+                <!-- Mitarbeiter -------------------------------------------------->
 
                 <div class="form-group row">
                     <label class="col-sm-3 col-form-label font-weight-bold">Mitarbeiter</label>
@@ -112,7 +119,7 @@ else
                             <tr>
                                 <td>@emp.FirstName @emp.LastName</td>
                                 <td>
-                                    <button type="button" class="btn btn-danger" @onclick="() => { DeleteFromProject(emp); }">
+                                    <button type="button" class="btn btn-danger" @onclick="() => { DeleteFromProject(Project.ProjectID, emp); Update(); }">
                                         <span class="oi oi-trash" aria-hidden="true"></span>
                                     </button>
                                 </td>
@@ -122,6 +129,7 @@ else
                     </table>
                 </div>
 
+                <!-- Projekttätigkeiten ------------------------------------------------------------>
 
                 <div class="form-group row">
                     <label class="col-sm-3 col-form-label font-weight-bold">Projekttätigkeiten</label>
@@ -131,7 +139,7 @@ else
                         <th class="text-center" scope="col">Zugewiesene Mitarbeiter</th>
                         <th scope="col">
                             <div class="form-group text-right">
-                                <button type="button" class="btn btn-info text-right" @onclick="(() => { PopAddActivity(ID); })">+ Projekttätigkeit</button>
+                                <button type="button" class="btn btn-info text-right" @onclick="(() => { PopAddActivity(ID); })">Edit Projekttätigkeit</button>
                             </div>
                         </th>
                         </thead>
@@ -147,11 +155,11 @@ else
                         @foreach (var activ in _projectActivity.GetProjectActivitiesProject(ID))
                         {
                             <tr>
-                                <td>@activ.Description</td>
                                 @if (Project.Employees.Find(x => x.EmployeeID == activ.EmployeeID) == null)
                                 {
-                                    <td class="text-center">[kein zugewiesener Mitarbeiter]</td>
-                                    <button type="button" class="btn btn-info" @onclick="(() => { /*PopAddEmployeetoActivity(); */})"></button>
+                                    <td>@activ.Description</td>
+                                    <!--- liste an mitarbeitern -->
+                                    <td class="text-center">[Keine zugewiesene Mitarbeiter!]</td>
                                 }
                                 else
                                 {
@@ -163,6 +171,8 @@ else
                     </table>
                 </div>
 
+                <!-- PROJEKTZWECKE -------------------------------------------------->
+
                 <div class="form-group row">
                     <label class="col-sm-3 col-form-label font-weight-bold">Projektzwecke</label>
                     <table class="table border-primary col">
@@ -171,12 +181,12 @@ else
                         <th class="text-center" scope="col">Gelöst durch...</th>
                         <th scope="col">
                             <div class="form-group text-right">
-                                <button type="button" class="btn btn-info text-right" @onclick="(() => {  })">+ Projektzweck</button>
+                                <button type="button" class="btn btn-info text-right" @onclick="(() => { AddProjectPurposeToProject(ID); })">+ Projektzweck</button>
                             </div>
                         </th>
                         </thead>
                         <tbody>
-                        @if (!Project.Projectpurpose.Any())
+                        @if (!_projectPurposeService.GettAllPurposesFromProject(ID).Any())
                         {
                             <tr>
                                 <td>[Fügen Sie neue Projektzwecke hinzu!]</td>
@@ -184,7 +194,7 @@ else
                                 <td></td>
                             </tr>
                         }
-                        @foreach (var purpose in Project.Projectpurpose)
+                        @foreach (var purpose in _projectPurposeService.GettAllPurposesFromProject(ID)) /*THEY GIVE ME MEDICINE*/
                         {
                             <tr>
                                 <td>@purpose.Purpose</td>
@@ -202,39 +212,32 @@ else
                     </table>
                 </div>
 
-
                 <div class="form-group text-right">
-                    <a href="/Projektübersicht" class="sm form-label">
-                        <button type="button" class="btn btn-danger" data-dismiss="container">
-                            <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
-                        </button>
-                    </a>
-                    <a href="/Projektübersicht" class="sm form-label">
-                        <button type="button" class="btn btn-success" @onclick="(() => { Save(); })">
-                            <span class="oi oi-document" aria-hidden="true"></span> Speichern
+                    <a href="/Projektübersicht">
+                        <button type="submit" class="btn btn-info" @onclick="() => { Save(); }">
+                            <span class="oi oi-document" aria-hidden="true"></span> Zurück zur Übersicht
                         </button>
                     </a>
                 </div>
             </div>
         </div>
-        </div>
-</EditForm>
+
+    </EditForm>
 }
 
 
 @code {
     private Project Project { get; set; } = new Project();
-    
+
     AddFieldToProject _addFieldToProject;
     AddProjectActivityToProject _addProjectActivityToProject;
     AddEmployeeToProject _addEmployeeToProject;
     PopAddProjectPurposeToProject _popAddProjectPurpose;
-    
+
 
     public List<ProjectActivity> Activitieslist { get; set; } = new List<ProjectActivity>();
 
 
-    
     [Parameter]
     public int ID { get; set; }
 
@@ -242,10 +245,12 @@ else
     public DateTime time { get; set; }
     public string field { get; set; }
     public List<string> FieldstoDisplay { get; set; }
+
     private void Save()
     {
         Project.ProjectID = ID;
         _projectService.UpdateProject(Project);
+        StateHasChanged();
     }
 
     public void PopAddFieldToProject()
@@ -276,25 +281,25 @@ else
         Loading = false;
         StateHasChanged();
     }
-    
-    public void DeleteFromProject(Employee emp)
+
+    public void DeleteFromProject(int ProjectId, Employee emp)
     {
-        Project.Employees.Remove(emp);
+        _projectService.DeleteEmployeeFromProject(ProjectId, emp.EmployeeID);
     }
 
     public void AddProjectPurposeToProject(int ProjectID)
     {
         _popAddProjectPurpose.Showing(ID);
     }
-    
+
     public void Update()
     {
         Activitieslist = _projectActivity.GetProjectActivitiesProject(ID);
         Project = _projectService.GetProject(ID);
         StateHasChanged();
     }
-    
-    
-    
+
+
+
 
 }

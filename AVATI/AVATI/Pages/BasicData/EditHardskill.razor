@@ -65,7 +65,7 @@
     NewHardskill.Description = OldHardskill?.Description;
     if (OldHardskill != null)
     {
-      UpperCat = OldHardskill.Uppercat[0] ?? "";
+      UpperCat = OldHardskill.Uppercat.Any() ? OldHardskill.Uppercat[0] : "";
     }
   }
 
@@ -76,7 +76,7 @@
     NewHardskill.Uppercat = string.IsNullOrEmpty(UpperCat) ? new List<string>() : new List<string>() {UpperCat};
     
     await _hardskillService.UpdateHardskill(NewHardskill, OldHardskill);
-    await Abstract.UpdateLists();
+    Abstract.UpdateLists();
     Showing();
     //_navigationManager.NavigateTo(_navigationManager.Uri, true);
   }

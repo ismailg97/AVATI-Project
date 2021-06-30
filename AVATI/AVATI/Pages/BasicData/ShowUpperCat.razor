@@ -2,21 +2,46 @@
 
 @inject IHardskillService _hardskillService
 
-@if (Hardskill != null && Hardskill.Uppercat != null && Hardskill.Uppercat.Any())
+@if (Hardskill != null && Uppercat != null && Uppercat.Any())
 {
-    <ShowUpperCat Hardskill="@Uppercat"/><a>@Hardskill.Uppercat &rarr; </a>
+    if (Hardskill.IsHardskill)
+    {
+        foreach (var upperCat in Uppercat)
+        {
+            <div><ShowUpperCat Hardskill="@upperCat"/><a>@upperCat.Description &rarr; </a><a>@Hardskill.Description</a></div>
+        }
+    }
+    else
+    {
+        <ShowUpperCat Hardskill="@Uppercat[0]"/><a>@Hardskill.Uppercat[0] &rarr; </a>
+    }
 }
 
 @code {
     [Parameter]
     public Hardskill Hardskill { get; set; }
-    
-    private Hardskill Uppercat { get; set; }
+
+    private List<Hardskill> Uppercat { get; set; } = new();
 
     protected override async Task OnParametersSetAsync()
     {
         if (Hardskill != null && Hardskill.Uppercat != null && Hardskill.Uppercat.Any())
-            Uppercat = await _hardskillService.GetHardskillCategory(Hardskill.Uppercat[0]);
+        {
+            foreach (var upDescription in Hardskill.Uppercat)
+            {
+                var upperCat = await _hardskillService.GetHardskillCategory(upDescription);
+                if (!Uppercat.Contains(upperCat))
+                {
+                    Uppercat.Add(upperCat);
+                    
+                }
+            }
+            /*Console.WriteLine("-------------------------------");
+            Console.WriteLine(Hardskill.Description + ":");
+            foreach(var thing in Uppercat)
+                Console.WriteLine("    " + thing.Description);
+            Console.WriteLine("-------------------------------");*/
+        }
     }
 
 }

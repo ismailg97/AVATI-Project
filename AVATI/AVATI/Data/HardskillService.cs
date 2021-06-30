@@ -234,7 +234,7 @@ namespace AVATI.Data
             
             if (cat?.Subcat == null) return false;
             
-            foreach (var skill in cat.Subcat.ToList())
+            foreach (var skill in cat.Subcat)
             {
                 if (!(await GetHardskillOrCategory(skill)).IsHardskill) continue;
                 if (hardskills.Exists(x => x == skill))
@@ -243,12 +243,12 @@ namespace AVATI.Data
                     continue;
                 }
                 
-                var deleteSub = await GetConnection().ExecuteAsync("DELETE FROM Hardskill_Subcat WHERE Subcat = @subcat",
-                    new { subcat = skill });
+                var deleteSub = await GetConnection().ExecuteAsync("DELETE FROM Hardskill_Subcat WHERE Subcat = @subcat AND Uppercat = @uppercat",
+                    new { subcat = skill, uppercat = hardskillcat });
                 if (deleteSub != 1) return false; 
             }
             
-            foreach (var hardskill in hardskills.ToList())
+            foreach (var hardskill in hardskills)
             {
                 var uppercatRows = await GetConnection().ExecuteAsync("INSERT INTO Hardskill_Subcat (Uppercat, Subcat) VALUES (@uppercat, @subcat)", 
                     new {uppercat = hardskillcat, subcat = hardskill });
@@ -256,6 +256,36 @@ namespace AVATI.Data
             }
 
             return true;
+        }
+
+        public async Task<List<string>> GetHardskillsOfCategory(string description)
+        {
+            var subDescription = (await GetConnection().QueryAsync<string>(
+                "SELECT Subcat FROM Hardskill_Subcat WHERE Uppercat = @uppercat ", new{ uppercat = description})).ToList();
+
+            var hardskills = new List<string>();
+            
+            foreach (var subcat in subDescription)
+            {
+                var isHardskill = (await GetConnection().QueryAsync<bool>(
+                    "SELECT IsHardskill FROM Hardskill WHERE Description = @sub ", new{ sub = subcat})).Single();
+                if (isHardskill)
+                    hardskills.Add(subcat);
+                else
+                    hardskills.AddRange(await GetHardskillsOfCategory(subcat));
+            }
+
+            return hardskills;
+        }
+
+        public async Task<List<string>> GetAllDesCategorys()
+        {
+            return (await GetConnection().QueryAsync<string>("SELECT Description FROM Hardskill WHERE IsHardskill = 0")).ToList();
+        }
+
+        public async Task<List<string>> GetAllDesHardskills()
+        {
+            return (await GetConnection().QueryAsync<string>("SELECT Description FROM Hardskill WHERE IsHardskill = 1")).ToList();
         }
     }
 }
