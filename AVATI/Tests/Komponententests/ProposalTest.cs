@@ -6,7 +6,7 @@ using AVATI.Data;
 using AVATI.Data.ValidationAttributes;
 using NUnit.Framework;
 
-namespace Komponententests.Komponententests
+namespace Tests.Komponententests
 {
     public class Tests
     {

@@ -19,7 +19,7 @@
 
 @if (_isLoaded)
 {
-    <button class="btn btn-success float-right mr-2" @onclick=@(() => { ShowEdit(0); })>Neues Angebot</button>
+    <button class="btn btn-success float-right mr-2" id="createNew" @onclick=@(() => { ShowEdit(0); })>Neues Angebot</button>
     <div class="form-group row justify-content-center mr-5">
         <label for="sucheprop" class="col-form-label mr-2 font-weight-bold">Suche:</label>
         <input type="search" class="col-6 form-control" id="sucheprop" @bind-value="_filterSearch" @bind-value:event="oninput"/>
