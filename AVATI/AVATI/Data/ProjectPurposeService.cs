@@ -36,8 +36,7 @@ namespace AVATI.Data
 
         public bool UpdatePurpose(ProjectPurpose purpose)
         {
-            DbConnection db = GetConnection();
-            db.Open();
+            using DbConnection db = GetConnection();
             var result = db.Query("SELECT * FROM Projectpurpose where Purpose = @purpose AND ProjectID = @proID",
                 new {purpose = purpose.Purpose, proID = purpose.ProjectID});
             if (result.FirstOrDefault() == null)
@@ -54,7 +53,6 @@ namespace AVATI.Data
         public bool DeletePurpose(ProjectPurpose purpose)
         {
             using DbConnection db = GetConnection();
-            db.Open();
             var result = db.Query<ProjectPurpose>
             ("DELETE FROM Projectpurpose WHERE ProjectID = @proID and Purpose = @purpo",
                 new {proID = purpose.ProjectID, purpo = purpose.Purpose});
@@ -70,7 +68,6 @@ namespace AVATI.Data
         public bool AddProjectActivityToPurpose(ProjectPurpose purpose)
         {
             using DbConnection db = GetConnection();
-            db.Open();
             List<string> tempPurpose = db.Query<string>("Select * from Projectpurpose where ProjectID = @proID", 
                 new {proID = purpose.ProjectID}).ToList();
             
@@ -86,7 +83,6 @@ namespace AVATI.Data
         {
             List<ProjectPurpose> _Purposes;
             using DbConnection db = GetConnection();
-            db.Open();
 
             _Purposes = new List<ProjectPurpose>(db.Query<ProjectPurpose>("Select * from Projectpurpose where ProjectID = @proID",
                 new {proID = projectID}).ToList());
