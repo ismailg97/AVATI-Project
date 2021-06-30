@@ -481,26 +481,29 @@
         return element;
     }
 
-    public static Table GenerateRoleTable(int id)
+    public Table GenerateRoleTable(int id)
     {
+        var employees = _proposal.GetProposal(id).Employees;
         var table = new Table();
         var tableProp = new TableProperties(
-            new TableStyle() {Val = "EinfacheTabelle4"}, new TableLook() /*,new TableBorders(    //Borders maybe not needed, depending on style
-                new TopBorder() { Val = 
-                    new EnumValue<BorderValues>(BorderValues.Dashed), Size = 24 },
-                new BottomBorder() { Val = 
-                    new EnumValue<BorderValues>(BorderValues.Dashed), Size = 24 },
-                new LeftBorder() { Val = 
-                    new EnumValue<BorderValues>(BorderValues.Dashed), Size = 24 },
-                new RightBorder() { Val = 
-                    new EnumValue<BorderValues>(BorderValues.Dashed), Size = 24 },
-                new InsideHorizontalBorder() { Val = 
-                    new EnumValue<BorderValues>(BorderValues.Dashed), Size = 24 },
-                new InsideVerticalBorder() { Val = 
-                    new EnumValue<BorderValues>(BorderValues.Dashed), Size = 24 }
-                )*/);
+            new TableStyle() {Val = "EinfacheTabelle4"}, new TableWidth() {Width = "0", Type = TableWidthUnitValues.Auto}, new TableLook() {Val = "04A0", FirstRow = OnOffValue.FromBoolean(true), LastRow = OnOffValue.FromBoolean(false), FirstColumn = OnOffValue.FromBoolean(true), LastColumn = OnOffValue.FromBoolean(false)});
+        var tableGrid = new TableGrid(new GridColumn() {Width = "4531"}, new GridColumn() {Width = "4531"});
         table.AppendChild<TableProperties>(tableProp);
-        
+        table.AppendChild<TableGrid>(tableGrid);
+        //table.Append(new TableRow(new TableCell(new Paragraph(new Run(new Text("TestL")))), new TableCell(new Paragraph(new Run(new Text("TestR")))))); //testing/debuging
+        foreach (var emp in employees)
+        {
+            foreach (var role in emp.Roles)
+            {
+                var tableRow = new TableRow(new TableRowProperties(new ConditionalFormatStyle() {Val = "100000000000", FirstRow = OnOffValue.FromBoolean(true), LastRow = OnOffValue.FromBoolean(false), FirstColumn = OnOffValue.FromBoolean(false), LastColumn = OnOffValue.FromBoolean(false)}));
+                var cell1 = new TableCell(new TableCellProperties());
+                //new Paragraph(new Run(new Text(emp.FirstName + emp.LastName)))
+                //cell1.AppendChild(new Paragraph(new Run(new Text(emp.FirstName + emp.LastName))));
+                var cell2 = new TableCell(new Paragraph(new Run(new Text(role))));
+                tableRow.Append(cell1, cell2);
+                table.AppendChild(tableRow);
+            }
+        }
         return table;
     }
     
@@ -508,7 +511,7 @@
     {
         string templatePath = "E:\\Users\\Tobi\\Desktop\\AvatiProposalDoc.docx";
         MemoryStream memStream = new MemoryStream();
-        using (FileStream fileStream = new FileStream(templatePath, FileMode.Open, FileAccess.Read))
+        await using (FileStream fileStream = new FileStream(templatePath, FileMode.Open, FileAccess.Read))
             await fileStream.CopyToAsync(memStream);
         using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(memStream, true))
         {
@@ -556,7 +559,7 @@
                                     par.Remove();
                                     break;
                                 case "Tätigkeitsbereiche":
-                                    par.InsertAfterSelf(GenerateRoleTable(id));
+                                    body.AppendChild(GenerateRoleTable(id));
                                     break;
                             }
                         }
@@ -564,10 +567,10 @@
                 }
             }
             //TODO After inserting the table, fill 'Mitarbeiterprofile' from another template if possible
-            //TODO After filling the Profiles, KOSTENMIXKALKULATION   DAMM DAMM DAMM
+            //TODO After filling the Profiles, KOSTENMIXKALKULATION   DAMM DAMM DAMM, also from another template if possible
             Console.WriteLine(wordDoc.ToFlatOpcString());
-            wordDoc.Save();
-            wordDoc.Close();
+            wordDoc.Save(); //maybe useless
+            wordDoc.Close();//maybe usless
         }
         var task = await _blazorDownloadFileService.DownloadFile("test.docx", memStream, "application/octet-stream");
     }
