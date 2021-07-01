@@ -2,88 +2,37 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/AnalysisEnabled/@EntryValue">VISIBLE_FILES</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/SweaWarningsMode/@EntryValue">ShowAndRun</s:String>
 	<s:String x:Key="/Default/CodeInspection/PencilsConfiguration/ActualSeverity/@EntryValue">INFO</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=055def47_002D7c49_002D445d_002Db095_002Dd7354db3a4ee/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="UiProposalOverview #7" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::FA4B3AFF-18B6-4199-83ED-BC5995956107::net5.0::Tests.UiProposalOverview&amp;lt;T&amp;gt;&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=0af21061_002D32e7_002D485d_002D9c3b_002D66cf37d383af/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="UiProposalOverview #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::FA4B3AFF-18B6-4199-83ED-BC5995956107::net5.0::Komponententests.UiProposalOverview&amp;lt;T&amp;gt;&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=1600f65a_002D1bbc_002D4031_002Dad28_002Da80337499739/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="UiProposalOverview" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::FA4B3AFF-18B6-4199-83ED-BC5995956107::net5.0::Komponententests.UiProposalOverview&amp;lt;T&amp;gt;&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	
-	
-	
-	
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=45d000a4_002Dbab6_002D4e36_002Dae08_002D2aabc9d14a74/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="UiProposalOverview #5" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::FA4B3AFF-18B6-4199-83ED-BC5995956107::net5.0::Komponententests.UiProposalOverview&amp;lt;T&amp;gt;&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=559238e2_002D592b_002D42da_002D95f0_002D51ab0b8e8918/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="UiProposalOverview #6" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::FA4B3AFF-18B6-4199-83ED-BC5995956107::net5.0::Komponententests.UiProposalOverview&amp;lt;T&amp;gt;&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
 	
 	
 	
 	
 	
 	
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=5ec9ea91_002D7d50_002D4e60_002Da82e_002D534d7eb234de/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreateProposalTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::FA4B3AFF-18B6-4199-83ED-BC5995956107::net5.0::Komponententests.UiProposalOverview&amp;lt;ChromeDriver&amp;gt;.CreateProposalTest&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::FA4B3AFF-18B6-4199-83ED-BC5995956107::net5.0::Komponententests.UiProposalOverview&amp;lt;FirefoxDriver&amp;gt;.CreateProposalTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=74411b0d_002Dc4f5_002D467f_002Db9d7_002Ddc63eafa4d60/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="UiProposalOverview #16" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::FA4B3AFF-18B6-4199-83ED-BC5995956107::net5.0::Komponententests.UiProposalOverview&amp;lt;T&amp;gt;&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
 	
 	
 	
 	
 	
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a93806ff_002D1a8b_002D4068_002D9c19_002D84dd376f2b39/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="UIProposalOverview #5" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::FA4B3AFF-18B6-4199-83ED-BC5995956107::net5.0::Komponententests.UIProposalOverview&amp;lt;T&amp;gt;&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
 	
 	
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b2e4c3c6_002Da64b_002D4119_002D9f41_002Ddfb4d3f22875/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreateProposalTest #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::FA4B3AFF-18B6-4199-83ED-BC5995956107::net5.0::Komponententests.UiProposalOverview&amp;lt;ChromeDriver&amp;gt;.CreateProposalTest&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::FA4B3AFF-18B6-4199-83ED-BC5995956107::net5.0::Komponententests.UiProposalOverview&amp;lt;FirefoxDriver&amp;gt;.CreateProposalTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=bb048992_002Dd20c_002D4071_002D8748_002Dbf635e3c946a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreateProposalTest #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::FA4B3AFF-18B6-4199-83ED-BC5995956107::net5.0::Komponententests.UiProposalOverview&amp;lt;ChromeDriver&amp;gt;.CreateProposalTest&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::FA4B3AFF-18B6-4199-83ED-BC5995956107::net5.0::Komponententests.UiProposalOverview&amp;lt;FirefoxDriver&amp;gt;.CreateProposalTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=bbd52586_002D45b9_002D46b1_002Db329_002D4d1514a59200/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="UiProposalOverview #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::FA4B3AFF-18B6-4199-83ED-BC5995956107::net5.0::Komponententests.UiProposalOverview&amp;lt;T&amp;gt;&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
 	
 	
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d1db173f_002Dd227_002D41ed_002Dbb19_002D86bd767c74b3/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="UiProposalOverview #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::FA4B3AFF-18B6-4199-83ED-BC5995956107::net5.0::Komponententests.UiProposalOverview&amp;lt;T&amp;gt;&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	<s:String x:Key="/Default/Housekeeping/UnitTestingMru/UnitTestRunner/HangingTestRunnerResponse/@EntryValue">KillProcess</s:String>
 	
