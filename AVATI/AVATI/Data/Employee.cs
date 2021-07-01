@@ -1,5 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using Blazorise;
 using Microsoft.AspNetCore.Components;
 
 
@@ -10,6 +15,7 @@ namespace AVATI.Data
     {
         public int EmployeeID { get; set; }
         public string FirstName { get; set; }
+        [NotNull][Required]
         public string LastName { get; set; }
         public string Image;
         public float RelevantWorkExperience { get; set; }

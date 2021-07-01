@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Drawing;
 using Dapper;
 using Microsoft.Extensions.Configuration;
 
@@ -148,7 +149,7 @@ namespace AVATI.Data
                 "UPDATE Employee SET Firstname= @Firstname ,Lastname = @Lastname , Image = NULL , WorkExperience = @RWE, EmploymentTime = @EmpTime,RCLevel = @RC, IsActive = @IA WHERE EmployeeID = @ID",
                 new
                 {
-                    ID = emp.EmployeeID, Firstname = emp.FirstName, Lastname = emp.LastName,
+                    ID = emp.EmployeeID, Firstname = emp.FirstName, Lastname = emp.LastName, IMAGE = emp.Image,
                     RWE = emp.RelevantWorkExperience, EmpTime = emp.EmploymentTime, RC = emp.Rc, IA = emp.IsActive
                 });
 
@@ -167,6 +168,7 @@ namespace AVATI.Data
             {
                 foreach (var hardskill in emp.HardSkillLevel)
                 {
+                    
                     db.Query("INSERT INTO Employee_Hardskill VALUES (@ID, @DESC, @LEVEL)",
                         new {ID = emp.EmployeeID, DESC = hardskill.Item1.Description, LEVEL = hardskill.Item2});
                 }
@@ -178,7 +180,7 @@ namespace AVATI.Data
                 foreach (var language in emp.Language)
                 {
                     db.Query("INSERT INTO Employee_Language VALUES (@ID, @DESC, @LEVEL)",
-                        new {ID = emp.EmployeeID, DESC = language.Item1, LEVEL = language.Item2});
+                        new {ID = emp.EmployeeID, DESC = language.Item1, LEVEL = language.Item2.ToString()});
                 }
             }
 
