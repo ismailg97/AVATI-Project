@@ -316,6 +316,7 @@
             _showAdditionalInfo.Add(proposal.ProposalID, true);
         }
         _isLoaded = true;
+        Open = 0;
         StateHasChanged();
     }
 
@@ -325,7 +326,6 @@
         Console.WriteLine("We do enter here");
         var tempValue = _proposal.GetAllProposals();
         _proposals = await tempValue;
-        _isLoaded = true;
         _promptDelete = new Dictionary<int, bool>();
         _showEmployee = new Dictionary<int, bool>();
         _showAttributes = new Dictionary<int, bool>();
@@ -337,6 +337,7 @@
             _showAttributes.Add(proposal.ProposalID, true);
             _showAdditionalInfo.Add(proposal.ProposalID, true);
         }
+        _isLoaded = true;
         StateHasChanged();
     }
 
@@ -375,8 +376,10 @@
         }
         var tempValue = _proposal.GetAllProposals();
         _proposals = await tempValue;
-        _promptDelete[propId] = !_promptDelete[propId];
-        _isLoaded = true;
+        await Update();
+        _showEmployee[propId] = !_showEmployee[propId];
+        StateHasChanged();
+
     }
 
     private async Task ShowDetail(int employeeId, int proposalId)
