@@ -47,7 +47,7 @@ namespace AVATI
             services.AddSingleton<IBasicDataService, BasicDataService>();
             services.AddSingleton<JsonImport>();
             services.AddSingleton<Projectedit>();
-            services.AddSingleton<ILoginService,LoginServiceSimple>();
+            services.AddSingleton<ILoginService,LoginService>();
             services.AddSingleton<IProposalService, ProposalService>();
             services.AddSingleton<SearchService>();
             services.AddSingleton<IEmployeeService, EmployeeService>();
