@@ -15,16 +15,30 @@
                        <label class="form-label">Bezeichnung:</label>
                        <InputText class="form-control" @bind-Value="@_hardskill.Description"/>
                        <label class="form-label">Oberkategorie:</label>
-                       <InputSelect class="form-control" @bind-Value="@UpperCat">
-                         <option value="">Keine Oberkategorie</option>
-                         @if (_allCategorys != null)
+                       <table>
+                         @if (UpperCat.Any())
                          {
-                           @foreach (var hardskillcat in _allCategorys)
+                           foreach (var uppercat in UpperCat)
                            {
-                             <option value="@hardskillcat.Description">@hardskillcat.Description</option>
+                             <tr>@uppercat</tr>
                            }
                          }
-                       </InputSelect>
+                         else
+                         {
+                           <tr>Keine Oberkategorie</tr>
+                         }
+                       </table>
+                       <div class="list-group border-dark overflow-auto mr-3 col-9" style="height: 100px">
+                         @if (_allCategorys != null)
+                         {
+                           foreach (var cat in _allCategorys)
+                           {
+                             <button type="button" class="@(IsInList(cat) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => UpperCatList(cat)">
+                               <a><a class="@(IsInList(cat) ? "showRemove" : "")">@cat</a> <a class="remove"><span class="oi oi-x"></span></a></a>
+                             </button>
+                           }
+                         }
+                       </div>
                      </div>
                    <div class="modal-footer">
                      <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">Abbrechen</button>
@@ -42,18 +56,18 @@
 @code {
   [Parameter] public BasicDataAbstract Abstract { get; set; }
   private bool _show = false;
-
-  string UpperCat { get; set; }
   
   string Description { get; set; }
 
+  private List<string> UpperCat { get; set; } = new();
+
   private Hardskill _hardskill = new();
 
-  private List<Hardskill> _allCategorys;
+  private List<string> _allCategorys;
 
   protected override async Task OnInitializedAsync()
   {
-    _allCategorys = await _hardskillService.GetAllHardskillCategorys();
+    _allCategorys = await _hardskillService.GetAllDesCategorys();
   }
 
   private async Task Create()
@@ -61,16 +75,30 @@
     var hardskill = new Hardskill
     {
       Description = _hardskill.Description,
-      Uppercat = string.IsNullOrEmpty(UpperCat) ? new List<string>() : new List<string>(){ UpperCat },
+      Uppercat = new List<string>(UpperCat),
       Subcat = null
     };
 
     await _hardskillService.CreateHardskill(hardskill);
-    UpperCat = "";
+    UpperCat.Clear();
     _hardskill.Description = "";
-   Abstract.UpdateLists();
+    await Abstract.UpdateLists();
     Showing();
     //_navigationManager.NavigateTo(_navigationManager.Uri, true);
+  }
+
+  private void UpperCatList(string description)
+  {
+    if (UpperCat.Contains(description))
+      UpperCat.Remove(description);
+    else
+      UpperCat.Add(description);
+    StateHasChanged();
+  }
+
+  private bool IsInList(string description)
+  {
+    return UpperCat.Contains(description);
   }
 
   public void Showing()

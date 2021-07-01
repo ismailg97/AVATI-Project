@@ -28,6 +28,10 @@ namespace AVATI.Data
         
         public Task<List<string>> GetAllDesHardskills();
 
+        public Task<List<string>> GetAllRoots();
+
         public Task<List<string>> GetHardskillsOfCategory(string description);
+        public Task<bool> CheckDescriptionHardskill(string description);
+
     }
 }

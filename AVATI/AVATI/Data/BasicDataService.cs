@@ -2,9 +2,7 @@
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.Data;
-using System.Data.Common;
 using System.Linq;
 
 namespace AVATI.Data
@@ -25,85 +23,119 @@ namespace AVATI.Data
 
         public bool CreateSoftSkill(string description)
         {
+            using var db = GetConnection();
             var query = "INSERT INTO Softskill (Description) VALUES (@softskill)";
-            var rowsAffected = GetConnection().Execute(query, new {softskill = description});
+            var rowsAffected = db.Execute(query, new {softskill = description});
             return rowsAffected == 1;
         }
 
         public bool UpdateSoftSkill(string newDescription, string oldDescription)
         {
+            using var db = GetConnection();
             var query = "UPDATE Softskill SET Description = @newSoftskill WHERE Description = @oldSoftskill";
-            var rowsAffected = GetConnection().Execute(query, new {newSoftskill = newDescription, oldSoftskill = oldDescription});
+            var rowsAffected = db.Execute(query, new {newSoftskill = newDescription, oldSoftskill = oldDescription});
             return rowsAffected == 1;
         }
 
         public bool DeleteSoftSkill(string description)
         {
+            using var db = GetConnection();
             var query = "DELETE FROM Softskill WHERE Description = @softskill";
-            var rowsAffected = GetConnection().Execute(query, new { softskill = description });
+            var rowsAffected = db.Execute(query, new { softskill = description });
             return rowsAffected == 1;
         }
 
         public List<string> GetAllSoftSkills()
         {
-            return GetConnection().Query<string>("SELECT Description FROM Softskill").ToList();
+            using var db = GetConnection();
+            return db.Query<string>("SELECT Description FROM Softskill").ToList();
         }
 
         public bool CreateRole(string description)
         {
+            using var db = GetConnection();
             var query = "INSERT INTO dbo.Role (Description) VALUES (@role)";
-            var rowsAffected = GetConnection().Execute(query, new {role = description});
+            var rowsAffected = db.Execute(query, new {role = description});
             return rowsAffected == 1;
         }
 
         public bool UpdateRole(string newDescription, string oldDescription)
         {
+            using var db = GetConnection();
             var query = "UPDATE dbo.Role SET Description = @newRole WHERE Description = @oldRole";
-            var rowsAffected = GetConnection().Execute(query, new {newRole = newDescription, oldRole = oldDescription});
+            var rowsAffected = db.Execute(query, new {newRole = newDescription, oldRole = oldDescription});
             return rowsAffected == 1;
         }
 
         public bool DeleteRole(string description)
         {
+            using var db = GetConnection();
             var query = "DELETE FROM dbo.Role WHERE Description = @role";
-            var rowsAffected = GetConnection().Execute(query, new { role = description });
+            var rowsAffected = db.Execute(query, new { role = description });
             return rowsAffected == 1;
         }
 
         public List<string> GetAllRoles()
         {
-            return GetConnection().Query<string>("SELECT Description FROM dbo.Role").ToList();
+            using var db = GetConnection();
+            return db.Query<string>("SELECT Description FROM dbo.Role").ToList();
         }
 
         public bool CreateField(string description)
         {
+            using var db = GetConnection();
             var query = "INSERT INTO Field (Description) VALUES (@field)";
-            var rowsAffected = GetConnection().Execute(query, new {field = description});
+            var rowsAffected = db.Execute(query, new {field = description});
             return rowsAffected == 1;
         }
 
         public bool UpdateField(string newDescription, string oldDescription)
         {
+            using var db = GetConnection();
             var query = "UPDATE Field SET Description = @newField WHERE Description = @oldField";
-            var rowsAffected = GetConnection().Execute(query, new {newField = newDescription, oldField = oldDescription});
+            var rowsAffected = db.Execute(query, new {newField = newDescription, oldField = oldDescription});
             return rowsAffected == 1;
         }
 
         public bool DeleteField(string description)
         {
+            using var db = GetConnection();
             var query = "DELETE FROM Field WHERE Description = @field";
-            var rowsAffected = GetConnection().Execute(query, new { field = description });
+            var rowsAffected = db.Execute(query, new { field = description });
             return rowsAffected == 1;
         }
 
         public List<string> GetAllFields()
         {
-            return GetConnection().Query<string>("SELECT Description FROM Field").ToList();
+            using var db = GetConnection();
+            return db.Query<string>("SELECT Description FROM Field").ToList();
         }
 
         public List<string> GetAllLanguages()
         {
-            return GetConnection().Query<string>("SELECT Description FROM dbo.Language").ToList();
+            using var db = GetConnection();
+            return db.Query<string>("SELECT Description FROM dbo.Language").ToList();
+        }
+        
+        public bool CheckDescriptionSoftskill(string description)
+        {
+            using var db = GetConnection();
+            return db.Query<string>("SELECT Description FROM Softskill WHERE Description = @skillOrCat",
+                new {skillOrCat = description}).SingleOrDefault() == null;
+        }
+        
+        public bool CheckDescriptionField(string description)
+        {
+            using var db = GetConnection();
+            return  db.Query<string>("SELECT Description FROM Field WHERE Description = @skillOrCat",
+                new {skillOrCat = description}).SingleOrDefault() == null;
+        }
+        
+        public bool CheckDescriptionRole(string description)
+        {
+            using var db = GetConnection();
+            return  db.Query<string>("SELECT Description FROM dbo.ROle WHERE Description = @skillOrCat",
+                new {skillOrCat = description}).SingleOrDefault() == null;
         }
     }
 }

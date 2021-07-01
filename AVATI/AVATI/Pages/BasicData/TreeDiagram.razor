@@ -1,0 +1,40 @@
+﻿@using AVATI.Data
+@using System.Runtime.CompilerServices
+@using System.Collections.Generic
+
+@inject IHardskillService _hardskillService
+
+
+        <div class="container">
+            <ul class="tree">
+                <li><a class="cat" type="button" @onclick="() => ShowingSubcat()">@Description</a>
+                    
+                        @if (_showSubcat && Subcat != null && Subcat.Any())
+                        {
+                            <TreeElement Descriptions ="@Subcat"/>
+                        }
+                </li>
+            </ul>
+        </div>
+
+
+@code {
+    [Parameter]
+    public string Description { get; set; }
+
+    public List<string> Subcat = new();
+
+    private bool _showSubcat = true;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var cat = await _hardskillService.GetHardskillCategory(Description);
+        Subcat = cat.Subcat;
+    }
+
+    private void ShowingSubcat()
+    {
+        _showSubcat = !_showSubcat;
+    }
+
+}

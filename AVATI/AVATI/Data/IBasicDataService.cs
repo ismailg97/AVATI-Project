@@ -30,6 +30,10 @@ namespace AVATI.Data
 
         public List<string> GetAllLanguages();
 
+        public bool CheckDescriptionSoftskill(string description);
 
+        public bool CheckDescriptionField(string description);
+
+        public bool CheckDescriptionRole(string description);
     }
 }

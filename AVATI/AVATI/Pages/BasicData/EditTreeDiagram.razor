@@ -1,0 +1,107 @@
+﻿@using AVATI.Data
+
+@inject IHardskillService _hardskillService
+
+<AddHardskills @ref="_addHardskills" Description="@Description"/>
+
+    <div class="container">
+        <ul class="tree">
+            <li>
+                @if(!_showRename)
+                {
+                    <ContextMenu Id="@Description">
+                        <Item OnClick="() => DeleteCategory()">Löschen <span class="oi oi-trash"></span></Item>
+                                                     
+                        <Item OnClick="() => ShowingRename()">Umbenennen <span class="oi oi-pencil"></span></Item>
+                                         
+                        <Item OnClick="() => ShowingAddHardskills()">Hardskills hinzufügen <span class="oi oi-plus"></span></Item>
+                                                     
+                    </ContextMenu>
+                    
+                    <ContextMenuTrigger MenuId="@Description">
+                        <a class="cat" type="button" @onclick="() => ShowingUnder()">@Description</a>
+                                         
+                        @if (_containsHardskills)
+                        {
+                            <a class="btn btn-info" style="color: white !important;" type="button" @onclick="ShowingSubHardskills">
+                                    @(_showSubHardskills ? "Skills ausblenden" : "Skills anzeigen")
+                            </a>
+                        }
+                    </ContextMenuTrigger>
+                    } else {
+                            <input type="text" id="softskill" @bind="_rename"/>
+                            <button type="button" class="check inline" @onclick="() => Update()">&#10003;</button>
+                            <button type="button" class="stop inline" @onclick="() => ShowingRename()">&#10005;</button>
+                    }
+                
+                @if (_showUnder || !_subcat.Any() || _showSubHardskills)
+                {
+                    <EditTreeElement @ref="@_element" Subcats="@_subcat" Uppercat="@Description" ShowHardskills="@_showSubHardskills"/>
+                }
+            </li>
+        </ul>
+    </div>
+
+
+@code {
+    [Parameter]
+    public string Description { get; set; }
+
+    private List<string> _subcat = new();
+
+    private EditTreeElement _element;
+    
+    AddHardskills _addHardskills;
+
+    private bool _showUnder;
+
+    private bool _showRename;
+
+    private bool _containsHardskills;
+
+    private string _rename;
+
+    private bool _showSubHardskills;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _showSubHardskills = false;
+        var category = await _hardskillService.GetHardskillCategory(Description);
+        _subcat = category.Subcat;
+        _showRename = false;
+        _showUnder = true;
+        _containsHardskills = await _hardskillService.ContainsAnyHardskills(Description);
+    }
+
+    private async Task DeleteCategory()
+    {
+        await _hardskillService.DeleteHardskillCategory(Description);
+    }
+
+    private async Task Update()
+    {
+        await _hardskillService.UpdateHardskillCategory(Description, _rename);
+        ShowingRename();
+    }
+
+    private void ShowingRename()
+    {
+        _showRename = !_showRename;
+    }
+
+    private void ShowingAddHardskills()
+    {
+        _addHardskills.Showing();
+    }
+
+    private void ShowingUnder()
+    {
+        _showUnder = !_showUnder;
+    }
+
+    private void ShowingSubHardskills()
+    {
+        _showSubHardskills = !_showSubHardskills;
+        StateHasChanged();
+    }
+}

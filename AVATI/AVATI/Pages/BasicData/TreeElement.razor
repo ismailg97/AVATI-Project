@@ -1,34 +1,9 @@
-﻿@page "/TreeElement"
-@using AVATI.Data
-@using System.Runtime.CompilerServices
+﻿@using AVATI.Data
 @using System.Collections.Generic
 
 @inject IHardskillService _hardskillService
 
-@if (_isRoot)
-    {
-        <div class="container">
-            <ul class="tree">
-                @foreach (var hardskillcat in Hardskills.Keys)
-                {
-                    if (!Show.ContainsKey(hardskillcat.Description))
-                    {
-                        Show.Add(hardskillcat.Description, Hardskills[hardskillcat]);
-                    }
-                
-                    <li><a class="@(hardskillcat.IsHardskill ? "hardskill":"cat")" type="button" @onclick="() => Showing(hardskillcat.Description)">@hardskillcat.Description</a>
-                    
-                        @if (Show[hardskillcat.Description] && hardskillcat.Subcat != null && hardskillcat.Subcat.Any())
-                        {
-                            <TreeElement Descriptions = "@hardskillcat.Subcat"/>
-                        }
-                    </li>
-                }
-            </ul>
-        </div>
-    }
-    else
-    {
+
         <ul>
             @foreach (var hardskillcat in Hardskills.Keys)
             {
@@ -48,15 +23,11 @@
             
             }
         </ul>
-        
-}
 
 
 @code {
     [Parameter]
     public List<string> Descriptions { get; set; }
-
-    private bool _isRoot;
 
     private Dictionary<Hardskill, bool> Hardskills { get; set; } = new();
 
@@ -64,14 +35,6 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        _isRoot = false;
-        if (Descriptions.Any())
-        {
-            var first = await _hardskillService.GetHardskillOrCategory(Descriptions[0]);
-            if(first != null)
-                _isRoot = first.IsRoot();
-        }
-        
         foreach (var description in Descriptions)
         {
             var skillOrCat = await _hardskillService.GetHardskillOrCategory(description);

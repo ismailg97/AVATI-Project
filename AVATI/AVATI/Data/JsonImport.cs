@@ -255,7 +255,16 @@ namespace AVATI.Data
                     new { description = "Expertise" });
                 
                     foreach (var hardskill in jsonFile.skills.Expertise)
-                    {   
+                    {
+                        if (hardskill == "Projektmanagement")
+                        {
+                            db.Execute("INSERT INTO Hardskill (Description, IsHardskill) VALUES (@description, 1)", 
+                                new { description = "Projektleitung" });
+                            db.Execute("INSERT INTO Hardskill_Subcat (Uppercat, Subcat) VALUES (@uppercat, @description)",
+                                new { description = "Projektleitung", uppercat = "Expertise" });
+                            continue;
+                        }
+
                         if (db.Query<int>("SELECT COUNT(*) FROM Hardskill WHERE Description = @description",
                             new {description = @hardskill}).Single() == 0) 
                         {

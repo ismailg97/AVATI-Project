@@ -53,7 +53,7 @@
 
     private bool _show = false;
 
-    private void Delete()
+    private async Task Delete()
     {
         switch (Type)
         {
@@ -67,10 +67,11 @@
                 _basicDataService.DeleteRole(Description);
                 break;
             default:
-                _hardskillService.DeleteHardskill(Description);
+                await _hardskillService.DeleteHardskill(Description);
                 break;
         }
-        Abstract?.UpdateLists();
+        if(Abstract != null)
+            await Abstract.UpdateLists();
         Showing();
         //_navigationManager.NavigateTo(_navigationManager.Uri, true);
     }
