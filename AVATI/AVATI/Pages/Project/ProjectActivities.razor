@@ -29,14 +29,12 @@ else
             <p>Hier können Sie Tätigkeiten im Projekt hinzufügen, verwalten, editieren und löschen. Diese stehen als Auswahlmöglichkeit für alle Projekte zur Verfügung. </p>
             <div class="row">
                 <div class="col-8">
-                    <div class="form-group">
+                    <div class="form-group col-10">
+                        <input class="form-control" type="text" placeholder="Suche Aktivität..."
+                                   @bind="filterSearch"
+                                   @bind:event="oninput">
                         <table class="table table-hover">
                             <thead>
-                            <div class="form-group">
-                                <input class="form-control" type="text" placeholder="Suche Aktivität..."
-                                       @bind="filterSearch"
-                                       @bind:event="oninput">
-                            </div>
                             <tr>
                                 <th scope="col">Beschreibung</th>
                                 <th scope="col"></th>

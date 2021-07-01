@@ -15,8 +15,9 @@
         <div class="row">
             <div class="col-md-4">
                 <div style="margin-top: -5%; border-radius: 80%" class="profile-img">
-                    @if(Emp.Image == null){
-                    <img class="rounded" src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" style="margin-left: -45px" width="300" height="200" alt=""/>
+                    @if (Emp.Image == null)
+                    {
+                        <img class="rounded" src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" style="margin-left: -45px" width="300" height="200" alt=""/>
                     }
                     else
                     {
@@ -39,7 +40,7 @@
                         <!------ Employment Time ---------->
                         <p style="color: #000;margin-top: -7px">Beschäftigt seit: @Emp.EmploymentTime.ToShortDateString()</p>
 
-                        <p style="color: #000;margin-top: -7px">Relevante Berufserfahrung: @(Emp.RelevantWorkExperience * 100)%</p>
+                        <p style="color: #000;margin-top: -7px">Relevante Berufserfahrung: @(Emp.RelevantWorkExperience) Jahre</p>
 
                     </div>
                 </div>
@@ -117,7 +118,7 @@
                 </div>
             </div>
 
-            
+
             <div style="border-color: black" class="form-group backdrop rounded col-md-8">
                 <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider"></div>
 
@@ -176,19 +177,14 @@
                                 <th class="text-left">Projekt</th>
                                 <th class="text-left">Projekttätigkeit</th>
                             </tr>
-                        @if (_projctActivityService.GetProjectActivitiesEmployee(Id).Any())
-                        {
-                            
+                            @if (_projctActivityService.GetProjectActivitiesEmployee(Id).Any())
+                            {
                                 foreach (var activity in _projctActivityService.GetProjectActivitiesEmployee(Id))
                                 {
-                                    @if( activity.EmployeeID == Id)
-                                    {
-                                        <tr>
-                                        <td class="text-left">@activity.ProjectID</td>
+                                    <tr>
+                                        <td class="text-left">@_projektService.GetProject(activity.ProjectID).Projecttitel</td>
                                         <td class="text-left">@activity.Description</td>
-                                    </tr>
-                                        
-                                    }
+                                        </tr>
                                 }
                             }
                             else
@@ -197,7 +193,7 @@
                                     <td></td>
                                     <td></td>
                                 </tr>
-                            } 
+                            }
                         </table>
                     </div>
                 </div>
@@ -219,8 +215,8 @@
     private bool _booleanWork = false;
 
     [Parameter]
-    public int Id { get; set; } 
-    
+    public int Id { get; set; }
+
     public List<ProjectActivity> ActivityList { get; set; }
 
 
@@ -228,7 +224,7 @@
 
     protected override void OnInitialized()
     {
-        Emp = _employee.GetEmployeeProfile(Id); 
+        Emp = _employee.GetEmployeeProfile(Id);
     }
 
     public void CollLang()

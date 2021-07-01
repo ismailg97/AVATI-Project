@@ -1,5 +1,6 @@
 ﻿@page "/Login"
 @using AVATI.Data
+@using DocumentFormat.OpenXml.Office2010.Excel
 @inject ILoginService _login
 @inject NavigationManager _navManager
 
@@ -60,16 +61,20 @@
 @code {
     private bool _boolean = false;
     LoginClass Log = new LoginClass();
+    public int Id { get; set; }
+    public string empType { get; set; }
 
     private void LoginCheck()
     {
-        if (_login.LogIn(Log.Username, Log.Password))
+        Id = _login.LogIn(Log.Username, Log.Password);
+        if (Id == -1)
         {
-            _navManager.NavigateTo("/profile/4");
+            _boolean = true;
         }
         else
         {
-            _boolean = true;
+            empType=_login.Login_EmpType(Id);
+            _navManager.NavigateTo("/profile/" + Id );
         }
     }
 

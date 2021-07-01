@@ -36,6 +36,9 @@
   public Employee Employee { get; set; }
   public Hardskill Hardskill { get; set; }
 
+  [Parameter]
+  public EditProfile Abstract { get; set; }
+
     [Parameter] 
   public Hardskill OldHardskill{ get; set; }
 
@@ -78,33 +81,34 @@
       }
       Employee.HardSkillLevel.Add(new Tuple<Hardskill, int>(Hardskill, 1));
       _show = !_show;
-      StateHasChanged();
-      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
+      //InvokeAsync(StateHasChanged);
+      //_navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
     }
     if (buttonId == 2)
     {
       
       Employee.HardSkillLevel.Add(new Tuple<Hardskill, int>(Hardskill, 2));
       _show = !_show;
-      StateHasChanged();
-      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
+      //InvokeAsync(StateHasChanged);
+      //_navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
     }
     if (buttonId == 3)
     {
       
       Employee.HardSkillLevel.Add(new Tuple<Hardskill, int>(Hardskill, 3));
       _show = !_show;
-      StateHasChanged();
-      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
+      //InvokeAsync(StateHasChanged);
+      //_navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
     }
     if (buttonId == 4)
     {
       
       Employee.HardSkillLevel.Add(new Tuple<Hardskill, int>(Hardskill, 4));
       _show = !_show;
-      StateHasChanged();
-      _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
+      //StateHasChanged();
+      //_navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
     }
+    Abstract.Update();
   }
     
 }

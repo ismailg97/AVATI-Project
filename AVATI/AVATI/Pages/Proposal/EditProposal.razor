@@ -41,7 +41,7 @@
                                 </div>
                                 <div class="col">
                                     <label for="ende">Vsl. Ende </label>
-                                    <InputDate id="ende" class="form-control col" @bind-Value="Proposal.End"/>
+                                    <InputDate id="end" class="form-control col" @bind-Value="Proposal.End"/>
                                 </div>
 
                             </div>
@@ -59,7 +59,7 @@
                             </div>
                             <div class="form-group row col-10">
                                 
-                                    <div class="list-group border-dark overflow-auto mr-3 col-9" style="height: 100px; border: 2px solid darkslategray">
+                                    <div class="list-group border-dark overflow-auto mr-3 col-9" id="hardskills" style="height: 100px; border: 2px solid darkslategray">
                                         @foreach (var hardskill in _hardskills)
                                         {
                                             @if ((TempHardskill == null || hardskill.Description.Contains(TempHardskill)) && !Proposal.Hardskills.Contains(hardskill))
@@ -108,17 +108,17 @@
                             }
                             <div class="form-group">
                                 <label class="mt-2">Zusätzliche Informationen </label>
-                                <InputText id="addinfo" class="form-control" @bind-Value="@Proposal.AdditionalInfo" placeholder=" "></InputText>
+                                <InputText id="addInfo" class="form-control" @bind-Value="@Proposal.AdditionalInfo" placeholder=" "></InputText>
                             </div>
                             <div class="form-row float-right">
                                 <button class="btn btn-danger mr-1" type="button" @onclick=@Close>Abbrechen</button>
                                 @if (Id == 0)
                                 {
-                                    <button type="submit" class="btn btn-success">Angebot anlegen</button>
+                                    <button type="submit" id="submit" class="btn btn-success">Angebot anlegen</button>
                                 }
                                 else
                                 {
-                                    <button type="submit" class="btn btn-success">Änderungen speichern</button>
+                                    <button type="submit" id="submit" class="btn btn-success">Änderungen speichern</button>
                                 }
                             </div>
                         </EditForm>
