@@ -58,7 +58,7 @@
 @code {
 
     [Parameter]
-    public Projectedit Abstract { get; set; } = new Projectedit();
+    public Projectedit Abstract { get; set; } 
 
     [Parameter]
     public int ID { get; set; }
@@ -85,6 +85,7 @@
         temp.Purpose = Description;
         temp.ProjectID = ID;
         _projectPurpose.AddProjectActivityToPurpose(temp);
+        Abstract.Update();
         StateHasChanged();
     }
 

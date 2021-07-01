@@ -5,7 +5,6 @@
 @inject IProjektService _projectService
 @inject NavigationManager _navigationManager
 @inject IProjectActivityService _projectActivity
-@inject EmployeeServiceSimple _employeeService
 @inject ProjectPurposeService _projectPurposeService
 
 <AddFieldToProject @ref="_addFieldToProject" Abstract="@this"/>
@@ -31,10 +30,10 @@ else
     <EditForm Model="@Project" OnValidSubmit="@Save">
 
         <DataAnnotationsValidator/>
+                    <ValidationSummary/>
         <div class="row col h-100">
             <div class="text-left col">
                 <div class="column">
-                    <ValidationSummary/>
                     <h3 class="text-lg-left font-weight-bold"><em>@Project.Projecttitel</em> editieren!</h3>
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label font-weight-bold">Projekttitel</label>
