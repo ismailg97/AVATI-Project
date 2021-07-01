@@ -8,13 +8,13 @@
 @inject IProjektService _projektService
 @inject JsonImport _jsonImport
 
-@inject IProjectActivityService _projctActivityService
+@inject IProjectActivityService _projectActivityService
 @inject NavigationManager _navManager
 @inject IEmployeeService _employeeService
 
 <h3>Projektübersicht</h3>
 
-
+<EditForm Model="projActivity" >
 <table id="table" data-show-refresh="true" class="table align-middle mb-5">
     <thead>
     <div class="form-group">
@@ -29,23 +29,22 @@
     </tr>
     </thead>
     <tbody>
-    @if (_projctActivityService.GetProjectActivitiesEmployee(Id).Any())
+    @if (_projectActivityService.GetProjectActivitiesEmployee(Id).Any())
     {
-        @foreach (var activity in _projctActivityService.GetProjectActivitiesEmployee(Id))
+        @foreach (var activity in _projectActivityService.GetProjectActivitiesEmployee(Id))
         {
-            //int projId = activity.ProjectID;
-            Project proj = _projektService.GetProject(activity.ProjectID);
+            
+                Project proj = _projektService.GetProject(activity.ProjectID);
                 <tr>
                     <td>@proj.Projecttitel</td>
                     <td>@proj.Projectdescription</td>
+                    <td>@activity.Description</td>
                     <td>
-                        <input class="rounded form-control" type="text" @bind="activity.Description" placeholder="@activity.Description">
-                    </td>
-                    <td>
-                        <button type="button" @onclick="(() => { setProjectActivity(Id, proj.ProjectID, activity.Description); })" class="btn btn-secondary">Bearbeiten</button>
-                        <button type="button" @onclick="(() => { deleteProjectActivity(Id, proj.ProjectID, proj.Projectdescription); })" class="btn btn-danger">Löschen</button>
+                        <button type="button" @onclick="(() => { UpdateActivity(projActivity.Description, activity.Description, proj.ProjectID); })" class="btn btn-secondary oi oi-pencil"></button>
+                        <button type="button" @onclick="(() => { deleteProjectActivity(Id, proj.ProjectID, activity.Description); })" class="btn btn-danger oi oi-trash">Löschen</button>
                     </td>
                 </tr>
+            
         }
     }
     else
@@ -58,26 +57,32 @@
     @if (_projektService.GetAllProjects().Any())
     {
         @foreach (var projects in _projektService.GetAllProjects())
-        { 
+        {
             @if (!IsVisible(projects.Projecttitel))
-                                 continue;
-            
-                if (projects.Employees.Find(x => x.EmployeeID == Id) == null )
-                {
-                   
-                    <tr>
-                        <td>@projects.Projecttitel</td>
-                        <td>@projects.Projectdescription</td>
-                        <td>
-                            <input class="rounded form-control" type="text" @bind="projActivity.Description" placeholder="">
-                        </td>
-                        <td>
-                            <button type="button" @onclick="(() => { setProjectActivity(Id, projects.ProjectID, projActivity.Description); })" class="btn btn-success">Hinzufügen</button>
+                continue;
+            projactList = _projectActivityService.GetEmployeeProjectActivities(Id, projects.ProjectID);
 
-                        </td>
-                    </tr>
-                }
-            
+            if (projactList.Find(x => x.EmployeeID == Id) == null)
+            {
+                <tr>
+                    <td>@projects.Projecttitel</td>
+                    <td>@projects.Projectdescription</td>
+                    <td>
+
+                        <select class="rounded form-control" type="text"  @bind="@projActivity.Description" placeholder="">
+                            @foreach (var projACT in _projectActivityService.GetAllProjectActivities())
+                            {
+                                <option>@projACT.Description</option>
+                            }
+                        </select>
+
+                    </td>
+                    <td>
+                        <button type="button" @onclick="(() => { setProjectActivity(Id, projects.ProjectID, projActivity.Description); })" class="btn btn-success oi oi-plus"></button>
+
+                    </td>
+                </tr>
+            }
         }
     }
     else
@@ -90,7 +95,7 @@
     }
     </tbody>
 </table>
-
+</EditForm>
 
 @code
 {
@@ -101,6 +106,7 @@
 
     public ProjectActivity projActivity { get; set; }
     public Project project { get; set; }
+    public List<ProjectActivity> projactList = new List<ProjectActivity>();
 
 
     public string Input { get; set; }
@@ -125,14 +131,20 @@
 
     public void setProjectActivity(int empId, int projId, string description)
     {
-        _projctActivityService.SetProjectActivity(empId, projId, description);
+        _projectActivityService.AddActivity(description);
+        _projectActivityService.SetProjectActivity(empId, projId, description);
+        _navManager.NavigateTo("/employeeProject/" + Emp.EmployeeID, forceLoad: true);
+    }
+    
+    public void UpdateActivity(string newDescription, string oldDescription, int projID)
+    {
+        _projectActivityService.ChangeProjectActivity(Id, projID, oldDescription,  newDescription);
         _navManager.NavigateTo("/employeeProject/" + Emp.EmployeeID, forceLoad: true);
     }
 
     public void deleteProjectActivity(int empId, int projId, string desc)
     {
-        
-        _projctActivityService.DeleteProjectActivityEmployee(empId, projId, desc);
+        _projectActivityService.DeleteProjectActivityEmployee(empId, projId, desc);
         _navManager.NavigateTo("/employeeProject/" + Emp.EmployeeID, forceLoad: true);
     }
 

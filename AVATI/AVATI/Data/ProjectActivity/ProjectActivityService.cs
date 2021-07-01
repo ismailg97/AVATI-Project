@@ -116,11 +116,33 @@ namespace AVATI.Data
 
         public List<ProjectActivity> GetProjectActivitiesEmployee(int EmployeeId)
         {
+            List<ProjectActivity> projALIst = new List<ProjectActivity>();
             using IDbConnection db = GetConnection();
-            List<ProjectActivity> tempList = new List<ProjectActivity>(db.Query<ProjectActivity>(
-                "SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE EmployeeID = @emp",
-                new {emp = EmployeeId}));
-            return tempList;
+            List<int> tempList = db.Query<int>(
+                "SELECT ProjectActivityID FROM ProjectActivity_Project_Employee WHERE EmployeeID = @id", new
+                {
+                    id = EmployeeId
+                }).ToList();
+            foreach (var projA in tempList)
+            {
+                string test = db.QuerySingle<string>(
+                    "SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectActivityID = @pr ", new
+                    {
+                        pr = projA
+                    });
+                projALIst.Add(new ProjectActivity()
+                {
+                    EmployeeID = EmployeeId, 
+                    Description = test ,
+                    ProjectID = db.QuerySingle<int>("SELECT ProjectID FROM ProjectActivity_Project_Employee WHERE ProjectActivityID = @pr", new
+                    {
+                        pr = projA
+                    })
+                });
+                Console.WriteLine(test);
+            }
+
+            return projALIst;
         }
 
         public bool UpdateActivity(string oldDescription, string newDescription)
@@ -199,5 +221,11 @@ namespace AVATI.Data
 
             return true;
         }
+
+        public bool ChangeProjectActivity(int EmpId,int ProjId,string oldDescription, string newDescription)
+        {
+            return true;
+        }
+        
     }
 }
