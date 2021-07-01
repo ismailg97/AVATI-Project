@@ -70,7 +70,7 @@
                     {
                         @if (TempHardskill == null || hardskill.Description.Contains(TempHardskill, StringComparison.OrdinalIgnoreCase))
                         {
-                            <button class="btn btn-outline-dark" @onclick=@(() => { _searchService.AddHardSearch(hardskill); })>@hardskill.Description</button>
+                            <button class="btn btn-outline-dark" id="hardskillsToAdd" @onclick=@(() => { _searchService.AddHardSearch(hardskill); })>@hardskill.Description</button>
                         }
                     }
                 </div>
@@ -85,7 +85,7 @@
                     {
                         @if (TempCategory == null || hardskill.Description.Contains(TempCategory, StringComparison.OrdinalIgnoreCase))
                         {
-                            <button class="btn btn-outline-dark" @onclick=@(() => { _searchService.AddCategorySearch(hardskill); })>@hardskill.Description</button>
+                            <button class="btn btn-outline-dark" id="categoriesToAdd" @onclick=@(() => { _searchService.AddCategorySearch(hardskill); })>@hardskill.Description</button>
                         }
                     }
                 </div>
@@ -115,7 +115,7 @@
                 <div class="row">
                     @foreach (var softskill in _searchService.SoftskillsToDisplay)
                     {
-                        <button class="btn btn-sm btn-outline-info mb-1 mr-1" @onclick=@(() => { _searchService.AddSoftSearch(softskill); })>@softskill</button>
+                        <button class="btn btn-sm btn-outline-info mb-1 mr-1" id="softskillsToAdd" @onclick=@(() => { _searchService.AddSoftSearch(softskill); })>@softskill</button>
                     }
 
                 </div>
@@ -142,10 +142,10 @@
         <div class="form-group row col-9 mb-4">
             @foreach (var role in _searchService.RolesToDisplay)
             {
-                <button class="btn btn-sm btn-outline-info  mb-1 mr-1" @onclick=@(() => { _searchService.AddRoleSearch(role); })>@role</button>
+                <button class="btn btn-sm btn-outline-info  mb-1 mr-1" id="rolesToAdd" @onclick=@(() => { _searchService.AddRoleSearch(role); })>@role</button>
             }
         </div>
-        <button type="submit" @onclick=@(async () => {await CallSearch(); _searchService.TableIsVisible = true;}) class="btn btn-success col-2 text-center mb-5">Suchen</button>
+        <button type="submit" id="submitQuery" @onclick=@(async () => {await CallSearch(); _searchService.TableIsVisible = true;}) class="btn btn-success col-2 text-center mb-5">Suchen</button>
     </EditForm>
     @if (_searchService.TableIsVisible)
     {
@@ -162,7 +162,7 @@
         {
             <h4 class="mb-3 font-weight-bold">Gefundene Mitarbeiter:</h4>
 
-            <table class="table table-bordered table-striped text-center">
+            <table class="table table-bordered table-striped text-center" id="result-table">
                 <thead>
                 <tr>
                     <th>Name</th>
@@ -230,7 +230,7 @@
 
                                 @if (Id != 0 && _proposal.GetProposal(Id).Employees.Find(e => e.EmployeeID == employee.EmployeeID) == null)
                                 {
-                                    <button class="btn btn-sm btn-outline-success" @onclick=@(() => { _proposal.AddEmployee(Id, employee.EmployeeID, employee.Rc); })>Hinzufügen</button>
+                                    <button class="btn btn-sm btn-outline-success" id="employeeAdd" @onclick=@(() => { _proposal.AddEmployee(Id, employee.EmployeeID, employee.Rc); })>Hinzufügen</button>
                                 }
                                 else if (Id != 0 && _proposal.GetProposal(Id).Employees.Find(e => e.EmployeeID == employee.EmployeeID) != null)
                                 {
@@ -248,7 +248,7 @@
 
     @if (Id != 0 && _searchService.TableIsVisible)
     {
-        <button class="btn btn-info mt-2" @onclick=@(() => { ReturnToProposal(Id); })>Zum Angebot zurück</button>
+        <button class="btn btn-info mt-2" id="returnBtn" @onclick=@(() => { ReturnToProposal(Id); })>Zum Angebot zurück</button>
     }
     </div>
     </div>
