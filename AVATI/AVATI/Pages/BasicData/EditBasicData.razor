@@ -80,7 +80,7 @@
     _showExistError = false;
   }
 
-  private async Task Update()
+  private void Update()
   {
     if (string.IsNullOrEmpty(NewDescription) || string.IsNullOrWhiteSpace(NewDescription))
     {
@@ -101,15 +101,17 @@
     {
       case BasicDataType.SoftSkill:
         _basicDataService.UpdateSoftSkill(NewDescription, OldDescription);
+        Abstract.UpdateSoftskills();
         break;
       case BasicDataType.Field:
         _basicDataService.UpdateField(NewDescription, OldDescription);
+        Abstract.UpdateFields();
         break;
       default:
         _basicDataService.UpdateRole(NewDescription, OldDescription);
+        Abstract.UpdateRoles();
         break;
     }
-    await Abstract.UpdateLists();
     Showing();
     //_navigationManager.NavigateTo(_navigationManager.Uri, true);
   }

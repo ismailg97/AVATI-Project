@@ -73,7 +73,7 @@
     _showExistError = false;
   }
 
-  private async Task Create()
+  private void Create()
   {
     if (string.IsNullOrEmpty(Description) || string.IsNullOrWhiteSpace(Description))
     {
@@ -95,16 +95,18 @@
     {
       case BasicDataType.SoftSkill:
         _basicDataService.CreateSoftSkill(Description);
+        Abstract.UpdateSoftskills();
         break;
       case BasicDataType.Field:
         _basicDataService.CreateField(Description);
+        Abstract.UpdateFields();
         break;
       default:
         _basicDataService.CreateRole(Description);
+        Abstract.UpdateRoles();
         break;
     }
     Description = "";
-    await Abstract.UpdateLists();
     Showing();
   //_navigationManager.NavigateTo(_navigationManager.Uri, true);
   }

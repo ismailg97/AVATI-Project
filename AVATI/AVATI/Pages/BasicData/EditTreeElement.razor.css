@@ -27,7 +27,7 @@ p { padding-bottom:50px;}
     left:-20px;
     border-left: 1px solid #ccc;
     border-bottom:1px solid #ccc;
-    border-radius:0 0 0 0px;
+    border-radius:0 0 0 0;
     width:20px;
     height:15px;
 }
@@ -39,7 +39,7 @@ p { padding-bottom:50px;}
     left:-20px;
     border-left: 1px solid #ccc;
     border-top:1px solid #ccc;
-    border-radius:0px 0 0 0;
+    border-radius:0 0 0 0;
     width:20px;
     height:100%;
 }
@@ -112,18 +112,18 @@ ul.tree>li:first-child::after {
     outline: none;
 }
 
-div{
+.tree div{
     margin-top: 15px;
 }
 
-div::before{
+.tree div::before{
     margin-top: 20px;
     content: "";
     position: absolute;
     top:13px;
     left:10px;
     border-left:1px solid #ccc;
-    border-radius:0 0 0 0px;
+    border-radius:0 0 0 0;
     width:15px;
     height:15px;
 }

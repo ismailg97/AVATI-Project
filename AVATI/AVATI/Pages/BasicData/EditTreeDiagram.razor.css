@@ -112,11 +112,11 @@ ul.tree>li:first-child::after {
     outline: none;
 }
 
-div{
+.tree div{
     margin-top: 15px;
 }
 
-div::before{
+.tree div::before{
     margin-top: 20px;
     content: "";
     position: absolute;

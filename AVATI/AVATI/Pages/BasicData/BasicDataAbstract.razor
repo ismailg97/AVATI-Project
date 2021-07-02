@@ -157,7 +157,7 @@
                 if (ShowEditCat[hardskillcat])
                 {
                     <div>
-                        <EditTreeDiagram Description="@hardskillcat"/>
+                        <EditTreeDiagram Description="@hardskillcat" Abstract="@this"/>
                     </div>
                 }
                 else if (ShowSubCat[hardskillcat])
@@ -288,13 +288,33 @@
         _allRoots = await _hardskillService.GetAllRoots();
     }
 
-    public async Task UpdateLists()
+    public async Task UpdateCategorys()
+    {
+        _allRoots = await _hardskillService.GetAllRoots();
+        StateHasChanged();
+    }
+
+    public async Task UpdateHardskills()
+    {
+        _hardskills = await _hardskillService.GetAllDesHardskills();
+        StateHasChanged();
+    }
+
+    public void UpdateSoftskills()
     {
         _softskills = _basicDataService.GetAllSoftSkills();
+        StateHasChanged();
+    }
+    
+    public void UpdateFields()
+    {
         _fields = _basicDataService.GetAllFields();
+        StateHasChanged();
+    }
+
+    public void UpdateRoles()
+    {
         _roles = _basicDataService.GetAllRoles();
-        _hardskills = await _hardskillService.GetAllDesHardskills();
-        _allRoots = await _hardskillService.GetAllRoots();
         StateHasChanged();
     }
 

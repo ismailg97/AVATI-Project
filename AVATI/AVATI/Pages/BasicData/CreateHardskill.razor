@@ -82,7 +82,8 @@
     await _hardskillService.CreateHardskill(hardskill);
     UpperCat.Clear();
     _hardskill.Description = "";
-    await Abstract.UpdateLists();
+    await Abstract.UpdateCategorys();
+    await Abstract.UpdateHardskills();
     Showing();
     //_navigationManager.NavigateTo(_navigationManager.Uri, true);
   }

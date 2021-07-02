@@ -20,6 +20,8 @@ namespace AVATI.Data
         public Task<bool> DeleteHardskillCategory( string description );
 
         public Task<bool> ContainsAnyHardskills( string description );
+
+        public Task<bool> ContainsJustHardskills( string description);
         
         public Task<Hardskill> GetHardskillCategory( string description );
         public Task<List<Hardskill>> GetAllHardskillCategorys();
@@ -33,5 +35,6 @@ namespace AVATI.Data
         public Task<List<string>> GetHardskillsOfCategory(string description);
         public Task<bool> CheckDescriptionHardskill(string description);
 
+        public Task<List<string>> AllCategorysOfCategory(string category);
     }
 }

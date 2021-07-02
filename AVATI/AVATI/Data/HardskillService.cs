@@ -193,6 +193,21 @@ namespace AVATI.Data
             return false;
         }
 
+        public async Task<bool> ContainsJustHardskills(string description)
+        {
+            using var db = GetConnection();
+            var subCategorys = (await db.QueryAsync<string>("SELECT Subcat FROM Hardskill_Subcat WHERE Uppercat = @cat", 
+                new{ cat = description })).ToList();
+
+            foreach (var subCat in subCategorys)
+            {
+                if (!(await db.QueryAsync<bool>("SELECT IsHardskill FROM Hardskill WHERE Description = @sub",
+                    new {sub = subCat})).Single()) return false;
+            }
+
+            return true;
+        }
+
         public async Task<List<Hardskill>> GetAllHardskillCategorys()
         {
             using var db = GetConnection();
@@ -307,6 +322,43 @@ namespace AVATI.Data
             using var db = GetConnection();
             return (await db.QueryAsync<string>("SELECT Description FROM Hardskill WHERE Description = @skillOrCat",
                 new {skillOrCat = description})).SingleOrDefault() == null;
+        }
+
+        private async Task<List<string>> AllSubCatsOfCategory(string category)
+        {
+            using var db = GetConnection();
+            var subCats = (await db.QueryAsync<string>(
+                "SELECT Subcat FROM Hardskill_Subcat WHERE Uppercat = @uppercat AND Subcat in (SELECT Description FROM Hardskill WHERE IsHardskill = 0)",
+                new {uppercat = category})).ToList();
+            var subCatsReturn = new List<string>(subCats);
+            foreach (var subCat in subCats)
+            {
+                subCatsReturn.AddRange( await AllSubCatsOfCategory(subCat));
+            }
+
+            return subCatsReturn;
+        }
+        
+        private async Task<List<string>> AllUpperCatsOfCategory(string category)
+        {
+            using var db = GetConnection();
+            var upperCat = (await db.QueryAsync<string>(
+                "SELECT Uppercat FROM Hardskill_Subcat WHERE Subcat = @subcat",
+                new { subcat = category })).SingleOrDefault();
+            var upperCatReturn = new List<string>();
+            if (upperCat == null)
+                return upperCatReturn;
+            upperCatReturn.Add(upperCat);
+            upperCatReturn.AddRange(await AllUpperCatsOfCategory(upperCat));
+
+            return upperCatReturn;
+        }
+
+        public async Task<List<string>> AllCategorysOfCategory(string category)
+        {
+            var allCategorys = await AllUpperCatsOfCategory(category);
+            allCategorys.AddRange(await AllSubCatsOfCategory(category));
+            return allCategorys;
         }
     }
 }

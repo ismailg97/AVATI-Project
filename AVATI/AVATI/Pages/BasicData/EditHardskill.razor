@@ -87,7 +87,8 @@
     NewHardskill.Uppercat = new List<string>(UpperCat);
     
     await _hardskillService.UpdateHardskill(NewHardskill, OldHardskill);
-    await Abstract.UpdateLists();
+    await Abstract.UpdateHardskills();
+    await Abstract.UpdateCategorys();
     Showing();
     //_navigationManager.NavigateTo(_navigationManager.Uri, true);
   }
