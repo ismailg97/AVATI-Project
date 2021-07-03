@@ -24,7 +24,7 @@
         <label for="sucheprop" class="col-form-label mr-2 font-weight-bold">Suche:</label>
         <input type="search" class="col-6 form-control" id="sucheProp" @bind-value="_filterSearch" @bind-value:event="oninput"/>
     </div>
-    <div class="container col-11">
+    <div class="container col-sm">
         <div class="row">
             @foreach (var proposal in _proposals)
             {

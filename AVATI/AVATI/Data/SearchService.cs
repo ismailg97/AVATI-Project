@@ -185,7 +185,7 @@ namespace AVATI.Data
             foreach (var employee in EmployeeList)
             {
                 int numberOfMatches = 0;
-                if (name != null && String.Concat(employee.FirstName, " " + employee.LastName).Contains(name))
+                if (name != null && String.Concat(employee.FirstName, " " + employee.LastName).Contains(name, StringComparison.OrdinalIgnoreCase))
                 {
                     ++numberOfMatches;
                 }
