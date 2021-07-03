@@ -15,9 +15,9 @@
                @bind:event="oninput">
     </div>
     <tr>
-        <th scope="col">Projekttitel</th>
-        <th scope="col">Projektbeschreibung</th>
-        <th scope="col"></th>
+        <th>Projekttitel</th>
+        <th>Projektbeschreibung</th>
+        <th></th>
     </tr>
     </thead>
     <tbody>
@@ -28,17 +28,17 @@
             @if (filterSearch == null || project.Projecttitel.Contains(filterSearch, StringComparison.OrdinalIgnoreCase))
             {
                 <tr>
-                    <td>@project.Projecttitel</td>
-                    <td>@project.Projectdescription</td>
-                    <td class="text-right">
+                    <td style="width: 30%">@project.Projecttitel</td>
+                    <td style="width: 40%">@project.Projectdescription</td>
+                    <td class="text-right" style="width: 30%">
                         <a href="/Projektübersicht/Projektedit/@project.ProjectID">
-                            <button type="button" class="btn btn-primary"><span class="oi oi-pencil" aria-hidden="true"></span> Bearbeiten</button>
+                            <button type="button" class="btn btn-primary btn-sm"><span class="oi oi-pencil" aria-hidden="true"></span> Bearbeiten</button>
                         </a>
 
                         <a href="/Projektübersicht/ProjectDetailedView/@project.ProjectID">
-                            <button type="button" class="btn btn-info"><span class="oi oi-project" aria-hidden="true"></span> Details</button>
+                            <button type="button" class="btn btn-info btn-sm"><span class="oi oi-project" aria-hidden="true"></span> Details</button>
                         </a>
-                        <button type="button" class="btn btn-danger"
+                        <button type="button" class="btn btn-danger btn-sm"
                                 @onclick=@(() => { ShowDelete(project.ProjectID); })>
                             <span class="oi oi-delete" aria-hidden="true"></span> Löschen
                         </button>

@@ -19,9 +19,9 @@
 
 @if (PageIsLoaded)
 {
-    <div class="container h-100 @(IsProject ? "col" : "col-10")">
-    <div class="row h-100 justify-content-center align-items-center">
-    <div class="@(IsProject ? "col" : "col-12") text-left">
+    <div class="container h-100 @(IsProject ? "col" : "col-12")" style="margin-left: 5%">
+ 
+    <div class="col-12 text-left">
     <EditForm Model="_searchService">
         @if (Id != 0)
         {
@@ -57,9 +57,8 @@
                 }
             </div>
         </div>
-
         <div class="form-group row">
-            <div class="@(IsProject ? "col-5" : "col-4") mr-4">
+            <div class="col-4 mr-4">
                 <label for="suche">Filter <small class="text-muted">(Nach individuellen Hardskills suchen)</small></label>
                 <input type="search" class="col form-control" id="suche" @bind-value="TempHardskill" @bind-value:event="oninput" placeholder="Hardskill..."/>
                 <div class="form-group row col">
@@ -75,7 +74,7 @@
                     }
                 </div>
             </div>
-            <div class="@(IsProject ? "col-5" : "col-4") mr-4">
+            <div class="col-4 mr-4">
                 <label for="suche">Filter <small class="text-muted">(Nach Hardskillkategorien suchen)</small></label>
                 <input type="search" class="col form-control" id="suche" @bind-value="TempCategory" @bind-value:event="oninput" placeholder="Hardskillkategorie..."/>
                 <div class="form-group row col">
@@ -151,18 +150,18 @@
     {
         if (!_searchService.PerfectMatch && SelectEmployees.Any())
         {
-            <div class="alert alert-danger">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die alle Kriterien erfüllt!</div>
+            <div class="alert alert-danger col-10">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die alle Kriterien erfüllt!</div>
         }
 
         @if (!SelectEmployees.Any())
         {
-            <div class="alert alert-danger">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die mindestens eines der Kriterien erfüllt!</div>
+            <div class="alert alert-danger col-10">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die mindestens eines der Kriterien erfüllt!</div>
         }
         else
         {
             <h4 class="mb-3 font-weight-bold">Gefundene Mitarbeiter:</h4>
 
-            <table class="table table-bordered table-striped text-center" id="result-table">
+            <table class="table table-bordered table-striped text-center col-10" id="result-table">
                 <thead>
                 <tr>
                     <th>Name</th>
@@ -250,7 +249,6 @@
     {
         <button class="btn btn-info mt-2" id="returnBtn" @onclick=@(() => { ReturnToProposal(Id); })>Zum Angebot zurück</button>
     }
-    </div>
     </div>
     </div>
 }

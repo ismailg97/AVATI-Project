@@ -24,8 +24,8 @@
         <label for="sucheprop" class="col-form-label mr-2 font-weight-bold">Suche:</label>
         <input type="search" class="col-6 form-control" id="sucheProp" @bind-value="_filterSearch" @bind-value:event="oninput"/>
     </div>
-    <div class="container col-10">
-        <div class="row row-cols-1 row-cols-md-1">
+    <div class="container col-11">
+        <div class="row">
             @foreach (var proposal in _proposals)
             {
                 @if (proposal.ProposalTitle.Contains(_filterSearch, StringComparison.OrdinalIgnoreCase))
@@ -34,10 +34,10 @@
                         <div class="card border-dark h-100">
                             <div class="card-header text-center">
                                 <p class="font-weight-bolder">Angebot: @proposal.ProposalID.ToString()</p>
-                                <p>
+                                <div class="row justify-content-center mb-1">
                                     <button class="btn btn-outline-dark btn-sm" @onclick=@(async () => { await CreateDocument(proposal.ProposalID); })>Dokument erzeugen</button>
-                                    <button class="btn btn-outline-success btn-sm ml-2" id="createProj" @onclick=@(() => { CallConfirmation(proposal.ProposalID); })>Projekt erzeugen</button>
-                                </p>
+                                    <button class="btn btn-outline-success btn-sm ml-1" id="createProj" @onclick=@(() => { CallConfirmation(proposal.ProposalID); })>Projekt erzeugen</button>
+                                </div>
                                 <button class="btn btn-outline-secondary btn-sm" @onclick=@(() => { ShowEdit(proposal.ProposalID); })> Editieren</button>
                                 <button class="btn btn-outline-info btn-sm" id="copyProposal" @onclick=@(async () => { await CallCopy(proposal.ProposalID); })>Kopieren</button>
                                 <button class="btn btn-outline-danger btn-sm" id="deleteProp" @onclick=@(async () => { await CallDelete(proposal.ProposalID); })>Löschen</button>
@@ -323,7 +323,6 @@
     public async Task Update()
     {
         _isLoaded = false;
-        Console.WriteLine("We do enter here");
         var tempValue = _proposal.GetAllProposals();
         _proposals = await tempValue;
         _promptDelete = new Dictionary<int, bool>();
@@ -359,7 +358,6 @@
 
     private void ShowEdit(int propId)
     {
-        Console.WriteLine("this function is being called");
         _editProposal.Show(propId);
     }
 
@@ -370,7 +368,6 @@
         {
             if (!_tempEmpList.Exists(e => e.EmployeeID == emp.EmployeeID))
             {
-                Console.WriteLine("GEHEN WIR HIER REIN");
                 _proposal.RemoveEmployee(propId, emp.EmployeeID);
             }
         }
@@ -465,16 +462,13 @@
             using (WordprocessingDocument wordDocument =
                 WordprocessingDocument.Create(mem, WordprocessingDocumentType.Document))
             {
-    //Grundstruktur des Dokuments erzeugen (Document und Rumpf des Dokuments)
                 MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
                 Document document1 = new Document();
                 Body body1 = document1.AppendChild(new Body());
-    //Document zeilenweise befüllen
                 Paragraph para1 = body1.AppendChild(new Paragraph());
                 Run run1 = para1.AppendChild(new Run());
                 run1.AppendChild(new Text("Projekt: " + id.ToString()));
-
-    //Das erstellte Dokument übergeben
+                
                 mainPart.Document = document1;
             }
 

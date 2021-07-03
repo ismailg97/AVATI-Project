@@ -10,7 +10,7 @@ namespace AVATI.Data.ValidationAttributes
             if (value is Proposal proposal)
             {
 
-                if (proposal.Start.CompareTo(proposal.End) >= 0)
+                if (proposal.Start.CompareTo(proposal.End.AddDays(1)) >= 0)
                 {
                     return new ValidationResult("Startdatum kann nicht vor Enddatum liegen!");
                 }
@@ -28,7 +28,7 @@ namespace AVATI.Data.ValidationAttributes
                     
             } else if (value is Project project)
             {
-                if (project.Projectbeginning.CompareTo(project.Projectend) >= 0)
+                if (project.Projectbeginning.CompareTo(project.Projectend.AddDays(1)) >= 0)
                 {
                     return new ValidationResult("Startdatum kann nicht vor Enddatum liegen!");
                 }
