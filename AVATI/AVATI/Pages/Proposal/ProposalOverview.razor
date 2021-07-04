@@ -24,13 +24,12 @@
         <label for="sucheprop" class="col-form-label mr-2 font-weight-bold">Suche:</label>
         <input type="search" class="col-6 form-control" id="sucheProp" @bind-value="_filterSearch" @bind-value:event="oninput"/>
     </div>
-    <div class="container col-sm">
-        <div class="row">
+    <div class="row">
             @foreach (var proposal in _proposals)
             {
                 @if (proposal.ProposalTitle.Contains(_filterSearch, StringComparison.OrdinalIgnoreCase))
                 {
-                    <div class="col-4 mb-4">
+                    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
                         <div class="card border-dark h-100">
                             <div class="card-header text-center">
                                 <p class="font-weight-bolder">Angebot: @proposal.ProposalID.ToString()</p>
@@ -40,7 +39,7 @@
                                 </div>
                                 <button class="btn btn-outline-secondary btn-sm" @onclick=@(() => { ShowEdit(proposal.ProposalID); })> Editieren</button>
                                 <button class="btn btn-outline-info btn-sm" id="copyProposal" @onclick=@(async () => { await CallCopy(proposal.ProposalID); })>Kopieren</button>
-                                <button class="btn btn-outline-danger btn-sm" id="deleteProp" @onclick=@(async () => { await CallDelete(proposal.ProposalID); })>Löschen</button>
+                                <button class="btn btn-outline-danger btn-sm" id="deleteProp" @onclick=@(() => {propToDelete = proposal.ProposalID; _promptPropDelete = !_promptPropDelete;})>Löschen</button>
                             </div>
                             <div class="card-body text-center">
                                 <h5 class="card-title text-center">@proposal.ProposalTitle</h5>
@@ -137,7 +136,6 @@
             }
 
         </div>
-    </div>
 }
 @if(!_isLoaded)
 {
@@ -179,11 +177,32 @@
     <div class="modal-backdrop fade show"></div>
 }
 
+@if (_promptPropDelete)
+{
+    <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
+        <div class="modal-dialog">
+            <div class="modal-content" style="border-color: darkslategray; border-width: 5px">
+                <div class="modal-header flex-column">
+                    <h4 class="modal-title col-12 text-center">Löschen bestätigen</h4>
+                </div>
+                <div class="modal-body text-left">
+                <p>Wollen Sie das Angebot <b> "@_proposal.GetProposal(propToDelete).ProposalTitle" </b> wirklich löschen? Der Prozess kann nicht rückgängig gemacht werden!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { _promptPropDelete = !_promptPropDelete; })">Abbrechen</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(async () => {_promptPropDelete = !_promptPropDelete; await CallDelete(propToDelete);})">Löschen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
 @if (PromptConfirmation)
 {
     <div class="modal fade show mt-5 overflow-auto" id="myModal" style=" display: inline-block; max-height: 80%">
         <div class="modal-dialog modal-lg border border-5 border-dark">
-            <div class="modal-content">
+            <div class="modal-content" style="border-color: darkslategray; border-width: 5px">
                 <div class="modal-header">
                     <div class="modal-title justify-content-center">Angebot Nr.@Temp.ProposalID in ein Projekt umwandeln? </div>
                 </div>
@@ -282,7 +301,8 @@
     [Parameter]
     public int Open { get; set; }
 
-    private bool _isLoaded = false;
+    private bool _promptPropDelete;
+    private bool _isLoaded;
     private List<Proposal> _proposals;
     private string _filterSearch = "";
     EditProposal _editProposal;
@@ -297,7 +317,7 @@
     public static int EmpEdit { get; set; }
     public Proposal Temp { get; set; }
     private static int _changeValue;
-
+    private int propToDelete;
     private List<Employee> _tempEmpList;
 
     protected override async Task OnInitializedAsync()

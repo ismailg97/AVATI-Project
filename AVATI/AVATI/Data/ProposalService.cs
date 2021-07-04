@@ -45,6 +45,12 @@ namespace AVATI.Data
             return GetProposal(proposalId).Fields;
         }
 
+        public bool GenerateDocument(int proposalId)
+        {
+            //TODO: in service-klasse einbinden
+            return false;
+        }
+
         public bool RemoveEmployee(int propId, int empId)
         {
             using DbConnection db = GetConnection();
@@ -60,7 +66,6 @@ namespace AVATI.Data
                 new {prop = propId, emp = empId});
             db.Execute("Delete FROM EmployeeDetail WHERE ProposalId = @prop and EmployeeId = @emp",
                 new {prop = propId, emp = empId});
-            Console.WriteLine("We out here");
             return true;
         }
 
@@ -71,7 +76,7 @@ namespace AVATI.Data
                 db.QuerySingle<Employee>("SELECT * FROM Employee WHERE EmployeeID = @emp", new {emp = empl});
             if (tempEmp == null)
             {
-                Console.WriteLine("Employee doesnt exist");
+                return false;
             }
 
             db.Execute("INSERT INTO EmployeeDetail VALUES(@prop, @emp, @oldRc)",
@@ -92,7 +97,7 @@ namespace AVATI.Data
                 db.Execute("INSERT INTO Proposal VALUES(@proposalTitle, @Info, @beg, @end)",
                     new
                     {
-                        proposalTitle = proposal.ProposalTitle ?? "LEER",
+                        proposalTitle = proposal.ProposalTitle,
                         Info = proposal.AdditionalInfo ?? "[Keine Zusatzinformationen]",
                         beg = proposal.Start.ToString("d", DateTimeFormatInfo.InvariantInfo),
                         end = proposal.End.ToString("d", DateTimeFormatInfo.InvariantInfo)
@@ -101,13 +106,13 @@ namespace AVATI.Data
             }
             else
             {
-                Console.WriteLine("Are we ebin :=");
                 db.Execute(
-                    "update Proposal set ProposalTitle = @propTitle, AdditionalInfo = @addInfo where ProposalId = @propId",
+                    "update Proposal set ProposalTitle = @propTitle, AdditionalInfo = @addInfo, ProposalEnd = @end, ProposalBegin = @start where ProposalId = @propId",
                     new
                     {
                         propTitle = proposal.ProposalTitle ?? "Leer",
-                        addInfo = proposal.AdditionalInfo ?? "[Keine Zusatzinformationen", propId = idToUSe
+                        addInfo = proposal.AdditionalInfo ?? "[Keine Zusatzinformationen", propId = idToUSe,
+                        start = proposal.Start, end = proposal.End
                     });
             }
 
@@ -159,7 +164,7 @@ namespace AVATI.Data
             if (db.Query<Proposal>("SELECT * FROM PROPOSAL WHERE ProposalId = @propID", new {propId = proposalId})
                 .FirstOrDefault() == null)
             {
-                Console.WriteLine("fehler beim löschen des Probosals");
+                
                 return false;
             }
             else
@@ -188,7 +193,7 @@ namespace AVATI.Data
                 db.Execute("INSERT INTO Proposal VALUES(@proposalTitle, @Info, @beg, @end)",
                     new
                     {
-                        proposalTitle = (temp.ProposalTitle == null) ? "LEER" :  temp.ProposalTitle + " [KOPIE]",
+                        proposalTitle = temp.ProposalTitle + " [KOPIE]",
                         Info = temp.AdditionalInfo ?? "[Keine Zusatzinformationen]",
                         beg = temp.Start.ToString("d", DateTimeFormatInfo.InvariantInfo),
                         end = temp.End.ToString("d", DateTimeFormatInfo.InvariantInfo)
@@ -221,11 +226,7 @@ namespace AVATI.Data
                 return newId;
             }
         }
-
-        public bool GenerateDocument(int proposalId)
-        {
-            throw new System.NotImplementedException();
-        }
+        
 
         public Proposal GetProposal(int proposalId)
         {
@@ -235,7 +236,6 @@ namespace AVATI.Data
                     new {propId = proposalId})
                 .FirstOrDefault()) == null)
             {
-                Console.WriteLine("FEEEEEHLER DAS PROPOSAL JIBT ES NICHT");
                 return null;
             }
             else
@@ -320,7 +320,6 @@ namespace AVATI.Data
                 "Update EmployeeDetail SET AltRC = @newRCLevel Where ProposalID = @propId and EmployeeId = @employeeId",
                 new {newRCLevel = newRc, propId = proposalId, employeeId = empId}) != 1)
             {
-                Console.WriteLine("Fehler beim ändern des RC-Levels");
                 return false;
             }
             else
