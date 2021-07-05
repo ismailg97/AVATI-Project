@@ -14,22 +14,31 @@
 @inject IProposalService _proposal
 @inject NavigationManager _navManager
 @inject SearchService _search
+@inject IJSRuntime _jsRuntime
 <EmployeeDetail @ref="_employeeDetail" Abstract="@this"/>
 <EditProposal @ref="_editProposal" Abstract="@this"/>
 
 @if (_isLoaded)
 {
     <button class="btn btn-success float-right mr-2" id="createNew" @onclick=@(() => { ShowEdit(0); })>Neues Angebot</button>
-    <div class="form-group row justify-content-center mr-5">
-        <label for="sucheprop" class="col-form-label mr-2 font-weight-bold">Suche:</label>
-        <input type="search" class="col-6 form-control" id="sucheProp" @bind-value="_filterSearch" @bind-value:event="oninput"/>
+    <div class="form-group row">
+    <label for="sucheprop" class="col-form-label mr-2 font-weight-bold">Suche:</label>
+        <input type="search" class="col-5 form-control" id="sucheProp" @bind-value="_filterSearch" placeholder="Angebotstitel..." @bind-value:event="oninput"/>
     </div>
-    <div class="row">
+    <div class="row @((_proposals.FindAll((e => e.ProposalTitle.Contains(_filterSearch, StringComparison.OrdinalIgnoreCase))).Count < 3) ? "justify-content-center" : "")">
+        @{
+            Proposal proposalToSwap;
+            if (Open != 0 && (proposalToSwap = _proposals.Find(e => e.ProposalID == Open)) != null)
+            {
+                _proposals.Remove(proposalToSwap);
+                _proposals.Insert(0, proposalToSwap);
+            }
+        }
             @foreach (var proposal in _proposals)
             {
                 @if (proposal.ProposalTitle.Contains(_filterSearch, StringComparison.OrdinalIgnoreCase))
                 {
-                    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                    <div class="col-lg-4 col-md-6 col-sm-12 mb-4" id=@proposal.ProposalID.ToString()>
                         <div class="card border-dark h-100">
                             <div class="card-header text-center">
                                 <p class="font-weight-bolder">Angebot: @proposal.ProposalID.ToString()</p>
@@ -37,7 +46,7 @@
                                     <button class="btn btn-outline-dark btn-sm" @onclick=@(async () => { await CreateDocument(proposal.ProposalID); })>Dokument erzeugen</button>
                                     <button class="btn btn-outline-success btn-sm ml-1" id="createProj" @onclick=@(() => { CallConfirmation(proposal.ProposalID); })>Projekt erzeugen</button>
                                 </div>
-                                <button class="btn btn-outline-secondary btn-sm" @onclick=@(() => { ShowEdit(proposal.ProposalID); })> Editieren</button>
+                                <button class="btn btn-outline-secondary btn-sm" id="editProposal" @onclick=@(() => { ShowEdit(proposal.ProposalID); })> Editieren</button>
                                 <button class="btn btn-outline-info btn-sm" id="copyProposal" @onclick=@(async () => { await CallCopy(proposal.ProposalID); })>Kopieren</button>
                                 <button class="btn btn-outline-danger btn-sm" id="deleteProp" @onclick=@(() => {propToDelete = proposal.ProposalID; _promptPropDelete = !_promptPropDelete;})>Löschen</button>
                             </div>
@@ -64,7 +73,7 @@
                                                 <li class="list-group-item border-dark bg-light font-weight-bold text-black">
                                                     <span id="empName">@employee.FirstName @employee.LastName</span>
                                                     <div class="btn-group float-right">
-                                                        <button class="btn btn-info btn-sm mr-2" @onclick=@(async () => { await ShowDetail(employee.EmployeeID, proposal.ProposalID); })>Details</button>
+                                                        <button class="btn btn-info btn-sm mr-2" id="empDetail" @onclick=@(async () => { await ShowDetail(employee.EmployeeID, proposal.ProposalID); })>Details</button>
                                                         <button class="btn btn-primary btn-sm " @onclick=@(() => { ShowRcEdit(proposal, employee.EmployeeID, 3); })>RC: @proposal.AltRc[employee.EmployeeID] </button>
                                                     </div>
 
@@ -134,8 +143,8 @@
                     </div>
                 }
             }
-
         </div>
+    
 }
 @if(!_isLoaded)
 {
@@ -190,7 +199,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { _promptPropDelete = !_promptPropDelete; })">Abbrechen</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(async () => {_promptPropDelete = !_promptPropDelete; await CallDelete(propToDelete);})">Löschen</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="deletePropConfirm" @onclick="(async () => {_promptPropDelete = !_promptPropDelete; await CallDelete(propToDelete);})">Löschen</button>
                 </div>
             </div>
         </div>
@@ -300,7 +309,8 @@
 
     [Parameter]
     public int Open { get; set; }
-
+    
+    
     private bool _promptPropDelete;
     private bool _isLoaded;
     private List<Proposal> _proposals;
@@ -336,7 +346,6 @@
             _showAdditionalInfo.Add(proposal.ProposalID, true);
         }
         _isLoaded = true;
-        Open = 0;
         StateHasChanged();
     }
 

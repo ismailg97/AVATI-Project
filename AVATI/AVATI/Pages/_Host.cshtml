@@ -32,6 +32,13 @@
            document.getElementById("result-table").scrollIntoView({behavior:"smooth"})
             
         }
+        
+        window.scrollAble = {
+           scrollToProposal: function(objectFromDotNet)
+           {
+               document.getElementById(objectFromDotNet.toString()).scrollIntoView({behavior:"smooth"})
+           }
+       };  
 </script> 
 
 <component type="typeof(App)" render-mode="ServerPrerendered"/>

@@ -13,7 +13,7 @@ namespace AVATI.Data.ValidationAttributes
                 if (proposal.Start.CompareTo(proposal.End.AddDays(1)) >= 0)
                 {
                     return new ValidationResult("Startdatum kann nicht vor Enddatum liegen!");
-                } else if (proposal.Start.CompareTo(DateTime.Now.AddDays(1)) < 0 || proposal.End.CompareTo(DateTime.Now.AddDays(1)) < 0)
+                } else if (proposal.Start.CompareTo(DateTime.Now.AddDays(-1)) < 0 || proposal.End.CompareTo(DateTime.Now.AddDays(-1)) < 0)
                 {
                     return new ValidationResult("Start-/Enddatum können nicht vor dem aktuellen Datum liegen!");
                 }
