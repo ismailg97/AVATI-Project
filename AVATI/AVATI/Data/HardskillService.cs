@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -161,10 +162,12 @@ namespace AVATI.Data
             
             foreach (var skill in cat.Subcat)
             {
-                if (cat.Uppercat != null && cat.Uppercat.Any())
+                var upperCatsOfSkill = (await db.QueryAsync<string>("SELECT Uppercat FROM Hardskill_Subcat WHERE Subcat = @subcat",
+                    new {subcat = skill})).ToList();
+                if (cat.Uppercat != null && cat.Uppercat.Any() && !upperCatsOfSkill.Contains(cat.Uppercat[0]))
                 {
                     var insertUpper = await db.ExecuteAsync("INSERT INTO Hardskill_Subcat (Uppercat, Subcat) VALUES (@uppercat, @subcat)", 
-                        new{ uppercat = cat.Uppercat, subcat = skill });
+                        new{ uppercat = cat.Uppercat[0], subcat = skill });
                     if (insertUpper != 1) return false;
                 }
             }
@@ -281,10 +284,14 @@ namespace AVATI.Data
             {
                 var isHardskill = (await db.QueryAsync<bool>(
                     "SELECT IsHardskill FROM Hardskill WHERE Description = @sub ", new{ sub = subcat})).Single();
-                if (isHardskill)
+                if (isHardskill && !hardskills.Contains(subcat))
                     hardskills.Add(subcat);
                 else
-                    hardskills.AddRange(await GetHardskillsOfCategory(subcat));
+                {
+                    var next = await GetHardskillsOfCategory(subcat);
+                    foreach (var hardskill in next.Where(x => !hardskills.Contains(x)))
+                        hardskills.Add(hardskill);
+                }
             }
 
             return hardskills;
@@ -320,8 +327,15 @@ namespace AVATI.Data
         public async Task<bool> CheckDescriptionHardskill(string description)
         {
             using var db = GetConnection();
-            return (await db.QueryAsync<string>("SELECT Description FROM Hardskill WHERE Description = @skillOrCat",
-                new {skillOrCat = description})).SingleOrDefault() == null;
+            var trimDesc = description.Replace(" ", "");
+            var allCatsHardskills = (await db.QueryAsync<string>("SELECT Description FROM Hardskill")).ToList();
+            foreach (var skillOrCat in allCatsHardskills)
+            {
+                if (trimDesc.Equals(skillOrCat.Replace(" ", ""), StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
+
+            return true;
         }
 
         private async Task<List<string>> AllSubCatsOfCategory(string category)

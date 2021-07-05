@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -120,22 +121,43 @@ namespace AVATI.Data
         public bool CheckDescriptionSoftskill(string description)
         {
             using var db = GetConnection();
-            return db.Query<string>("SELECT Description FROM Softskill WHERE Description = @skillOrCat",
-                new {skillOrCat = description}).SingleOrDefault() == null;
+            var trimDesc = description.Replace(" ", "");
+            var allSoftSkills = db.Query<string>("SELECT Description FROM Softskill").ToList();
+            foreach (var softSkill in allSoftSkills)
+            {
+                if (trimDesc.Equals(softSkill.Replace(" ", ""), StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
+
+            return true;
         }
         
         public bool CheckDescriptionField(string description)
         {
             using var db = GetConnection();
-            return  db.Query<string>("SELECT Description FROM Field WHERE Description = @skillOrCat",
-                new {skillOrCat = description}).SingleOrDefault() == null;
+            var trimDesc = description.Replace(" ", "");
+            var allFields = db.Query<string>("SELECT Description FROM Field").ToList();
+            foreach (var field in allFields)
+            {
+                if (trimDesc.Equals(field.Replace(" ", ""), StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
+
+            return true;
         }
         
         public bool CheckDescriptionRole(string description)
         {
             using var db = GetConnection();
-            return  db.Query<string>("SELECT Description FROM dbo.ROle WHERE Description = @skillOrCat",
-                new {skillOrCat = description}).SingleOrDefault() == null;
+            var trimDesc = description.Replace(" ", "");
+            var allRoles = db.Query<string>("SELECT Description FROM Role").ToList();
+            foreach (var role in allRoles)
+            {
+                if (trimDesc.Equals(role.Replace(" ", ""), StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
+
+            return true;
         }
     }
 }
