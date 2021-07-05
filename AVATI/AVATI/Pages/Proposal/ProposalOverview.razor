@@ -506,11 +506,69 @@
         }
         return table;
     }
+
+    public Table TestTable(int id)
+    {
+        Table table = new Table();
+        TableProperties props = new TableProperties(
+            new TableBorders(
+                new TopBorder
+                {
+                    Val = new EnumValue<BorderValues>(BorderValues.Single),
+                    Size = 12
+                },
+                new BottomBorder
+                {
+                    Val = new EnumValue<BorderValues>(BorderValues.Single),
+                    Size = 12
+                },
+                new LeftBorder
+                {
+                    Val = new EnumValue<BorderValues>(BorderValues.Single),
+                    Size = 12
+                },
+                new RightBorder
+                {
+                    Val = new EnumValue<BorderValues>(BorderValues.Single),
+                    Size = 12
+                },
+                new InsideHorizontalBorder
+                {
+                    Val = new EnumValue<BorderValues>(BorderValues.Single),
+                    Size = 12
+                },
+                new InsideVerticalBorder
+                {
+                    Val = new EnumValue<BorderValues>(BorderValues.Single),
+                    Size = 12
+                }));
+        table.AppendChild<TableProperties>(props);
+        
+        foreach (var emp in _proposal.GetProposal(id).Employees)
+        {
+            Console.WriteLine(emp.FirstName + emp.LastName);
+            foreach (var role in emp.Roles)
+            {
+                Console.WriteLine(role);
+                var tr = new TableRow();
+                var tc = new TableCell();
+                tc.AppendChild(new Paragraph(new Run(new Text(emp.FirstName + emp.LastName + role))));
+                tc.AppendChild(new TableCellProperties(new TableCellWidth {Type = TableWidthUnitValues.Auto}));
+                tr.AppendChild(tc);
+                table.AppendChild(tr);
+                Console.WriteLine("I added a TableRow");
+            }
+        }
+        
+        return table;
+    }
     
     public async Task CreateDocument(int id)
     {
+        string empTemplatePath = "E:\\Users\\Tobi\\Desktop\\AvatiWorkerDoc.docx";
         string templatePath = "E:\\Users\\Tobi\\Desktop\\AvatiProposalDoc.docx";
         MemoryStream memStream = new MemoryStream();
+        var pageBreaker = new Paragraph(new Run(new Break { Type = BreakValues.Page}));
         await using (FileStream fileStream = new FileStream(templatePath, FileMode.Open, FileAccess.Read))
             await fileStream.CopyToAsync(memStream);
         using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(memStream, true))
@@ -519,6 +577,7 @@
             if (wordDoc.MainDocumentPart != null)
             {
                 Body body = wordDoc.MainDocumentPart.Document.Body;
+                var doc = wordDoc.MainDocumentPart.Document;
                 var paragraphs = body.Descendants<Paragraph>().ToList();
                 foreach (var par in paragraphs)
                 {
@@ -558,19 +617,31 @@
                                     }
                                     par.Remove();
                                     break;
-                                case "Tätigkeitsbereiche":
-                                    body.AppendChild(GenerateRoleTable(id));
+                                case "Rollenverteilung":
+                                    Console.WriteLine("Hier");
+                                    //body.AppendChild(GenerateRoleTable(id));
+                                    //par.InsertAfterSelf(new Table(new TableRow(new TableCell(new Paragraph(new Run(new Text("TestL")))), new TableCell(new Paragraph(new Run(new Text("TestR")))))));
+                                    body.Append(TestTable(id));
+                                    body.AppendChild(pageBreaker);
                                     break;
                             }
                         }
                     }
                 }
+                /*
+                paragraphs = body.Descendants<Paragraph>().ToList();
+                string altChunkId = "AltChunkId1";
+                AlternativeFormatImportPart chunk = wordDoc.MainDocumentPart.AddAlternativeFormatImportPart(AlternativeFormatImportPartType.WordprocessingML, altChunkId);
+                using (FileStream fs = File.Open(empTemplatePath, FileMode.Open))
+                {
+                    chunk.FeedData(fs);
+                }
+                var altChunk = new AltChunk();
+                altChunk.Id = altChunkId;
+                body.InsertAfter(altChunk, paragraphs.Last());*/    //working fine
             }
-            //TODO After inserting the table, fill 'Mitarbeiterprofile' from another template if possible
-            //TODO After filling the Profiles, KOSTENMIXKALKULATION   DAMM DAMM DAMM, also from another template if possible
+    //TODO After filling the Profiles, KOSTENMIXKALKULATION   DAMM DAMM DAMM, also from another template if possible
             Console.WriteLine(wordDoc.ToFlatOpcString());
-            wordDoc.Save(); //maybe useless
-            wordDoc.Close();//maybe usless
         }
         var task = await _blazorDownloadFileService.DownloadFile("test.docx", memStream, "application/octet-stream");
     }
