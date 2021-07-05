@@ -1,110 +1,171 @@
 ﻿@using AVATI.Data
-@using DocumentFormat.OpenXml.Wordprocessing
-@using System.Security.Cryptography
 
 @inject IHardskillService _hardskillService
-@inject NavigationManager _navigationManager
 
 <div class="modal @(_show ? "fade show" : "" )" id="myModal" style=" display: @(_show ? "block" : "none");">
                <div class="modal-dialog">
                  <div class="modal-content">
-                   <div class="modal-header">
-                     @if (ShowCreateCat)
-                     {
-                       <h5 class="modal-title">
-                         Erstellen einer neuen Kategorie
-                       </h5>
-                     } else {
-                       <h5 class="modal-title">
-                         Kategorisierung von Hardskills in "<b>@Description</b>"
-                       </h5>
-                     }
-                     <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
-                   </div>
-                   <div class="modal-body">
-                     <div class="container">
-                       
+                   @if (_finishedLoadPage)
+                   {
+                     <div class="modal-header">
                        @if (ShowCreateCat)
                        {
-                         <div class="form-group">
-                           <label>Bezeichnung der Kategorie:</label>
-                           <input class="form-control" type="text" @bind="_cat"/>
-                         </div>
-                       }
-
-                       @if (_containsH)
-                       {
-                         <h6>Bereits enthaltene Hardskills</h6>
-                         <hr/>
-
-                         foreach (var hardskill in Uppercat.Subcat)
-                            {
-                              <button type="button" class="@(IsInList(hardskill) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">
-                                      <a><a class="@(IsInList(hardskill) ? "showRemove" : "")">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a></a>
-                              </button>
-                            }
-                       }
-
-
-                       @if (_hardskills != null && _hardskills.Any(x => x.Uppercat == null))
-                       {
-                         <h6>Hardskills ohne Hardskillkategorie</h6>
-                         <hr/>
-                         foreach (var hardskill in _hardskills)
-                         {
-                           if (hardskill.Uppercat == null)
-                           {
-                             <button type="button" class="@(IsInList(hardskill.Description) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill.Description)">
-                               <a><a class="@(IsInList(hardskill.Description) ? "showRemove" : "")">@hardskill.Description</a> <a class="remove"><span class="oi oi-x"></span></a></a>
-                             </button>
-                           }
-                         }
-                       }
-
-                       @if (_showCreateSkill)
-                       {
-                         <div class="distance">
-                           <label>Bezeichnung des Hardskills:</label>
-                           <input class="form-control" style="display: inline;" type="text" @bind="_hardskill"/>
-                           <button class="check" style="display: inline;" @onclick="CreateHardskill">&#10003;</button>
-                           <button class="stop" style="display: inline;" @onclick="ShowingCreateHardskill">&#10005;</button>
-                         </div>
+                         <h5 class="modal-title">
+                           Erstellen einer neuen Kategorie
+                         </h5>
                        }
                        else
                        {
-                         <div>
-                           <button class="btn btn-outline-success" @onclick="ShowingCreateHardskill">Create New Hardskill</button>
-                         </div>
+                         <h5 class="modal-title">
+                           Kategorisierung von Hardskills in "<b>@Description</b>"
+                         </h5>
                        }
-
-                       <div>
-                         <button class="btn btn-outline-info" @onclick="ShowingCat">Hardskills mit Kategorien @(_showCat ? "ausblenden" : "einblenden")</button>
-                       </div>
-                       @if (_showCat)
-                       {
-                         <div class="list-group border-dark overflow-auto mr-3 col-9" style="height: 200px">
-                              @foreach (var hardskillcat in SubHardskills.Keys.Where(x => x.Description != Description))
-                              {
-                                <div class="container">
-                                  <h6>@hardskillcat.Description</h6>
-                                  <hr/>
-                                  @foreach (var description in SubHardskills[hardskillcat])
-                                  {
-                                    <button type="button" class="@(IsInList(description) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(description)">
-                                      <a><a class="@(IsInList(description) ? "showRemove" : "")">@description</a> <a class="remove"><span class="oi oi-x"></span></a></a>
-                                    </button>
-                                  }
-                                </div>
-                              }
-                         </div>
-                       }
-
+                       <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
                      </div>
-                   </div>
-                   <div class="modal-footer">
-                     <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">Abbrechen</button>
-                     <button type="button" class="btn btn-success" @onclick="AddingHardskills">Speichern</button>
-                   </div>
+                     <div class="modal-body">
+                       <div class="container">
+                         @if (_showExistErrorCategory){
+                           <div class="errormessage">
+                             <a><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></a>
+                           </div>
+                           
+                         } else if (_showEmptyErrorCategory){
+                           <div class="errormessage">
+                             <a><b>Die Bezeichnung ist erforderlich</b></a>
+                           </div>
+                           
+                         }
+
+                         @if (ShowCreateCat)
+                         {
+                           <div class="form-group">
+                             <label>Bezeichnung der Kategorie:</label>
+                             <input class="form-control" type="text" @bind="_cat"/>
+                           </div>
+                         }
+
+                         @if (Subcat.Any())
+                         {
+                           <h6>Enthaltene Hardskills</h6>
+                           <hr/>
+
+                           foreach (var hardskill in Subcat)
+                           {
+                             <button type="button" class="@(IsInList(hardskill) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">
+                               <a><a class="@(IsInList(hardskill) ? "showRemove" : "")">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a></a>
+                             </button>
+                           }
+                         }
+
+                         @if (_toDeleteSkills != null && _toDeleteSkills.Any())
+                         {
+                           <h6>Zu entferndende Hardskills</h6>
+                           <hr/>
+                           foreach (var hardskill in _toDeleteSkills)
+                           {
+                             <button type="button" class="@(IsInList(hardskill) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">
+                               <a><a class="@(IsInList(hardskill) ? "showRemove" : "")">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a></a>
+                             </button>
+                           }
+                         }
+
+                         @if (_hardskills != null && _hardskills.Any())
+                         {
+                           <h6>Hardskills ohne Hardskillkategorie</h6>
+                           <hr/>
+                           foreach (var hardskill in _hardskills)
+                           {
+                             <button type="button" class="@(IsInList(hardskill) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">
+                               <a><a class="@(IsInList(hardskill) ? "showRemove" : "")">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a></a>
+                             </button>
+                           }
+                         }
+
+                         @if (_showCreateSkill)
+                         {
+                           @if (_showExistErrorHardskill){
+                             <div class="errormessage">
+                               <a><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></a>
+                             </div>
+                           
+                           } else if (_showEmptyErrorHardskill){
+                             <div class="errormessage">
+                               <a><b>Die Bezeichnung ist erforderlich</b></a>
+                             </div>
+                           
+                           }
+                           <div class="distance">
+                             <label>Bezeichnung des Hardskills:</label>
+                             <input class="form-control" style="display: inline;" type="text" @bind="_hardskill"/>
+                             <button class="check" style="display: inline;" @onclick="CreateHardskill">&#10003;</button>
+                             <button class="stop" style="display: inline;" @onclick="ShowingCreateHardskill">&#10005;</button>
+                           </div>
+                         }
+                         else
+                         {
+                           <div>
+                             <button class="btn btn-outline-success" @onclick="ShowingCreateHardskill">Create New Hardskill</button>
+                           </div>
+                         }
+
+                         <div>
+                           <button class="btn btn-outline-info" @onclick="ShowingCat">Hardskills mit Kategorien @(_showCat ? "ausblenden" : "einblenden")</button>
+                         </div>
+                         @if (_finishedLoadCats)
+                         {
+                           if (_showCat && SubHardskills.Any())
+                           {
+                             <div class="list-group border-dark overflow-auto mr-3 col-9" style="height: 200px">
+                               @foreach (var hardskillcat in SubHardskills.Keys.Where(x => x != Description))
+                               {
+                                 <div class="container">
+                                   <h6>@hardskillcat</h6>
+                                   <hr/>
+                                   @foreach (var description in SubHardskills[hardskillcat])
+                                   {
+                                     <button type="button" class="@(IsInList(description) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(description)">
+                                       <a><a class="@(IsInList(description) ? "showRemove" : "")">@description</a> <a class="remove"><span class="oi oi-x"></span></a></a>
+                                     </button>
+                                   }
+                                 </div>
+                               }
+                             </div>
+                           }
+                         }
+                         else
+                         {
+                           <div class="d-flex flex-column align-items-center justify-content-center" style="margin-top: 15px;">
+                             <div class="row">
+                               <div class="spinner-border" role="status">
+                                 <span class="sr-only">Loading...</span>
+                               </div>
+                             </div>
+                             <div class="row">
+                               <strong>Lade...</strong>
+                             </div>
+                           </div>
+                         }
+
+                       </div>
+                     </div>
+                     <div class="modal-footer">
+                       <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">Abbrechen</button>
+                       <button type="button" class="btn btn-success" @onclick="AddingHardskills">Speichern</button>
+                     </div>
+                   }
+                   else
+                   {
+                     <div class="d-flex flex-column align-items-center justify-content-center">
+                       <div class="row">
+                         <div class="spinner-border" role="status">
+                           <span class="sr-only">Loading...</span>
+                         </div>
+                       </div>
+                       <div class="row">
+                         <strong>Lade...</strong>
+                       </div>
+                     </div>
+                   }
                  </div>
                </div>
           </div>
@@ -114,18 +175,27 @@
 }
 
 @code {
-  [Parameter] public BasicDataAbstract Abstract { get; set; }
+  [Parameter] 
+  public EditTreeElement TreeElement { get; set; }
+  
+  [Parameter]
+  public EditTreeDiagram TreeDiagram { get; set; }
+  
+  [Parameter] 
+  public BasicDataAbstract Abstract { get; set; }
   
   [Parameter]
   public string Description { get; set; }
 
   private List<string> Subcat { get; set; } = new();
   
-  private Dictionary<Hardskill, List<string>> SubHardskills { get; set; } = new ();
+  private Dictionary<string, List<string>> SubHardskills { get; set; } = new ();
   
   private Hardskill Uppercat { get; set; }
+  
+  private bool _finishedLoadPage = false;
 
-  private bool _containsH;
+  private bool _finishedLoadCats = true;
 
   private string _hardskill;
 
@@ -139,26 +209,43 @@
 
   private bool ShowCreateCat { get; set; } = false;
 
-  private List<Hardskill> _hardskills;
+  private List<string> _toDeleteSkills = new();
 
-  private List<Hardskill> _hardskillCats;
+  private List<string> _hardskills = new();
   
-  protected override async Task OnInitializedAsync()
-  {
-    _hardskills = await _hardskillService.GetAllHardskills();
-    _hardskillCats = await _hardskillService.GetAllHardskillCategorys();
-  }
+  private bool _showEmptyErrorCategory;
+
+  private bool _showExistErrorCategory;
+  
+  private bool _showEmptyErrorHardskill;
+
+  private bool _showExistErrorHardskill;
 
   protected override async Task OnParametersSetAsync()
   {
-    if (_hardskillCats == null) return;
-    ShowCreateCat = !_hardskillCats.Exists(x => x.Description == Description);
-    Uppercat = await _hardskillService.GetHardskillCategory(Description);
+    _showEmptyErrorCategory = false;
+    _showExistErrorCategory = false;
+    _showEmptyErrorHardskill = false;
+    _showExistErrorHardskill = false;
+    _finishedLoadPage = false;
+    _toDeleteSkills.Clear();
+    _hardskills.Clear();
+    Subcat.Clear();
+    SubHardskills.Clear();
+    
+    var allSkills = await _hardskillService.GetAllHardskills();
 
-    if (Uppercat == null) 
-      _containsH = false;
-    else
-      _containsH = await _hardskillService.ContainsAnyHardskills(Description);
+    foreach (var hardskill in allSkills.ToList())
+    {
+      if ((hardskill.Uppercat == null || !hardskill.Uppercat.Any()) && !_hardskills.Contains(hardskill.Description))
+        _hardskills.Add(hardskill.Description);
+    }
+    
+     var hardskillCats = await _hardskillService.GetAllDesCategorys();
+    
+    if (hardskillCats == null) return;
+    ShowCreateCat = !hardskillCats.Exists(x => x == Description);
+    Uppercat = await _hardskillService.GetHardskillCategory(Description);
     
     if (Uppercat != null)
     {
@@ -166,31 +253,45 @@
       {
         var hardskill = await _hardskillService.GetHardskill(description);
         if (hardskill != null)
-          Subcat.Add(description);
+        {
+          if(!Subcat.Contains(description))
+            Subcat.Add(description);
+        }
       }
     }
-
-    foreach (var cat in _hardskillCats)
-    {
-      if (!await _hardskillService.ContainsAnyHardskills(cat.Description)) continue;
-      
-      var subCats = new List<string>();
-
-      foreach (var subcat in cat.Subcat)
-      {
-        var hardskill = await _hardskillService.GetHardskill(subcat);
-        if (hardskill != null)
-          subCats.Add(hardskill.Description);
-      }
-
-      if (!SubHardskills.ContainsKey(cat))
-        SubHardskills.Add(cat, new List<string>(subCats));
-    }
+    _finishedLoadPage = true;
   }
 
-  private void ShowingCat()
+  private async Task ShowingCat()
   {
-    _showCat = !_showCat;
+    if (!SubHardskills.Any())
+    {
+      _finishedLoadCats = false;
+      StateHasChanged();
+      var hardskillCats = await _hardskillService.GetAllDesCategorys();
+      foreach (var cat in hardskillCats.ToList())
+      {
+        if (!await _hardskillService.ContainsAnyHardskills(cat)) continue;
+        var category = await _hardskillService.GetHardskillCategory(cat);
+        if (category == null) continue;
+      
+        var subCats = new List<string>();
+
+        foreach (var subcat in category.Subcat)
+        {
+          var hardskill = await _hardskillService.GetHardskill(subcat);
+          if (hardskill != null)
+            subCats.Add(hardskill.Description);
+        }
+
+        SubHardskills.TryAdd(cat, new List<string>(subCats));
+      }
+      _showCat = !_showCat;
+      _finishedLoadCats = true;
+      StateHasChanged();
+    }
+    else
+      _showCat = !_showCat;
   }
 
   private void ShowingCreateHardskill()
@@ -198,12 +299,27 @@
     _showCreateSkill = !_showCreateSkill;
   }
 
-  private void HardskillList(string hardskill)
+  private async Task HardskillList(string description)
   {
-    if (Subcat.Contains(hardskill))
-      Subcat.Remove(hardskill);
+    var hardskill = await _hardskillService.GetHardskill(description);
+    if (hardskill == null) return;
+    
+    if (Subcat.Contains(description))
+    {
+      Subcat.Remove(description);
+      if (hardskill.Uppercat == null || !hardskill.Uppercat.Any())
+        _hardskills.Add(description);
+      else if(hardskill.Uppercat.Contains(Description))
+        _toDeleteSkills.Add(description);
+    }
     else
-      Subcat.Add(hardskill);
+    {
+      Subcat.Add(description);
+      if (hardskill.Uppercat == null || !hardskill.Uppercat.Any())
+        _hardskills.Remove(description);
+      else if(hardskill.Uppercat.Contains(Description))
+        _toDeleteSkills.Remove(description);
+    }
   }
   
   private bool IsInList(string description)
@@ -215,6 +331,24 @@
   {
     if (ShowCreateCat)
     {
+      if (string.IsNullOrEmpty(_cat) || string.IsNullOrWhiteSpace(_cat))
+      {
+        _showExistErrorCategory = false;
+        _showEmptyErrorCategory = true;
+        StateHasChanged();
+        return;
+      }
+      _showEmptyErrorCategory = false;
+
+      if (!await _hardskillService.CheckDescriptionHardskill(_cat))
+      {
+        _showEmptyErrorCategory = false;
+        _showExistErrorCategory = true;
+        StateHasChanged();
+        return;
+      }
+      _showExistErrorCategory = false;
+      
       var cat = new Hardskill()
       {
           Description = _cat,
@@ -223,17 +357,43 @@
           IsHardskill = false
       };
       await _hardskillService.CreateHardskillCategory(cat);
-      Abstract.UpdateLists();
-    } 
-    else 
+      _show = !_show;
+      Subcat.Clear();
+      await Abstract.UpdateHardskills();
+      await Abstract.UpdateCategorys();
+    }
+    else
+    {
       await _hardskillService.EditHardskillsCategory(Description, Subcat);
-    
-    Subcat.Clear();
-    Showing();
+      _show = !_show;
+      Subcat.Clear();
+      if (TreeDiagram != null)
+        await TreeDiagram.Loading();
+      else
+        await TreeElement.Loading(Description);
+    }
   }
 
   private async Task CreateHardskill()
   {
+    if (string.IsNullOrEmpty(_hardskill) || string.IsNullOrWhiteSpace(_hardskill))
+    {
+      _showExistErrorHardskill = false;
+      _showEmptyErrorHardskill = true;
+      StateHasChanged();
+      return;
+    }
+    _showEmptyErrorHardskill = false;
+
+    if (!await _hardskillService.CheckDescriptionHardskill(_hardskill))
+    {
+      _showEmptyErrorHardskill = false;
+      _showExistErrorHardskill = true;
+      StateHasChanged();
+      return;
+    }
+    _showExistErrorHardskill = false;
+    
     var hardskill = new Hardskill()
     {
       Description = _hardskill,
@@ -241,7 +401,7 @@
       Subcat = null
     };
     await _hardskillService.CreateHardskill(hardskill);
-    HardskillList(hardskill.Description);
+    await HardskillList(hardskill.Description);
     ShowingCreateHardskill();
   }
 
@@ -251,5 +411,5 @@
     Subcat.Clear();
     StateHasChanged();
   }
-    
+
 }

@@ -53,24 +53,28 @@
 
     private bool _show = false;
 
-    private void Delete()
+    private async Task Delete()
     {
         switch (Type)
         {
             case BasicDataType.SoftSkill:
                 _basicDataService.DeleteSoftSkill(Description);
+                Abstract.UpdateSoftskills();
                 break;
             case BasicDataType.Field:
                 _basicDataService.DeleteField(Description);
+                Abstract.UpdateFields();
                 break;
             case BasicDataType.Role:
                 _basicDataService.DeleteRole(Description);
+                Abstract.UpdateRoles();
                 break;
             default:
-                _hardskillService.DeleteHardskill(Description);
+                await _hardskillService.DeleteHardskill(Description);
+                await Abstract.UpdateHardskills();
+                await Abstract.UpdateCategorys();
                 break;
         }
-        Abstract?.UpdateLists();
         Showing();
         //_navigationManager.NavigateTo(_navigationManager.Uri, true);
     }

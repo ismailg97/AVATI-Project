@@ -20,7 +20,20 @@
     <link href="Profile.razor.css" rel="stylesheet" />
     <link href="_content/Blazor.ContextMenu/blazorContextMenu.min.css" rel="stylesheet" />
     <script src="_content/Blazor.ContextMenu/blazorContextMenu.min.js"></script>
+
+
+
 <body>
+
+<script>
+
+ // When the user clicks the button, the page scrolls to the top
+        function OnScrollEvent() {
+           document.getElementById("result-table").scrollIntoView({behavior:"smooth"})
+            
+        }
+</script> 
+
 <component type="typeof(App)" render-mode="ServerPrerendered"/>
 
 <div id="blazor-error-ui">
@@ -33,7 +46,6 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
-
 <script src="_framework/blazor.server.js"></script>
 </body>
 </html>

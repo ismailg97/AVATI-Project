@@ -27,7 +27,7 @@ p { padding-bottom:50px;}
     left:-20px;
     border-left: 1px solid #ccc;
     border-bottom:1px solid #ccc;
-    border-radius:0 0 0 0;
+    border-radius:0 0 0 0px;
     width:20px;
     height:15px;
 }
@@ -39,7 +39,7 @@ p { padding-bottom:50px;}
     left:-20px;
     border-left: 1px solid #ccc;
     border-top:1px solid #ccc;
-    border-radius:0 0 0 0;
+    border-radius:0px 0 0 0;
     width:20px;
     height:100%;
 }
@@ -116,10 +116,6 @@ ul.tree>li:first-child::after {
     margin-top: 15px;
 }
 
-.between2 {
-    margin-top: 10px;
-}
-
 .between0::before, .between1::before, .between2::before{
     content: "";
     position: absolute;
@@ -136,11 +132,11 @@ ul.tree>li:first-child::after {
 }
 
 .between1::before{
-    margin-top: 28px;
+    margin-top: 30px;
 }
 
 .between2::before{
-    margin-top: 47px;
+    margin-top: 40px;
 }
 
 .btn-secondary, .btn-primary{

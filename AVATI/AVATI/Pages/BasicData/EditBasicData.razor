@@ -23,6 +23,24 @@
                       <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
                     </div>
                     <div class="modal-body">
+                      @if (_showExistError)
+                      {
+                        @if (Type == BasicDataType.SoftSkill)
+                        {
+                          <a style="color: red; margin-bottom: 20px;"><b>Es existiert bereits ein Softskill mit derselben Bezeichnung</b></a>
+                        }
+                        else if (Type == BasicDataType.Field)
+                        {
+                          <a style="color: red; margin-bottom: 20px;"><b>Es existiert bereits eine Branche mit derselben Bezeichnung</b></a>
+                        }
+                        else
+                        {
+                          <a style="color: red; margin-bottom: 20px;"><b>Es existiert bereits eine Rolle mit derselben Bezeichnung</b></a>
+                        }
+                      } else if (_showEmptyError)
+                      {
+                        <a style="color: red; margin-bottom: 20px;"><b>Die Bezeichnung ist erforderlich</b></a>
+                      }                      
                       <input class="form-control col-7" type="text" id="softskill" @bind="NewDescription"/>
                     </div>
                     <div class="modal-footer">
@@ -50,30 +68,59 @@
   private bool _show = false;
   
   private string NewDescription { get; set; }
+  
+  private bool _showEmptyError;
+
+  private bool _showExistError;
 
   protected override void OnParametersSet()
   {
     NewDescription = OldDescription;
+    _showEmptyError = false;
+    _showExistError = false;
   }
-
 
   private void Update()
   {
+    if (string.IsNullOrEmpty(NewDescription) || string.IsNullOrWhiteSpace(NewDescription))
+    {
+      _showExistError = false;
+      _showEmptyError = true;
+      return;
+    }
+    _showEmptyError = false;
+
+    if (CheckDescription() && NewDescription != OldDescription)
+    {
+      _showEmptyError = false;
+      _showExistError = true;
+      return;
+    }
+    _showExistError = false;
     switch (Type)
     {
       case BasicDataType.SoftSkill:
         _basicDataService.UpdateSoftSkill(NewDescription, OldDescription);
+        Abstract.UpdateSoftskills();
         break;
       case BasicDataType.Field:
         _basicDataService.UpdateField(NewDescription, OldDescription);
+        Abstract.UpdateFields();
         break;
       default:
         _basicDataService.UpdateRole(NewDescription, OldDescription);
+        Abstract.UpdateRoles();
         break;
     }
-    Abstract.UpdateLists();
     Showing();
     //_navigationManager.NavigateTo(_navigationManager.Uri, true);
+  }
+  
+  private bool CheckDescription()
+  {
+    return (Type == BasicDataType.SoftSkill && !_basicDataService.CheckDescriptionSoftskill(NewDescription)) ||
+           (Type == BasicDataType.Field && !_basicDataService.CheckDescriptionField(NewDescription)) ||
+           (Type == BasicDataType.Role && !_basicDataService.CheckDescriptionRole(NewDescription));
   }
 
   public void Showing()

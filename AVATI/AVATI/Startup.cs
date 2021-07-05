@@ -47,14 +47,13 @@ namespace AVATI
             services.AddSingleton<IBasicDataService, BasicDataService>();
             services.AddSingleton<JsonImport>();
             services.AddSingleton<Projectedit>();
-            services.AddSingleton<ILoginService,LoginServiceSimple>();
+            services.AddSingleton<ILoginService,LoginService>();
             services.AddSingleton<IProposalService, ProposalService>();
             services.AddSingleton<SearchService>();
             services.AddSingleton<IEmployeeService, EmployeeService>();
             services.AddBlazorDownloadFile();
             services.AddSingleton<IEmployeeDetailService, EmployeeDetailService>();
             services.AddSingleton<IProjectActivityService, ProjectActivityService>();
-            services.AddSingleton<EmployeeServiceSimple>();
             services.AddSingleton<DatabaseUtils>();
             services.AddSingleton<IProjektService, ProjectService>();
             services.AddSingleton<ProjectPurposeService>();

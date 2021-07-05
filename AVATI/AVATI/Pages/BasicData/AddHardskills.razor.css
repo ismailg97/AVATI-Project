@@ -10,6 +10,7 @@
 
 .btn-primary, .btn-secondary {
     margin-left: 5px;
+    margin-top: 5px;
 }
 
 .btn-outline-info {
@@ -80,4 +81,10 @@ h6{
     box-shadow: #d9534f;
     border-left: #d9534f;
     border-right: #d9534f;
+}
+
+.errormessage {
+    color: red !important;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }

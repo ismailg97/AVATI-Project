@@ -1,0 +1,25 @@
+﻿.remove{
+    visibility: hidden;
+    font-size: 0px;
+    height: 0;
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: visibility 0s, opacity 0.3s linear;
+}
+
+.showRemove:hover + .remove,
+.remove:hover{
+    visibility: visible;
+    font-size: smaller;
+    height: auto;
+    width: auto;
+    opacity: 1;
+}
+
+.errormessage {
+    color: red !important;
+    margin-left: 15px;
+    margin-top: 10px;
+    margin-bottom: -5px;
+}
