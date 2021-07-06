@@ -4,37 +4,94 @@
 
 @inject IHardskillService _hardskillService
 
+@if (_loadPagefinished)
+{
+    <div class="container">
+        <ul class="tree">
+            <li><a class="cat" type="button" @onclick="ShowingUnder">@Description</a>
 
-        <div class="container">
-            <ul class="tree">
-                <li><a class="cat" type="button" @onclick="() => ShowingSubcat()">@Description</a>
-                    
-                        @if (_showSubcat && Subcat != null && Subcat.Any())
-                        {
-                            <TreeElement Descriptions ="@Subcat"/>
-                        }
-                </li>
-            </ul>
+                @if (_subcat != null && _subcat.Any())
+                {
+                    <TreeElement Subcats="@_subcat" ShowCategorys="@_showSubCategorys" ShowHardskills="@_showSubHardskills"/>
+                }
+            </li>
+        </ul>
+    </div>
+}
+else
+{
+    <div class="d-flex flex-column align-items-start justify-content-start">
+        <div class="row">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
         </div>
-
+        <div class="row">
+            <strong>Lade...</strong>
+        </div>
+    </div>
+}
 
 @code {
     [Parameter]
     public string Description { get; set; }
 
-    public List<string> Subcat = new();
+    private List<string> _subcat = new();
 
-    private bool _showSubcat = true;
+    private bool _containsJustHardskills;
+
+    private bool _containsJustCategorys;
+
+    private bool _showSubHardskills;
+
+    private bool _showSubCategorys;
+    
+    private bool _loadPagefinished;
+
+    protected override void OnInitialized()
+    {
+        _loadPagefinished = false;
+    }
 
     protected override async Task OnParametersSetAsync()
     {
         var cat = await _hardskillService.GetHardskillCategory(Description);
-        Subcat = cat.Subcat;
+        _subcat = cat.Subcat;
+        _showSubHardskills = false;
+        _showSubCategorys = true;
+        _containsJustHardskills = await _hardskillService.ContainsJustHardskills(Description);
+        _containsJustCategorys = !await _hardskillService.ContainsAnyHardskills(Description);
+        _loadPagefinished = true;
     }
 
-    private void ShowingSubcat()
-    {
-        _showSubcat = !_showSubcat;
+    private void ShowingUnder(){
+        if (_containsJustHardskills)
+        {
+            _showSubCategorys = true;
+            _showSubHardskills = !_showSubHardskills;
+            
+        } else if (_containsJustCategorys) {
+            
+            _showSubCategorys = !_showSubCategorys;
+            _showSubHardskills = false;
+            
+        } else if (!_showSubCategorys) {
+            
+            _showSubCategorys = true;
+            _showSubHardskills = false;
+            
+        } else if (_showSubCategorys && _showSubHardskills) {
+            
+            _showSubCategorys = false;
+            _showSubHardskills = false;
+            
+        } else {
+            
+            _showSubCategorys = true;
+            _showSubHardskills = true;
+        }
+        
+        StateHasChanged();
     }
 
 }

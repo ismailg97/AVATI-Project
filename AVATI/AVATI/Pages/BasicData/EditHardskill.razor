@@ -13,6 +13,15 @@
                      <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
                    </div>
                    <EditForm Model="@NewHardskill" OnValidSubmit="Update">
+                     @if (_showExistError){
+                       <div class="errormessage">
+                         <a><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></a>
+                       </div>
+                     } else if (_showEmptyError){
+                       <div class="errormessage">
+                         <a><b>Die Bezeichnung ist erforderlich</b></a>
+                       </div> 
+                     }
                      <div class="modal-body">
                        <label class="form-label">Bezeichnung:</label>
                        <InputText class="form-control" @bind-Value="@NewHardskill.Description"/>
@@ -68,6 +77,10 @@
   private Hardskill NewHardskill { get; set; } = new();
   
   private List<string> _allCategorys;
+  
+  private bool _showEmptyError;
+
+  private bool _showExistError;
 
   protected override async Task OnInitializedAsync()
   {
@@ -76,12 +89,31 @@
 
   protected override void OnParametersSet()
   {
+    _showEmptyError = false;
+    _showExistError = false;
     NewHardskill.Description = OldHardskill?.Description;
     UpperCat = OldHardskill?.Uppercat;
   }
 
   private async Task Update()
   {
+    if (string.IsNullOrEmpty(NewHardskill.Description) || string.IsNullOrWhiteSpace(NewHardskill.Description))
+    {
+      _showExistError = false;
+      _showEmptyError = true;
+      StateHasChanged();
+      return;
+    }
+    _showEmptyError = false;
+
+    if (NewHardskill.Description != OldHardskill.Description && !await _hardskillService.CheckDescriptionHardskill(NewHardskill.Description))
+    {
+      _showEmptyError = false;
+      _showExistError = true;
+      StateHasChanged();
+      return;
+    }
+    
     NewHardskill.Subcat = null;
 
     NewHardskill.Uppercat = new List<string>(UpperCat);

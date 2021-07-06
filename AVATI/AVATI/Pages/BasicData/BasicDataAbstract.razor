@@ -53,9 +53,13 @@
 <table class="table table-striped">
     <caption><h5><b>Hardskills</b></h5></caption>
     <div class="form-group col-8">
-        <input class="form-control" type="text" placeholder="Filter..."
+        <input class="form-control" type="text" placeholder="Filtern nach Hardskills..."
                @bind="Filter[1]"
                @bind:event="oninput">
+    </div>
+    <div class="form-group col-8">
+        <input class="form-control" type="text" placeholder="Filtern nach Hardskillkategorien..."
+               @bind="Filter[5]" @oninput="InCategory">
     </div>
     @if (_hardskills != null && _hardskills.Any(x => IsVisible(x, 1)))
     {
@@ -65,14 +69,17 @@
             <th></th>
         </tr>
 
-        @foreach (string hardskill in _hardskills)
+        foreach (string hardskill in _hardskills)
         {
-            @if (!IsVisible(hardskill, 1))
+            if (!IsVisible(hardskill, 1))
                 continue;
 
-            if (!ShowUpper.ContainsKey(hardskill))
+            if (!_inCategory[hardskill])
+                continue;
+
+            if (!_showUpper.ContainsKey(hardskill))
             {
-                ShowUpper.Add(hardskill, false);
+                _showUpper.Add(hardskill, false);
             }
 
             <tr @onmouseover="() => ShowingUpperCat(hardskill)" @onmouseout="() => ShowingUpperCat(hardskill)">
@@ -83,7 +90,7 @@
                 </td>
             </tr>
             
-            if (ShowUpper[hardskill])
+            if (_showUpper[hardskill])
             {
                 <div><ShowUpperCat Description="@hardskill"/></div>
             }
@@ -117,22 +124,22 @@
                 continue;
 
             
-                if (!ShowEditCat.ContainsKey(hardskillcat))
+                if (!_showEditCat.ContainsKey(hardskillcat))
                 {
-                    ShowEditCat.Add(hardskillcat, false);
+                    _showEditCat.Add(hardskillcat, false);
                 }
                 
-                if (!ShowSubCat.ContainsKey(hardskillcat))
+                if (!_showSubCat.ContainsKey(hardskillcat))
                 {
-                    ShowSubCat.Add(hardskillcat, false);
+                    _showSubCat.Add(hardskillcat, false);
                 }
 
                 <tr>
                     <td>@hardskillcat</td>
                     <td class="smalltd">
-                        @if (!ShowEditCat[hardskillcat])
+                        @if (!_showEditCat[hardskillcat])
                         {
-                            if (!ShowSubCat[hardskillcat])
+                            if (!_showSubCat[hardskillcat])
                             {
                                 <button class="btn btn-success" @onclick="() => ShowingSubCat(hardskillcat)" type="button">View</button>
                             }
@@ -143,7 +150,7 @@
                         }
                     </td>
                     <td class="smalltd">
-                        @if (ShowEditCat[hardskillcat])
+                        @if (_showEditCat[hardskillcat])
                         {
                             <button class="btn btn-primary" @onclick="() => ShowingEditCat(hardskillcat)">Abgeschlossen</button>
                         }
@@ -154,13 +161,13 @@
                     </td>
                 </tr>
 
-                if (ShowEditCat[hardskillcat])
+                if (_showEditCat[hardskillcat])
                 {
                     <div>
                         <EditTreeDiagram Description="@hardskillcat" Abstract="@this"/>
                     </div>
                 }
-                else if (ShowSubCat[hardskillcat])
+                else if (_showSubCat[hardskillcat])
                 {
                     <div>
                         <TreeDiagram Description="@hardskillcat"/>
@@ -253,6 +260,7 @@
     List<string> _roles;
     List<string> _hardskills;
     List<string> _allRoots;
+    List<string> _allCategorys;
         
     CreateBasicData _createBasicData;
     EditBasicData _editBasicData;
@@ -264,14 +272,16 @@
     AddHardskills _createCat;
 
     //0: Filter for Softskill, 1: Filter for Hardskill, 2: Filter for Hardskillcategory
-    //3: Filter for Field, 4: Filter for Role
-    private string[] Filter { get; set; } = new string[5];
+    //3: Filter for Field, 4: Filter for Role, 5: Filter for Hardskillcategorys at Hardskills
+    private string[] Filter { get; set; } = new string[6];
 
-    public Dictionary<string, bool> ShowEditCat = new();
+    private  Dictionary<string, bool> _showEditCat = new();
 
-    public Dictionary<string, bool> ShowSubCat = new();
+    private Dictionary<string, bool> _showSubCat = new();
 
-    public Dictionary<string, bool> ShowUpper = new();
+    private Dictionary<string, bool> _showUpper = new();
+
+    private Dictionary<string, bool> _inCategory = new();
 
     private string Description { get; set; }
     
@@ -285,18 +295,28 @@
         _fields = _basicDataService.GetAllFields();
         _roles = _basicDataService.GetAllRoles();
         _hardskills = await _hardskillService.GetAllDesHardskills();
+        foreach (var hardskill in _hardskills)
+        {
+            _inCategory.TryAdd(hardskill, true);
+        }
         _allRoots = await _hardskillService.GetAllRoots();
+        _allCategorys = await _hardskillService.GetAllDesCategorys();
     }
 
     public async Task UpdateCategorys()
     {
         _allRoots = await _hardskillService.GetAllRoots();
+        _allCategorys = await _hardskillService.GetAllDesCategorys();
         StateHasChanged();
     }
 
     public async Task UpdateHardskills()
     {
         _hardskills = await _hardskillService.GetAllDesHardskills();
+        foreach (var hardskill in _hardskills)
+        {
+            _inCategory.TryAdd(hardskill, true);
+        }
         StateHasChanged();
     }
 
@@ -322,21 +342,49 @@
     {
         return string.IsNullOrEmpty(Filter[index]) || description.Contains(Filter[index], StringComparison.OrdinalIgnoreCase);
     }
+    
+    private async Task InCategory()
+    {
+        foreach (var hardskill in _hardskills)
+        {
+            _inCategory[hardskill] = false;
+            if (string.IsNullOrEmpty(Filter[5]))
+            {
+                _inCategory[hardskill] = true;
+                continue;
+            }
+            
+            foreach (var category in _allCategorys)
+            {
+                if (_inCategory[hardskill])
+                    continue;
+                if (category.Contains(Filter[5], StringComparison.OrdinalIgnoreCase))
+                {
+                    var hardskillList = await _hardskillService.GetHardskillsOfCategory(category);
+                    if (hardskillList == null)
+                        continue;
+                    _inCategory[hardskill] = hardskillList.Contains(hardskill);
+                }
+            }
+            
+        }
+        StateHasChanged();
+    }
 
     private void ShowingEditCat(string cat)
     {
-        ShowEditCat[cat] = !ShowEditCat[cat];
+        _showEditCat[cat] = !_showEditCat[cat];
     }
 
     private void ShowingSubCat(string cat)
     {
-        ShowSubCat[cat] = !ShowSubCat[cat];
+        _showSubCat[cat] = !_showSubCat[cat];
     }
     
     
     void ShowingUpperCat(string hardskill)
     {
-        ShowUpper[hardskill] = !ShowUpper[hardskill];
+        _showUpper[hardskill] = !_showUpper[hardskill];
     }
 
     void PopCreateBasicData(BasicDataType type)

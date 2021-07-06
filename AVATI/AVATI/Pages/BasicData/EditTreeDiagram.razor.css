@@ -112,20 +112,31 @@ ul.tree>li:first-child::after {
     outline: none;
 }
 
-.tree div{
+.between0, .between1, .between2{
     margin-top: 15px;
 }
 
-.tree div::before{
-    margin-top: 20px;
+.between0::before, .between1::before, .between2::before{
     content: "";
     position: absolute;
     top:13px;
     left:10px;
     border-left:1px solid #ccc;
-    border-radius:0 0 0 0px;
+    border-radius:0 0 0 0;
     width:15px;
     height:15px;
+}
+
+.between0::before{
+    margin-top: 20px;
+}
+
+.between1::before{
+    margin-top: 30px;
+}
+
+.between2::before{
+    margin-top: 40px;
 }
 
 .btn-secondary, .btn-primary{
@@ -181,4 +192,17 @@ ul.tree>li:first-child::after {
 
 .inline{
     display: inline !important;
+}
+
+.d-flex{
+    margin-top: 10px !important;
+    margin-left: 20px !important;
+}
+
+.errormessage{
+    color: red !important;
+}
+
+.tree p{
+    margin-bottom: -50px !important;
 }
