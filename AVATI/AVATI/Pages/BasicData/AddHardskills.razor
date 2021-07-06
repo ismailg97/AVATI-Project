@@ -24,6 +24,17 @@
                      </div>
                      <div class="modal-body">
                        <div class="container">
+                         @if (_showExistErrorCategory){
+                           <div class="errormessage">
+                             <a><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></a>
+                           </div>
+                           
+                         } else if (_showEmptyErrorCategory){
+                           <div class="errormessage">
+                             <a><b>Die Bezeichnung ist erforderlich</b></a>
+                           </div>
+                           
+                         }
 
                          @if (ShowCreateCat)
                          {
@@ -72,6 +83,17 @@
 
                          @if (_showCreateSkill)
                          {
+                           @if (_showExistErrorHardskill){
+                             <div class="errormessage">
+                               <a><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></a>
+                             </div>
+                           
+                           } else if (_showEmptyErrorHardskill){
+                             <div class="errormessage">
+                               <a><b>Die Bezeichnung ist erforderlich</b></a>
+                             </div>
+                           
+                           }
                            <div class="distance">
                              <label>Bezeichnung des Hardskills:</label>
                              <input class="form-control" style="display: inline;" type="text" @bind="_hardskill"/>
@@ -156,6 +178,9 @@
   [Parameter] 
   public EditTreeElement TreeElement { get; set; }
   
+  [Parameter]
+  public EditTreeDiagram TreeDiagram { get; set; }
+  
   [Parameter] 
   public BasicDataAbstract Abstract { get; set; }
   
@@ -187,9 +212,21 @@
   private List<string> _toDeleteSkills = new();
 
   private List<string> _hardskills = new();
+  
+  private bool _showEmptyErrorCategory;
+
+  private bool _showExistErrorCategory;
+  
+  private bool _showEmptyErrorHardskill;
+
+  private bool _showExistErrorHardskill;
 
   protected override async Task OnParametersSetAsync()
   {
+    _showEmptyErrorCategory = false;
+    _showExistErrorCategory = false;
+    _showEmptyErrorHardskill = false;
+    _showExistErrorHardskill = false;
     _finishedLoadPage = false;
     _toDeleteSkills.Clear();
     _hardskills.Clear();
@@ -247,8 +284,7 @@
             subCats.Add(hardskill.Description);
         }
 
-        if (!SubHardskills.ContainsKey(cat))
-          SubHardskills.Add(cat, new List<string>(subCats));
+        SubHardskills.TryAdd(cat, new List<string>(subCats));
       }
       _showCat = !_showCat;
       _finishedLoadCats = true;
@@ -295,6 +331,24 @@
   {
     if (ShowCreateCat)
     {
+      if (string.IsNullOrEmpty(_cat) || string.IsNullOrWhiteSpace(_cat))
+      {
+        _showExistErrorCategory = false;
+        _showEmptyErrorCategory = true;
+        StateHasChanged();
+        return;
+      }
+      _showEmptyErrorCategory = false;
+
+      if (!await _hardskillService.CheckDescriptionHardskill(_cat))
+      {
+        _showEmptyErrorCategory = false;
+        _showExistErrorCategory = true;
+        StateHasChanged();
+        return;
+      }
+      _showExistErrorCategory = false;
+      
       var cat = new Hardskill()
       {
           Description = _cat,
@@ -313,12 +367,33 @@
       await _hardskillService.EditHardskillsCategory(Description, Subcat);
       _show = !_show;
       Subcat.Clear();
-      await TreeElement.Loading(Description);
+      if (TreeDiagram != null)
+        await TreeDiagram.Loading();
+      else
+        await TreeElement.Loading(Description);
     }
   }
 
   private async Task CreateHardskill()
   {
+    if (string.IsNullOrEmpty(_hardskill) || string.IsNullOrWhiteSpace(_hardskill))
+    {
+      _showExistErrorHardskill = false;
+      _showEmptyErrorHardskill = true;
+      StateHasChanged();
+      return;
+    }
+    _showEmptyErrorHardskill = false;
+
+    if (!await _hardskillService.CheckDescriptionHardskill(_hardskill))
+    {
+      _showEmptyErrorHardskill = false;
+      _showExistErrorHardskill = true;
+      StateHasChanged();
+      return;
+    }
+    _showExistErrorHardskill = false;
+    
     var hardskill = new Hardskill()
     {
       Description = _hardskill,

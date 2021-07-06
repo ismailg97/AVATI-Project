@@ -82,3 +82,9 @@ h6{
     border-left: #d9534f;
     border-right: #d9534f;
 }
+
+.errormessage {
+    color: red !important;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}

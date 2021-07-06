@@ -2,53 +2,79 @@
 
 @inject IHardskillService _hardskillService
 
-<AddHardskills @ref="_addHardskills" Description="@Description"/>
+<AddHardskills @ref="_addHardskills" Description="@Description" TreeDiagram="@this"/>
 
+@if (_loadPagefinished)
+{
     <div class="container">
         <ul class="tree">
             <li>
-                @if(!_showRename)
+                @if (!_showRename)
                 {
                     <ContextMenu Id="@Description">
                         <Item OnClick="() => DeleteCategory()">Löschen <span class="oi oi-trash"></span></Item>
-                                                     
+
                         <Item OnClick="() => ShowingRename()">Umbenennen <span class="oi oi-pencil"></span></Item>
-                                         
+
                         <Item OnClick="() => ShowingAddHardskills()">Hardskills hinzufügen <span class="oi oi-plus"></span></Item>
-                                                     
+
                     </ContextMenu>
-                    
+
                     <ContextMenuTrigger MenuId="@Description">
                         <a class="cat" type="button" @onclick="() => ShowingUnder()">@Description</a>
                     </ContextMenuTrigger>
-                    } else {
-                            <input type="text" id="softskill" @bind="_rename"/>
-                            <button type="button" class="check inline" @onclick="() => Update()">&#10003;</button>
-                            <button type="button" class="stop inline" @onclick="() => ShowingRename()">&#10005;</button>
-                    }
-                
-                    @if (_loadfinished)
+                }
+                else
+                {
+                    <input class="form-control col-4 inline" type="text" id="softskill" @bind="_rename"/>
+                    <button type="button" class="check inline" @onclick="() => Update()">&#10003;</button>
+                    <button type="button" class="stop inline" @onclick="() => ShowingRename()">&#10005;</button>
+                    if (_showExistError)
                     {
-                        <EditTreeElement @ref="@_element" Subcats="@_subcat" Uppercat="@Description" 
-                                         ShowHardskills="@_showSubHardskills" ShowCategorys="@_showSubCategorys" UpperTree="@this"/>
+                        <p class="errormessage"><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></p>
                     }
-                    else
+                    else if (_showEmptyError)
                     {
-                        <div class="d-flex flex-column align-items-center justify-content-center">
-                            <div class="row">
-                                <div class="spinner-border" role="status">
-                                    <span class="sr-only">Loading...</span>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <strong>Lade...</strong>
+                        <p class="errormessage"><b>Die Bezeichnung ist erforderlich</b></p>
+                    }
+                }
+
+                @if (_loadfinished)
+                {
+                    <EditTreeElement @ref="@_element" Subcats="@_subcat" Uppercat="@Description"
+                                     ShowHardskills="@_showSubHardskills" ShowCategorys="@_showSubCategorys" UpperTree="@this"
+                                     RenameProblem="@_renameProblem" ContainsJustHardskills="@_containsJustHardskills"/>
+                }
+                else
+                {
+                    <div class="d-flex flex-column align-items-start justify-content-start">
+                        <div class="row">
+                            <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span>
                             </div>
                         </div>
-                    }
+                        <div class="row">
+                            <strong>Lade...</strong>
+                        </div>
+                    </div>
+                }
             </li>
         </ul>
     </div>
-
+}
+else
+{
+    <div class="d-flex flex-column align-items-start justify-content-start">
+        <div class="row">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <div class="row">
+            <strong>Lade...</strong>
+        </div>
+    </div>
+}
 
 @code {
     [Parameter]
@@ -65,7 +91,9 @@
 
     private bool _showRename;
 
-    private bool _containsHardskills;
+    private bool _containsJustHardskills;
+
+    private bool _containsJustCategorys;
 
     private string _rename;
 
@@ -75,15 +103,33 @@
 
     private bool _loadfinished = true;
 
+    private bool _loadPagefinished;
+
+    private bool _showExistError;
+
+    private bool _showEmptyError;
+
+    private int _renameProblem;
+
+    protected override void OnInitialized()
+    {
+        _loadPagefinished = false;
+    }
+
     protected override async Task OnParametersSetAsync()
     {
         _rename = Description;
+        _renameProblem = 0;
         _showSubCategorys = true;
         _showSubHardskills = false;
+        _showExistError = false;
+        _showEmptyError = false;
         var category = await _hardskillService.GetHardskillCategory(Description);
         _subcat = category.Subcat;
         _showRename = false;
-        _containsHardskills = await _hardskillService.ContainsJustHardskills(Description);
+        _containsJustHardskills = await _hardskillService.ContainsJustHardskills(Description);
+        _containsJustCategorys = !await _hardskillService.ContainsAnyHardskills(Description);
+        _loadPagefinished = true;
     }
 
     private async Task DeleteCategory()
@@ -95,15 +141,42 @@
 
     private async Task Update()
     {
+        if (string.IsNullOrEmpty(_rename) || string.IsNullOrWhiteSpace(_rename))
+        {
+            _showExistError = false;
+            _showEmptyError = true;
+            _renameProblem = 2;
+            StateHasChanged();
+            return;
+        }
+        _renameProblem = 1;
+        _showEmptyError = false;
+
+        if (!await _hardskillService.CheckDescriptionHardskill(_rename) && _rename != Description)
+        {
+            _showEmptyError = false;
+            _showExistError = true;
+            _renameProblem = 2;
+            StateHasChanged();
+            return;
+        }
+        _renameProblem = 1;
+        _showExistError = false;
+
+        _loadPagefinished = false;
+        StateHasChanged();
         await _hardskillService.UpdateHardskillCategory(Description, _rename);
         await Abstract.UpdateCategorys();
         await Abstract.UpdateHardskills();
+        _loadPagefinished = true;
+        StateHasChanged();
         ShowingRename();
     }
 
     private void ShowingRename()
     {
         _showRename = !_showRename;
+        _renameProblem = _showRename ? 1 : 0;
     }
 
     private void ShowingAddHardskills()
@@ -113,32 +186,32 @@
 
     public void ShowingUnder()
     {
-        if (_containsHardskills)
+        if (_containsJustHardskills)
         {
             _showSubCategorys = true;
             _showSubHardskills = !_showSubHardskills;
-            StateHasChanged();
-            return;
-        }
-        
-        if (!_showSubCategorys)
-        {
+            
+        } else if (_containsJustCategorys) {
+            
+            _showSubCategorys = !_showSubCategorys;
+            _showSubHardskills = false;
+            
+        } else if (!_showSubCategorys) {
+            
             _showSubCategorys = true;
             _showSubHardskills = false;
-            StateHasChanged();
-            return;
-        }
-
-        if (_showSubCategorys && _showSubHardskills)
-        {
+            
+        } else if (_showSubCategorys && _showSubHardskills) {
+            
             _showSubCategorys = false;
             _showSubHardskills = false;
-            StateHasChanged();
-            return;
+            
+        } else {
+            
+            _showSubCategorys = true;
+            _showSubHardskills = true;
         }
-
-        _showSubCategorys = true;
-        _showSubHardskills = true;
+        
         StateHasChanged();
     }
 
@@ -153,7 +226,8 @@
         _loadfinished = false;
         StateHasChanged();
         _subcat = (await _hardskillService.GetHardskillCategory(Description))?.Subcat;
-        _containsHardskills = await _hardskillService.ContainsJustHardskills(Description);
+        _containsJustHardskills = await _hardskillService.ContainsJustHardskills(Description);
+        _containsJustCategorys = !await _hardskillService.ContainsAnyHardskills(Description);
         _loadfinished = true;
         StateHasChanged();
     }
