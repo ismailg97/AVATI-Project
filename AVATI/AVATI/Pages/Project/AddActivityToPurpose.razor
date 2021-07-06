@@ -1,0 +1,117 @@
+﻿@page "/Projektübersicht/Projektedit/AddActivityToPurpose/{ID:int}"
+@page "/Projektübersicht/Projektedit/AddActivityToPurpose"
+
+@using AVATI.Data
+
+@inject ProjectPurposeService _purposeService
+@inject IProjectActivityService _projectActivity
+@inject IProjektService _projectService
+
+@if (_show)
+{
+    <div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
+        <div class="modal modal-dialog-scrollable modal-dialog col">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tätigkeiten zu Zwecken</h5>
+                    <button type="button" class="close" data-dismiss="modal" @onclick=@Close>
+                        <span aria-hidden="true">x</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="min-width: 100%">
+                    <label class="font-weight-bold">Tätigkeiten zur Auswahl stehend:</label>
+                    <div class="list-group col overflow-auto border-dark" style="height: 550px">
+                        @if (!_projectActivity.GetProjectActivitiesProject(ID).Any())
+                        {
+                            <label type="button" class="btn btn-outline-info">[keine Tätigkeiten vorhanden]</label>
+                        }
+                        else
+                        {
+                            @foreach (var activity in _projectActivity.GetProjectActivitiesProject(ID))
+                            {
+                                <button type="button" class="btn btn-outline-dark" @onclick=@(() => { UpdatePurpose(activity); })>@activity.Description</button>
+                            }
+                        }
+                    </div>
+                    <hr class="mx-2"/> <!--line divider -->
+                    <label class="font-weight-bold ">Zugewiesene Tätigkeit:</label>
+                    <div class="list-group col overflow-auto text-center border-dark" style="height: 100px">
+                        @if (purpose.AssignedProjectActivity == null)
+                        {
+                            <label>[keine Tätigkeit zugewiesen]</label>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-outline-dark" @onclick="() => { RemoveAssignedActivity();}">@purpose.AssignedProjectActivity.Description</button>
+                        }
+                    </div>
+                    <div class="div float-right">
+                        <button type="button" class="btn btn-info" @onclick="(() => { Close(); })">Zurück zur Übersicht</button>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+}
+
+@if (_show)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code{
+
+    [Parameter]
+    public int ID { get; set; }
+
+    public int EmployeeID { get; set; }
+
+    private List<ProjectActivity> _activitiesFromProject;
+    private ProjectPurpose purpose;
+
+    private bool _show { get; set; }
+
+
+    [Parameter]
+    public Projectedit Abstract { get; set; }
+
+    public void UpdatePurpose(ProjectActivity activity)
+    {
+        purpose.AssignedProjectActivity = activity;
+        _purposeService.UpdatePurpose(purpose);
+        StateHasChanged();
+    }
+
+    public void RemoveAssignedActivity()
+    {
+        purpose.AssignedProjectActivity = null;
+        _purposeService.UpdatePurpose(purpose);
+        StateHasChanged();
+    }
+    
+    public void Showing(ProjectPurpose purp, int projectID)
+    {
+        ID = projectID;
+        purpose = purp;
+        _show = !_show;
+        _activitiesFromProject = _projectActivity.GetProjectActivitiesProject(projectID);
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        _show = !_show;
+        StateHasChanged();
+    }
+
+    public void Submit(int ID)
+    {
+        _show = !_show;
+        Abstract.Update();
+        StateHasChanged();
+    }
+
+}
+

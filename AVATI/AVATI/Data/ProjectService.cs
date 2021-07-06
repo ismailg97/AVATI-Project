@@ -175,7 +175,7 @@ namespace AVATI.Data
 
         public List<string> GetAllFieldsFromOneProject(int ProjectID)
         {
-            IDbConnection db = GetConnection();
+            using IDbConnection db = GetConnection();
             db.Open();
             //TODO List fehlt
             List<string> fields = new List<string>();
@@ -184,7 +184,7 @@ namespace AVATI.Data
 
         public bool DeleteEmployeeFromProject(int ProjectID, int EmployeeID)
         {
-            IDbConnection db = GetConnection();
+            using IDbConnection db = GetConnection();
             db.Open();
             db.Execute("DELETE FROM ProjectActivity_Project_Employee WHERE ProjectID = @pro AND EmployeeID = @emp",
                 new {pro = ProjectID, emp = EmployeeID});
@@ -193,7 +193,7 @@ namespace AVATI.Data
 
         public bool UpdateFieldsFromProject(int ProjectID, List<string> fields)
         {
-            IDbConnection db = GetConnection();
+            using IDbConnection db = GetConnection();
             db.Open();
             var listInProject = db.Query<string>("SELECT Field from Project_Field WHERE ProjectID = @pro",
                 new {pro = ProjectID}).ToList();

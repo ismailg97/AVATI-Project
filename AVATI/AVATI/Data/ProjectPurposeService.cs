@@ -25,7 +25,7 @@ namespace AVATI.Data
                 (_configuration.GetConnectionString("AVATI-Database"));
         }
         
-        public ProjectPurpose CreatePurpose(string description, int ProjectID)
+        public ProjectPurpose CreatePurpose(string description, int ProjectID)          
         {
             ProjectPurpose temp = new ProjectPurpose();
             temp.Purpose = description;
@@ -43,9 +43,45 @@ namespace AVATI.Data
             {
                 return false;
             }
-            
-            db.Execute("update ProjectPurpose set Purpose = @purp, ProjectActivity = @purpActiv where ProjectID = @proID ", 
-                new { purp = purpose.Purpose, purActiv = purpose.AssignedProjectActivity, proID = purpose.ProjectID});
+
+            if (purpose.AssignedProjectActivity == null)
+            {
+                db.Execute(
+                    "update Projectpurpose set ProjectActivity = null where ProjectId = @proID and Purpose = @purp", new
+                    {
+                        proID = purpose.ProjectID, purp = purpose.Purpose
+                    }
+                );
+            }
+            else
+            {
+                db.Execute(
+                    "update ProjectPurpose set ProjectActivity = @purpActiv where ProjectID = @proID and Purpose = @purp",
+                    new
+                    {
+                        purp = purpose.Purpose, purpActiv = purpose.AssignedProjectActivity.Description,
+                        proID = purpose.ProjectID
+                    });
+            }
+
+            return true;
+        }
+
+        public bool UpdatePurposeString(string old, string now, int ProjectID)
+        {
+            using DbConnection db = GetConnection();
+            db.Open();
+            Console.WriteLine("geht hier rein");
+            var result = db.Query<string>("Select Purpose from Projectpurpose where Purpose = @purp",
+                new { purp = old});
+            Console.WriteLine("liegst aber asdf");
+            if (result.FirstOrDefault() == null)
+            {
+                return false;
+            }
+            Console.WriteLine("exekutiert!");
+            db.Execute("update Projectpurpose set Purpose = @purpose where Purpose = @older and ProjectID =  @proID",
+                new { purpose = now, older = old, proID = ProjectID });
             return true;
         }
         
