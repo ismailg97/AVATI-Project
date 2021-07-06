@@ -402,8 +402,8 @@
         }
         var tempValue = _proposal.GetAllProposals();
         _proposals = await tempValue;
+        Open = propId;
         await Update();
-        _showEmployee[propId] = !_showEmployee[propId];
         StateHasChanged();
     }
 
