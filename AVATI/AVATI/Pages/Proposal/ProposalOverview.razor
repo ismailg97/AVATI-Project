@@ -3,8 +3,8 @@
 @using System.IO
 @using System.Linq
 @using AVATI.Data
+@using AVATI.Data.EmployeeDetailFiles
 @using BlazorDownloadFile
-@using Blazorise.Utilities
 @using DocumentFormat.OpenXml
 @using DocumentFormat.OpenXml.Packaging
 @using DocumentFormat.OpenXml.Wordprocessing
@@ -18,6 +18,9 @@
 @inject IProposalService _proposal
 @inject NavigationManager _navManager
 @inject SearchService _search
+@inject IEmployeeDetailService _detailService
+@inject IEmployeeService _employeeService
+
 <EmployeeDetail @ref="_employeeDetail" Abstract="@this"/>
 <EditProposal @ref="_editProposal" Abstract="@this"/>
 
@@ -503,24 +506,37 @@
         return element;
     }
 
+    public static Paragraph GenerateLanguageListItem(Tuple<string, LanguageLevel> lang)
+    {
+        var element = new Paragraph(
+            new ParagraphProperties(new ParagraphStyleId() {Val = "Listenabsatz"}, new NumberingProperties(new NumberingLevelReference() {Val = 0}, new NumberingId() {Val = 3})),
+            new Run(new RunProperties(new RunFonts() {ComplexScriptTheme = ThemeFontValues.MinorHighAnsi}, new FontSize() {Val = "28"}), new Text(lang.Item1), new TabChar(), new Text(lang.Item2.ToString()))) {RsidRunAdditionDefault = "00A20795", RsidParagraphAddition = "00A20795", RsidParagraphProperties = "00A20795", RsidParagraphMarkRevision = "00DC35F6", ParagraphId = "2F558D7D", TextId = "77777777"};
+        return element;
+    }
+
+    public static Paragraph GenerateRoleListItem(string role)
+    {
+        var element = new Paragraph(
+            new ParagraphProperties(new ParagraphStyleId() {Val = "Listenabsatz"}, new NumberingProperties(new NumberingLevelReference() {Val = 0}, new NumberingId() {Val = 3})),
+            new Run(new RunProperties(new RunFonts() {ComplexScriptTheme = ThemeFontValues.MinorHighAnsi}, new FontSize() {Val = "28"}), new Text(role))) {RsidRunAdditionDefault = "00A20795", RsidParagraphAddition = "00A20795", RsidParagraphProperties = "00A20795", RsidParagraphMarkRevision = "00DC35F6", ParagraphId = "287FC6A0", TextId = "610EA71A"};
+        return element;
+    }
+
     public Table GenerateRoleTable(int id) //ist das Kunst oder kann das weg?
     {
-        var employees = _proposal.GetProposal(id).Employees;
         var table = new Table();
         var tableProp = new TableProperties(
             new TableStyle() {Val = "EinfacheTabelle4"}, new TableWidth() {Width = "0", Type = TableWidthUnitValues.Auto}, new TableLook() {Val = "04A0", FirstRow = OnOffValue.FromBoolean(true), LastRow = OnOffValue.FromBoolean(false), FirstColumn = OnOffValue.FromBoolean(true), LastColumn = OnOffValue.FromBoolean(false)});
         var tableGrid = new TableGrid(new GridColumn() {Width = "4531"}, new GridColumn() {Width = "4531"});
         table.AppendChild<TableProperties>(tableProp);
         table.AppendChild<TableGrid>(tableGrid);
-    //table.Append(new TableRow(new TableCell(new Paragraph(new Run(new Text("TestL")))), new TableCell(new Paragraph(new Run(new Text("TestR")))))); //testing/debuging
-        foreach (var emp in employees)
+   
+        foreach (var emp in _detailService.GetAllEmployeeDetail(id))
         {
             foreach (var role in emp.Roles)
             {
                 var tableRow = new TableRow(new TableRowProperties(new ConditionalFormatStyle() {Val = "100000000000", FirstRow = OnOffValue.FromBoolean(true), LastRow = OnOffValue.FromBoolean(false), FirstColumn = OnOffValue.FromBoolean(false), LastColumn = OnOffValue.FromBoolean(false)}));
                 var cell1 = new TableCell(new TableCellProperties());
-    //new Paragraph(new Run(new Text(emp.FirstName + emp.LastName)))
-    //cell1.AppendChild(new Paragraph(new Run(new Text(emp.FirstName + emp.LastName))));
                 var cell2 = new TableCell(new Paragraph(new Run(new Text(role))));
                 tableRow.Append(cell1, cell2);
                 table.AppendChild(tableRow);
@@ -565,17 +581,16 @@
                     Size = 12
                 }));
         table.AppendChild<TableProperties>(props);
-        foreach (var emp in _proposal.GetProposal(id).Employees)
+        foreach (var emp in _detailService.GetAllEmployeeDetail(id))
         {
-            foreach (var role in emp.Roles)
+            foreach (var role in emp.Roles )
             {
                 var tr = new TableRow();
                 var tc = new TableCell();
-                tc.AppendChild(new Paragraph(new Run(new Text(emp.FirstName + emp.LastName + role))));
+                tc.AppendChild(new Paragraph(new Run(new Text( _employeeService.GetEmployeeProfile(emp.EmployeeId).FirstName + " " + _employeeService.GetEmployeeProfile(emp.EmployeeId).LastName + role))));
                 tc.AppendChild(new TableCellProperties(new TableCellWidth {Type = TableWidthUnitValues.Auto}));
                 tr.AppendChild(tc);
                 table.AppendChild(tr);
-                Console.WriteLine("I added a TableRow");
             }
         }
         return table;
@@ -584,16 +599,17 @@
     public async Task CreateDocument(int id)
     {
         int i = 0;
-        string kostenmixDoc = "E:\\Users\\Tobi\\Desktop\\AvatiKostenmixDoc.docx";
-        string empTempDocPath = "E:\\Users\\Tobi\\Desktop\\AvatiTempDoc.docx";
-        string empTemplatePath = "E:\\Users\\Tobi\\Desktop\\AvatiWorkerDoc.docx";
-        string templatePath = "E:\\Users\\Tobi\\Desktop\\AvatiProposalDoc.docx";
+        //string costCalcTemplateDoc = "E:\\Users\\Tobi\\Desktop\\AvatiKostenmixDoc.docx";
+        string empTempDocPath = "wwwroot\\templates\\AvatiTempDoc.docx";
+        string empTemplatePath = "wwwroot\\templates\\AvatiWorkerDoc.docx";
+        string templatePath = "wwwroot\\templates\\AvatiProposalDoc.docx";
         MemoryStream memStream = new MemoryStream();
         var pageBreaker = new Paragraph(new Run(new Break {Type = BreakValues.Page}));
         await using (FileStream fileStream = new FileStream(templatePath, FileMode.Open, FileAccess.Read))
             await fileStream.CopyToAsync(memStream);
         using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(memStream, true))
         {
+            
             wordDoc.ChangeDocumentType(WordprocessingDocumentType.Document);
             Body body = wordDoc.MainDocumentPart.Document.Body;
             var paragraphs = body.Descendants<Paragraph>().ToList();
@@ -603,7 +619,6 @@
                 {
                     foreach (var element in run.Descendants<Text>().ToList())
                     {
-                        Console.WriteLine(element.Text);
                         switch (element.Text)
                         {
                             case "Angebotstitel":
@@ -651,6 +666,7 @@
                 i++;
                 FileStream clearTempDoc = new FileStream(empTempDocPath, FileMode.Create, FileAccess.ReadWrite);
                 await clearTempDoc.DisposeAsync();
+                
                 using (WordprocessingDocument empDoc = WordprocessingDocument.Open(empMemStream, true))
                 {
                     var empBody = empDoc.MainDocumentPart.Document.Body;
@@ -661,55 +677,60 @@
                         {
                             foreach (var text in run.Descendants<Text>().ToList())
                             {
-                                Console.WriteLine(text.Text);
                                 switch (text.Text)
                                 {
                                     case "Name":
                                         text.Text = text.Text.Replace("Name", emp.FirstName + " " + emp.LastName);
                                         break;
                                     case "numb":
-                                        text.Text = text.Text.Replace("numb", emp.Rc.ToString());
-                                        Console.WriteLine(emp.Rc.ToString() + "yikes");
+                                        text.Text = text.Text.Replace("numb", _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result.Rc.ToString());
                                         break;
                                     case "branch":
-                                        foreach (var field in emp.Field)
+                                        foreach (var field in _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result.Fields)
                                         {
                                             par.InsertAfterSelf(GenerateFieldListItem(field));
                                         }
                                         par.Remove();
                                         break;
                                     case "hards":
-                                        foreach (var hardskill in emp.Hardskills)
+                                        foreach (var hardskill in _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result.Hardskills)
                                         {
                                             par.InsertAfterSelf(GenerateHardskillListItem(hardskill.Description));
                                         }
                                         par.Remove();
                                         break;
                                     case "softs":
-                                        foreach (var softskill in emp.Softskills)
+                                        foreach (var softskill in _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result.Softskills)
                                         {
                                             par.InsertAfterSelf(GenerateSoftskillListItem(softskill));
                                         }
                                         par.Remove();
                                         break;
                                     case "langs":
-                                        foreach (var lang in emp.Language)
+                                        foreach (var lang in _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result.Languages)
                                         {
+                                            par.InsertAfterSelf(GenerateLanguageListItem(lang));
                                         }
+                                        par.Remove();
                                         break;
                                     case "roles":
+                                        foreach (var role in _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result.Roles)
+                                        {
+                                            par.InsertAfterSelf(GenerateRoleListItem(role));
+                                        }
+                                        par.Remove();
                                         break;
                                 }
                             }
                         }
                     }
-                    Console.WriteLine("Hallo");
+                    empBody.InsertAfter(pageBreaker.CloneNode(true), empParagraphs.Last());
                     empDoc.SaveAs(empTempDocPath).Close();
                 }
                 paragraphs = body.Descendants<Paragraph>().ToList();
-                string altChunkId = "AltChunkId" + i.ToString();
+                string altChunkId = "AltChunkId" + i;
                 AlternativeFormatImportPart chunk = wordDoc.MainDocumentPart.AddAlternativeFormatImportPart(AlternativeFormatImportPartType.WordprocessingML, altChunkId);
-                using (FileStream empFs = File.Open("E:\\Users\\Tobi\\Desktop\\AvatiTempDoc.docx", FileMode.Open))
+                using (FileStream empFs = File.Open("wwwroot\\templates\\AvatiTempDoc.docx", FileMode.Open))
                 {
                     chunk.FeedData(empFs);
                 }
@@ -717,13 +738,13 @@
                 body.InsertAfter(altChunk, paragraphs.Last());
             }
             /*MemoryStream kostenmixMemStream = new MemoryStream();
-            await using (FileStream kostenmisFs = new FileStream(kostenmixDoc, FileMode.Open, FileAccess.Read))
+            await using (FileStream kostenmixFs = new FileStream(costCalcTemplateDoc, FileMode.Open, FileAccess.Read))
                 await kostenmisFs.CopyToAsync(kostenmixMemStream);*/ //preparing for template fillup
-            //TODO KOSTENMIXKALKULATION   DAMM DAMM DAMM, also from template
-            //Console.WriteLine(wordDoc.ToFlatOpcString());
+            //TODO create template for Kostenmixkalkulation
+            //TODO 
             wordDoc.Save();
             wordDoc.Close();
             var task = await _blazorDownloadFileService.DownloadFile("test.docx", memStream, "application/octet-stream");
-        } //end of big using
+        }
     }
 }
