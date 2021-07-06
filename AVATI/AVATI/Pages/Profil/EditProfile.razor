@@ -2,8 +2,14 @@
 @page "/profile/update/{id:int}"
 @using AVATI.Data
 @using Blazorise
+
 @using System.Text.RegularExpressions
 @using DocumentFormat.OpenXml.Spreadsheet
+@using System.IO
+@using System
+@using System.Net.Mime
+@using Azure.Storage.Blobs
+@using Microsoft.EntityFrameworkCore.Migrations.Operations
 @inject IProjektService _projektService
 @inject IEmployeeService _employee
 @inject NavigationManager _navManager
@@ -14,326 +20,393 @@
 <HardSkillLevelSelection @ref="_hardSkillLevel" Abstract="@this"/>
 <LanguageLevelSelection @ref="_languageLevel" Abstract="@this"/>
 
+
 @if (PageIsLoaded)
 {
-<h3>Profil</h3>
+    <h3>Profil</h3>
 
-<!------ Gets Employee with the same Id as the Router Parameter ---------->
-<EditForm Model="@Emp" OnValidSubmit="@EditProfiles">
-
-
-<div class="row">
-    <!------ Change Profile Image ---------->
-    <div class="col-md-4">
-        <div class="profile-img">
-            <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" style="margin-left: -20px" width="300" height="200" alt=""/>
-            <div class="file btn btn-lg btn-primary" style="margin-top: 50px; margin-left: -30px">
-                Change Photo
-                <input type="file" id="empImage" @bind-value="@Emp.Image"  name="file"/>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="profile-head">
-
-            <div class="form-group">
-                <div class="row">
-                    <!------ First Name ---------->
-                    <div class="col-6">
-                        <div class="card-title small font-weight-light lead text-left">Vorname</div>
-                        <input type="text" class="form-control" @bind-value="@Emp.FirstName" placeholder="@Emp.FirstName" required>
-                    </div>
-                    <!------ Last Name ---------->
-                    <div class="col-6">
-                        <div class="card-title small font-weight-light lead text-left">Nachname</div>
-                        <input type="text" class="form-control" @bind-value="@Emp.LastName" placeholder="@Emp.LastName" required>
-                    </div>
-                </div>
-                <div style="margin-top: 20px" class="row">
-                    <!------ RC-Level ---------->
-                    <div class="col-6">
-                        <div class="card-title small font-weight-light lead text-left">Rate-Card Level</div>
-                        <input class="form-control" min="1" max="7" type="number"  @bind=@_changeValue id="example-number-input"/>
-                    </div>
-                    <!------ Employment Time ---------->
-                    <div class="col-6">
-                        <div class="card-title small font-weight-light lead text-left">Beschäftigungszeit</div>
-                        <!--<InputDate type="date" class="form-control" @bind-value="@Emp.EmploymentTime" placeholder="@Emp.EmploymentTime" required/>-->
-                        <InputDate class="form-control col" @bind-Value="@Emp.EmploymentTime"/>
-                    </div>
-                </div>
-                <div style="margin-top: 20px" class="row">
-                    <!------ Relevant Work Experience ---------->
-                    <div class="col-6">
-                        <div class="card-title small font-weight-light lead text-left">Relevante Berufserfahrung</div>
-                        <input type="number" class="form-control" @bind-value="@Emp.RelevantWorkExperience" min="0" step="0.1" placeholder="@Emp.RelevantWorkExperience">
-                    </div>
-                   
-                </div>
-
-            </div>
-
-        </div>
-    </div>
-
-    <!------ Edit Profile Button ---------->
-    <div class="col-md-2">
-        <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Bestätigen"/>
+    <!------ Gets Employee with the same Id as the Router Parameter ---------->
+    <EditForm Model="@Emp" OnValidSubmit="@EditProfiles">
 
 
-        <!------ Return Button ---------->
-
-        <a style="margin-top: 20px" href="/profile/@Emp.EmployeeID">
-            <input type="button" class="profile-edit-btn" name="btnAddMore" value="Zurück"/>
-        </a>
-    </div>
-</div>
-
-
-<form class="backdrop">
-
-<!------ Skills ---------->
-<div class="form-col">
-
-<div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
-
-
-<!------ Hard Skills ---------->
-<div class=" form-group">
-    <label class="mr-3 mt-2">Hard Skills: </label>
-    @foreach (var hardskill in Emp.Hardskills)
-    {
-        @if (Emp.HardSkillLevel.Any())
-        {
-            @foreach (var hardskillTuple in Emp.HardSkillLevel)
-            {
-                @if (hardskillTuple.Item1 == hardskill)
+    <div class="row">
+        <!------ Change Profile Image ---------->
+        <div class="col-md-4">
+            <div class="profile-img">
+                @if (Emp.Image == null)
                 {
-                    if (hardskillTuple.Item2 == 1)
+                    <img class="rounded" src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" style="margin-left: -45px" width="300" height="200" alt=""/>
+                }
+                else
+                {
+                    <img class="rounded" src="@Emp.Image" style="margin-left: -45px" width="300" height="200" alt=""/>
+                }
+                <div class="file btn btn-lg btn-primary" style="margin-top: 50px; margin-left: -30px">
+                    <InputFile class="rounded" type="file" id="empImage" OnChange="HandlePhotoSelected"  name="file"/>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="profile-head">
+
+                <div class="form-group">
+                    <div class="row">
+                        <!------ First Name ---------->
+                        <div class="col-6">
+                            <div class="card-title small font-weight-light lead text-left">Vorname</div>
+                            <input type="text" class="form-control" @bind-value="@Emp.FirstName" placeholder="@Emp.FirstName" required>
+                        </div>
+                        <!------ Last Name ---------->
+                        <div class="col-6">
+                            <div class="card-title small font-weight-light lead text-left">Nachname</div>
+                            <input type="text" class="form-control" @bind-value="@Emp.LastName" placeholder="@Emp.LastName" required>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px" class="row">
+                        <!------ RC-Level ---------->
+                        <div class="col-6">
+                            <div class="card-title small font-weight-light lead text-left">Rate-Card Level</div>
+                            <input class="form-control" min="1" max="7" type="number" @bind=@_changeValue id="example-number-input"/>
+                        </div>
+                        <!------ Employment Time ---------->
+                        <div class="col-6">
+                            <div class="card-title small font-weight-light lead text-left">Beschäftigungszeit</div>
+                            <!--<InputDate type="date" class="form-control" @bind-value="@Emp.EmploymentTime" placeholder="@Emp.EmploymentTime" required/>-->
+                            <InputDate class="form-control col" @bind-Value="@Emp.EmploymentTime"/>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px" class="row">
+                        <!------ Relevant Work Experience ---------->
+                        <div class="col-6">
+                            <div class="card-title small font-weight-light lead text-left">Relevante Berufserfahrung</div>
+                            <input type="number" class="form-control" @bind-value="@Emp.RelevantWorkExperience" min="0" step="0.1" placeholder="@Emp.RelevantWorkExperience">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!------ Edit Profile Button ---------->
+        <div class="col-md-2">
+            <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Bestätigen"/>
+
+
+            <!------ Return Button ---------->
+
+            <a style="margin-top: 20px" href="/profile/@Emp.EmployeeID">
+                <input type="button" class="profile-edit-btn" name="btnAddMore" value="Zurück"/>
+            </a>
+        </div>
+    </div>
+
+
+    <form class="backdrop">
+
+    <!------ Skills ---------->
+    <div class="form-col">
+
+        <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
+
+
+        <!------ Hard Skills ---------->
+        <div class=" form-group">
+            <label class="mr-3 mt-2">Hard Skills: </label>
+            @foreach (var hardskill in Emp.Hardskills)
+            {
+                @if (Emp.HardSkillLevel.Any())
+                {
+                    @foreach (var hardskillTuple in Emp.HardSkillLevel)
                     {
-                        <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); })>  
-                            <a><a class="showRemove"> @hardskill.Description | 1 </a> <a class="remove"><span style="color: darkred" class="oi oi-x"></span></a></a>
-                        </button>
-                    }
-                    if (hardskillTuple.Item2 == 2)
-                    {
-                        <button type="button" class="btn btn-outline-primary btn-sm mr-2" @onclick=@(() => { Emp.Hardskills.Remove(hardskill); Emp.HardSkillLevel.Remove(hardskillTuple); })>
-                            <a><a class="showRemove"> @hardskill.Description | 2 </a> <a class="remove"><span style="color: darkred" class="oi oi-x"></span></a></a>
-                        </button>
-                    }
-                    if (hardskillTuple.Item2 == 3)
-                    {
-                        <button type="button" class="btn btn-outline-secondary btn-sm mr-2" @onclick=@(() => { Emp.Hardskills.Remove(hardskill); Emp.HardSkillLevel.Remove(hardskillTuple); })>
-                            <a><a class="showRemove"> @hardskill.Description | 3 </a> <a class="remove"><span style="color: darkred" class="oi oi-x"></span></a></a>
-                        </button>
-                    }
-                    if (hardskillTuple.Item2 == 4)
-                    {
-                        <button type="button" class="btn btn-outline-dark btn-sm mr-2" @onclick=@(() => { Emp.Hardskills.Remove(hardskill); Emp.HardSkillLevel.Remove(hardskillTuple); })>
-                            <a><a class="showRemove"> @hardskill.Description | 4 </a> <a class="remove"><span style="color: darkred" class="oi oi-x"></span></a></a>
-                        </button>
+                        @if (hardskillTuple.Item1 == hardskill)
+                        {
+                            if (hardskillTuple.Item2 == 1)
+                            {
+                                <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); })>
+                                    <a>
+                                        <a class="showRemove"> @hardskill.Description | 1 </a>
+                                        <a class="remove">
+                                            <span style="color: darkred" class="oi oi-x"></span>
+                                        </a>
+                                    </a>
+                                </button>
+                            }
+                            if (hardskillTuple.Item2 == 2)
+                            {
+                                <button type="button" class="btn btn-outline-primary btn-sm mr-2" @onclick=@(() => { Emp.Hardskills.Remove(hardskill); Emp.HardSkillLevel.Remove(hardskillTuple); })>
+                                    <a>
+                                        <a class="showRemove"> @hardskill.Description | 2 </a>
+                                        <a class="remove">
+                                            <span style="color: darkred" class="oi oi-x"></span>
+                                        </a>
+                                    </a>
+                                </button>
+                            }
+                            if (hardskillTuple.Item2 == 3)
+                            {
+                                <button type="button" class="btn btn-outline-secondary btn-sm mr-2" @onclick=@(() => { Emp.Hardskills.Remove(hardskill); Emp.HardSkillLevel.Remove(hardskillTuple); })>
+                                    <a>
+                                        <a class="showRemove"> @hardskill.Description | 3 </a>
+                                        <a class="remove">
+                                            <span style="color: darkred" class="oi oi-x"></span>
+                                        </a>
+                                    </a>
+                                </button>
+                            }
+                            if (hardskillTuple.Item2 == 4)
+                            {
+                                <button type="button" class="btn btn-outline-dark btn-sm mr-2" @onclick=@(() => { Emp.Hardskills.Remove(hardskill); Emp.HardSkillLevel.Remove(hardskillTuple); })>
+                                    <a>
+                                        <a class="showRemove"> @hardskill.Description | 4 </a>
+                                        <a class="remove">
+                                            <span style="color: darkred" class="oi oi-x"></span>
+                                        </a>
+                                    </a>
+                                </button>
+                            }
+                        }
                     }
                 }
             }
-        }
-    }
 
-</div>
-<div class="card-title medium font-weight-light lead text-left" id="title" @onclick="(() => { CollHardSkill(); })">Weitere Hard Skills</div>
-<div class="card-text @(_booleanHardSkill ? "" : "collapse")">
-    <input class="form-control" type="text" placeholder="Suche Hardskill..."
-               @bind="Filter"
-               @bind:event="oninput">
-    @foreach (var hardskill in HardskillList)
-    {
-        @if (!IsVisible(hardskill.Description))
-            continue;
-        if (!Emp.Hardskills.Exists(x => x.Description.Equals(hardskill.Description)))
+        </div>
+        <div class="card-title medium font-weight-light lead text-left" id="title" @onclick="(() => { CollHardSkill(); })">Weitere Hard Skills</div>
+        <div class="card-text @(_booleanHardSkill ? "" : "collapse")">
+            <input class="form-control" type="text" placeholder="Suche Hardskill..."
+                   @bind="Filter"
+                   @bind:event="oninput">
+            @foreach (var hardskill in HardskillList)
+            {
+                @if (!IsVisible(hardskill.Description))
+                    continue;
+                if (!Emp.Hardskills.Exists(x => x.Description.Equals(hardskill.Description)))
+                {
+                    <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { HandleHardSkillClick(hardskill); })>
+                        @hardskill.Description
+                    </button>
+                }
+            }
+        </div>
+    </div>
+
+    <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
+
+    <!------ Soft Skills ---------->
+    <div class="form-group">
+        <label class="mr-3 mt-2">Softskills: </label>
+        @foreach (var softskilll in Emp.Softskills)
         {
-            <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { HandleHardSkillClick(hardskill); })>
-                @hardskill.Description
+            <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Softskills.Remove(softskilll); })>
+                <a>
+                    <a class="showRemove"> @softskilll </a>
+                    <a class="remove">
+                        <span style="color: darkred" class="oi oi-x"></span>
+                    </a>
+                </a>
+            </button>
+        }
+    </div>
+    @foreach (var softskill in _basicDataService.GetAllSoftSkills())
+    {
+        if (!Emp.Softskills.Contains(softskill))
+        {
+            <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { Emp.Softskills.Add(softskill); })>
+                @softskill
             </button>
         }
     }
-</div>
-</div>
 
-<div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
+    <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
 
-<!------ Soft Skills ---------->
-<div class="form-group">
-    <label class="mr-3 mt-2">Softskills: </label>
-    @foreach (var softskilll in Emp.Softskills)
-    {
-        <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Softskills.Remove(softskilll); })>
-             <a><a class="showRemove"> @softskilll </a> <a class="remove"><span style="color: darkred" class="oi oi-x"></span></a></a>
-        </button>
-    }
-</div>
-@foreach (var softskill in _basicDataService.GetAllSoftSkills())
-{
-    if (!Emp.Softskills.Contains(softskill))
-    {
-        <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { Emp.Softskills.Add(softskill); })>
-            @softskill
-        </button>
-    }
-}
-
-<div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
-
-<!------ Rollen ---------->
-<div class="form-group">
-    <label class="mr-3 mt-2">Rollen: </label>
-    @foreach (var empRoles in Emp.Roles)
-    {
-        <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Roles.Remove(empRoles); })>
-             <a><a class="showRemove"> @empRoles </a> <a class="remove"><span style="color: darkred" class="oi oi-x"></span></a></a>
-        </button>
-    }
-</div>
-@foreach (var roles in _basicDataService.GetAllRoles())
-{
-    if (!Emp.Roles.Contains(roles))
-    {
-        <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { Emp.Roles.Add(roles); })>
-            @roles
-        </button>
-    }
-}
-
-<div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
-
-<!------ Fields ---------->
-
-<div class="form-group">
-    <label class="mr-3 mt-2">Branchenwissen: </label>
-    @foreach (var empField in Emp.Field)
-    {
-        <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Field.Remove(empField); })>
-             <a><a class="showRemove"> @empField</a> <a class="remove"><span style="color: darkred" class="oi oi-x"></span></a></a>
-        </button>
-    }
-</div>
-@foreach (var field in _basicDataService.GetAllFields())
-{
-    if (!Emp.Field.Contains(field))
-    {
-        <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { Emp.Field.Add(field); })>
-            @field
-        </button>
-    }
-}
-
-<div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
-
-<!------ Languages ---------->
-
-<div class=" form-group">
-    <label class="mr-3 mt-2">Sprachen: </label>
-    @foreach (var language in Emp.Language)
-                {
-        @if (Emp.Language.Any())
+    <!------ Rollen ---------->
+    <div class="form-group">
+        <label class="mr-3 mt-2">Rollen: </label>
+        @foreach (var empRoles in Emp.Roles)
         {
-            
-                
-                    @if (language.Item2 == LanguageLevel.A1)
-                    {
-                        <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Language.Remove(language);; })>
-                            <!-- @language.Item1 | @language.Item2.ToString() <span style="color: darkred" class="oi oi-x"></span> -->
-                             <a><a class="showRemove"> @language.Item1 | @language.Item2 </a> <a class="remove"><span style="color: darkred" class="oi oi-x"></span></a></a>
-                        </button>
-                    }
-                    @if (language.Item2 == LanguageLevel.A2)
-                    {
-                        <button type="button" class="btn btn-outline-primary btn-sm mr-2" @onclick=@(() => { Emp.Language.Remove(language);})>
-                            <a><a class="showRemove"> @language.Item1 | @language.Item2 </a> <a class="remove"><span style="color: darkred" class="oi oi-x"></span></a></a>
-                        </button>
-                    }
-                    @if (language.Item2 == LanguageLevel.B1)
-                    {
-                        <button type="button" class="btn btn-outline-secondary btn-sm mr-2" @onclick=@(() => { Emp.Language.Remove(language); })>
-                            <a><a class="showRemove"> @language.Item1 | @language.Item2 </a> <a class="remove"><span style="color: darkred" class="oi oi-x"></span></a></a>
-                        </button>
-                    }
-                    @if (language.Item2 == LanguageLevel.B2)
-                    {
-                        <button type="button" class="btn btn-outline-dark btn-sm mr-2" @onclick=@(() => { Emp.Language.Remove(language);  })>
-                            <a><a class="showRemove"> @language.Item1 | @language.Item2 </a> <a class="remove"><span style="color: darkred" class="oi oi-x"></span></a></a>
-                        </button>
-                    }
-                    @if (language.Item2 == LanguageLevel.C1)
-                    {
-                        <button type="button" class="btn btn-outline-info btn-sm mr-2" @onclick=@(() => { Emp.Language.Remove(language); })>
-                            <a><a class="showRemove"> @language.Item1 | @language.Item2 </a> <a class="remove"><span style="color: darkred" class="oi oi-x"></span></a></a>
-                        </button>
-                    }
-                    @if (language.Item2 == LanguageLevel.C2)
-                    {
-                        <button type="button" class="btn btn-outline-warning btn-sm mr-2" @onclick=@(() => { Emp.Language.Remove(language);  })>
-                            <a><a class="showRemove"> @language.Item1 | @language.Item2 </a> <a class="remove"><span style="color: darkred" class="oi oi-x"></span></a></a>
-                        </button>
-                    }
-                
-            }
-        }
-    
-</div>
-@foreach (var language in _basicDataService.GetAllLanguages())
-{
-    @if ((Emp.Language.Find(x => x.Item1 == language)) == null)
-    {
-        <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { HandleLanguageClick(language); })>
-            @language
-        </button>
-    }
-}
-
-<div style="margin-top: 20px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
-
- Projects 
-<div class="form-group ">
-    <label class="mr-3 mt-2">Projekte: </label>
-    <table align="left" style="text-align: left" class="table align-middle">
-        <tr>
-            <th class="text-left">Projekt</th>
-            <th class="text-left">Projekttätigkeit</th>
-            <th class="text-left">Hardskills</th>
-            <th class="text-left">Softskills</th>
-            <th>
-                <a href="/employeeProject/@Emp.EmployeeID">
-                    <button style="margin-left: -120px" type="button" class="profile-edit-btn btn btn-outline-warning">
-                        Bearbeiten
-                    </button>
+            <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Roles.Remove(empRoles); })>
+                <a>
+                    <a class="showRemove"> @empRoles </a>
+                    <a class="remove">
+                        <span style="color: darkred" class="oi oi-x"></span>
+                    </a>
                 </a>
-            </th>
-        </tr>
-        @if (_projctActivityService.GetProjectActivitiesEmployee(Id).Any())
+            </button>
+        }
+    </div>
+    @foreach (var roles in _basicDataService.GetAllRoles())
+    {
+        if (!Emp.Roles.Contains(roles))
         {
-            foreach (var activity in _projctActivityService.GetProjectActivitiesEmployee(Id))
+            <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { Emp.Roles.Add(roles); })>
+                @roles
+            </button>
+        }
+    }
+
+    <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
+
+    <!------ Fields ---------->
+
+    <div class="form-group">
+        <label class="mr-3 mt-2">Branchenwissen: </label>
+        @foreach (var empField in Emp.Field)
+        {
+            <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Field.Remove(empField); })>
+                <a>
+                    <a class="showRemove"> @empField</a>
+                    <a class="remove">
+                        <span style="color: darkred" class="oi oi-x"></span>
+                    </a>
+                </a>
+            </button>
+        }
+    </div>
+    @foreach (var field in _basicDataService.GetAllFields())
+    {
+        if (!Emp.Field.Contains(field))
+        {
+            <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { Emp.Field.Add(field); })>
+                @field
+            </button>
+        }
+    }
+
+    <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
+
+    <!------ Languages ---------->
+
+    <div class=" form-group">
+        <label class="mr-3 mt-2">Sprachen: </label>
+        @foreach (var language in Emp.Language)
+        {
+            @if (Emp.Language.Any())
             {
-                
-                <tr>
-                    <td class="text-left">@_projektService.GetProject(activity.ProjectID).Projecttitel</td>
-                    <td class="text-left">@activity.Description</td>
-                    <td class="text-left"></td>
-                    <td class="text-left"></td>
-                </tr>
-                
+                @if (language.Item2 == LanguageLevel.A1)
+                {
+                    <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Language.Remove(language);; })>
+                        <!-- @language.Item1 | @language.Item2.ToString() <span style="color: darkred" class="oi oi-x"></span> -->
+                        <a>
+                            <a class="showRemove"> @language.Item1 | @language.Item2 </a>
+                            <a class="remove">
+                                <span style="color: darkred" class="oi oi-x"></span>
+                            </a>
+                        </a>
+                    </button>
+                }
+                @if (language.Item2 == LanguageLevel.A2)
+                {
+                    <button type="button" class="btn btn-outline-primary btn-sm mr-2" @onclick=@(() => { Emp.Language.Remove(language); })>
+                        <a>
+                            <a class="showRemove"> @language.Item1 | @language.Item2 </a>
+                            <a class="remove">
+                                <span style="color: darkred" class="oi oi-x"></span>
+                            </a>
+                        </a>
+                    </button>
+                }
+                @if (language.Item2 == LanguageLevel.B1)
+                {
+                    <button type="button" class="btn btn-outline-secondary btn-sm mr-2" @onclick=@(() => { Emp.Language.Remove(language); })>
+                        <a>
+                            <a class="showRemove"> @language.Item1 | @language.Item2 </a>
+                            <a class="remove">
+                                <span style="color: darkred" class="oi oi-x"></span>
+                            </a>
+                        </a>
+                    </button>
+                }
+                @if (language.Item2 == LanguageLevel.B2)
+                {
+                    <button type="button" class="btn btn-outline-dark btn-sm mr-2" @onclick=@(() => { Emp.Language.Remove(language); })>
+                        <a>
+                            <a class="showRemove"> @language.Item1 | @language.Item2 </a>
+                            <a class="remove">
+                                <span style="color: darkred" class="oi oi-x"></span>
+                            </a>
+                        </a>
+                    </button>
+                }
+                @if (language.Item2 == LanguageLevel.C1)
+                {
+                    <button type="button" class="btn btn-outline-info btn-sm mr-2" @onclick=@(() => { Emp.Language.Remove(language); })>
+                        <a>
+                            <a class="showRemove"> @language.Item1 | @language.Item2 </a>
+                            <a class="remove">
+                                <span style="color: darkred" class="oi oi-x"></span>
+                            </a>
+                        </a>
+                    </button>
+                }
+                @if (language.Item2 == LanguageLevel.C2)
+                {
+                    <button type="button" class="btn btn-outline-warning btn-sm mr-2" @onclick=@(() => { Emp.Language.Remove(language); })>
+                        <a>
+                            <a class="showRemove"> @language.Item1 | @language.Item2 </a>
+                            <a class="remove">
+                                <span style="color: darkred" class="oi oi-x"></span>
+                            </a>
+                        </a>
+                    </button>
+                }
             }
         }
-        else
-        {
-            <tr>
-                <td></td>
-                <td></td>
-            </tr>
-        }
-    </table>
-</div> 
 
-</form>
-</EditForm>
+    </div>
+    @foreach (var language in _basicDataService.GetAllLanguages())
+    {
+        @if ((Emp.Language.Find(x => x.Item1 == language)) == null)
+        {
+            <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { HandleLanguageClick(language); })>
+                @language
+            </button>
+        }
+    }
+
+    <div style="margin-top: 20px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
+
+    <!---Projects --->
+    <div class="form-group ">
+        <label class="mr-3 mt-2">Projekte: </label>
+        <table align="left" style="text-align: left" class="table align-middle">
+            <tr>
+                <th class="text-left">Projekt</th>
+                <th class="text-left">Projekttätigkeit</th>
+                <th class="text-left">Hardskills</th>
+                <th class="text-left">Softskills</th>
+                <th>
+                    <a href="/employeeProject/@Emp.EmployeeID">
+                        <button style="margin-left: -120px" type="button" class="profile-edit-btn btn btn-outline-warning">
+                            Bearbeiten
+                        </button>
+                    </a>
+                </th>
+            </tr>
+            @if (_projctActivityService.GetProjectActivitiesEmployee(Id).Any())
+            {
+                foreach (var activity in _projctActivityService.GetProjectActivitiesEmployee(Id))
+                {
+                    <tr>
+                        <td class="text-left">@_projektService.GetProject(activity.ProjectID).Projecttitel</td>
+                        <td class="text-left">@activity.Description</td>
+                        <td class="text-left">@string.Join(" | ", activity.HardSkillsDesc)</td>
+                        <td class="text-left"> @string.Join(" | ", activity.SoftSkills)</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            }
+        </table>
+    </div>
+
+    </form>
+    </EditForm>
 }
 else
 {
@@ -350,22 +423,19 @@ else
 }
 
 @code {
-
-    public string Input { get; set; }
-    public bool Clicked { get; set; } = false;
-
-    private string Filter { get; set; }
-
     HardSkillLevelSelection _hardSkillLevel;
     LanguageLevelSelection _languageLevel;
 
     [Parameter]
     public int Id { get; set; }
 
+    public string Input { get; set; }
+    public bool Clicked { get; set; } = false;
+    private string Filter { get; set; }
     public Employee Emp = new Employee();
     public string WorkExperience;
-    public List<Hardskill> HardskillList =  new List<Hardskill>();
-    public List<ProjectActivity> ProjList = new List<ProjectActivity>();
+    public List<Hardskill> HardskillList = new List<Hardskill>();
+    public List<string> ProjList = new List<string>();
     public Project Proj = new Project();
 
     private bool _booleanHardSkill = false;
@@ -374,7 +444,7 @@ else
     private int _changeValue;
     //private bool _booleanName;
 
-    
+
     public bool IsVisible(string titel)
     {
         if (string.IsNullOrEmpty(Filter))
@@ -390,10 +460,7 @@ else
         HardskillList = await TempHard;
         Emp = _employee.GetEmployeeProfile(Id);
         PageIsLoaded = true;
-
     }
-
-
 
 
     public void EditProject()
@@ -416,19 +483,7 @@ else
         _booleanProj = !_booleanProj;
     }
 
-
-    public void Check()
-    {
-        var regexItem = new Regex("^[a-zA-Z]*$");
-        if (regexItem.IsMatch(Emp.FirstName) || regexItem.IsMatch(Emp.LastName))
-        {
-            return;
-        }
-
-        EditProfiles();
-    }
-
-
+    
     public void HandleHardSkillClick(Hardskill hardskill)
     {
         _hardSkillLevel.Showing(Emp, hardskill);
@@ -445,12 +500,30 @@ else
 
     public void Update()
     {
-      StateHasChanged();  
+        StateHasChanged();
     }
-    
+
     public void CollHardSkill()
     {
         _booleanHardSkill = !_booleanHardSkill;
     }
+
+
+    private async Task HandlePhotoSelected(InputFileChangeEventArgs obj)
+    {
+        
+        var imageFile = obj.File;
+        string imgType = imageFile.ContentType;
+        var buffer = new byte[imageFile.Size];
+        await imageFile.OpenReadStream().ReadAsync(buffer);
+        var imgUrl =$"data:{imgType};base64,{Convert.ToBase64String(buffer)}";
+        var img = Convert.ToBase64String(buffer);
+        Console.WriteLine(img);
+        Console.WriteLine(imgUrl);
+        Emp.Image = imgUrl;
+
+    }
+
+   
 
 }

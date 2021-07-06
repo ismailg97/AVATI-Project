@@ -145,12 +145,13 @@ namespace AVATI.Data
         public bool EditEmployeeProfile(Employee emp)
         {
             using DbConnection db = GetConnection();
+            
             db.Query(
-                "UPDATE Employee SET Firstname= @Firstname ,Lastname = @Lastname , Image = NULL , WorkExperience = @RWE, EmploymentTime = @EmpTime,RCLevel = @RC, IsActive = @IA WHERE EmployeeID = @ID",
+                "UPDATE Employee SET Firstname= @Firstname ,Lastname = @Lastname , Image = @img , WorkExperience = @RWE, EmploymentTime = @EmpTime,RCLevel = @RC, IsActive = @IA WHERE EmployeeID = @ID",
                 new
                 {
                     ID = emp.EmployeeID, Firstname = emp.FirstName, Lastname = emp.LastName, IMAGE = emp.Image,
-                    RWE = emp.RelevantWorkExperience, EmpTime = emp.EmploymentTime, RC = emp.Rc, IA = emp.IsActive
+                    RWE = emp.RelevantWorkExperience, EmpTime = emp.EmploymentTime, RC = emp.Rc, IA = emp.IsActive, img = emp.Image
                 });
 
             db.Query("DELETE FROM Employee_Field WHERE EmployeeID = @ID", new {ID = emp.EmployeeID});
@@ -163,16 +164,27 @@ namespace AVATI.Data
                 }
             }
 
-            db.Query("DELETE FROM Employee_Hardskill WHERE EmployeeID = @ID", new {ID = emp.EmployeeID});
-            if (emp.HardSkillLevel.Any())
+            List<string> HardSkillList = new List<string>(db.Query<string>(
+                "SELECT Hardskill FROM Employee_Hardskill WHERE EmployeeID =@id", new {id = emp.EmployeeID}));
+            foreach (var hard in HardSkillList)
             {
-                foreach (var hardskill in emp.HardSkillLevel)
+                if (emp.Hardskills.Find(x => x.Description == hard) == null)
                 {
-                    
-                    db.Query("INSERT INTO Employee_Hardskill VALUES (@ID, @DESC, @LEVEL)",
-                        new {ID = emp.EmployeeID, DESC = hardskill.Item1.Description, LEVEL = hardskill.Item2});
-                }
+                    db.Query("DELETE FROM Employee_Hardskill WHERE Hardskill = @hardsk AND EmployeeID=@id",
+                        new {hardsk = hard, id = emp.EmployeeID});
+                } 
             }
+            
+            
+            //db.Query("DELETE FROM Employee_Hardskill WHERE EmployeeID = @ID", new {ID = emp.EmployeeID});
+            //if (emp.HardSkillLevel.Any())
+            //{
+            //    foreach (var hardskill in emp.HardSkillLevel)
+            //    {
+            //db.Query("INSERT INTO Employee_Hardskill VALUES (@ID, @DESC, @LEVEL)",
+            //            new {ID = emp.EmployeeID, DESC = hardskill.Item1.Description, LEVEL = hardskill.Item2});
+            //    }
+            //}
 
             db.Query("DELETE FROM Employee_Language WHERE EmployeeID = @ID", new {ID = emp.EmployeeID});
             if (emp.Language.Any())
@@ -194,15 +206,28 @@ namespace AVATI.Data
                 }
             }
 
-            db.Query("DELETE FROM Employee_Softskill WHERE EmployeeID = @ID", new {ID = emp.EmployeeID});
-            if (emp.Softskills.Any())
+            List<string> SoftSkillList = new List<string>(db.Query<string>(
+                "SELECT Softskill FROM Employee_Softskill WHERE EmployeeID =@id", new {id = emp.EmployeeID}));
+            foreach (var soft in SoftSkillList)
             {
-                foreach (var softskill in emp.Softskills)
+                if (emp.Softskills.Find(x => x.Equals(soft)) == null)
                 {
-                    db.Query("INSERT INTO Employee_Softskill VALUES (@ID, @SOFTSKILL)",
-                        new {ID = emp.EmployeeID, SOFTSKILL = softskill});
-                }
+                    db.Query("DELETE FROM Employee_Softskill WHERE Softskill = @softsk AND EmployeeID=@id",
+                        new {softsk = soft, id = emp.EmployeeID});
+                } 
             }
+            
+            //db.Query("DELETE FROM Employee_Softskill WHERE EmployeeID = @ID", new {ID = emp.EmployeeID});
+            //if (emp.Softskills.Any())
+            //{
+            //    foreach (var softskill in emp.Softskills)
+            //    {
+            //        db.Query("INSERT INTO Employee_Softskill VALUES (@ID, @SOFTSKILL)",
+            //            new {ID = emp.EmployeeID, SOFTSKILL = softskill});
+            //    }
+            //}
+            
+            
 
             return true;
         }
@@ -225,7 +250,7 @@ namespace AVATI.Data
                 db.Query<float>("select WorkExperience from Employee where EmployeeID = @ID", new {ID = employeeId})
                     .ToList();
             employee.RelevantWorkExperience = employeesWE[0];
-            Console.WriteLine(employee.Rc);
+            
 
             var fields = db
                 .Query<string>("select Field from Employee_Field where EmployeeId = @ID", new {ID = employeeId})
@@ -271,7 +296,7 @@ namespace AVATI.Data
                 .ToList();
             foreach (var role in roles)
             {
-                Console.WriteLine(role);
+                
                 employee.Roles.Add(role);
             }
 
@@ -322,5 +347,6 @@ namespace AVATI.Data
             }
             else return LanguageLevel.C2;
         }
+        
     }
 }
