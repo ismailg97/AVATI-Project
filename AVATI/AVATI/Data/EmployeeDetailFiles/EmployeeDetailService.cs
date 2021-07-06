@@ -27,11 +27,7 @@ namespace AVATI.Data.EmployeeDetailFiles
         }
 
         public List<EmployeeDetail> EmployeeDetails;
-
-        public bool UpdateEmployeeDetail(EmployeeDetail employeeDetail)
-        {
-            throw new System.NotImplementedException();
-        }
+        
 
         public async Task<bool> UpdateEmployeeDetail(int employeeId, int proposalId, EmployeeDetail employeeDetail)
         {

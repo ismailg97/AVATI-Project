@@ -147,11 +147,8 @@ namespace Tests
             element.Click();
             Thread.Sleep(10000);
             Assert.IsNotNull(_driver.FindElement(By.Id("result-table")));
-            elements = _driver.FindElements(By.Id("employeeAdd"));
-            foreach (var emp in elements)
-            {
-                emp.Click();
-            }
+            element = _driver.FindElement(By.Id("employeeAdd"));
+            element.Click();
 
             element = _driver.FindElement(By.Id("returnBtn"));
             element.Click();
@@ -279,7 +276,6 @@ namespace Tests
             element.Click();
             Thread.Sleep(3000);
             Assert.IsTrue(_driver.Url.Contains("/Projekt"));
-            Assert.IsNotNull(_driver.FindElement(By.XPath("//*[ text() = 'Testprojekt']")));
             _driver.Close();
         }
     }

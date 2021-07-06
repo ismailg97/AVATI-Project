@@ -151,21 +151,21 @@
 
     @if (_searchService.TableIsVisible)
     {
-        if (!_searchService.PerfectMatch && SelectEmployees.Any())
-        {
-            <div class="alert alert-danger col-11">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die alle Kriterien erfüllt!</div>
-        }
-
-        @if (!SelectEmployees.Any())
+        @if (!SelectEmployees.Any() || (Id != 0 && (SelectEmployees.Count(e => employeeList.Any(x => x.EmployeeID == e.EmployeeID)) == SelectEmployees.Count)))
         {
             <div class="alert alert-danger col-11">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die mindestens eines der Kriterien erfüllt!</div>
         }
         else
         {
+            if (!_searchService.PerfectMatch && SelectEmployees.Any())
+            {
+                <div class="alert alert-danger col-11">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die alle Kriterien erfüllt!</div>
+            }
+
             <h4 class="mb-3 font-weight-bold">Gefundene Mitarbeiter:</h4>
 
-            <table class="table table-bordered table-striped text-center col-lg-11 col-md-12" id="result-table">
-                <thead>
+            <table class="table table-hover text-center col-lg-11 mb-4 col-md-12" id="result-table">
+                <thead class="thead-dark">
                 <tr>
                     <th>Name</th>
                     <th>RC</th>
@@ -182,71 +182,147 @@
                 <tbody>
                 @foreach (var employee in SelectEmployees)
                 {
-                    <tr>
-                        <td class="font-weight-bold" style="width: 15%">@employee.FirstName @employee.LastName</td>
-                        <td style="width: 5%">
+                    if (Id == 0 || employeeList.Find(e => e.EmployeeID == employee.EmployeeID) == null)
+                    {
+                        <tr>
+                            <td class="font-weight-bold" style="width: 15%">@employee.FirstName @employee.LastName</td>
+                            <td style="width: 5%">
 
-                            <button type="button" class="btn btn-primary align-middle col">@employee.Rc</button>
-                        </td>
-                        <td style="width:30%">
-                            <div class="form-group row col">
-                                @foreach (var hardskill in employee.Hardskills)
-                                {
-                                    if (_searchService.HardskillsToSearchTemp.Exists(e => e.Description.Equals(hardskill.Description)))
-                                    {
-                                        <button class="btn btn-success btn-sm mr-1 mb-1">@hardskill.Description</button>
-                                    }
-                                }
-                                @foreach (var tuple in _employeesWithCategories.FindAll(e => e.Item2 == employee.EmployeeID))
-                                {
-                                    <button class="btn btn-info btn-sm mr-1 mb-1">@tuple.Item1</button>
-                                }
-
-                            </div>
-                        </td>
-                        <td style="width:20%">
-                            <div class="form-group row col">
-                                @foreach (var softskill in employee.Softskills)
-                                {
-                                    if (_searchService.SoftskillsToSearchTemp.Contains(softskill))
-                                    {
-                                        <button class="btn btn-secondary btn-sm mr-1 mb-1">@softskill</button>
-                                    }
-                                }
-                            </div>
-                        </td>
-                        <td style="width: 20%">
-                            <div class="form-group row col">
-                                @foreach (var role in employee.Roles)
-                                {
-                                    if (_searchService.RolesToSearchTemp.Contains(role))
-                                    {
-                                        <button class="btn btn-secondary btn-sm mr-1 mb-1">@role</button>
-                                    }
-                                }
-                            </div>
-                        </td>
-                        @if (Id != 0)
-                        {
-                            <td style="width: 10%" class="text-center">
-
-                                @if (Id != 0 && _proposal.GetProposal(Id).Employees.Find(e => e.EmployeeID == employee.EmployeeID) == null)
-                                {
-                                    <button class="btn btn-sm btn-outline-success" id="employeeAdd" @onclick=@(() => { _proposal.AddEmployee(Id, employee.EmployeeID, employee.Rc); })>Hinzufügen</button>
-                                }
-                                else if (Id != 0 && _proposal.GetProposal(Id).Employees.Find(e => e.EmployeeID == employee.EmployeeID) != null)
-                                {
-                                    <button class="btn btn-sm btn-outline-danger" @onclick=@(() => { _proposal.RemoveEmployee(Id, employee.EmployeeID); })>Löschen</button>
-                                }
+                                <button type="button" class="btn btn-primary align-middle col">@employee.Rc</button>
                             </td>
-                        }
+                            <td style="width:30%">
+                                <div class="form-group row col">
+                                    @foreach (var hardskill in employee.Hardskills)
+                                    {
+                                        if (_searchService.HardskillsToSearchTemp.Exists(e => e.Description.Equals(hardskill.Description)))
+                                        {
+                                            <button class="btn btn-success btn-sm mr-1 mb-1">@hardskill.Description</button>
+                                        }
+                                    }
+                                    @foreach (var tuple in _employeesWithCategories.FindAll(e => e.Item2 == employee.EmployeeID))
+                                    {
+                                        <button class="btn btn-info btn-sm mr-1 mb-1">@tuple.Item1</button>
+                                    }
 
-                    </tr>
+                                </div>
+                            </td>
+                            <td style="width:20%">
+                                <div class="form-group row col">
+                                    @foreach (var softskill in employee.Softskills)
+                                    {
+                                        if (_searchService.SoftskillsToSearchTemp.Contains(softskill))
+                                        {
+                                            <button class="btn btn-secondary btn-sm mr-1 mb-1">@softskill</button>
+                                        }
+                                    }
+                                </div>
+                            </td>
+                            <td style="width: 20%">
+                                <div class="form-group row col">
+                                    @foreach (var role in employee.Roles)
+                                    {
+                                        if (_searchService.RolesToSearchTemp.Contains(role))
+                                        {
+                                            <button class="btn btn-secondary btn-sm mr-1 mb-1">@role</button>
+                                        }
+                                    }
+                                </div>
+                            </td>
+                            @if (Id != 0)
+                            {
+                                <td style="width: 10%" class="text-center">
+
+                                    @if (Id != 0 && _proposal.GetProposal(Id).Employees.Find(e => e.EmployeeID == employee.EmployeeID) == null)
+                                    {
+                                        <button class="btn btn-sm btn-outline-success" id="employeeAdd" @onclick=@(() => { _proposal.AddEmployee(Id, employee.EmployeeID, employee.Rc); employeeList.Add(employee); StateHasChanged(); })>Hinzufügen</button>
+                                    }
+                                </td>
+                            }
+
+                        </tr>
+                    }
                 }
                 </tbody>
 
             </table>
         }
+    }
+
+    @if (_proposalToCompare != null && Id != 0 && employeeList.Count != 0)
+    {
+        <h4 class="mb-3 mt-4 font-weight-bold">In <b> @_proposalToCompare.ProposalTitle </b> befindliche Mitarbeiter: </h4>
+
+
+        <table class="table table-hover text-center col-lg-11 col-md-12" id="result-table">
+            <thead class="thead-light">
+            <tr>
+                <th>Name</th>
+                <th>RC</th>
+                <th>Hardskills / Kategorien</th>
+                <th>Softskills</th>
+                <th>Rolle(n)</th>
+                @if (Id != 0)
+                {
+                    <th>Entfernen</th>
+                }
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var employee in employeeList)
+            {
+                <tr>
+                    <td class="font-weight-bold" style="width: 15%">@employee.FirstName @employee.LastName</td>
+                    <td style="width: 5%">
+
+                        <button type="button" class="btn btn-primary align-middle col">@employee.Rc</button>
+                    </td>
+                    <td style="width:30%">
+                        <div class="form-group row col">
+                            @foreach (var hardskill in employee.Hardskills)
+                            {
+                                if (_searchService.HardskillsToSearchTemp.Exists(e => e.Description.Equals(hardskill.Description)))
+                                {
+                                    <button class="btn btn-success btn-sm mr-1 mb-1">@hardskill.Description</button>
+                                }
+                            }
+                            @foreach (var tuple in _employeesWithCategories.FindAll(e => e.Item2 == employee.EmployeeID))
+                            {
+                                <button class="btn btn-info btn-sm mr-1 mb-1">@tuple.Item1</button>
+                            }
+
+                        </div>
+                    </td>
+                    <td style="width:20%">
+                        <div class="form-group row col">
+                            @foreach (var softskill in employee.Softskills)
+                            {
+                                if (_searchService.SoftskillsToSearchTemp.Contains(softskill))
+                                {
+                                    <button class="btn btn-secondary btn-sm mr-1 mb-1">@softskill</button>
+                                }
+                            }
+                        </div>
+                    </td>
+                    <td style="width: 20%">
+                        <div class="form-group row col">
+                            @foreach (var role in employee.Roles)
+                            {
+                                if (_searchService.RolesToSearchTemp.Contains(role))
+                                {
+                                    <button class="btn btn-secondary btn-sm mr-1 mb-1">@role</button>
+                                }
+                            }
+                        </div>
+                    </td>
+                    <td style="width: 10%" class="text-center">
+                        <button class="btn btn-sm btn-outline-danger" id="employeeRemove" @onclick=@(() => { _proposal.RemoveEmployee(Id, employee.EmployeeID); employeeList.Remove(employee); StateHasChanged(); })>Entfernen</button>
+
+                    </td>
+                </tr>
+            }
+            </tbody>
+
+        </table>
     }
 
     @if (Id != 0 && _searchService.TableIsVisible)
@@ -279,6 +355,9 @@ else
 
     private bool _pageIsLoaded;
 
+    private Data.Proposal _proposalToCompare;
+
+    private List<Employee> employeeList = new List<Employee>();
 
     private List<Tuple<string, int>> _employeesWithCategories;
 
@@ -338,8 +417,21 @@ else
         _pageIsLoaded = true;
         _searchService.TableIsVisible = true;
         StateHasChanged();
-        await Task.Delay(300);
-        await _jsRuntime.InvokeAsync<string>("OnScrollEvent");
+        if (Id != 0)
+        {
+            _proposalToCompare = _proposal.GetProposal(Id);
+            employeeList = new List<Employee>();
+            foreach (var em in _proposalToCompare.Employees)
+            {
+                Employee temp = _employee.GetEmployeeProfile(em.EmployeeID);
+                employeeList.Add(temp);
+            }
+        }
+        if (SelectEmployees.Any())
+        {
+            await Task.Delay(300);
+            await _jsRuntime.InvokeAsync<string>("OnScrollEvent");
+        }
     }
 
 
