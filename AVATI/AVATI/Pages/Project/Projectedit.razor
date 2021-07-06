@@ -11,6 +11,8 @@
 <AddProjectActivityToProject @ref="_addProjectActivityToProject" Abstract="@this"/>
 <AddEmployeeToProject @ref="_addEmployeeToProject" Abstract="@this"/>
 <PopAddProjectPurposeToProject @ref="_popAddProjectPurpose" Abstract="@this"/>
+<AddActivityToPurpose @ref="_popProjectActivityToPurpose" Abstract="@this"/>
+<AlterPurposeName @ref="_popAlterPurposeName" Abstract="@this"/>
 
 @if (Loading)
 {
@@ -28,196 +30,218 @@
 else
 {
     <EditForm Model="@Project" OnValidSubmit="@Save">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+    <div class="row col h-100">
+    <div class="text-left col">
+    <div class="column">
+        <h3 class="text-lg-left font-weight-bold"><em>@Project.Projecttitel</em> editieren!</h3>
+        <div class="form-group row">
+            <ValidationSummary/>
+            <label class="col-sm-3 col-form-label font-weight-bold">Projekttitel</label>
+            <div class="col-sm-9">
+                <InputText id="projekttitel" class="form-control" @bind-Value="Project.Projecttitel"></InputText>
+            </div>
+        </div>
 
-        <DataAnnotationsValidator/>
-                    <ValidationSummary/>
-        <div class="row col h-100">
-            <div class="text-left col">
-                <div class="column">
-                    <h3 class="text-lg-left font-weight-bold"><em>@Project.Projecttitel</em> editieren!</h3>
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label font-weight-bold">Projekttitel</label>
-                        <div class="col-sm-9">
-                            <InputText id="projekttitel" class="form-control" @bind-Value="Project.Projecttitel"></InputText>
-                        </div>
-                    </div>
+        <div class="form-group row">
+            <ValidationSummary/>
+            <label class="col-sm-3 col-form-label font-weight-bold">Projektbeschreibung</label>
+            <div class="col-sm-9">
+                <textarea id="projektbeschreibung" class="form-control" @bind="Project.Projectdescription"></textarea>
+            </div>
+        </div>
 
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label font-weight-bold">Projektbeschreibung</label>
-                        <div class="col-sm-9">
-                            <textarea id="projektbeschreibung" class="form-control" @bind="Project.Projectdescription"></textarea>
-                        </div>
-                    </div>
+        <!-- BRANCHEN -------------------------------------------------->
 
-                    <!-- BRANCHEN -------------------------------------------------->
-
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label font-weight-bold">Branchen</label>
-                        <div class="col-sm-6 col-form-label">
-                            <div class="list-group border-dark border overflow-auto" style="max-height: 200px">
-                                @if (!Project.Fields.Any())
-                                {
-                                    <button class="btn btn-outline-dark">[Keine Branche dem Projekt zugewiesen]</button>
-                                }
-                                @foreach (var branche in Project.Fields)
-                                {
-                                    <button class="btn btn-outline-dark">@branche</button>
-                                }
-                            </div>
-                            <button class="btn btn-info col" @onclick="() => { PopAddFieldToProject(); }">
-                                <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span> Edit Branchen
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- ZEITEN -------------------------------------------------->
-
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label font-weight-bold">Projektanfang</label>
-                        <div class="col-sm col-form-label">
-                            <div class="row col input-group" id="datetimepicker1">
-                                <InputDate class="form-control col-3" @bind-Value="@Project.Projectbeginning"></InputDate>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label font-weight-bold">Projektende</label>
-                        <div class="col-sm col-form-label">
-                            <div class="row col">
-                                <InputDate class="form-control col-3" @bind-Value="@Project.Projectend"></InputDate>
-                            </div>
-                        </div>
-                    </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label font-weight-bold">Branchen</label>
+            <div class="col-sm-6 col-form-label">
+                <div class="list-group border-dark border overflow-auto" style="max-height: 200px">
+                    @if (!Project.Fields.Any())
+                    {
+                        <button class="btn btn-outline-dark">[Keine Branche dem Projekt zugewiesen]</button>
+                    }
+                    @foreach (var branche in Project.Fields)
+                    {
+                        <button class="btn btn-outline-dark">@branche</button>
+                    }
                 </div>
+                <button class="btn btn-info col" @onclick="() => { PopAddFieldToProject(); }">
+                    <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span> Edit Branchen
+                </button>
+            </div>
+        </div>
 
-                <!-- Mitarbeiter -------------------------------------------------->
+        <!-- ZEITEN -------------------------------------------------->
 
-                <div class="form-group row">
-                    <label class="col-sm-3 col-form-label font-weight-bold">Mitarbeiter</label>
-                    <table class="table border-primary col">
-                        <thead>
-                        <tr>
-                            <th scope="col" style="width: 50%">Mitarbeiter</th>
-                            <th>
-                                <div class="form-group text-right">
-                                    <button type="button" class="btn btn-info text-right" @onclick="() => { PopAddEmployeeToProject(ID); }">+ Mitarbeiter</button>
-                                </div>
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @if (!Project.Employees.Any())
-                        {
-                            <tr>
-                                <td>[Weisen Sie Mitarbeiter dem Projekt zu!]</td>
-                                <td></td>
-                            </tr>
-                        }
-                        @foreach (var emp in Project.Employees)
-                        {
-                            <tr>
-                                <td>@emp.FirstName @emp.LastName</td>
-                                <td>
-                                    <button type="button" class="btn btn-danger" @onclick="() => { DeleteFromProject(Project.ProjectID, emp); Update(); }">
-                                        <span class="oi oi-trash" aria-hidden="true"></span>
-                                    </button>
-                                </td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Projekttätigkeiten ------------------------------------------------------------>
-
-                <div class="form-group row">
-                    <label class="col-sm-3 col-form-label font-weight-bold">Projekttätigkeiten</label>
-                    <table class="table border-primary col">
-                        <thead>
-                        <th scope="col">Projekttätigkeiten</th>
-                        <th class="text-center" scope="col">Zugewiesene Mitarbeiter</th>
-                        <th scope="col">
-                            <div class="form-group text-right">
-                                <button type="button" class="btn btn-info text-right" @onclick="(() => { PopAddActivity(ID); })">Edit Projekttätigkeit</button>
-                            </div>
-                        </th>
-                        </thead>
-                        <tbody>
-                        @if (!_projectActivity.GetProjectActivitiesProject(ID).Any())
-                        {
-                            <tr>
-                                <td>[Weisen Sie passende Projekttätigkeiten dem Projekt zu!]</td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        }
-                        @foreach (var activ in _projectActivity.GetProjectActivitiesProject(ID))
-                        {
-                            <tr>
-                                @if (Project.Employees.Find(x => x.EmployeeID == activ.EmployeeID) == null)
-                                {
-                                    <td>@activ.Description</td>
-                                    <!--- liste an mitarbeitern -->
-                                    <td class="text-center">[Keine zugewiesene Mitarbeiter!]</td>
-                                }
-                                else
-                                {
-                                    <td>@Project.Employees.Find(x => x.EmployeeID == activ.EmployeeID)</td>
-                                }
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- PROJEKTZWECKE -------------------------------------------------->
-
-                <div class="form-group row">
-                    <label class="col-sm-3 col-form-label font-weight-bold">Projektzwecke</label>
-                    <table class="table border-primary col">
-                        <thead>
-                        <th scope="col">Projektzwecke</th>
-                        <th class="text-center" scope="col">Gelöst durch...</th>
-                        <th scope="col">
-                            <div class="form-group text-right">
-                                <button type="button" class="btn btn-info text-right" @onclick="(() => { AddProjectPurposeToProject(ID); })">+ Projektzweck</button>
-                            </div>
-                        </th>
-                        </thead>
-                        <tbody>
-                        @if (!_projectPurposeService.GettAllPurposesFromProject(ID).Any())
-                        {
-                            <tr>
-                                <td>[Fügen Sie neue Projektzwecke hinzu!]</td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        }
-                        @foreach (var purpose in _projectPurposeService.GettAllPurposesFromProject(ID)) /*THEY GIVE ME MEDICINE*/
-                        {
-                            <tr>
-                                <td>@purpose.Purpose</td>
-                                @if (purpose.AssignedProjectActivity == null)
-                                {
-                                    <td>[Keine Projekttätigkeit zugewiesen!]</td>
-                                }
-                                else
-                                {
-                                    <td>@purpose.AssignedProjectActivity.Description</td>
-                                }
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="form-group text-right">
-                <button type="submit" class="btn btn-info">
-                            <span class="oi oi-document" aria-hidden="true"></span> Zurück zur Übersicht
-                        </button>
+        <div class="form-group row">
+            <ValidationSummary/>
+            <label class="col-sm-3 col-form-label font-weight-bold">Projektanfang</label>
+            <div class="col-sm col-form-label">
+                <div class="row col input-group" id="datetimepicker1">
+                    <InputDate class="form-control col-3" @bind-Value="@Project.Projectbeginning"></InputDate>
                 </div>
             </div>
         </div>
+        <div class="form-group row">
+            <ValidationSummary/>
+            <label class="col-sm-3 col-form-label font-weight-bold">Projektende</label>
+            <div class="col-sm col-form-label">
+                <div class="row col">
+                    <InputDate class="form-control col-3" @bind-Value="@Project.Projectend"></InputDate>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mitarbeiter -------------------------------------------------->
+
+    <div class="form-group row">
+        <label class="col-sm-3 col-form-label font-weight-bold">Mitarbeiter</label>
+        <table class="table border-primary col">
+            <thead>
+            <tr>
+                <th scope="col" style="width: 50%">Mitarbeiter</th>
+                <th>
+                    <div class="form-group text-right">
+                        <button type="button" class="btn btn-info text-right" @onclick="() => { PopAddEmployeeToProject(ID); }">+ Mitarbeiter</button>
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            @if (!Project.Employees.Any())
+            {
+                <tr>
+                    <td>[Weisen Sie Mitarbeiter dem Projekt zu!]</td>
+                    <td></td>
+                </tr>
+            }
+            @foreach (var emp in Project.Employees)
+            {
+                <tr>
+                    <td>@emp.FirstName @emp.LastName</td>
+                    <td>
+                        <button type="button" class="btn btn-danger" @onclick="() => { DeleteFromProjectEmployee(Project.ProjectID, emp); Update(); }">
+                            <span class="oi oi-trash" aria-hidden="true"></span>
+                        </button>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Projekttätigkeiten ------------------------------------------------------------>
+
+    <div class="form-group row">
+        <label class="col-sm-3 col-form-label font-weight-bold">Projekttätigkeiten</label>
+        <table class="table border-primary col">
+            <thead>
+            <th scope="col">Projekttätigkeiten</th>
+            <th scope="col" class="text-center">Zugewiesene Mitarbeiter</th>
+            <th scope="col">
+                <div class="form-group text-right">
+                    <button type="button" class="btn btn-info text-right" @onclick="(() => { PopAddActivity(ID); })">
+                        <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span> Edit Projekttätigkeit
+                    </button>
+                </div>
+            </th>
+            </thead>
+            <tbody>
+            @if (!_projectActivity.GetProjectActivitiesProject(ID).Any())
+            {
+                <tr>
+                    <td>[Weisen Sie passende Projekttätigkeiten dem Projekt zu!]</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            }
+            @foreach (var activ in _projectActivity.GetProjectActivitiesProject(ID))
+            {
+                <tr>
+                    @if (Project.Employees.Find(x => x.EmployeeID == activ.EmployeeID) == null)
+                    {
+                        <td>@activ.Description</td>
+                        <!--- liste an mitarbeitern -->
+                        <td class="text-center">[Keine zugewiesene Mitarbeiter!]</td>
+                    }
+                    else
+                    {
+                        <td>@Project.Employees.Find(x => x.EmployeeID == activ.EmployeeID)</td>
+                    }
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PROJEKTZWECKE -------------------------------------------------->
+
+    <div class="form-group row">
+        <label class="col-sm-3 col-form-label font-weight-bold">Projektzwecke</label>
+        <table class="table border-primary col">
+            <thead>
+            <th scope="col">Projektzwecke</th>
+            <th scope="col"></th>
+            <th scope="col">Gelöst durch...</th>
+            <th scope="col">
+                <div class="form-group text-right">
+                    <button type="button" class="btn btn-info text-right" @onclick="(() => { AddProjectPurposeToProject(ID); })">+ Projektzweck</button>
+                </div>
+            </th>
+            </thead>
+            <tbody>
+            @if (!_projectPurposeService.GettAllPurposesFromProject(ID).Any())
+            {
+                <tr>
+                    <td>[Fügen Sie neue Projektzwecke hinzu!]</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            }
+            @foreach (var purpose in _projectPurposeService.GettAllPurposesFromProject(ID))
+            {
+                <tr>
+                    <td>@purpose.Purpose</td>
+                    <td>
+                        <button type="button" class="btn btn-info" @onclick="() => { PopAlterPurposeName(purpose); }"> <!-- modal fenster hinzufügen -->
+                        <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span> Edit
+                        </button>
+                        <button type="button" class="btn btn-danger" @onclick="() => { DeleteFromProjectPurpose(purpose); }">
+                            <span class="oi oi-trash" aria-hidden="true"></span>
+                        </button>
+                    </td>
+                    @if (purpose.AssignedProjectActivity == null)
+                    {
+                        <td>
+                            <button type="button" class="btn btn-info" @onclick="() => { AddPurposeToActivity(purpose); }">
+                                +
+                            </button>
+                        </td>
+                        <td>leer</td>
+                    }
+                    else
+                    {
+                        <td>
+                            <button type="button" class="btn btn-info" @onclick="() => { AddPurposeToActivity(purpose); }">+</button>
+                        </td>
+                        <td>@purpose.AssignedProjectActivity.Description</td>
+                    }
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-group text-right">
+        <button type="submit" class="btn btn-info" @onclick="() => { NavigateTo(ID); }">
+            <span class="oi oi-document" aria-hidden="true"></span> Zurück zur Übersicht
+        </button>
+    </div>
+    </div>
+    </div>
 
     </EditForm>
 }
@@ -230,7 +254,8 @@ else
     AddProjectActivityToProject _addProjectActivityToProject;
     AddEmployeeToProject _addEmployeeToProject;
     PopAddProjectPurposeToProject _popAddProjectPurpose;
-
+    AddActivityToPurpose _popProjectActivityToPurpose;
+    AlterPurposeName _popAlterPurposeName;
 
     public List<ProjectActivity> Activitieslist { get; set; } = new List<ProjectActivity>();
 
@@ -248,17 +273,24 @@ else
         Project.ProjectID = ID;
         _projectService.UpdateProject(Project);
         StateHasChanged();
-        _navigationManager.NavigateTo("/Projektübersicht");
     }
 
     public void PopAddFieldToProject()
     {
         _addFieldToProject.Showing(ID);
+        StateHasChanged();
     }
 
     public void PopAddProjectActivity(int ID)
     {
         _addProjectActivityToProject.Showing(ID);
+        StateHasChanged();
+    }
+
+    public void PopAlterPurposeName(ProjectPurpose purpose)
+    {
+        _popAlterPurposeName.Showing(purpose);
+        StateHasChanged();
     }
 
     protected override void OnInitialized()
@@ -270,6 +302,7 @@ else
     public void PopAddActivity(int ID)
     {
         _addProjectActivityToProject.Showing(ID);
+        StateHasChanged();
     }
 
     public async void PopAddEmployeeToProject(int ID)
@@ -280,14 +313,34 @@ else
         StateHasChanged();
     }
 
-    public void DeleteFromProject(int ProjectId, Employee emp)
+    public void DeleteFromProjectEmployee(int ProjectId, Employee emp)
     {
         _projectService.DeleteEmployeeFromProject(ProjectId, emp.EmployeeID);
+        StateHasChanged();
+    }
+
+    public void DeleteFromProjectPurpose(ProjectPurpose purpose)
+    {
+        _projectPurposeService.DeletePurpose(purpose);
+        StateHasChanged();
     }
 
     public void AddProjectPurposeToProject(int ProjectID)
     {
         _popAddProjectPurpose.Showing(ID);
+        StateHasChanged();
+    }
+
+    public void UpdatePurpose(ProjectPurpose purpose)
+    {
+        _projectPurposeService.UpdatePurposeString(null, null, 7);
+        StateHasChanged();
+    }
+
+    public void AddPurposeToActivity(ProjectPurpose purpose)
+    {
+        _popProjectActivityToPurpose.Showing(purpose, ID);
+        StateHasChanged();
     }
 
     public void Update()
@@ -297,7 +350,9 @@ else
         StateHasChanged();
     }
 
-
-
+    public void NavigateTo(int ID)
+    {
+        _navigationManager.NavigateTo("/Projektübersicht");
+    }
 
 }

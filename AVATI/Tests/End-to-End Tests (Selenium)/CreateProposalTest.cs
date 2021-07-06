@@ -147,11 +147,8 @@ namespace Tests
             element.Click();
             Thread.Sleep(10000);
             Assert.IsNotNull(_driver.FindElement(By.Id("result-table")));
-            elements = _driver.FindElements(By.Id("employeeAdd"));
-            foreach (var emp in elements)
-            {
-                emp.Click();
-            }
+            element = _driver.FindElement(By.Id("employeeAdd"));
+            element.Click();
 
             element = _driver.FindElement(By.Id("returnBtn"));
             element.Click();
@@ -190,11 +187,73 @@ namespace Tests
 
             element = _driver.FindElement(By.Id("deleteProp"));
             element.Click();
+            Thread.Sleep(1000);
+            element = _driver.FindElement(By.Id("deletePropConfirm"));
+            element.Click();
             Thread.Sleep(3000);
         }
 
         [Test]
-        public void D_CreateProjectFromProposal()
+        public void D_EditProposalTest()
+        {
+            var element = _driver.FindElement(By.Id("sucheProp"));
+            element.Clear();
+            Thread.Sleep(1000);
+            element.SendKeys("Test");
+            Thread.Sleep(5000);
+            element = _driver.FindElement(By.Id("editProposal"));
+            element.Click();
+            Thread.Sleep(3000);
+            element = _driver.FindElement(By.XPath("//*[ text() = 'Analytische Fähigkeiten' ]"));
+            element.Click();
+
+            element = _driver.FindElement(By.XPath("//*[ text() = 'Impulsgeben' ]"));
+            element.Click();
+
+            element = _driver.FindElement(By.XPath("//*[ text() = 'IT' ]"));
+            element.Click();
+
+            element = _driver.FindElement(By.XPath("//*[ text() = 'Kunst/Kultur' ]"));
+            element.Click();
+            
+            var titleInput = _driver.FindElement(By.Id("title"));
+            titleInput.SendKeys("tEsTpRoJeKt mit weniger Attributen");
+
+            var addInput = _driver.FindElement(By.Id("addInfo"));
+            addInput.SendKeys(
+                "Sehr minimalistisches Angebot");
+
+            Thread.Sleep(2000);
+
+            var final = _driver.FindElement(By.Id("submit"));
+            final.Click();
+            Thread.Sleep(2000);
+        }
+
+        [Test]
+        public void E_AlterEmployeeDetail()
+        {
+            var element = _driver.FindElement(By.Id("empProfile"));
+            element.Click();
+            Thread.Sleep(3000);
+            element = _driver.FindElement(By.Id("empDetail"));
+            element.Click();
+            Thread.Sleep(3000);
+            var final = _driver.FindElement(By.Id("submitDetail"));
+            final.Click();
+            Thread.Sleep(2000);
+            element = _driver.FindElement(By.Id("empDetail"));
+            element.Click();
+            Thread.Sleep(12000);
+            final = _driver.FindElement(By.Id("submitDetail"));
+            final.Click();
+            
+            
+        }
+        
+
+        [Test]
+        public void F_CreateProjectFromProposal()
         {
             var jse = (IJavaScriptExecutor) _driver;
 
@@ -217,7 +276,6 @@ namespace Tests
             element.Click();
             Thread.Sleep(3000);
             Assert.IsTrue(_driver.Url.Contains("/Projekt"));
-            Assert.IsNotNull(_driver.FindElement(By.XPath("//*[ text() = 'Testprojekt']")));
             _driver.Close();
         }
     }

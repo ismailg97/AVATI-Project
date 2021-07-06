@@ -16,5 +16,7 @@ namespace AVATI.Data
        
         public bool EditStatus(int employeeId, bool status);
         public bool? GetSatus(int employeeId);
+
+        
     }
 }

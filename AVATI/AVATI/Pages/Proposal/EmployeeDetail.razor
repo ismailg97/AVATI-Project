@@ -44,11 +44,11 @@
                                                 {
                                                     if (EmployeeDetailView.Fields.Find(e => e.Equals(field)) != null)
                                                     {
-                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => { EmployeeDetailView.Fields.Remove(field);})>@field</button>
+                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addField" @onclick=@(() => { EmployeeDetailView.Fields.Remove(field);})>@field</button>
                                                     }
                                                     else
                                                     {
-                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {EmployeeDetailView.Fields.Add(field);})>@field</button>
+                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" id="addField" @onclick=@(() => {EmployeeDetailView.Fields.Add(field);})>@field</button>
                                                     }
                                                 }
                                         </div>
@@ -63,11 +63,11 @@
                                             {
                                                 if (EmployeeDetailView.Hardskills.Find(e => e.Description.Equals(hardSkill.Description)) != null)
                                                 {
-                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {EmployeeDetailView.Hardskills.RemoveAll(e => e.Description == hardSkill.Description);})>@hardSkill.Description</button>    
+                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addHardskill" @onclick=@(() => {EmployeeDetailView.Hardskills.RemoveAll(e => e.Description == hardSkill.Description);})>@hardSkill.Description</button>    
                                                 }
                                                 else
                                                 {
-                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {EmployeeDetailView.Hardskills.Add(hardSkill);})>@hardSkill.Description</button>
+                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" id="addHardskill" @onclick=@(() => {EmployeeDetailView.Hardskills.Add(hardSkill);})>@hardSkill.Description</button>
                                                 }
                                                 
                                             }
@@ -80,11 +80,11 @@
                                             {
                                                 if (EmployeeDetailView.Languages.Find(e => e.Item1.Equals(lang.Item1)) != null)
                                                 {
-                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {EmployeeDetailView.Languages.Remove(lang);})>@lang.Item1 @lang.Item2</button>
+                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addLanguage" @onclick=@(() => {EmployeeDetailView.Languages.Remove(lang);})>@lang.Item1 @lang.Item2</button>
                                                 }
                                                 else
                                                 {
-                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => { EmployeeDetailView.Languages.Add(lang);})>@lang.Item1 @lang.Item2</button>
+                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1"  id="addLanguage" @onclick=@(() => { EmployeeDetailView.Languages.Add(lang);})>@lang.Item1 @lang.Item2</button>
                                                 }
                                             }
                                         </div>
@@ -98,11 +98,11 @@
                                                 {
                                                     if (EmployeeDetailView.Softskills.Contains(softSkill))
                                                     {
-                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => {EmployeeDetailView.Softskills.Remove(softSkill);})>@softSkill</button>
+                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addSoftskill" @onclick=@(() => {EmployeeDetailView.Softskills.Remove(softSkill);})>@softSkill</button>
                                                     }
                                                     else
                                                     {
-                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {EmployeeDetailView.Softskills.Add(softSkill);})>@softSkill</button>
+                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" id="addSoftskill" @onclick=@(() => {EmployeeDetailView.Softskills.Add(softSkill);})>@softSkill</button>
                                                     }
                                                 }
                                             </div>
@@ -114,11 +114,11 @@
                                                 {
                                                     if (EmployeeDetailView.Roles.Find(e => e.Equals(role)) != null)
                                                     {
-                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" @onclick=@(() => { EmployeeDetailView.Roles.Remove(role);})>@role</button>
+                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addRole" @onclick=@(() => { EmployeeDetailView.Roles.Remove(role);})>@role</button>
                                                     }
                                                     else
                                                     {
-                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" @onclick=@(() => {EmployeeDetailView.Roles.Add(role);})>@role</button>
+                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" id="addRole" @onclick=@(() => {EmployeeDetailView.Roles.Add(role);})>@role</button>
                                                     }
                                                 }
                                             </div>
@@ -130,7 +130,7 @@
                     </div>
                     <div class="modal-footer mt-5">
                         <button class="btn btn-danger" @onclick="@Close">Abbrechen</button>
-                        <button class="btn btn-success" @onclick=@(() => { _employeeDetailService.UpdateEmployeeDetail(EmpId, PropId, EmployeeDetailView); Close();})>Änderungen speichern</button> <!--TODO: make work-->
+                        <button class="btn btn-success" id="submitDetail" @onclick=@(() => { _employeeDetailService.UpdateEmployeeDetail(EmpId, PropId, EmployeeDetailView); Close();})>Änderungen speichern</button> <!--TODO: make work-->
                     </div>
                 </div>
             </div>
