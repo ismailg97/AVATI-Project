@@ -15,7 +15,7 @@
 @inject NavigationManager _navManager
 @inject SearchService _search
 @inject IJSRuntime _jsRuntime
-<EmployeeDetail @ref="_employeeDetail" Abstract="@this"/>
+<ModalEmpDetail @ref="_employeeDetail" Abstract="@this"/>
 <EditProposal @ref="_editProposal" Abstract="@this"/>
 
 @if (_isLoaded)
@@ -95,7 +95,7 @@
                                                 {
                                                     <span class="align-middle d-inline-block font-weight-bolder" style="color: red">@employee.FirstName @employee.LastName</span>
                                                     <button type="button" class="btn float-right btn-sm" @onclick=@(() => { _tempEmpList.Add(employee); })>
-                                                        <span class="oi oi-action-redo"></span>
+                                                        <span class="oi oi-x"></span>
                                                     </button>
                                                 }
                                             </li>
@@ -319,7 +319,7 @@
     private List<Proposal> _proposals;
     private string _filterSearch = "";
     EditProposal _editProposal;
-    EmployeeDetail _employeeDetail;
+    ModalEmpDetail _employeeDetail;
     Dictionary<int, bool> _showEmployee;
     Dictionary<int, bool> _showAttributes;
     Dictionary<int, bool> _showAdditionalInfo;
