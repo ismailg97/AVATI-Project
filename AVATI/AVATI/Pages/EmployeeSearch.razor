@@ -380,8 +380,8 @@ else
     {
         _searchService.EmptyQuery();
         Task<List<Hardskill>> tempHard = _hard.GetAllHardskills();
-        Task<List<Hardskill>> TempKat = _hard.GetAllHardskillCategorys();
-        _hardskillCategory = await TempKat;
+        Task<List<Hardskill>> tempKat = _hard.GetAllHardskillCategorys();
+        _hardskillCategory = await tempKat;
         _hardskills = await tempHard;
         AllEmployees = _employee.GetAllEmployees();
         _roles = _basic.GetAllRoles();
@@ -449,7 +449,7 @@ else
 
     private void ReturnToProposal(int proposalId)
     {
-        _navigation.NavigateTo("/ProposalOverview/" + proposalId.ToString());
+        _navigation.NavigateTo("/ProposalOverview/" + proposalId);
     }
 
 

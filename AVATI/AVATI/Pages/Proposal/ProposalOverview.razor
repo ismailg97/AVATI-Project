@@ -48,7 +48,7 @@
                             </div>
                             <button class="btn btn-outline-secondary btn-sm" id="editProposal" @onclick=@(() => { ShowEdit(proposal.ProposalID); })> Editieren</button>
                             <button class="btn btn-outline-info btn-sm" id="copyProposal" @onclick=@(async () => { await CallCopy(proposal.ProposalID); })>Kopieren</button>
-                            <button class="btn btn-outline-danger btn-sm" id="deleteProp" @onclick=@(() => {propToDelete = proposal.ProposalID; _promptPropDelete = !_promptPropDelete;})>Löschen</button>
+                            <button class="btn btn-outline-danger btn-sm" id="deleteProp" @onclick=@(() => {_propToDelete = proposal.ProposalID; _promptPropDelete = !_promptPropDelete;})>Löschen</button>
                         </div>
                         <div class="card-body text-center">
                             <h5 class="card-title text-center">@proposal.ProposalTitle</h5>
@@ -161,6 +161,9 @@
 <!-- RC - Level Pop-Up -->
 @if (ShowPop)
 {
+    <EditForm Model="@RcToEdit" OnValidSubmit=@UpdateRc>
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>    
     <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
         <div class="modal-dialog modal-sm border border-5 border-dark">
             <div class="modal-content">
@@ -169,20 +172,21 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group row col align-content-center">
-                        <label for="example-number-input" class="col-form-label mr-4">Level:</label>
+                        <label for="number-input" class="col-form-label-lg mr-4">Level:</label>
 
-                        <input class="form-control col-4" min="1" max="7" type="number" @bind=@_changeValue id="example-number-input"/>
+                        <InputNumber class="form-control-lg col-4" min="1" max="7" @bind-Value=@RcToEdit.Rc id="number-input"/>
 
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { ShowPop = !ShowPop; })">Abbrechen</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(async () => { _proposal.UpdateAltRc(RcToEdit.ProposalID, EmpEdit, _changeValue); ShowPop = !ShowPop; Open = RcToEdit.ProposalID; await Update();})">Speichern</button>
+                    <button type="submit" class="btn btn-success" data-dismiss="modal">Speichern</button>
                 </div>
             </div>
         </div>
     </div>
     <div class="modal-backdrop fade show"></div>
+    </EditForm>
 }
 
 @if (_promptPropDelete)
@@ -194,11 +198,11 @@
                     <h4 class="modal-title col-12 text-center">Löschen bestätigen</h4>
                 </div>
                 <div class="modal-body text-left">
-                    <p>Wollen Sie das Angebot <b> "@_proposal.GetProposal(propToDelete).ProposalTitle" </b> wirklich löschen? Der Prozess kann nicht rückgängig gemacht werden!</p>
+                    <p>Wollen Sie das Angebot <b> "@_proposal.GetProposal(_propToDelete).ProposalTitle" </b> wirklich löschen? Der Prozess kann nicht rückgängig gemacht werden!</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { _promptPropDelete = !_promptPropDelete; })">Abbrechen</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="deletePropConfirm" @onclick="(async () => {_promptPropDelete = !_promptPropDelete; await CallDelete(propToDelete);})">Löschen</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="deletePropConfirm" @onclick="(async () => {_promptPropDelete = !_promptPropDelete; await CallDelete(_propToDelete);})">Löschen</button>
                 </div>
             </div>
         </div>
@@ -322,11 +326,10 @@
     Dictionary<int, bool> _promptDelete;
     public bool ShowPop { get; set; }
     public bool PromptConfirmation { get; set; }
-    public Proposal RcToEdit { get; set; }
+    public Data.EmployeeDetailFiles.EmployeeDetail RcToEdit { get; set; }
     public static int EmpEdit { get; set; }
     public Proposal Temp { get; set; }
-    private static int _changeValue;
-    private int propToDelete;
+    private int _propToDelete;
     private List<Employee> _tempEmpList;
 
     protected override async Task OnInitializedAsync()
@@ -390,6 +393,12 @@
         _editProposal.Show(propId);
     }
 
+    private async void UpdateRc()
+    {
+        _proposal.UpdateAltRc(RcToEdit.ProposalId, RcToEdit.EmployeeId, RcToEdit.Rc); ShowPop = !ShowPop; Open = RcToEdit.ProposalId; 
+        await Update();
+    }
+    
     private async void RemoveEmpFromProposal(int propId)
     {
         var proposalTemporary = _proposal.GetProposal(propId);
@@ -400,7 +409,9 @@
                 _proposal.RemoveEmployee(propId, emp.EmployeeID);
             }
         }
+        _isLoaded = false;
         var tempValue = _proposal.GetAllProposals();
+        _isLoaded = true;
         _proposals = await tempValue;
         Open = propId;
         await Update();
@@ -416,8 +427,7 @@
     {
         if (!ShowPop)
         {
-            _changeValue = prop.AltRc[employeeId];
-            RcToEdit = prop;
+            RcToEdit = new Data.EmployeeDetailFiles.EmployeeDetail {ProposalId = prop.ProposalID, EmployeeId = employeeId, Rc =  prop.AltRc[employeeId]};
             EmpEdit = employeeId;
         }
 
@@ -444,15 +454,15 @@
         }
     }
 
-    private void CallSearch(int Id)
+    private void CallSearch(int id)
     {
-        _navManager.NavigateTo("/SearchEmployee/" + Id.ToString());
+        _navManager.NavigateTo("/SearchEmployee/" + id.ToString());
     }
 
-    public void OpenDeletePrompt(int Id)
+    public void OpenDeletePrompt(int id)
     {
-        _tempEmpList = _proposal.GetProposal(Id).Employees;
-        _promptDelete[Id] = !_promptDelete[Id];
+        _tempEmpList = _proposal.GetProposal(id).Employees;
+        _promptDelete[id] = !_promptDelete[id];
     }
 
 
