@@ -20,5 +20,6 @@ job2:
     tags:
         - sopro
     script:
-        - cd AVATI/UnitTests
+        - cd AVATI
+        - cd UnitTests
         - dotnet test         
