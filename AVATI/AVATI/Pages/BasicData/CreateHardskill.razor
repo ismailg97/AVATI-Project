@@ -1,4 +1,5 @@
 ﻿@using AVATI.Data
+@using DocumentFormat.OpenXml.Drawing
 
 @inject IHardskillService _hardskillService
 @inject NavigationManager _navigationManager
@@ -10,7 +11,7 @@
                      <h4 class="modal-title">Erstelle ein Hardskill</h4>
                      <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
                    </div>
-                   <EditForm Model="@_hardskill" OnValidSubmit="Create">
+                   <EditForm Model="@_hardskill">
                      @if (_showExistError){
                        <div class="errormessage">
                          <a><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></a>
@@ -24,25 +25,28 @@
                        <label class="form-label">Bezeichnung:</label>
                        <InputText class="form-control" @bind-Value="@_hardskill.Description"/>
                        <label class="form-label">Oberkategorie:</label>
-                       <table>
-                         @if (UpperCat.Any())
+                       <div>
+                         @if (UpperCat != null && UpperCat.Any())
                          {
                            foreach (var uppercat in UpperCat)
                            {
-                             <tr>@uppercat</tr>
+                             <a style="margin-left: 5px; margin-top: 5px; color: white !important;" class="btn btn-primary" type="button" @onclick="() => UpperCatList(uppercat)">
+                               <a class="showRemove">@uppercat</a> <a class="remove"><span class="oi oi-x"></span></a>
+                             </a>
                            }
                          }
                          else
                          {
-                           <tr>Keine Oberkategorie</tr>
+                           <tr style="color: #818181 !important;">Keine Oberkategorie</tr>
                          }
-                       </table>
+                       </div>
+                       <hr/>                      
                        <div class="list-group border-dark overflow-auto mr-3 col-9" style="height: 100px">
                          @if (_allCategorys != null)
                          {
                            foreach (var cat in _allCategorys)
                            {
-                             <button type="button" class="@(IsInList(cat) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => UpperCatList(cat)">
+                             <button style="margin-bottom: 3px;" type="button" class="@(IsInList(cat) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => UpperCatList(cat)">
                                <a><a class="@(IsInList(cat) ? "showRemove" : "")">@cat</a> <a class="remove"><span class="oi oi-x"></span></a></a>
                              </button>
                            }
@@ -51,7 +55,7 @@
                      </div>
                      <div class="modal-footer">
                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">Abbrechen</button>
-                       <button type="submit" class="btn btn-success">Speichern</button>
+                       <button type="button" class="btn btn-success" @onclick="Create">Speichern</button>
                      </div>
                    </EditForm>
                  </div>
@@ -81,14 +85,15 @@
   protected override async Task OnInitializedAsync()
   {
     _allCategorys = await _hardskillService.GetAllDesCategorys();
-    var bla = "  Hello   Darling  ";
-    Console.WriteLine("-" + bla.Trim() + "-");
   }
   
   protected override void OnParametersSet()
   {
     _showEmptyError = false;
     _showExistError = false;
+    Description = "";
+    UpperCat.Clear();
+
   }
 
   private async Task Create()
@@ -119,12 +124,12 @@
     };
 
     await _hardskillService.CreateHardskill(hardskill);
+    Showing();
     UpperCat.Clear();
     _hardskill.Description = "";
     await Abstract.UpdateCategorys();
     await Abstract.UpdateHardskills();
-    Showing();
-    //_navigationManager.NavigateTo(_navigationManager.Uri, true);
+  //_navigationManager.NavigateTo(_navigationManager.Uri, true);
   }
 
   private void UpperCatList(string description)
