@@ -358,8 +358,14 @@ else
     public void SetProjectActivity(ProjectActivity activity)
     {
         _projectActivityService.SetProjectActivity(Id, ProjectId, activity.Description);
+        foreach (var activities in _projectActivityService.GetEmployeeProjectActivities(Id, ProjectId))
+        {
+            if (activities.Description == activity.Description)
+            {
+                _projectActivityService.UpdateProjectActivityEmployee(Id, activity.ProjectID, activity);   
+            }
+        }
         
-        _projectActivityService.UpdateProjectActivityEmployee(Id, activity.ProjectID, activity);
     //_navManager.NavigateTo("/employeeProject/" + Emp.EmployeeID, forceLoad: true);
     }
 
