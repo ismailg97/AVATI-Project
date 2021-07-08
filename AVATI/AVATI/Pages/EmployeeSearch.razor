@@ -234,7 +234,7 @@
 
                                     @if (Id != 0 && _proposal.GetProposal(Id).Employees.Find(e => e.EmployeeID == employee.EmployeeID) == null)
                                     {
-                                        <button class="btn btn-sm btn-outline-success" id="employeeAdd" @onclick=@(() => { _proposal.AddEmployee(Id, employee.EmployeeID, employee.Rc); employeeList.Add(employee); StateHasChanged(); })>Hinzufügen</button>
+                                        <button class="btn btn-outline-success" id="employeeAdd" @onclick=@(() => { _proposal.AddEmployee(Id, employee.EmployeeID, employee.Rc); employeeList.Add(employee); StateHasChanged(); })> <span class="oi oi-plus"></span></button>
                                     }
                                 </td>
                             }
@@ -315,7 +315,7 @@
                         </div>
                     </td>
                     <td style="width: 10%" class="text-center">
-                        <button class="btn btn-sm btn-outline-danger" id="employeeRemove" @onclick=@(() => { _proposal.RemoveEmployee(Id, employee.EmployeeID); employeeList.Remove(employee); StateHasChanged(); })>Entfernen</button>
+                        <button class="btn btn-outline-danger" id="employeeRemove" @onclick=@(() => { _proposal.RemoveEmployee(Id, employee.EmployeeID); employeeList.Remove(employee); StateHasChanged(); })><span class="oi oi-x"></span></button>
 
                     </td>
                 </tr>
@@ -380,8 +380,8 @@ else
     {
         _searchService.EmptyQuery();
         Task<List<Hardskill>> tempHard = _hard.GetAllHardskills();
-        Task<List<Hardskill>> TempKat = _hard.GetAllHardskillCategorys();
-        _hardskillCategory = await TempKat;
+        Task<List<Hardskill>> tempKat = _hard.GetAllHardskillCategorys();
+        _hardskillCategory = await tempKat;
         _hardskills = await tempHard;
         AllEmployees = _employee.GetAllEmployees();
         _roles = _basic.GetAllRoles();
@@ -449,7 +449,7 @@ else
 
     private void ReturnToProposal(int proposalId)
     {
-        _navigation.NavigateTo("/ProposalOverview/" + proposalId.ToString());
+        _navigation.NavigateTo("/ProposalOverview/" + proposalId);
     }
 
 

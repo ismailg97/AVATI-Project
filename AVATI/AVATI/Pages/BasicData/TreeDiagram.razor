@@ -12,7 +12,8 @@
 
                 @if (_subcat != null && _subcat.Any())
                 {
-                    <TreeElement Subcats="@_subcat" ShowCategorys="@_showSubCategorys" ShowHardskills="@_showSubHardskills"/>
+                    <TreeElement Subcats="@_subcat" ShowCategorys="@_showSubCategorys" 
+                                 ShowHardskills="@_showSubHardskills" ContainsJustHardskills="@_containsJustHardskills"/>
                 }
             </li>
         </ul>

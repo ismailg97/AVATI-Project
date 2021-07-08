@@ -1,7 +1,5 @@
 ﻿@page "/ProjectActivities"
 @using AVATI.Data
-@using System.Diagnostics
-@using DocumentFormat.OpenXml.InkML
 
 @inject IProjectActivityService _projectActivityService
 @inject IProjektService _projektService
@@ -23,10 +21,10 @@ else
 {
     <EditForm Model="@Activity">
         <DataAnnotationsValidator/>
-
         <div class="container col">
             <h2 class="mb-3">Globale Projekttätigkeiten</h2>
             <p>Hier können Sie Tätigkeiten im Projekt hinzufügen, verwalten, editieren und löschen. Diese stehen als Auswahlmöglichkeit für alle Projekte zur Verfügung. </p>
+            <hr/>
             <div class="row">
                 <div class="col-8">
                     <div class="form-group col-10">

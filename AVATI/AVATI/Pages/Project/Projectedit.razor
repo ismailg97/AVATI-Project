@@ -31,14 +31,13 @@ else
 {
     <EditForm Model="@Project" OnValidSubmit="@Save">
     <DataAnnotationsValidator/>
-    <ValidationSummary/>
     <div class="row col h-100">
     <div class="text-left col">
     <div class="column">
-        <h3 class="text-lg-left font-weight-bold"><em>@Project.Projecttitel</em> editieren!</h3>
+        <h3 class="text-lg-left font-weight-bold">Projekt: <em> @Project.Projecttitel</em> editieren</h3>
         <div class="form-group row">
             <ValidationSummary/>
-            <label class="col-sm-3 col-form-label font-weight-bold">Projekttitel</label>
+            <label class="col-sm-3 col-form-label font-weight-bold">Titel</label>
             <div class="col-sm-9">
                 <InputText id="projekttitel" class="form-control" @bind-Value="Project.Projecttitel"></InputText>
             </div>
@@ -46,13 +45,13 @@ else
 
         <div class="form-group row">
             <ValidationSummary/>
-            <label class="col-sm-3 col-form-label font-weight-bold">Projektbeschreibung</label>
+            <label class="col-sm-3 col-form-label font-weight-bold">Beschreibung</label>
             <div class="col-sm-9">
                 <textarea id="projektbeschreibung" class="form-control" @bind="Project.Projectdescription"></textarea>
             </div>
         </div>
 
-        <!-- BRANCHEN -------------------------------------------------->
+        <!-- BRANCHEN -------------------------------------------------------------------------------------------->
 
         <div class="form-group row">
             <label class="col-sm-3 col-form-label font-weight-bold">Branchen</label>
@@ -73,11 +72,11 @@ else
             </div>
         </div>
 
-        <!-- ZEITEN -------------------------------------------------->
+        <!-- ZEITEN -------------------------------------------------------------------------------------------------------------------------------------->
 
         <div class="form-group row">
             <ValidationSummary/>
-            <label class="col-sm-3 col-form-label font-weight-bold">Projektanfang</label>
+            <label class="col-sm-3 col-form-label font-weight-bold">Startzeitpunkt</label>
             <div class="col-sm col-form-label">
                 <div class="row col input-group" id="datetimepicker1">
                     <InputDate class="form-control col-3" @bind-Value="@Project.Projectbeginning"></InputDate>
@@ -86,7 +85,7 @@ else
         </div>
         <div class="form-group row">
             <ValidationSummary/>
-            <label class="col-sm-3 col-form-label font-weight-bold">Projektende</label>
+            <label class="col-sm-3 col-form-label font-weight-bold">Endzeitpunkt</label>
             <div class="col-sm col-form-label">
                 <div class="row col">
                     <InputDate class="form-control col-3" @bind-Value="@Project.Projectend"></InputDate>
@@ -95,7 +94,7 @@ else
         </div>
     </div>
 
-    <!-- Mitarbeiter -------------------------------------------------->
+    <!-- Mitarbeiter ------------------------------------------------------------------------------------------------->
 
     <div class="form-group row">
         <label class="col-sm-3 col-form-label font-weight-bold">Mitarbeiter</label>
@@ -133,13 +132,13 @@ else
         </table>
     </div>
 
-    <!-- Projekttätigkeiten ------------------------------------------------------------>
+    <!-- Projekttätigkeiten ------------------------------------------------------------------------------------------------->
 
     <div class="form-group row">
         <label class="col-sm-3 col-form-label font-weight-bold">Projekttätigkeiten</label>
         <table class="table border-primary col">
             <thead>
-            <th scope="col">Projekttätigkeiten</th>
+            <th scope="col">Tätigkeit</th>
             <th scope="col" class="text-center">Zugewiesene Mitarbeiter</th>
             <th scope="col">
                 <div class="form-group text-right">
@@ -161,10 +160,9 @@ else
             @foreach (var activ in _projectActivity.GetProjectActivitiesProject(ID))
             {
                 <tr>
+                    <td>@activ.Description</td>
                     @if (Project.Employees.Find(x => x.EmployeeID == activ.EmployeeID) == null)
                     {
-                        <td>@activ.Description</td>
-                        <!--- liste an mitarbeitern -->
                         <td class="text-center">[Keine zugewiesene Mitarbeiter!]</td>
                     }
                     else
@@ -177,13 +175,13 @@ else
         </table>
     </div>
 
-    <!-- PROJEKTZWECKE -------------------------------------------------->
+    <!-- PROJEKTZWECKE ------------------------------------------------------------------------------------------------------->
 
     <div class="form-group row">
         <label class="col-sm-3 col-form-label font-weight-bold">Projektzwecke</label>
         <table class="table border-primary col">
             <thead>
-            <th scope="col">Projektzwecke</th>
+            <th scope="col">Zweck</th>
             <th scope="col"></th>
             <th scope="col">Gelöst durch...</th>
             <th scope="col">
@@ -206,8 +204,9 @@ else
                 <tr>
                     <td>@purpose.Purpose</td>
                     <td>
-                        <button type="button" class="btn btn-info" @onclick="() => { PopAlterPurposeName(purpose); }"> <!-- modal fenster hinzufügen -->
-                        <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span> Edit
+                        <button type="button" class="btn btn-info" @onclick="() => { PopAlterPurposeName(purpose); }">
+                            <!-- modal fenster hinzufügen -->
+                            <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span> Edit
                         </button>
                         <button type="button" class="btn btn-danger" @onclick="() => { DeleteFromProjectPurpose(purpose); }">
                             <span class="oi oi-trash" aria-hidden="true"></span>
@@ -216,16 +215,13 @@ else
                     @if (purpose.AssignedProjectActivity == null)
                     {
                         <td>
-                            <button type="button" class="btn btn-info" @onclick="() => { AddPurposeToActivity(purpose); }">
-                                +
-                            </button>
+                            <button type="button" class="btn btn-info" @onclick="() => { AddPurposeToActivity(purpose); }">+ | Edit</button>
                         </td>
-                        <td>leer</td>
                     }
-                    else
+                    else if (purpose.AssignedProjectActivity != null)
                     {
                         <td>
-                            <button type="button" class="btn btn-info" @onclick="() => { AddPurposeToActivity(purpose); }">+</button>
+                            <button type="button" class="btn btn-info" @onclick="() => { AddPurposeToActivity(purpose); }">+ | Edit</button>
                         </td>
                         <td>@purpose.AssignedProjectActivity.Description</td>
                     }

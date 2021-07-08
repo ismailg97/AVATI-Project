@@ -12,7 +12,7 @@
                      <h4 class="modal-title">Ändere den Hardskill</h4>
                      <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
                    </div>
-                   <EditForm Model="@NewHardskill" OnValidSubmit="Update">
+                   <EditForm Model="@NewHardskill">
                      @if (_showExistError){
                        <div class="errormessage">
                          <a><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></a>
@@ -25,26 +25,29 @@
                      <div class="modal-body">
                        <label class="form-label">Bezeichnung:</label>
                        <InputText class="form-control" @bind-Value="@NewHardskill.Description"/>
-                       <label class="form-label">Oberkategorie:</label>
-                       <table>
+                       <label class="form-label" style="margin-top: 20px;">Oberkategorie:</label>
+                       <div>
                          @if (UpperCat != null && UpperCat.Any())
                          {
                            foreach (var uppercat in UpperCat)
                            {
-                             <tr>@uppercat</tr>
+                             <a style="margin-left: 5px; margin-top: 5px; color: white !important;" class="btn btn-primary" type="button" @onclick="() => UpperCatList(uppercat)">
+                               <a class="showRemove">@uppercat</a> <a class="remove"><span class="oi oi-x"></span></a>
+                             </a>
                            }
                          }
                          else
                          {
-                           <tr>Keine Oberkategorie</tr>
+                           <tr style="color: #818181 !important;">Keine Oberkategorie</tr>
                          }
-                       </table>
+                       </div>
+                       <hr/>
                        <div class="list-group border-dark overflow-auto mr-3 col-9" style="height: 100px">
                          @if (_allCategorys != null)
                          {
                            foreach (var cat in _allCategorys)
                            {
-                             <button type="button" class="@(IsInList(cat) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => UpperCatList(cat)">
+                             <button style="margin-bottom: 3px;" type="button" class="@(IsInList(cat) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => UpperCatList(cat)">
                                <a><a class="@(IsInList(cat) ? "showRemove" : "")">@cat</a> <a class="remove"><span class="oi oi-x"></span></a></a>
                              </button>
                            }
@@ -53,7 +56,7 @@
                      </div>
                      <div class="modal-footer">
                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">Abbrechen</button>
-                       <button type="submit" class="btn btn-success">Speichern</button>
+                       <button type="button" class="btn btn-success" @onclick="Update">Speichern</button>
                      </div>
                    </EditForm>
                  </div>
@@ -119,10 +122,9 @@
     NewHardskill.Uppercat = new List<string>(UpperCat);
     
     await _hardskillService.UpdateHardskill(NewHardskill, OldHardskill);
+    Showing();
     await Abstract.UpdateHardskills();
     await Abstract.UpdateCategorys();
-    Showing();
-    //_navigationManager.NavigateTo(_navigationManager.Uri, true);
   }
   
   private void UpperCatList(string description)

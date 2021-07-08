@@ -13,8 +13,8 @@
                 <li><a class="cat" type="button" @onclick="() => ShowingUnder(category)">@category</a>
                     @if (_subcatsofCategory[category] != null && _subcatsofCategory[category].Any())
                     {
-                        <TreeElement Subcats="@_subcatsofCategory[category]"
-                                     ShowHardskills="@_showSubHardskills[category]" ShowCategorys="@_showSubCategorys[category]"/>
+                        <TreeElement Subcats="@_subcatsofCategory[category]" ShowHardskills="@_showSubHardskills[category]" 
+                                     ShowCategorys="@_showSubCategorys[category]" ContainsJustHardskills="@_containsJustHardskills[category]"/>
                     }
                 </li>
             }
@@ -30,7 +30,7 @@
         }
     </ul>
 }
-else
+else if(!ContainsJustHardskills)
 {
     <div class="d-flex flex-column align-items-start justify-content-start">
         <div class="row">
@@ -53,6 +53,9 @@ else
     
     [Parameter]
     public bool ShowCategorys { get; set; }
+    
+    [Parameter]
+    public bool ContainsJustHardskills { get; set; } 
 
     private List<string> _categorys = new();
     

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using Dapper;
-using DocumentFormat.OpenXml.Presentation;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
@@ -125,6 +124,22 @@ namespace AVATI.Data
             
             return _Purposes;
         }
-        
+        public ProjectPurpose GetProjectPurpose(string input)
+        {
+            using DbConnection db = GetConnection();
+
+            var purpose = (db
+                .QueryFirst<ProjectPurpose>("Select * from Projectpurpose where Purpose = @name", new {name = input})
+                );
+            
+            var activ = db.QueryFirst<string>("Select ProjectActivity from ProjectPurpose where Purpose = @inpu",
+                new {inpu = input});
+            ProjectActivity temp = new ProjectActivity
+            {
+                Description = activ, ProjectID = purpose.ProjectID
+            };
+            purpose.AssignedProjectActivity = temp; 
+            return purpose;
+        }
     }
 }
