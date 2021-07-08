@@ -20,47 +20,55 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        
-                            <div class="row justify-content-md-center">
-                                <div class="card col-sm-3 text-black border-dark">
-                                    <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" class="card-img-top" alt=""/>
-                                    <div class="card-body pb-3 pt-3">
-                                        <h5 class="card-title">@_employeeService.GetEmployeeProfile(EmpId).FirstName @_employeeService.GetEmployeeProfile(EmpId).LastName</h5>
-                                        <div class="card-title text-left">
-                                            Rate Card Level:
-                                            @if (EmployeeAttributes.Rc != 0)
+                        <div class="row justify-content-md-center">
+                            <div class="card ml-5 text-black border-dark" style="width: 25%">
+                                <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" class="card-img-top" alt=""/>
+                                <div class="card-body pb-3 pt-3">
+                                    <h5 class="card-title">@_employeeService.GetEmployeeProfile(EmpId).FirstName @_employeeService.GetEmployeeProfile(EmpId).LastName</h5>
+                                    <div class="card-title text-left">
+                                        Rate Card Level:
+                                        @if (EmployeeAttributes.Rc != 0)
+                                        {
+                                            <button class="btn btn-sm btn-outline-success" @onclick=@(() => { EmployeeDetailView.Rc = 0; })>@_employeeDetailService.GetEmployeeDetail(EmpId, PropId).Result.Rc</button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-sm btn-outline-dark" @onclick=@(() => { EmployeeDetailView.Rc = EmployeeAttributes.Rc; })>@_employeeDetailService.GetEmployeeDetail(EmpId, PropId).Result.Rc</button>
+                                        }
+                                    </div>
+                                    <div class="card-text text-left">
+                                        Branchen:
+                                        @foreach (var field in EmployeeAttributes.Field)
+                                        {
+                                            if (EmployeeDetailView.Fields.Find(e => e.Equals(field)) != null)
                                             {
-                                                <button class="btn btn-sm btn-outline-success" @onclick=@(() => { EmployeeDetailView.Rc = 0; })>@_employeeDetailService.GetEmployeeDetail(EmpId, PropId).Result.Rc</button>
-                                                                                                                                                                                                                 
+                                                <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addField" @onclick=@(() => { EmployeeDetailView.Fields.Remove(field); })>@field</button>
                                             }
                                             else
                                             {
-                                                <button class="btn btn-sm btn-outline-dark" @onclick=@(() => {EmployeeDetailView.Rc = EmployeeAttributes.Rc;})>@_employeeDetailService.GetEmployeeDetail(EmpId, PropId).Result.Rc</button>
+                                                <button class="btn btn-sm btn-outline-dark mb-1 mr-1" id="addField" @onclick=@(() => { EmployeeDetailView.Fields.Add(field); })>@field</button>
                                             }
-                                        </div>
-                                        <div class="card-text text-left">
-                                            Branchen:
-                                            @foreach (var field in EmployeeAttributes.Field)
-                                            {
-                                                if (EmployeeDetailView.Fields.Find(e => e.Equals(field)) != null)
-                                                {
-                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addField" @onclick=@(() => { EmployeeDetailView.Fields.Remove(field);})>@field</button>
-                                                }
-                                                else
-                                                {
-                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" id="addField" @onclick=@(() => {EmployeeDetailView.Fields.Add(field);})>@field</button>
-                                                }
-                                            }
-                                        </div>
+                                        }
                                     </div>
                                 </div>
-                                 <div class="card col-sm-2 ml-2 border-secondary">
-                                                                        <div class="card-header text-left bg-transparent border-secondary">Projekt(e)</div>
-                                                                        <div class="crad-body text-left">
-                                                                            
-                                                                        </div>
-                                                                    </div>
-                                <div class="col-sm-6">
+                            </div>
+                            <div class="card ml-2 border-secondary" style="width:20%">
+                                <div class="card-header text-left bg-transparent border-secondary">Projekt(e)</div>
+                                <div class="crad-body text-left">
+                                    @foreach (var project in EmployeeAttributes.ProjectActivities)
+                                    {
+                                        if (false)
+                                        {
+                                            <button class="btn btn-outline-success mb-1 mr-1" id="addProject" ></button>
+                                        }
+                                        else
+                                        {
+                                           <button class="btn btn-outline-dark mb-1 mr-1" id="addProject" ></button> 
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="col" style="width: 55%">
                                 <div class="row mb-2">
                                     <div class="card col-sm-8 border-secondary ml-2 mr-2" style="min-height: 221.883px">
                                         <div class="card-header text-left bg-transparent border-secondary">Hardskills</div>
@@ -69,13 +77,12 @@
                                             {
                                                 if (EmployeeDetailView.Hardskills.Find(e => e.Description.Equals(hardSkill.Description)) != null)
                                                 {
-                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addHardskill" @onclick=@(() => {EmployeeDetailView.Hardskills.RemoveAll(e => e.Description == hardSkill.Description);})>@hardSkill.Description</button>    
+                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addHardskill" @onclick=@(() => { EmployeeDetailView.Hardskills.RemoveAll(e => e.Description == hardSkill.Description); })>@hardSkill.Description</button>
                                                 }
                                                 else
                                                 {
-                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" id="addHardskill" @onclick=@(() => {EmployeeDetailView.Hardskills.Add(hardSkill);})>@hardSkill.Description</button>
+                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" id="addHardskill" @onclick=@(() => { EmployeeDetailView.Hardskills.Add(hardSkill); })>@hardSkill.Description</button>
                                                 }
-                                                
                                             }
                                         </div>
                                     </div>
@@ -86,53 +93,53 @@
                                             {
                                                 if (EmployeeDetailView.Languages.Find(e => e.Item1.Equals(lang.Item1)) != null)
                                                 {
-                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addLanguage" @onclick=@(() => {EmployeeDetailView.Languages.Remove(lang);})>@lang.Item1 @lang.Item2</button>
+                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addLanguage" @onclick=@(() => { EmployeeDetailView.Languages.Remove(lang); })>@lang.Item1 @lang.Item2</button>
                                                 }
                                                 else
                                                 {
-                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1"  id="addLanguage" @onclick=@(() => { EmployeeDetailView.Languages.Add(lang);})>@lang.Item1 @lang.Item2</button>
+                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" id="addLanguage" @onclick=@(() => { EmployeeDetailView.Languages.Add(lang); })>@lang.Item1 @lang.Item2</button>
                                                 }
                                             }
                                         </div>
                                     </div>
-                                   
+
                                 </div>
-                                    <div class="row mt-2">
-                                        <div class="card border-secondary col-sm-8 ml-2 mr-2" style="min-height: 221.883px">
-                                            <div class="card-header text-left bg-transparent border-secondary">Softskills</div>
-                                            <div class="card-body text-left">
-                                                @foreach (var softSkill in EmployeeAttributes.Softskills)
+                                <div class="row mt-2">
+                                    <div class="card border-secondary col-sm-8 ml-2 mr-2" style="min-height: 221.883px">
+                                        <div class="card-header text-left bg-transparent border-secondary">Softskills</div>
+                                        <div class="card-body text-left">
+                                            @foreach (var softSkill in EmployeeAttributes.Softskills)
+                                            {
+                                                if (EmployeeDetailView.Softskills.Contains(softSkill))
                                                 {
-                                                    if (EmployeeDetailView.Softskills.Contains(softSkill))
-                                                    {
-                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addSoftskill" @onclick=@(() => {EmployeeDetailView.Softskills.Remove(softSkill);})>@softSkill</button>
-                                                    }
-                                                    else
-                                                    {
-                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" id="addSoftskill" @onclick=@(() => {EmployeeDetailView.Softskills.Add(softSkill);})>@softSkill</button>
-                                                    }
+                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addSoftskill" @onclick=@(() => { EmployeeDetailView.Softskills.Remove(softSkill); })>@softSkill</button>
                                                 }
-                                            </div>
+                                                else
+                                                {
+                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" id="addSoftskill" @onclick=@(() => { EmployeeDetailView.Softskills.Add(softSkill); })>@softSkill</button>
+                                                }
+                                            }
                                         </div>
-                                        <div class="card border-secondary col-sm-3">
-                                            <div class="card-header text-left bg-transparent border-secondary">Rolle(n)</div>
-                                            <div class="card-body text-left">
-                                                @foreach (var role in EmployeeAttributes.Roles)
+                                    </div>
+                                    <div class="card border-secondary col-sm-3">
+                                        <div class="card-header text-left bg-transparent border-secondary">Rolle(n)</div>
+                                        <div class="card-body text-left">
+                                            @foreach (var role in EmployeeAttributes.Roles)
+                                            {
+                                                if (EmployeeDetailView.Roles.Find(e => e.Equals(role)) != null)
                                                 {
-                                                    if (EmployeeDetailView.Roles.Find(e => e.Equals(role)) != null)
-                                                    {
-                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addRole" @onclick=@(() => { EmployeeDetailView.Roles.Remove(role);})>@role</button>
-                                                    }
-                                                    else
-                                                    {
-                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" id="addRole" @onclick=@(() => {EmployeeDetailView.Roles.Add(role);})>@role</button>
-                                                    }
+                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addRole" @onclick=@(() => { EmployeeDetailView.Roles.Remove(role); })>@role</button>
                                                 }
-                                            </div>
+                                                else
+                                                {
+                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" id="addRole" @onclick=@(() => { EmployeeDetailView.Roles.Add(role); })>@role</button>
+                                                }
+                                            }
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
                     </div>
                     <div class="modal-footer mt-5">
                         <button class="btn btn-danger" @onclick="@Close">Abbrechen</button>
@@ -157,8 +164,10 @@
 
     [Parameter]
     public int EmpId { get; set; }
+
     [Parameter]
     public ProposalOverview Abstract { get; set; }
+
     public int PropId { get; set; }
     public Data.EmployeeDetailFiles.EmployeeDetail EmployeeDetailView;
     public Data.Employee EmployeeAttributes;
@@ -172,7 +181,7 @@
         EmpId = employeeId;
         PropId = proposalId;
         Task<Data.EmployeeDetailFiles.EmployeeDetail> detail = _employeeDetailService.GetEmployeeDetail(employeeId, proposalId);
-        EmployeeDetailView =  await detail;
+        EmployeeDetailView = await detail;
         EmployeeAttributes = _employeeService.GetEmployeeProfile(EmpId);
         Console.WriteLine(EmpId.ToString() + PropId.ToString());
         StateHasChanged();
@@ -185,5 +194,5 @@
         StateHasChanged();
     }
 
-    
+
 }
