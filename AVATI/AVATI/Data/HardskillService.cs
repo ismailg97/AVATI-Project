@@ -250,7 +250,10 @@ namespace AVATI.Data
             
             foreach (var skill in cat.Subcat)
             {
-                if (!(await GetHardskillOrCategory(skill)).IsHardskill) continue;
+                var isHardskill = (await db.QueryAsync<bool>(
+                    "SELECT IsHardskill FROM Hardskill WHERE Description = @skillOrCat",
+                    new {skillOrCat = skill})).Single();
+                if (!isHardskill) continue;
                 if (hardskills.Exists(x => x == skill))
                 {
                     hardskills.Remove(skill);
@@ -264,6 +267,10 @@ namespace AVATI.Data
             
             foreach (var hardskill in hardskills)
             {
+                var isHardskill = (await db.QueryAsync<bool>(
+                    "SELECT IsHardskill FROM Hardskill WHERE Description = @skillOrCat",
+                    new {skillOrCat = hardskill})).Single();
+                if (!isHardskill) continue;
                 var uppercatRows = await db.ExecuteAsync("INSERT INTO Hardskill_Subcat (Uppercat, Subcat) VALUES (@uppercat, @subcat)", 
                     new {uppercat = hardskillcat, subcat = hardskill });
                 if(uppercatRows != 1) return false;

@@ -41,7 +41,7 @@
 
                 @if (_loadfinished)
                 {
-                    <EditTreeElement @ref="@_element" Subcats="@_subcat" Uppercat="@Description"
+                    <EditTreeElement @ref="@_element" Subcats="@_subcat" Uppercat="@Description" Abstract="@Abstract"
                                      ShowHardskills="@_showSubHardskills" ShowCategorys="@_showSubCategorys" UpperTree="@this"
                                      RenameProblem="@_renameProblem" ContainsJustHardskills="@_containsJustHardskills"/>
                 }
@@ -176,7 +176,16 @@ else
     private void ShowingRename()
     {
         _showRename = !_showRename;
-        _renameProblem = _showRename ? 1 : 0;
+        if (_showRename)
+        {
+            if(_showExistError || _showEmptyError)
+                _renameProblem = 2;
+            else
+                _renameProblem = 1;
+        }
+        else
+            _renameProblem = 0;
+        StateHasChanged();
     }
 
     private void ShowingAddHardskills()
