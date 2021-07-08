@@ -11,7 +11,7 @@
     if (EmployeeAttributes != null)
     {
         <div class="modal fade show d-block" data-bs-backdrop="static" id="exampleModal" role="dialog">
-            <div class="modal-dialog" style="min-width: 1500px" role="document">
+            <div class="modal-dialog" style="min-width:1880px" role="document">
                 <div class="modal-content bg-light text-black">
                     <div class="modal-header">
                         <h5 class="modal-title font-weight-bolder text-center" id="titleLabel">Detailansicht</h5>
@@ -20,9 +20,9 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="container ml-3" style="min-width: 100%">
+                        
                             <div class="row justify-content-md-center">
-                                <div class="card col-sm-4 text-black border-dark">
+                                <div class="card col-sm-3 text-black border-dark">
                                     <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" class="card-img-top" alt=""/>
                                     <div class="card-body pb-3 pt-3">
                                         <h5 class="card-title">@_employeeService.GetEmployeeProfile(EmpId).FirstName @_employeeService.GetEmployeeProfile(EmpId).LastName</h5>
@@ -41,20 +41,26 @@
                                         <div class="card-text text-left">
                                             Branchen:
                                             @foreach (var field in EmployeeAttributes.Field)
+                                            {
+                                                if (EmployeeDetailView.Fields.Find(e => e.Equals(field)) != null)
                                                 {
-                                                    if (EmployeeDetailView.Fields.Find(e => e.Equals(field)) != null)
-                                                    {
-                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addField" @onclick=@(() => { EmployeeDetailView.Fields.Remove(field);})>@field</button>
-                                                    }
-                                                    else
-                                                    {
-                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" id="addField" @onclick=@(() => {EmployeeDetailView.Fields.Add(field);})>@field</button>
-                                                    }
+                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addField" @onclick=@(() => { EmployeeDetailView.Fields.Remove(field);})>@field</button>
                                                 }
+                                                else
+                                                {
+                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" id="addField" @onclick=@(() => {EmployeeDetailView.Fields.Add(field);})>@field</button>
+                                                }
+                                            }
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-8">
+                                 <div class="card col-sm-2 ml-2 border-secondary">
+                                                                        <div class="card-header text-left bg-transparent border-secondary">Projekt(e)</div>
+                                                                        <div class="crad-body text-left">
+                                                                            
+                                                                        </div>
+                                                                    </div>
+                                <div class="col-sm-6">
                                 <div class="row mb-2">
                                     <div class="card col-sm-8 border-secondary ml-2 mr-2" style="min-height: 221.883px">
                                         <div class="card-header text-left bg-transparent border-secondary">Hardskills</div>
@@ -89,6 +95,7 @@
                                             }
                                         </div>
                                     </div>
+                                   
                                 </div>
                                     <div class="row mt-2">
                                         <div class="card border-secondary col-sm-8 ml-2 mr-2" style="min-height: 221.883px">
@@ -126,7 +133,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
                     </div>
                     <div class="modal-footer mt-5">
                         <button class="btn btn-danger" @onclick="@Close">Abbrechen</button>

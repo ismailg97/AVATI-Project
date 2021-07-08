@@ -529,22 +529,21 @@
         return element;
     }
 
-    public Table GenerateRoleTable(int id) //ist das Kunst oder kann das weg?
+    public Table GenerateRoleTable(int id)
     {
         var table = new Table();
         var tableProp = new TableProperties(
-            new TableStyle() {Val = "EinfacheTabelle4"}, new TableWidth() {Width = "0", Type = TableWidthUnitValues.Auto}, new TableLook() {Val = "04A0", FirstRow = OnOffValue.FromBoolean(true), LastRow = OnOffValue.FromBoolean(false), FirstColumn = OnOffValue.FromBoolean(true), LastColumn = OnOffValue.FromBoolean(false)});
-        var tableGrid = new TableGrid(new GridColumn() {Width = "4531"}, new GridColumn() {Width = "4531"});
+            new TableStyle() {Val = "EinfacheTabelle4"}, new TableWidth() {Type = TableWidthUnitValues.Dxa, Width = 7000.ToString()});
         table.AppendChild<TableProperties>(tableProp);
-        table.AppendChild<TableGrid>(tableGrid);
-   
         foreach (var emp in _detailService.GetAllEmployeeDetail(id))
         {
             foreach (var role in emp.Roles)
             {
-                var tableRow = new TableRow(new TableRowProperties(new ConditionalFormatStyle() {Val = "100000000000", FirstRow = OnOffValue.FromBoolean(true), LastRow = OnOffValue.FromBoolean(false), FirstColumn = OnOffValue.FromBoolean(false), LastColumn = OnOffValue.FromBoolean(false)}));
-                var cell1 = new TableCell(new TableCellProperties());
-                var cell2 = new TableCell(new Paragraph(new Run(new Text(role))));
+                var tableRow = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+                var cell1 = new TableCell(new TableCellProperties(new TableCellWidth() {Type = TableWidthUnitValues.Dxa, Width = 3500.ToString()}));
+                cell1.AppendChild(new Paragraph(new Run(new RunProperties(new FontSize() {Val = 28.ToString()}, new Bold() {Val = OnOffValue.FromBoolean(false)}), new Text(_proposal.GetProposal(id).Employees.Find(e => e.EmployeeID == emp.EmployeeId).FirstName + _proposal.GetProposal(id).Employees.Find(e => e.EmployeeID == emp.EmployeeId).LastName))));
+                var cell2 = new TableCell(new TableCellProperties(new TableCellWidth() {Type = TableWidthUnitValues.Dxa, Width = 3500.ToString()}));
+                cell2.AppendChild(new Paragraph(new Run(new RunProperties(new FontSize() {Val = 28.ToString()}, new Bold() {Val = OnOffValue.FromBoolean(false)}), new Text(role))));
                 tableRow.Append(cell1, cell2);
                 table.AppendChild(tableRow);
             }
@@ -603,7 +602,7 @@
         return table;
     }
 
-    public async Task CreateDocument(int id)
+    public async Task CreateDocument(int id) //Threadsicher machen, wenn mehrere gleichzeitig ein Dokument erzeugen --> Ressourcenkonflikt 
     {
         int i = 0;
         //string costCalcTemplateDoc = "E:\\Users\\Tobi\\Desktop\\AvatiKostenmixDoc.docx";
@@ -658,8 +657,10 @@
                                 par.Remove();
                                 break;
                             case "Rollenverteilung":
-                                body.AppendChild(TestTable(id)); //body.AppendChild(GenerateRoleTable(id)); //empty table uff
+                                //body.AppendChild(TestTable(id)); 
+                                body.AppendChild(GenerateRoleTable(id));
                                 body.AppendChild(pageBreaker.CloneNode(true));
+                                Console.WriteLine(wordDoc.ToFlatOpcString());
                                 break;
                         }
                     }
