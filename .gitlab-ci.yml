@@ -4,8 +4,9 @@ services:
     - mcr.microsoft.com/mssql/server:2019-latest
 
 stages:
-    - test
     - build
+    - test
+    
     
 
 job:
