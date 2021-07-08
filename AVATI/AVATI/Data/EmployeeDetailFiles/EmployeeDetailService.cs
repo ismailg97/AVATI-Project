@@ -33,6 +33,11 @@ namespace AVATI.Data.EmployeeDetailFiles
         {
             await using DbConnection db = GetConnection();
             await db.OpenAsync();
+            /*await db.ExecuteAsync("Update EmployeeDetail SET Discount = @disc WHERE ProposalId = @pro and EmployeeId = @emp",
+                new
+                {
+                    pro = proposalId, emp = employeeId, disc = employeeDetail.Discount
+                });*/
             foreach (var soft in employeeDetail.Softskills)
             {
                 if (db.Query<string>(
@@ -184,9 +189,11 @@ namespace AVATI.Data.EmployeeDetailFiles
             int tempRC = db.QuerySingle<int>(
                 "SELECT AltRC from EmployeeDetail Where EmployeeId = @empID and ProposalID = @propId",
                 new {empID = emp, propId = proposalId});
+            /*int discount = db.QuerySingle<int>("SELECT Discount from EmployeeDetail Where EmployeeId = @empID and ProposalID = @propId",
+                new {empID = emp, propId = proposalId});*/ //TODO: Datenbindung Rabatt
             db.Execute("INSERT INTO EmployeeDetail VALUES(@propId, @empId, @rc)",
                 new {propId = newId, empId = emp, @rc = tempRC});
-
+            
             foreach (var softskill in db.Query<string>(
                 "SELECT Softskill from EmployeeDetail_Softskill Where ProposalID = @propId and EmployeeID = @empId",
                 new {propId = proposalId, empId = emp}))
@@ -234,7 +241,10 @@ namespace AVATI.Data.EmployeeDetailFiles
         {
             EmployeeDetail temp = new EmployeeDetail();
             await using DbConnection db = GetConnection();
-            await db.OpenAsync();
+            /*temp.Discount =
+                    db.QuerySingle<int>(
+                        "SELECT Discount from EmployeeDetail WHERE EmployeeId = @empId and ProposalID = @propId",
+                        new {empId = employeeId, propId = proposalId}); */
             temp.Roles = new List<string>(db.Query<string>(
                 "SELECT Role from EmployeeDetail_Role WHERE EmployeeId = @empId and ProposalId = @propId",
                 new {empId = employeeId, propId = proposalId}));
@@ -292,11 +302,14 @@ namespace AVATI.Data.EmployeeDetailFiles
         public List<EmployeeDetail> GetAllEmployeeDetail(int proposalId)
         {
             using DbConnection db = GetConnection();
-            db.Open();
             List<EmployeeDetail> employeeList =
                 new List<EmployeeDetail>(db.Query<EmployeeDetail>("SELECT * FROM EmployeeDetail WHERE ProposalId = @propId", new {propId = proposalId}));
             foreach (var temp in employeeList)
             {
+               /*temp.Discount =
+                    db.QuerySingle<int>(
+                        "SELECT Discount from EmployeeDetail WHERE EmployeeId = @empId and ProposalID = @propId",
+                        new {empId = temp.EmployeeId, propId = temp.ProposalId}); */
                 temp.Fields =
                     new List<string>(db.Query<string>(
                         "SELECT Field from EmployeeDetail_Field WHERE EmployeeId = @empId and ProposalId = @propId",
