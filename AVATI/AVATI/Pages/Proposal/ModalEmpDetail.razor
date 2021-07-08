@@ -30,7 +30,7 @@
                                             Rate Card Level:
                                             @if (EmployeeAttributes.Rc != 0)
                                             {
-                                                <button class="btn btn-sm btn-outline-success" @onclick=@(() => { EmployeeDetailView.Rc = 0; })>@_employeeDetailService.GetEmployeeDetail(EmpId, PropId).Result.Rc</button>
+                                                <button class="btn btn-sm btn-success" @onclick=@(() => { EmployeeDetailView.Rc = 0; })>@_employeeDetailService.GetEmployeeDetail(EmpId, PropId).Result.Rc</button>
                                                                                                                                                                                                                  
                                             }
                                             else
@@ -44,7 +44,7 @@
                                                 {
                                                     if (EmployeeDetailView.Fields.Find(e => e.Equals(field)) != null)
                                                     {
-                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addField" @onclick=@(() => { EmployeeDetailView.Fields.Remove(field);})>@field</button>
+                                                        <button class="btn btn-sm btn-success mb-1 mr-1" id="addField" @onclick=@(() => { EmployeeDetailView.Fields.Remove(field);})>@field</button>
                                                     }
                                                     else
                                                     {
@@ -63,7 +63,7 @@
                                             {
                                                 if (EmployeeDetailView.Hardskills.Find(e => e.Description.Equals(hardSkill.Description)) != null)
                                                 {
-                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addHardskill" @onclick=@(() => {EmployeeDetailView.Hardskills.RemoveAll(e => e.Description == hardSkill.Description);})>@hardSkill.Description</button>    
+                                                    <button class="btn btn-sm btn-success mb-1 mr-1" id="addHardskill" @onclick=@(() => {EmployeeDetailView.Hardskills.RemoveAll(e => e.Description == hardSkill.Description);})>@hardSkill.Description</button>    
                                                 }
                                                 else
                                                 {
@@ -80,7 +80,7 @@
                                             {
                                                 if (EmployeeDetailView.Languages.Find(e => e.Item1.Equals(lang.Item1)) != null)
                                                 {
-                                                    <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addLanguage" @onclick=@(() => {EmployeeDetailView.Languages.Remove(lang);})>@lang.Item1 @lang.Item2</button>
+                                                    <button class="btn btn-sm btn-success mb-1 mr-1" id="addLanguage" @onclick=@(() => {EmployeeDetailView.Languages.Remove(lang);})>@lang.Item1 @lang.Item2</button>
                                                 }
                                                 else
                                                 {
@@ -98,7 +98,7 @@
                                                 {
                                                     if (EmployeeDetailView.Softskills.Contains(softSkill))
                                                     {
-                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addSoftskill" @onclick=@(() => {EmployeeDetailView.Softskills.Remove(softSkill);})>@softSkill</button>
+                                                        <button class="btn btn-sm btn-success mb-1 mr-1" id="addSoftskill" @onclick=@(() => {EmployeeDetailView.Softskills.Remove(softSkill);})>@softSkill</button>
                                                     }
                                                     else
                                                     {
@@ -114,7 +114,7 @@
                                                 {
                                                     if (EmployeeDetailView.Roles.Find(e => e.Equals(role)) != null)
                                                     {
-                                                        <button class="btn btn-sm btn-outline-success mb-1 mr-1" id="addRole" @onclick=@(() => { EmployeeDetailView.Roles.Remove(role);})>@role</button>
+                                                        <button class="btn btn-sm btn-success mb-1 mr-1" id="addRole" @onclick=@(() => { EmployeeDetailView.Roles.Remove(role);})>@role</button>
                                                     }
                                                     else
                                                     {
@@ -129,9 +129,10 @@
                         </div>
                     </div>
                     <div class="modal-footer mt-5">
+                        <button class="btn btn-secondary" type="button" @onclick=@(async () => { await CreateDocument(); })>Dokument erstellen</button>
                         <button class="btn btn-danger" @onclick="@Close">Abbrechen</button>
-                        <button class="btn btn-success" id="submitDetail" @onclick=@(() => { _employeeDetailService.UpdateEmployeeDetail(EmpId, PropId, EmployeeDetailView); Close();})>Änderungen speichern</button> <!--TODO: make work-->
-                    </div>
+                        <button class="btn btn-success" id="submitDetail" @onclick=@(() => { _employeeDetailService.UpdateEmployeeDetail(EmpId, PropId, EmployeeDetailView); Close();})>Speichern</button> <!--TODO: make work-->
+                        </div>
                 </div>
             </div>
         </div>
@@ -178,6 +179,10 @@
         ShowBackdrop = !ShowBackdrop;
         StateHasChanged();
     }
-
+    
+    public async Task CreateDocument()
+    {
+        await Task.Delay(100);
+    }
     
 }
