@@ -289,12 +289,12 @@ namespace AVATI.Data.EmployeeDetailFiles
             return true;
         }
 
-        public List<EmployeeDetail> GetAllEmployeeDetail()
+        public List<EmployeeDetail> GetAllEmployeeDetail(int proposalId)
         {
             using DbConnection db = GetConnection();
             db.Open();
             List<EmployeeDetail> employeeList =
-                new List<EmployeeDetail>(db.Query<EmployeeDetail>("SELECT * FROM EmployeeDetail"));
+                new List<EmployeeDetail>(db.Query<EmployeeDetail>("SELECT * FROM EmployeeDetail WHERE ProposalId = @propId", new {propId = proposalId}));
             foreach (var temp in employeeList)
             {
                 temp.Fields =
@@ -310,9 +310,9 @@ namespace AVATI.Data.EmployeeDetailFiles
                     new {empId = temp.EmployeeId, propId = temp.ProposalId}))
                 {
                     temp.Languages.Add(new Tuple<string, LanguageLevel>(language,
-                        db.QuerySingle<LanguageLevel>(
+                        GetLanguageLevel(db.QuerySingle<string>(
                             "SELECT Level from Employee_Language WHERE EmployeeId = @emp and Language = @lang",
-                            new {emp = temp.EmployeeId, lang = language})));
+                            new {emp = temp.EmployeeId, lang = language}))));
                 }
 
                 temp.Rc = db.QuerySingle<int>(
@@ -325,6 +325,10 @@ namespace AVATI.Data.EmployeeDetailFiles
                 {
                     temp.Hardskills.Add(new Hardskill() {Description = hardskill});
                 }
+                temp.Roles =
+                    new List<string>(db.Query<string>(
+                        "SELECT Role from EmployeeDetail_Role WHERE EmployeeId = @empId and ProposalId = @propId",
+                        new {empId = temp.EmployeeId, propId = temp.ProposalId}));
             }
 
             return employeeList;
