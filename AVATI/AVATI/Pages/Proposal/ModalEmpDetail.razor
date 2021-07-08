@@ -128,11 +128,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer mt-5">
-                        <button class="btn btn-secondary" type="button" @onclick=@(async () => { await CreateDocument(); })>Dokument erstellen</button>
-                        <button class="btn btn-danger" @onclick="@Close">Abbrechen</button>
-                        <button class="btn btn-success" id="submitDetail" @onclick=@(() => { _employeeDetailService.UpdateEmployeeDetail(EmpId, PropId, EmployeeDetailView); Close();})>Speichern</button> <!--TODO: make work-->
+                    <div class="modal-footer mt-5 justify-content-between">
+                        <button class="btn btn-secondary" type="button" @onclick=@(async () => { await CreateDocument(); Close();})>Dokument <span class="oi oi-document ml-1"></span></button>
+                        <div>
+                            <button class="btn btn-danger" @onclick="@Close">Abbrechen</button>
+                            <button class="btn btn-success" id="submitDetail" @onclick=@(() => { _employeeDetailService.UpdateEmployeeDetail(EmpId, PropId, EmployeeDetailView); Close();})>Speichern</button> <!--TODO: make work-->
                         </div>
+                    </div>
                 </div>
             </div>
         </div>
