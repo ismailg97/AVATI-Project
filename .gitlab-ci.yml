@@ -14,3 +14,11 @@ job:
     script: 
         - cd AVATI
         - dotnet build
+
+job2: 
+    stage: test
+    tags:
+        - sopro
+    script:
+        - cd AVATI/UnitTests
+        - dotnet test         
