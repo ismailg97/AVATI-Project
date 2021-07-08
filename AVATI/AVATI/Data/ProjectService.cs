@@ -136,7 +136,7 @@ namespace AVATI.Data
                 new {proId = projectID});
             temp.Projectend = db.QuerySingle<DateTime>("SELECT Projectend from Project WHERE ProjectId = @proId",
                 new {proId = projectID});
-            temp.Fields = db.Query<string>("SELECT Field from Project_FIeld WHERE ProjectID = @pro",
+            temp.Fields = db.Query<string>("SELECT Field from Project_Field WHERE ProjectID = @pro",
                 new {pro = projectID}).ToList();
             temp.ProjectID = projectID;
             List<int> employeeIds = 
