@@ -540,19 +540,19 @@
         return element;
     }
 
-    public Table GenerateRoleTable(int id)
+    public Table GenerateRoleTable(Proposal prop)
     {
         var table = new Table();
         var tableProp = new TableProperties(
             new TableStyle() {Val = "EinfacheTabelle4"}, new TableWidth() {Type = TableWidthUnitValues.Dxa, Width = 7000.ToString()});
         table.AppendChild<TableProperties>(tableProp);
-        foreach (var emp in _detailService.GetAllEmployeeDetail(id))
+        foreach (var emp in _detailService.GetAllEmployeeDetail(prop.ProposalID))
         {
             foreach (var role in emp.Roles)
             {
                 var tableRow = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
                 var cell1 = new TableCell(new TableCellProperties(new TableCellWidth() {Type = TableWidthUnitValues.Dxa, Width = 3500.ToString()}));
-                cell1.AppendChild(new Paragraph(new Run(new RunProperties(new FontSize() {Val = 28.ToString()}, new Bold() {Val = OnOffValue.FromBoolean(false)}), new Text(_proposal.GetProposal(id).Employees.Find(e => e.EmployeeID == emp.EmployeeId).FirstName + _proposal.GetProposal(id).Employees.Find(e => e.EmployeeID == emp.EmployeeId).LastName))));
+                cell1.AppendChild(new Paragraph(new Run(new RunProperties(new FontSize() {Val = 28.ToString()}, new Bold() {Val = OnOffValue.FromBoolean(false)}), new Text(prop.Employees.Find(e => e.EmployeeID == emp.EmployeeId).FirstName + prop.Employees.Find(e => e.EmployeeID == emp.EmployeeId).LastName))));
                 var cell2 = new TableCell(new TableCellProperties(new TableCellWidth() {Type = TableWidthUnitValues.Dxa, Width = 3500.ToString()}));
                 cell2.AppendChild(new Paragraph(new Run(new RunProperties(new FontSize() {Val = 28.ToString()}, new Bold() {Val = OnOffValue.FromBoolean(false)}), new Text(role))));
                 tableRow.Append(cell1, cell2);
@@ -561,58 +561,7 @@
         }
         return table;
     }
-
-    public Table TestTable(int id)
-    {
-        Table table = new Table();
-        TableProperties props = new TableProperties(
-            new TableBorders(
-                new TopBorder
-                {
-                    Val = new EnumValue<BorderValues>(BorderValues.Single),
-                    Size = 12
-                },
-                new BottomBorder
-                {
-                    Val = new EnumValue<BorderValues>(BorderValues.Single),
-                    Size = 12
-                },
-                new LeftBorder
-                {
-                    Val = new EnumValue<BorderValues>(BorderValues.Single),
-                    Size = 12
-                },
-                new RightBorder
-                {
-                    Val = new EnumValue<BorderValues>(BorderValues.Single),
-                    Size = 12
-                },
-                new InsideHorizontalBorder
-                {
-                    Val = new EnumValue<BorderValues>(BorderValues.Single),
-                    Size = 12
-                },
-                new InsideVerticalBorder
-                {
-                    Val = new EnumValue<BorderValues>(BorderValues.Single),
-                    Size = 12
-                }));
-        table.AppendChild<TableProperties>(props);
-        foreach (var emp in _detailService.GetAllEmployeeDetail(id))
-        {
-            foreach (var role in emp.Roles )
-            {
-                var tr = new TableRow();
-                var tc = new TableCell();
-                tc.AppendChild(new Paragraph(new Run(new Text( _employeeService.GetEmployeeProfile(emp.EmployeeId).FirstName + " " + _employeeService.GetEmployeeProfile(emp.EmployeeId).LastName + role))));
-                tc.AppendChild(new TableCellProperties(new TableCellWidth {Type = TableWidthUnitValues.Auto}));
-                tr.AppendChild(tc);
-                table.AppendChild(tr);
-            }
-        }
-        return table;
-    }
-
+    
     public async Task CreateDocument(int id) //Threadsicher machen, wenn mehrere gleichzeitig ein Dokument erzeugen --> Ressourcenkonflikt 
     {
         int i = 0;
@@ -626,7 +575,7 @@
             await fileStream.CopyToAsync(memStream);
         using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(memStream, true))
         {
-            
+            var tempProp = _proposal.GetProposal(id); 
             wordDoc.ChangeDocumentType(WordprocessingDocumentType.Document);
             Body body = wordDoc.MainDocumentPart.Document.Body;
             var paragraphs = body.Descendants<Paragraph>().ToList();
@@ -639,14 +588,14 @@
                         switch (element.Text)
                         {
                             case "Angebotstitel":
-                                element.Text = element.Text.Replace("Angebotstitel", _proposal.GetProposal(id).ProposalTitle);
+                                element.Text = element.Text.Replace("Angebotstitel", tempProp.ProposalTitle);
                                 break;
                             case "Beschreibungstext":
-                                element.Text = element.Text.Replace("Beschreibungstext", _proposal.GetProposal(id).AdditionalInfo);
+                                element.Text = element.Text.Replace("Beschreibungstext", tempProp.AdditionalInfo);
                                 break;
                             case "Hard":
                             {
-                                foreach (var hardskill in _proposal.GetHardskills(id))
+                                foreach (var hardskill in tempProp.Hardskills)
                                 {
                                     par.InsertAfterSelf(GenerateHardskillListItem(hardskill.Description));
                                 }
@@ -654,22 +603,21 @@
                                 break;
                             }
                             case "Soft":
-                                foreach (var softskill in _proposal.GetSoftskills(id))
+                                foreach (var softskill in tempProp.Softskills)
                                 {
                                     par.InsertAfterSelf(GenerateSoftskillListItem(softskill));
                                 }
                                 par.Remove();
                                 break;
                             case "Field":
-                                foreach (var field in _proposal.GetFields(id))
+                                foreach (var field in tempProp.Fields)
                                 {
                                     par.InsertAfterSelf(GenerateFieldListItem(field));
                                 }
                                 par.Remove();
                                 break;
                             case "Rollenverteilung":
-                                //body.AppendChild(TestTable(id)); 
-                                body.AppendChild(GenerateRoleTable(id));
+                                body.AppendChild(GenerateRoleTable(tempProp));
                                 body.AppendChild(pageBreaker.CloneNode(true));
                                 Console.WriteLine(wordDoc.ToFlatOpcString());
                                 break;
@@ -677,7 +625,7 @@
                     }
                 }
             }
-            foreach (var emp in _proposal.GetProposal(id).Employees)
+            foreach (var emp in tempProp.Employees)
             {
                 MemoryStream empMemStream = new MemoryStream();
                 await using (FileStream yalla = new FileStream(empTemplatePath, FileMode.Open, FileAccess.Read))
@@ -685,7 +633,7 @@
                 i++;
                 FileStream clearTempDoc = new FileStream(empTempDocPath, FileMode.Create, FileAccess.ReadWrite);
                 await clearTempDoc.DisposeAsync();
-                
+                var tempEmp = _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result;
                 using (WordprocessingDocument empDoc = WordprocessingDocument.Open(empMemStream, true))
                 {
                     var empBody = empDoc.MainDocumentPart.Document.Body;
@@ -702,38 +650,38 @@
                                         text.Text = text.Text.Replace("Name", emp.FirstName + " " + emp.LastName);
                                         break;
                                     case "numb":
-                                        text.Text = text.Text.Replace("numb", _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result.Rc.ToString());
+                                        text.Text = text.Text.Replace("numb", tempEmp.Rc.ToString());
                                         break;
                                     case "branch":
-                                        foreach (var field in _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result.Fields)
+                                        foreach (var field in tempEmp.Fields)
                                         {
                                             par.InsertAfterSelf(GenerateFieldListItem(field));
                                         }
                                         par.Remove();
                                         break;
                                     case "hards":
-                                        foreach (var hardskill in _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result.Hardskills)
+                                        foreach (var hardskill in tempEmp.Hardskills)
                                         {
                                             par.InsertAfterSelf(GenerateHardskillListItem(hardskill.Description));
                                         }
                                         par.Remove();
                                         break;
                                     case "softs":
-                                        foreach (var softskill in _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result.Softskills)
+                                        foreach (var softskill in tempEmp.Softskills)
                                         {
                                             par.InsertAfterSelf(GenerateSoftskillListItem(softskill));
                                         }
                                         par.Remove();
                                         break;
                                     case "langs":
-                                        foreach (var lang in _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result.Languages)
+                                        foreach (var lang in tempEmp.Languages)
                                         {
                                             par.InsertAfterSelf(GenerateLanguageListItem(lang));
                                         }
                                         par.Remove();
                                         break;
                                     case "roles":
-                                        foreach (var role in _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result.Roles)
+                                        foreach (var role in tempEmp.Roles)
                                         {
                                             par.InsertAfterSelf(GenerateRoleListItem(role));
                                         }

@@ -15,7 +15,7 @@
             <DataAnnotationsValidator/>
             <ValidationSummary/>
             <div class="modal fade show d-block" data-bs-backdrop="static" id="exampleModal" role="dialog">
-                <div class="modal-dialog" style="min-width: 1500px" role="document">
+                <div class="modal-dialog" style="min-width: 1800px" role="document">
                     <div class="modal-content bg-light text-black">
                         <div class="modal-header">
                             <h5 class="modal-title font-weight-bolder text-center" id="titleLabel">Detailansicht</h5>
@@ -24,40 +24,45 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div class="container ml-3" style="min-width: 100%">
-                                <div class="row justify-content-md-center">
-                                    <div class="card col-sm-4 text-black border-dark">
-                                        <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" class="card-img-top" alt=""/>
-                                        <div class="card-body pb-3 pt-3">
-                                            <h5 class="card-title">@_employeeService.GetEmployeeProfile(EmpId).FirstName @_employeeService.GetEmployeeProfile(EmpId).LastName</h5>
-                                            <div class="card-title text-left">
-                                                Rate Card Level:
-                                                @if (EmployeeAttributes.Rc != 0)
+                            <div class="row justify-content-md-center">
+                                <div class="card text-black border-dark ml-3" style="width: 25%">
+                                    <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" class="card-img-top" alt=""/>
+                                    <div class="card-body pb-3 pt-3">
+                                        <h5 class="card-title">@_employeeService.GetEmployeeProfile(EmpId).FirstName @_employeeService.GetEmployeeProfile(EmpId).LastName</h5>
+                                        <div class="card-title text-left">
+                                            Rate Card Level:
+                                            @if (EmployeeAttributes.Rc != 0)
+                                            {
+                                                <button class="btn btn-sm btn-success" type="button" @onclick=@(() => { EmployeeDetailView.Rc = 0; })>@_employeeDetailService.GetEmployeeDetail(EmpId, PropId).Result.Rc</button>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn btn-sm btn-outline-dark" type="button" @onclick=@(() => { EmployeeDetailView.Rc = EmployeeAttributes.Rc; })>@_employeeDetailService.GetEmployeeDetail(EmpId, PropId).Result.Rc</button>
+                                            }
+                                        </div>
+                                        <div class="card-text text-left">
+                                            Branchen:
+                                            @foreach (var field in EmployeeAttributes.Field)
+                                            {
+                                                if (EmployeeDetailView.Fields.Find(e => e.Equals(field)) != null)
                                                 {
-                                                    <button class="btn btn-sm btn-success" type="button" @onclick=@(() => { EmployeeDetailView.Rc = 0; })>@_employeeDetailService.GetEmployeeDetail(EmpId, PropId).Result.Rc</button>
+                                                    <button class="btn btn-sm btn-success mb-1 mr-1" id="addField" type="button" @onclick=@(() => { EmployeeDetailView.Fields.Remove(field); })>@field</button>
                                                 }
                                                 else
                                                 {
-                                                    <button class="btn btn-sm btn-outline-dark" type="button" @onclick=@(() => { EmployeeDetailView.Rc = EmployeeAttributes.Rc; })>@_employeeDetailService.GetEmployeeDetail(EmpId, PropId).Result.Rc</button>
+                                                    <button class="btn btn-sm btn-outline-dark mb-1 mr-1" id="addField" type="button" @onclick=@(() => { EmployeeDetailView.Fields.Add(field); })>@field</button>
                                                 }
-                                            </div>
-                                            <div class="card-text text-left">
-                                                Branchen:
-                                                @foreach (var field in EmployeeAttributes.Field)
-                                                {
-                                                    if (EmployeeDetailView.Fields.Find(e => e.Equals(field)) != null)
-                                                    {
-                                                        <button class="btn btn-sm btn-success mb-1 mr-1" id="addField" type="button" @onclick=@(() => { EmployeeDetailView.Fields.Remove(field); })>@field</button>
-                                                    }
-                                                    else
-                                                    {
-                                                        <button class="btn btn-sm btn-outline-dark mb-1 mr-1" id="addField" type="button" @onclick=@(() => { EmployeeDetailView.Fields.Add(field); })>@field</button>
-                                                    }
-                                                }
-                                            </div>
+                                            }
                                         </div>
                                     </div>
-                                    <div class="col-sm-8">
+                                </div>
+                                <div class="card text-black border-dark ml-2" style="width: 20%">
+                                    <div class="card-header text-left bg-transparent border-secondary">Projekt(e)</div>
+                                    <div class="card-body text-left">
+
+                                    </div>
+                                </div>
+                                    <div class="col" style="width: 55%">
                                         <div class="row mb-2">
                                             <div class="card col-sm-8 border-secondary ml-2 mr-2" style="min-height: 221.883px">
                                                 <div class="card-header text-left bg-transparent border-secondary">Hardskills</div>
@@ -129,7 +134,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         <div class="modal-footer justify-content-between">
                             <div>
                                 <button class="btn btn-secondary" @onclick=@(Close)>Dokument <span class="ml-1 oi oi-document"></span></button>
