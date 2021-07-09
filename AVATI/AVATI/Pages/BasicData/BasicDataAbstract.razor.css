@@ -1,8 +1,4 @@
-﻿table{
-    margin-bottom: 0px;
-}
-
-.cap {
+﻿.cap {
     color: white;
     background-color: #7a212e;
     padding: 15px;
@@ -11,8 +7,21 @@
     margin-top: 50px;
 }
 
-tr:hover {
+.table tr:hover {
     background-color: #f5d7d7;
+}
+
+.table tr {
+    background-clip: padding-box;
+    border-radius: 30px !important;
+}
+
+.grey {
+    background-color: #e3e3e3;
+}
+
+.white {
+    background-color: white;
 }
 
 .smalltd {
@@ -38,7 +47,10 @@ hr {
     font-size: 12px;
 }
 
-.btn-success {
-    margin-top: 0px;
-    margin-bottom: 40px;
+.btn-outline-primary {
+    background-color: white;
+}
+
+.btn-outline-primary:hover {
+    background-color: #0275d8;
 }

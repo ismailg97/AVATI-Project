@@ -15,5 +15,24 @@ namespace AVATI.Data
         public List<string> SoftSkills { get; set; } = new List<string>();
         public List<Hardskill> HardSkills { get; set; } = new List<Hardskill>();
         public List<string> HardSkillsDesc { get; set; } = new List<string>();
+
+        private sealed class DescriptionEqualityComparer : IEqualityComparer<ProjectActivity>
+        {
+            public bool Equals(ProjectActivity x, ProjectActivity y)
+            {
+                if (ReferenceEquals(x, y)) return true;
+                if (ReferenceEquals(x, null)) return false;
+                if (ReferenceEquals(y, null)) return false;
+                if (x.GetType() != y.GetType()) return false;
+                return x.Description == y.Description;
+            }
+
+            public int GetHashCode(ProjectActivity obj)
+            {
+                return (obj.Description != null ? obj.Description.GetHashCode() : 0);
+            }
+        }
+
+        public static IEqualityComparer<ProjectActivity> DescriptionComparer { get; } = new DescriptionEqualityComparer();
     }
 }

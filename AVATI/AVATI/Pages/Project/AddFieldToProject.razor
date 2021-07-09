@@ -98,7 +98,6 @@
     public void Submit(int ID)
     {
         _show = !_show;
-    //Currently not implemented => Does nothing!!
         _projectService.UpdateFieldsFromProject(_projectToEdit.ProjectID, _projectToEdit.Fields);
         Abstract.Update();
         StateHasChanged();

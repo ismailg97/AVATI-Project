@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AVATI", "AVATI\AVATI.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{FA4B3AFF-18B6-4199-83ED-BC5995956107}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{FA4B3AFF-18B6-4199-83ED-BC5995956107}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA4B3AFF-18B6-4199-83ED-BC5995956107}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA4B3AFF-18B6-4199-83ED-BC5995956107}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

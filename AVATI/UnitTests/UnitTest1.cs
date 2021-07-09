@@ -5,8 +5,7 @@ using System.Linq;
 using AVATI.Data;
 using AVATI.Data.ValidationAttributes;
 using NUnit.Framework;
-
-namespace Tests.Komponententests
+namespace UnitTests
 {
     public class Tests
     {
@@ -83,5 +82,8 @@ namespace Tests.Komponententests
                     Validator.ValidateValue(proposal, ctx, validationAttributes);
                 });
         }
+
+        
+        
     }
 }

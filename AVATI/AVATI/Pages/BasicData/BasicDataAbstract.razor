@@ -1,5 +1,6 @@
 ﻿@page "/BasicDataAbstract"
 @using AVATI.Data
+@using Blazorise
 
 @inject IBasicDataService _basicDataService
 @inject IHardskillService _hardskillService
@@ -17,135 +18,196 @@
 <AddHardskills @ref="_createCat" Description="" Abstract="@this"/>
 
 <h3 class="cap"><b>Skills</b></h3>
-<table class="table table-striped">
-    <caption><h5><b>Softskills</b></h5></caption>
-    <div class="form-group col-8">
-        <input class="form-control" type="text" placeholder="Filter..."
-               @bind="Filter[0]"
-               @bind:event="oninput">
-    </div>
-    @if (_softskills.Any(x => IsVisible(x, 0)))
-    {
-        <tr>
-            <th>Bezeichnung</th>
-            <th></th>
-            <th></th>
-        </tr>
+<table class="table align-middle mb-5">
+    <caption><h4 style="display: inline;"><b>Softskills</b></h4>
+        <button style="display: inline;" class="@(_show[0] ? "btn btn-outline-primary" : "btn btn-primary")" @onclick="() => Showing(0)">@(_show[0] ? "Ausblenden" : "Einblenden")</button>
+        <button style="display: inline;" class="btn btn-success" @onclick="() => PopCreateBasicData(BasicDataType.SoftSkill)">Hinzufügen</button>
+    </caption>
     
-        foreach (string softskill in _softskills)
+    
+    @if (_show[0])
+    {
+        <div class="form-group col-8">
+                    <input class="form-control" type="text" placeholder="Filter..."
+                           @bind="Filter[0]"
+                           @bind:event="oninput">
+        </div>
+        if (_softskills.Any(x => IsVisible(x, 0)))
         {
-            if (!IsVisible(softskill, 0))
-                continue;
             <tr>
-                <td>@softskill</td>
-                <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditBasicData(softskill, BasicDataType.SoftSkill)">Editieren</button></td>
-                <td class="smalltd"><button class="btn btn-danger" @onclick="() => PopDelete(softskill, BasicDataType.SoftSkill)">Löschen</button></td>
-            </tr>
-        }
-    } else {
-        <tr>
-            <td style="color: #818181;">Kein Softskill gefunden</td>
-        </tr>
-    }
-</table>
-<div> <button class="btn btn-success" @onclick="() => PopCreateBasicData(BasicDataType.SoftSkill)">Hinzufügen</button> </div>
-
-<table class="table table-striped">
-    <caption><h5><b>Hardskills</b></h5></caption>
-    <div class="form-group col-8">
-        <input class="form-control" type="text" placeholder="Filtern nach Hardskills..."
-               @bind="Filter[1]"
-               @bind:event="oninput">
-    </div>
-    <div class="form-group col-8">
-        <input class="form-control" type="text" placeholder="Filtern nach Hardskillkategorien..."
-               @bind="Filter[5]" @oninput="InCategory">
-    </div>
-    @if (_hardskills != null && _hardskills.Any(x => IsVisible(x, 1)))
-    {
-        <tr>
-            <th>Bezeichnung</th>
-            <th></th>
-            <th></th>
-        </tr>
-
-        foreach (string hardskill in _hardskills)
-        {
-            if (!IsVisible(hardskill, 1))
-                continue;
-
-            if (!_inCategory[hardskill])
-                continue;
-
-            if (!_showUpper.ContainsKey(hardskill))
-            {
-                _showUpper.Add(hardskill, false);
-            }
-
-            <tr @onmouseover="() => ShowingUpperCat(hardskill)" @onmouseout="() => ShowingUpperCat(hardskill)">
-                <td>@hardskill</td>
-                <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditHardskill(hardskill)">Editieren</button></td>
-                <td class="smalltd">
-                    <button class="btn btn-danger" @onclick="() => PopDelete(hardskill, BasicDataType.HardSkill)">Löschen</button>
-                </td>
+                <th>Bezeichnung</th>
+                <th></th>
+                <th></th>
             </tr>
             
-            if (_showUpper[hardskill])
-            {
-                <div><ShowUpperCat Description="@hardskill"/></div>
-            }
-        }
-    } else {
-        <tr>
-            <td style="color: #818181;">Kein Hardskill gefunden</td>
-        </tr>
-    }
-</table>
-<div> <button class="btn btn-success" @onclick="PopCreateHardskill">Hinzufügen</button> </div>
-
-<table class="table table-striped">
-    <caption><h5><b>Hardskillkategorien</b></h5></caption>
-    <div class="form-group col-8">
-        <input class="form-control" type="text" placeholder="Filter..."
-               @bind="Filter[2]"
-               @bind:event="oninput">
-    </div>
-    @if (_allRoots != null && _allRoots.Any(x => IsVisible(x, 2)))
-    {
-        <tr>
-            <th>Bezeichnung</th>
-            <th></th>
-            <th></th>
-        </tr>
+            var count = 0;
         
-        @foreach (var hardskillcat in _allRoots)
+            foreach (string softskill in _softskills)
+            {
+                if (!IsVisible(softskill, 0))
+                    continue;
+                <tr class="@(count % 2 == 0 ? "grey" : "white")">
+                    <td>@softskill</td>
+                    <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditBasicData(softskill, BasicDataType.SoftSkill)">Editieren</button></td>
+                    <td class="smalltd"><button class="btn btn-danger" @onclick="() => PopDelete(softskill, BasicDataType.SoftSkill)">Löschen</button></td>
+                </tr>
+                ++count;
+            }
+        }
+        else
         {
-            if (!IsVisible(hardskillcat, 2))
-                continue;
+            <tr>
+                <td style="color: #818181;">Kein Softskill gefunden</td>
+            </tr>
+        }
+    }
+</table>
 
+<table class="table align-middle mb-5 table-striped">
+    <caption><h4 style="display: inline;"><b>Hardskills</b></h4>
+        <button style="display: inline;" class="@(_show[1] ? "btn btn-outline-primary" : "btn btn-primary")" @onclick="() => Showing(1)">@(_show[1] ? "Ausblenden" : "Einblenden")</button>
+        <button style="display: inline;" class="btn btn-success" @onclick="PopCreateHardskill">Hinzufügen</button> 
+    </caption>
+    
+    @if (_show[1] && !_loadHardskills)
+    {
+        <div class="d-flex flex-column align-items-center justify-content-center">
+            <div class="row">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            <div class="row">
+                <strong>Lade...</strong>
+            </div>
+        </div>
+    } else if (_show[1])
+    {
+        <div class="form-group col-8">
+            <input class="form-control" type="text" placeholder="Filtern nach Hardskills..."
+                   @bind="Filter[1]"
+                   @bind:event="oninput">
+        </div>
+        <div class="form-group col-8">
+            <input class="form-control" type="text" placeholder="Filtern nach Hardskillkategorien..."
+                   @bind="Filter[5]" @bind:event="oninput">
+        </div>
+        @if (_hardskills != null && _hardskills.Any(x => IsVisible(x, 1)))
+        {
+            <tr>
+                <th>Bezeichnung</th>
+                <th></th>
+                <th></th>
+            </tr>
             
+            var count = 0;
+            
+            foreach (string hardskill in _hardskills)
+            {
+                if (!IsVisible(hardskill, 1))
+                    continue;
+
+                if (!InCategory(hardskill))
+                    continue;
+
+                if (!_showUpper.ContainsKey(hardskill))
+                {
+                    _showUpper.Add(hardskill, false);
+                }
+            
+            
+                <tr class="@(count % 2 == 0 ? "grey" : "white")" @onmouseover="() => ShowingUpperCat(hardskill)" @onmouseout="() => ShowingUpperCat(hardskill)">
+                    <td>@hardskill</td>
+                    <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditHardskill(hardskill)">Editieren</button></td>
+                    <td class="smalltd">
+                        <button class="btn btn-danger" @onclick="() => PopDelete(hardskill, BasicDataType.HardSkill)">Löschen</button>
+                    </td>
+                </tr>
+            
+
+                @if (_showUpper[hardskill])
+                {
+                    <div>
+                        <ShowUpperCat Description="@hardskill"/>
+                    </div>
+                }
+                ++count;
+            }
+        }
+        else
+        {
+            <tr>
+                <td style="color: #818181;">Kein Hardskill gefunden</td>
+            </tr>
+        }
+    }
+</table>
+
+<table class="table align-middle mb-5 table-striped">
+    <caption><h4 style="display: inline;"><b>Hardskillkategorien</b> </h4>
+        <button style="display: inline;" class="@(_show[2] ? "btn btn-outline-primary" : "btn btn-primary")" @onclick="() => Showing(2)">@(_show[2] ? "Ausblenden" : "Einblenden")</button>
+        <button style="display: inline;" class="btn btn-success" @onclick="PopCreateHardskillCat">Hinzufügen</button>
+    </caption>
+    
+    @if (_show[2] && !_loadCategorys)
+    {
+        <div class="d-flex flex-column align-items-center justify-content-center">
+            <div class="row">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            <div class="row">
+                <strong>Lade...</strong>
+            </div>
+        </div>
+    } else if (_show[2])
+    {
+        <div class="form-group col-8">
+            <input class="form-control" type="text" placeholder="Filter..."
+                   @bind="Filter[2]"
+                   @bind:event="oninput">
+        </div>
+        @if (_allRoots != null && _allRoots.Any(x => IsVisible(x, 2)))
+        {
+            
+            <tr>
+                <th>Bezeichnung</th>
+                <th></th>
+                <th></th>
+            </tr>
+
+            var count = 0;
+            
+            @foreach (var hardskillcat in _allRoots)
+            {
+                if (!IsVisible(hardskillcat, 2))
+                    continue;
+
+
                 if (!_showEditCat.ContainsKey(hardskillcat))
                 {
                     _showEditCat.Add(hardskillcat, false);
                 }
-                
+
                 if (!_showSubCat.ContainsKey(hardskillcat))
                 {
                     _showSubCat.Add(hardskillcat, false);
                 }
-
-                <tr>
+                
+                <tr class="@(count % 2 == 0 ? "grey" : "white")">
                     <td>@hardskillcat</td>
                     <td class="smalltd">
                         @if (!_showEditCat[hardskillcat])
                         {
                             if (!_showSubCat[hardskillcat])
                             {
-                                <button class="btn btn-success" @onclick="() => ShowingSubCat(hardskillcat)" type="button">View</button>
+                                <button class="btn btn-success" @onclick="() => ShowingSubCat(hardskillcat)" type="button">Ansicht</button>
                             }
                             else
                             {
-                                <button class="btn btn-outline-success" @onclick="() => ShowingSubCat(hardskillcat)" type="button">Stop View</button>
+                                <button class="btn btn-outline-success" @onclick="() => ShowingSubCat(hardskillcat)" type="button">Ansicht stoppen
+                                </button>
                             }
                         }
                     </td>
@@ -160,8 +222,9 @@
                         }
                     </td>
                 </tr>
-
-                if (_showEditCat[hardskillcat])
+                
+                
+                @if (_showEditCat[hardskillcat])
                 {
                     <div>
                         <EditTreeDiagram Description="@hardskillcat" Abstract="@this"/>
@@ -173,85 +236,105 @@
                         <TreeDiagram Description="@hardskillcat"/>
                     </div>
                 }
+                ++count;
+            }
         }
-    } else {
-        <tr>
-            <td style="color: #818181;">Keine Hardskillkategorie gefunden</td>
-        </tr>
+        else
+        {
+            <tr>
+                <td style="color: #818181;">Keine Hardskillkategorie gefunden</td>
+            </tr>
+        }
     }
 </table>
-<div> <button class="btn btn-success" @onclick="PopCreateHardskillCat">Hinzufügen</button> </div>
 
 
-<h3 class="cap"><b>Branchen</b><a></a></h3>
-<div class="form-group col-6">
+<h3 class="cap"><b style="margin-right: 20px; display: inline;">Branchen</b>
+    <button style="display: inline;" class="@(_show[3] ? "btn btn-outline-primary" : "btn btn-primary")" @onclick="() => Showing(3)">@(_show[3] ? "Ausblenden" : "Einblenden")</button>
+    <button style="display: inline;" class="btn btn-success" @onclick="() => PopCreateBasicData(BasicDataType.Field)">Hinzufügen</button>
+</h3>
+@if (_show[3])
+{
+    <div class="form-group col-6">
         <input class="form-control" type="text" placeholder="Filter..."
                @bind="Filter[3]"
                @bind:event="oninput">
-</div>
-<table class="table">
-    @if (_fields.Any(x => IsVisible(x, 3)))
-    {
-        <tr>
-            <th>Bezeichnung</th>
-            <th></th>
-            <th></th>
-        </tr>
-        @foreach (var field in _fields)
+    </div>
+    <table class="table align-middle mb-5 table-striped">
+        @if (_fields.Any(x => IsVisible(x, 3)))
         {
-
-            @if (!IsVisible(field, 3))
-                continue;
-
+            
             <tr>
-                <td>@field</td>
-                <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditBasicData(field, BasicDataType.Field)">Editieren</button></td>
-                <td class="smalltd"><button class="btn btn-danger" @onclick="() => PopDelete(field, BasicDataType.Field)">Löschen</button></td>
+                <th>Bezeichnung</th>
+                <th></th>
+                <th></th>
+            </tr>
+
+            var count = 0;
+            
+            @foreach (var field in _fields)
+            {
+
+                @if (!IsVisible(field, 3))
+                    continue;
+
+                <tr class="@(count % 2 == 0 ? "grey" : "white")">
+                    <td>@field</td>
+                    <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditBasicData(field, BasicDataType.Field)">Editieren</button></td>
+                    <td class="smalltd"><button class="btn btn-danger" @onclick="() => PopDelete(field, BasicDataType.Field)">Löschen</button></td>
+                </tr>
+                ++count;
+            }
+        } else {
+            <tr>
+                <td style="color: #818181;">Keine Branche gefunden</td>
             </tr>
         }
-    } else {
-        <tr>
-            <td style="color: #818181;">Keine Branche gefunden</td>
-        </tr>
-    }
 </table>
-<div> <button class="btn btn-success" @onclick="() => PopCreateBasicData(BasicDataType.Field)">Hinzufügen</button> </div>
+}
 
-
-
-<h3 class="cap"><b>Rollen</b></h3>
-<div class="form-group col-6">
-        <input class="form-control" type="text" placeholder="Filter..."
-               @bind="Filter[4]"
-               @bind:event="oninput">
-</div>
-<table class="table">
-    @if (_roles.Any(x => IsVisible(x, 4)))
-    {
-        <tr>
-            <th>Bezeichnung</th>
-            <th></th>
-            <th></th>
-        </tr>
-        @foreach (var role in _roles)
+<h3 class="cap"><b style="margin-right: 20px; display: inline;">Rollen</b>
+    <button style="display: inline;" class="@(_show[4] ? "btn btn-outline-primary" : "btn btn-primary")" @onclick="() => Showing(4)">@(_show[4] ? "Ausblenden" : "Einblenden")</button>
+    <button style="display: inline;" class="btn btn-success" @onclick="() => PopCreateBasicData(BasicDataType.Role)">Hinzufügen</button>
+    </h3>
+@if (_show[4])
+{
+    <div class="form-group col-6">
+     <input class="form-control" type="text" placeholder="Filter..."
+            @bind="Filter[4]"
+            @bind:event="oninput">
+    </div>
+    <table class="table align-middle mb-5 table-striped">
+        @if (_roles.Any(x => IsVisible(x, 4)))
         {
-
-            @if (!IsVisible(role, 4))
-                continue;
-
             <tr>
-                <td>@role</td>
-                <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditBasicData(role, BasicDataType.Role)">Editieren</button></td>
-                <td class="smalltd"><button class="btn btn-danger" @onclick="() => PopDelete(role, BasicDataType.Role)">Löschen</button></td>
+                <th>Bezeichnung</th>
+                <th></th>
+                <th></th>
+            </tr>
+
+            var count = 0;
+            
+            @foreach (var role in _roles)
+            {
+
+                @if (!IsVisible(role, 4))
+                    continue;
+
+                <tr class="@(count % 2 == 0 ? "grey" : "white")">
+                    <td>@role</td>
+                    <td class="smalltd"><button class="btn btn-secondary" @onclick="() => PopEditBasicData(role, BasicDataType.Role)">Editieren</button></td>
+                    <td class="smalltd"><button class="btn btn-danger" @onclick="() => PopDelete(role, BasicDataType.Role)">Löschen</button></td>
+                </tr>
+                ++count;
+            }
+        } else {
+            <tr>
+                <td style="color: #818181;">Keine Rolle gefunden</td>
             </tr>
         }
-    } else {
-        <tr>
-            <td style="color: #818181;">Keine Rolle gefunden</td>
-        </tr>
-    }
-</table>
-<div> <button class="btn btn-success" @onclick="() => PopCreateBasicData(BasicDataType.Role)">Hinzufügen</button> </div>
+    </table>
+}
 
 
 @code {
@@ -260,7 +343,7 @@
     List<string> _roles;
     List<string> _hardskills;
     List<string> _allRoots;
-    List<string> _allCategorys;
+    Dictionary<string, List<string>> _allCategorys = new();
         
     CreateBasicData _createBasicData;
     EditBasicData _editBasicData;
@@ -275,13 +358,15 @@
     //3: Filter for Field, 4: Filter for Role, 5: Filter for Hardskillcategorys at Hardskills
     private string[] Filter { get; set; } = new string[6];
 
+    //0: Show for Softskill, 1: Show for Hardskill, 2: Show for Hardskillcategory
+    //3: Show for Field, 4: Show for Role
+    private bool[] _show = new bool[5];
+
     private  Dictionary<string, bool> _showEditCat = new();
 
     private Dictionary<string, bool> _showSubCat = new();
 
     private Dictionary<string, bool> _showUpper = new();
-
-    private Dictionary<string, bool> _inCategory = new();
 
     private string Description { get; set; }
     
@@ -289,34 +374,56 @@
 
     private BasicDataType Type { get; set; }
 
+    private bool _loadHardskills;
+
+    private bool _loadCategorys;
+
     protected override async Task OnInitializedAsync()
     {
+        _loadCategorys = false;
+        _loadHardskills = false;
+        for(int i = 0; i < 5; ++i)
+        {
+            _show[i] = true;
+        }
         _softskills = _basicDataService.GetAllSoftSkills();
         _fields = _basicDataService.GetAllFields();
         _roles = _basicDataService.GetAllRoles();
         _hardskills = await _hardskillService.GetAllDesHardskills();
-        foreach (var hardskill in _hardskills)
-        {
-            _inCategory.TryAdd(hardskill, true);
-        }
         _allRoots = await _hardskillService.GetAllRoots();
-        _allCategorys = await _hardskillService.GetAllDesCategorys();
+
+        var categorys = await _hardskillService.GetAllDesCategorys();
+
+        foreach (var category in categorys)
+        {
+            _allCategorys.TryAdd(category, await _hardskillService.GetHardskillsOfCategory(category));
+        }
+        
+        _loadCategorys = true;
+        _loadHardskills = true;
     }
 
     public async Task UpdateCategorys()
     {
+        _loadCategorys = false;
+        StateHasChanged();
         _allRoots = await _hardskillService.GetAllRoots();
-        _allCategorys = await _hardskillService.GetAllDesCategorys();
+        _loadCategorys = true;
         StateHasChanged();
     }
 
     public async Task UpdateHardskills()
     {
+        _loadHardskills = false;
+        StateHasChanged();
         _hardskills = await _hardskillService.GetAllDesHardskills();
-        foreach (var hardskill in _hardskills)
+        var categorys = await _hardskillService.GetAllDesCategorys();
+
+        foreach (var category in categorys)
         {
-            _inCategory.TryAdd(hardskill, true);
+            _allCategorys.TryAdd(category, await _hardskillService.GetHardskillsOfCategory(category));
         }
+        _loadHardskills = true;
         StateHasChanged();
     }
 
@@ -343,32 +450,28 @@
         return string.IsNullOrEmpty(Filter[index]) || description.Contains(Filter[index], StringComparison.OrdinalIgnoreCase);
     }
     
-    private async Task InCategory()
+    private bool InCategory(string hardskill)
     {
-        foreach (var hardskill in _hardskills)
+        if (string.IsNullOrEmpty(Filter[5]))
         {
-            _inCategory[hardskill] = false;
-            if (string.IsNullOrEmpty(Filter[5]))
+                return true;
+        }
+        
+        foreach (var category in _allCategorys.Keys)
+        {
+            if (category.Contains(Filter[5], StringComparison.OrdinalIgnoreCase) && _allCategorys[category].Contains(hardskill))
             {
-                _inCategory[hardskill] = true;
-                continue;
-            }
-            
-            foreach (var category in _allCategorys)
-            {
-                if (_inCategory[hardskill])
-                    continue;
-                if (category.Contains(Filter[5], StringComparison.OrdinalIgnoreCase))
-                {
-                    var hardskillList = await _hardskillService.GetHardskillsOfCategory(category);
-                    if (hardskillList == null)
-                        continue;
-                    _inCategory[hardskill] = hardskillList.Contains(hardskill);
-                }
+                return true;
             }
             
         }
-        StateHasChanged();
+
+        return false;
+    }
+
+    private void Showing(int index)
+    {
+        _show[index] = !_show[index];
     }
 
     private void ShowingEditCat(string cat)

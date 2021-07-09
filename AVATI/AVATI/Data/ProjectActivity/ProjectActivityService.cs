@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using Dapper;
 using DocumentFormat.OpenXml.Drawing.Charts;
@@ -163,7 +164,6 @@ namespace AVATI.Data
                 });
                 
             }
-
             return projALIst;
         }
 
@@ -304,6 +304,6 @@ namespace AVATI.Data
             
             return true;
         }
-        
+
     }
 }
