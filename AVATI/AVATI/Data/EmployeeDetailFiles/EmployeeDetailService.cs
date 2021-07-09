@@ -4,7 +4,6 @@ using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
@@ -32,12 +31,13 @@ namespace AVATI.Data.EmployeeDetailFiles
         public async Task<bool> UpdateEmployeeDetail(int employeeId, int proposalId, EmployeeDetail employeeDetail)
         {
             await using DbConnection db = GetConnection();
-            await db.OpenAsync();
-            /*await db.ExecuteAsync("Update EmployeeDetail SET Discount = @disc WHERE ProposalId = @pro and EmployeeId = @emp",
+            var rows = await db.ExecuteAsync("Update EmployeeDetail SET Discount = @disc WHERE ProposalId = @pro and EmployeeId = @emp",
                 new
                 {
                     pro = proposalId, emp = employeeId, disc = employeeDetail.Discount
-                });*/
+                });
+
+            Console.WriteLine("Rows affected: " + rows + " Discount: " + employeeDetail.Discount);
             foreach (var soft in employeeDetail.Softskills)
             {
                 if (db.Query<string>(
@@ -180,19 +180,42 @@ namespace AVATI.Data.EmployeeDetailFiles
                     });
                 }
             }
+            
+            await db.ExecuteAsync(
+                "UPDATE EmployeeDetail_ProjectActivity SET InDetail = 0 WHERE ProposalID = @propId AND ProjectActivityID in (SELECT ProjectActivityID FROM ProjectActivity_Project_Employee WHERE EmployeeID = @empId)",
+                new{ propId = proposalId, empId = employeeId});
+
+            foreach (var projectact in employeeDetail.ProjectActivities)
+            {
+                var exists = db.QuerySingle<int>("SELECT COUNT(*) FROM EmployeeDetail_ProjectActivity WHERE ProjectActivityID = @proactId AND ProposalID = @propId",
+                    new{ proactId = projectact.ProjectActivityID, propId = proposalId });
+                if (exists == 0)
+                {
+                    await db.ExecuteAsync("INSERT INTO EmployeeDetail_ProjectActivity VALUES (@proactId, @propId, 1)",
+                        new {proactId = projectact.ProjectActivityID, propId = proposalId});
+                }
+                else if (exists == 1)
+                {
+                    await db.ExecuteAsync("UPDATE EmployeeDetail_ProjectActivity SET InDetail = 1 WHERE ProjectActivityID = @proactId AND ProposalID = @propId",
+                        new {proactId = projectact.ProjectActivityID, propId = proposalId});
+                }
+                else
+                    return false;
+            }
+
             return true;
         }
 
         public bool CopyDetail(int proposalId, int newId, int emp)
         {
             using DbConnection db = GetConnection();
-            int tempRC = db.QuerySingle<int>(
+            int tempRc = db.QuerySingle<int>(
                 "SELECT AltRC from EmployeeDetail Where EmployeeId = @empID and ProposalID = @propId",
                 new {empID = emp, propId = proposalId});
-            /*int discount = db.QuerySingle<int>("SELECT Discount from EmployeeDetail Where EmployeeId = @empID and ProposalID = @propId",
-                new {empID = emp, propId = proposalId});*/ //TODO: Datenbindung Rabatt
-            db.Execute("INSERT INTO EmployeeDetail VALUES(@propId, @empId, @rc)",
-                new {propId = newId, empId = emp, @rc = tempRC});
+            int discount = db.QuerySingle<int>("SELECT Discount from EmployeeDetail Where EmployeeId = @empID and ProposalID = @propId",
+                new {empID = emp, propId = proposalId});
+            db.Execute("INSERT INTO EmployeeDetail VALUES(@propId, @empId, @rc, @dc)",
+                new {propId = newId, empId = emp, rc = tempRc, dc = discount});
             
             foreach (var softskill in db.Query<string>(
                 "SELECT Softskill from EmployeeDetail_Softskill Where ProposalID = @propId and EmployeeID = @empId",
@@ -234,6 +257,14 @@ namespace AVATI.Data.EmployeeDetailFiles
                     new {newPropId = newId, empId = emp, Copy = language});
             }
 
+            foreach (var projectactId in db.Query<int>(
+                "SELECT ProjectActivityID FROM ProjectActivity_Project_Employee p LEFT JOIN EmployeeDetail_ProjectActivity e ON p.ProjectActivityID = e.ProjectActivityID WHERE EmployeeID = @empId and ProposalID = @propId and InDetail = 1",
+                new {propId = proposalId, empId = emp}))
+            {
+                db.Execute("INSERT INTO EmployeeDetail_ProjectActivity VALUES (@proactId, @newPropId, 1)", 
+                    new{proactId = projectactId, newPropId = newId});
+            }
+
             return true;
         }
 
@@ -241,10 +272,10 @@ namespace AVATI.Data.EmployeeDetailFiles
         {
             EmployeeDetail temp = new EmployeeDetail();
             await using DbConnection db = GetConnection();
-            /*temp.Discount =
+            temp.Discount =
                     db.QuerySingle<int>(
                         "SELECT Discount from EmployeeDetail WHERE EmployeeId = @empId and ProposalID = @propId",
-                        new {empId = employeeId, propId = proposalId}); */
+                        new {empId = employeeId, propId = proposalId});
             temp.Roles = new List<string>(db.Query<string>(
                 "SELECT Role from EmployeeDetail_Role WHERE EmployeeId = @empId and ProposalId = @propId",
                 new {empId = employeeId, propId = proposalId}));
@@ -279,6 +310,16 @@ namespace AVATI.Data.EmployeeDetailFiles
                 temp.Hardskills.Add(new Hardskill() {Description = hardskill});
             }
 
+            temp.ProjectActivities = db.Query<ProjectActivity>(
+                "SELECT * FROM ProjectActivity_Project_Employee p LEFT JOIN EmployeeDetail_ProjectActivity e ON p.ProjectActivityID = e.ProjectActivityID WHERE EmployeeID = @empId and ProposalID = @propId and InDetail = 1",
+            new {empId = employeeId, propId = proposalId}).ToList();
+
+            foreach (var projectact in temp.ProjectActivities)
+            {
+                Console.WriteLine("ProjectActivityID: " + projectact.ProjectActivityID + " Description: " 
+                              + projectact.Description + " ProjectID: " + projectact.ProjectID + " EmployeeID: " + projectact.EmployeeID);
+            }
+
             return temp;
         }
 
@@ -296,6 +337,9 @@ namespace AVATI.Data.EmployeeDetailFiles
                 new {empId = employeeId, propId = proposalId});
             db.Execute("DELETE FROM EmployeeDetail_Role WHERE EmployeeId = @empId and ProposalID = @propId",
                 new {empId = employeeId, propId = proposalId});
+            db.Execute(
+                "DELETE FROM EmployeeDetail_ProjectActivity WHERE ProposalID = @propId AND ProjectActivityID IN (SELECT ProjectActivityID WHERE EmployeeID = @empId)",
+                 new{ empId = employeeId, propId = proposalId });
             return true;
         }
 
@@ -306,10 +350,10 @@ namespace AVATI.Data.EmployeeDetailFiles
                 new List<EmployeeDetail>(db.Query<EmployeeDetail>("SELECT * FROM EmployeeDetail WHERE ProposalId = @propId", new {propId = proposalId}));
             foreach (var temp in employeeList)
             {
-               /*temp.Discount =
+               temp.Discount =
                     db.QuerySingle<int>(
                         "SELECT Discount from EmployeeDetail WHERE EmployeeId = @empId and ProposalID = @propId",
-                        new {empId = temp.EmployeeId, propId = temp.ProposalId}); */
+                        new {empId = temp.EmployeeId, propId = temp.ProposalId}); 
                 temp.Fields =
                     new List<string>(db.Query<string>(
                         "SELECT Field from EmployeeDetail_Field WHERE EmployeeId = @empId and ProposalId = @propId",
@@ -342,6 +386,10 @@ namespace AVATI.Data.EmployeeDetailFiles
                     new List<string>(db.Query<string>(
                         "SELECT Role from EmployeeDetail_Role WHERE EmployeeId = @empId and ProposalId = @propId",
                         new {empId = temp.EmployeeId, propId = temp.ProposalId}));
+                
+                temp.ProjectActivities = db.Query<ProjectActivity>(
+                    "SELECT * FROM ProjectActivity_Project_Employee p LEFT JOIN EmployeeDetail_ProjectActivity e ON p.ProjectActivityID = e.ProjectActivityID WHERE EmployeeID = @empId and ProposalID = @propId and InDetail = 1",
+                    new {empId = temp.EmployeeId, propId = temp.ProposalId}).ToList();
             }
 
             return employeeList;

@@ -187,6 +187,7 @@
         EmployeeDetailView = await detail;
         EmployeeAttributes = _employeeService.GetEmployeeProfile(EmpId);
         Console.WriteLine(EmpId.ToString() + PropId.ToString());
+        await _employeeDetailService.GetEmployeeDetail(EmpId, PropId);
         StateHasChanged();
     }
 
