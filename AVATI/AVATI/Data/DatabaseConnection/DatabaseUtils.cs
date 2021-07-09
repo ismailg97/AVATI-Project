@@ -40,8 +40,6 @@ namespace AVATI.Data.DatabaseConnection
                 //The tables doe not exist yet
                 
             }
-                    
-
             return true;
         }
 

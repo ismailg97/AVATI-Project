@@ -13,18 +13,21 @@ namespace AVATI.Data
 {
     public class ProjectService : IProjektService
     {
-        private readonly IConfiguration _configuration;
         public List<Project> Projects { get; set; }
-
+        private string ConnectionString; //global connectionstring
+        
         public ProjectService(IConfiguration configuration)
         {
-            _configuration = configuration;
+            ConnectionString = configuration.GetConnectionString("AVATI-Database");
         }
-
+        public ProjectService(string connection) //for testing database connections -> for testpurposes
+        {
+            ConnectionString = connection;
+        }
         public DbConnection GetConnection()
         {
             return new SqlConnection
-                (_configuration.GetConnectionString("AVATI-Database"));
+                (ConnectionString);
         }
 
         public bool CreateProject(Project project)

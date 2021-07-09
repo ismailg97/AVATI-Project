@@ -76,13 +76,13 @@
 
     public void UpdatePurpose(ProjectActivity activity)
     {
-        if (purpose.AssignedProjectActivity != null)
+        if (purpose.AssignedProjectActivity == null || string.IsNullOrEmpty(purpose.AssignedProjectActivity.Description))
         {
             purpose.AssignedProjectActivity = activity;
             _purposeService.UpdatePurpose(purpose);
             _activitiesFromProject.Remove(activity);
         }
-        else
+        else 
         {
             
         }
@@ -91,13 +91,8 @@
 
     public void RemoveAssignedActivity()
     {
-        if (!_activitiesFromProject.Contains(purpose.AssignedProjectActivity))
-        {
-            _activitiesFromProject.Add(purpose.AssignedProjectActivity);
-        }
-        else
-        {
-        }
+        _activitiesFromProject.Add(purpose.AssignedProjectActivity);
+        
         purpose.AssignedProjectActivity = null;
         _purposeService.UpdatePurpose(purpose);
         StateHasChanged();
@@ -115,7 +110,6 @@
             if (activ.Description == purpose.AssignedProjectActivity.Description)
             {
                 _activitiesFromProject.Remove(activ);
-
             }
         }
         StateHasChanged();

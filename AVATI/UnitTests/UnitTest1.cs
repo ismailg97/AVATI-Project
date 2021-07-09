@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using AVATI.Data;
 using AVATI.Data.ValidationAttributes;
+using Dapper;
+using Microsoft.Data.SqlClient;
 using NUnit.Framework;
 namespace UnitTests
 {
@@ -83,6 +85,15 @@ namespace UnitTests
                 });
         }
 
+        [Test]
+        public void iwas()
+        {
+            ProjectService blep = new ProjectService("data source=2003:cf:af20:b949:e481:adec:ea83:9034, 1433;initial catalog=AVATI;user id=sa;password=AVATIPassword1");
+            var result = blep.GetAllProjects(); //parameter übergeben
+            
+            
+            Assert.IsNotEmpty(result);
+        }
         
         
     }
