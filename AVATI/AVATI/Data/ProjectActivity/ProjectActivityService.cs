@@ -24,7 +24,7 @@ namespace AVATI.Data
             _config = config;
         }
 
-        public bool SetProjectActivity(int EmployeeId, int ProjectId, string Description)
+        public bool SetProjectActivity(int EmpId,int ProjId, ProjectActivity activity)
         {
             using IDbConnection db = GetConnection();
             var returnVal =
@@ -32,15 +32,69 @@ namespace AVATI.Data
                     "Select ProjectActivity from ProjectActivity_Project_Employee WHERE ProjectId = @pro AND EmployeeId = @emp AND ProjectActivity = @desc",
                     new
                     {
-                        emp = EmployeeId, pro = ProjectId, desc = Description
+                        emp = EmpId, pro = ProjId, desc = activity.Description
                     });
-            if (returnVal.FirstOrDefault() != null)
-            {
-                return false;
-            }
+            //if (returnVal.FirstOrDefault() != null)
+            //{
+            //    return false;
+            //}
 
             db.Execute("INSERT INTO ProjectActivity_Project_Employee VALUES(@pro, @emp, @desc)",
-                new {emp = EmployeeId, pro = ProjectId, desc = Description});
+                new {emp = EmpId, pro = ProjId, desc = activity.Description});
+
+            int ProjectActivityID = db.QuerySingle<int>("SELECT ProjectActivityID FROM ProjectActivity_Project_Employee WHERE ProjectId = @pro AND EmployeeId = @emp AND ProjectActivity = @desc", new{ emp = EmpId, pro = ProjId, desc = activity.Description});
+
+            
+            List<string> HardSkillList = new List<string>(db.Query<string>(
+                "SELECT Hardskill FROM ProjectActivity_Hardskill WHERE ProjectActivityID=@projActivityID", new { projActivityID= ProjectActivityID}));
+            foreach (var hard in HardSkillList)
+            {
+                if (activity.HardSkills.Find(x => x.Equals(hard)) == null)
+                {
+                    db.Query("DELETE FROM Employee_Hardskill WHERE Hardskill = @hardsk AND ProjectActivityID=@projActivityID",
+                        new {hardsk = hard, projActivityID = activity.ProjectActivityID});
+                } 
+            }
+
+            foreach (var hardskill in activity.HardSkills)
+            {
+                if (HardSkillList.Find(x => x.Equals(hardskill)) == null)
+                {
+                    db.Query(
+                        "INSERT INTO ProjectActivity_Hardskill VALUES (@projActivityID, @EmployeeID, @hardskillDesc)",
+                        new
+                        {
+                            projActivityID = ProjectActivityID, EmployeeID = EmpId, hardskillDesc = hardskill
+                        });
+                }
+            }
+            
+            
+            
+            List<string> SoftSkillList = new List<string>(db.Query<string>(
+                "SELECT Softskill FROM ProjectActivity_Softskill WHERE ProjectActivityID=@projActivityID", new { projActivityID = ProjectActivityID}));
+            foreach (var soft in SoftSkillList)
+            {
+                if (activity.SoftSkills.Find(x => x.Equals(soft)) == null)
+                {
+                    db.Query("DELETE FROM ProjectActivity_Softskill WHERE Softskill = @softskill AND ProjectActivityID=@projActivityID",
+                        new {softskill = soft, projActivityID = activity.ProjectActivityID});
+                } 
+            }
+            
+            foreach (var softskill in activity.SoftSkills)
+            {
+                if (SoftSkillList.Find(x => x.Equals(softskill)) == null)
+                {
+                    db.Query(
+                        "INSERT INTO ProjectActivity_Softskill VALUES (@projActivityID, @EmployeeID, @softskillDesc)",
+                        new
+                        {
+                            projActivityID = ProjectActivityID, EmployeeID = EmpId, softskillDesc = softskill
+                        });
+                }
+            }
+            
             return true;
         }
 
@@ -152,7 +206,7 @@ namespace AVATI.Data
                     {
                         pr = projA
                     }),
-                    HardSkillsDesc = db.Query<string>("SELECT Hardskill FROM ProjectActivity_Hardskill WHERE ProjectActivityID = @pr ", new
+                    HardSkills = db.Query<string>("SELECT Hardskill FROM ProjectActivity_Hardskill WHERE ProjectActivityID = @pr ", new
                     {
                         pr = projA
                     }).ToList(),
@@ -256,14 +310,14 @@ namespace AVATI.Data
                 "SELECT Hardskill FROM ProjectActivity_Hardskill WHERE EmployeeID =@id AND ProjectActivityID=@projActivityID", new {id = EmpId, projActivityID=activity.ProjectActivityID}));
             foreach (var hard in HardSkillList)
             {
-                if (activity.HardSkillsDesc.Find(x => x.Equals(hard)) == null)
+                if (activity.HardSkills.Find(x => x.Equals(hard)) == null)
                 {
                     db.Query("DELETE FROM Employee_Hardskill WHERE Hardskill = @hardsk AND EmployeeID=@id AND ProjectActivityID=@projActivityID",
                         new {hardsk = hard, id = EmpId, projActivityID = activity.ProjectActivityID});
                 } 
             }
 
-            foreach (var hardskill in activity.HardSkillsDesc)
+            foreach (var hardskill in activity.HardSkills)
             {
                 if (HardSkillList.Find(x => x.Equals(hardskill)) == null)
                 {

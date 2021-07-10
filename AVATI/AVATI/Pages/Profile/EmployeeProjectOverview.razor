@@ -22,7 +22,7 @@
 @if (_pageIsLoaded)
 {
     <EditForm Model="@ProjActivity">
-        <table id="table" data-show-refresh="true" class="table align-middle mb-5">
+        <table id="table" data-show-refresh="true" class="table align-middle table-striped mb-5">
             <thead>
             <div class="form-group">
                 <input class="form-control" type="text" placeholder="Suche Projekt..."
@@ -48,6 +48,7 @@
                         <td>
                             <button type="button" @onclick="(() => { ShowUpdate(activity); })" class="btn btn-secondary oi oi-pencil"></button>
                             <button type="button" @onclick="(() => { DeleteProjectActivity(activity); })" class="btn btn-danger oi oi-trash">Löschen</button>
+                            <button type="button" @onclick="(() => { ShowAdd(activity); })" class="btn btn-success oi oi-plus"></button>
                         </td>
                     </tr>
                 }
@@ -97,11 +98,11 @@ else
 {
     <div class="d-flex flex-column align-items-center justify-content-center">
         <div class="row">
-            <div class="spinner-border" role="status">
+            <div class="spinner-border text-primary mb-2" role="status" style="height: 5rem; width: 5rem">
                 <span class="sr-only">Loading...</span>
             </div>
         </div>
-        <div class="row">
+        <div class="row" style="font-size: larger">
             <strong>Lade...</strong>
         </div>
     </div>
@@ -120,10 +121,10 @@ else
                         <!------ Project Activity ---------->
                         <div class="form-group">
                             <label class="mr-3 mt-2">Projektaktivität: </label>
-                            <select>
+                            <select >
                                 @foreach (var activities in _projectActivityService.GetAllProjectActivities())
                                 {
-                                    <option @onclick="(() => { _projectActivity.Description = activities.Description; })">@activities.Description</option>
+                                    <option value="" @onclick="(() => { _projectActivity.Description = activities.Description; })">@activities.Description</option>
                                 }
                             </select>
                         </div>
@@ -159,11 +160,11 @@ else
                         <!------ Hard Skills ---------->
                         <div class="form-group">
                             <label class="mr-3 mt-2">Hardskill: </label>
-                            @if (_projectActivity.HardSkillsDesc.Any())
+                            @if (_projectActivity.HardSkills.Any())
                             {
-                                @foreach (var hardskilll in _projectActivity.HardSkillsDesc)
+                                @foreach (var hardskilll in _projectActivity.HardSkills)
                                 {
-                                    <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.HardSkillsDesc.RemoveAll(x => x.Equals(hardskilll)); })>
+                                    <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.HardSkills.RemoveAll(x => x.Equals(hardskilll)); })>
                                         <a>
                                             <a class="showRemove"> @hardskilll </a>
                                             <a class="remove">
@@ -181,9 +182,9 @@ else
                                @bind:event="oninput">
                         @foreach (var hardskill in Emp.Hardskills)
                         {
-                            if (!_projectActivity.HardSkillsDesc.Contains(hardskill.Description))
+                            if (!_projectActivity.HardSkills.Contains(hardskill.Description))
                             {
-                                <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { _projectActivity.HardSkillsDesc.Add(hardskill.Description); })>
+                                <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { _projectActivity.HardSkills.Add(hardskill.Description); })>
                                     @hardskill.Description
                                 </button>
                             }
@@ -260,11 +261,11 @@ else
                         <!------ Hard Skills ---------->
                         <div class="form-group">
                             <label class="mr-3 mt-2">Hardskill: </label>
-                            @if (_projectActivity.HardSkillsDesc.Any())
+                            @if (_projectActivity.HardSkills.Any())
                             {
-                                @foreach (var hardskilll in _projectActivity.HardSkillsDesc)
+                                @foreach (var hardskilll in _projectActivity.HardSkills)
                                 {
-                                    <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.HardSkillsDesc.RemoveAll(x => x.Equals(hardskilll)); })>
+                                    <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.HardSkills.RemoveAll(x => x.Equals(hardskilll)); })>
                                         <a>
                                             <a class="showRemove"> @hardskilll </a>
                                             <a class="remove">
@@ -282,9 +283,9 @@ else
                                @bind:event="oninput">
                         @foreach (var hardskill in Emp.Hardskills)
                         {
-                            if (!_projectActivity.HardSkillsDesc.Contains(hardskill.Description))
+                            if (!_projectActivity.HardSkills.Contains(hardskill.Description))
                             {
-                                <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { _projectActivity.HardSkillsDesc.Add(hardskill.Description); })>
+                                <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { _projectActivity.HardSkills.Add(hardskill.Description); })>
                                     @hardskill.Description
                                 </button>
                             }
@@ -296,6 +297,107 @@ else
                             <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
                         </button>
                         <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { SetProjectActivity(_projectActivity); ShowPopCreate = !ShowPopCreate;})">
+                            <span class="oi oi-document" aria-hidden="true"></span> Speichern
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@if (ShowPopAdd)
+{
+    <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
+        <div class="modal-dialog border-dark">
+            <div class="modal-content">
+                <div class="modal-header flex-column">
+                    <h4 class="modal-title col-12 text-center">Aktivität bearbeiten</h4>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="form-group">
+
+                        <!------ Project Activity ---------->
+                        <div class="form-group">
+                            <label class="mr-3 mt-2">Projektaktivität: </label>
+                            <select>
+                                @foreach (var activities in _projectActivityService.GetAllProjectActivities())
+                                {
+                                    <option @onclick="(() => { _projectActivity.Description = activities.Description; })">@activities.Description</option>
+                                }
+                            </select>
+                        </div>
+
+
+                        <!------ Soft Skills ---------->
+                        <div class="form-group">
+                            <label class="mr-3 mt-2">Softskill: </label>
+                            @if (_projectActivity.SoftSkills.Any())
+                            {
+                                @foreach (var softskilll in _projectActivity.SoftSkills)
+                                {
+                                    <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.SoftSkills.RemoveAll(x => x.Equals(softskilll)); })>
+                                        <a>
+                                            <a class="showRemove"> @softskilll </a>
+                                            <a class="remove">
+                                                <span style="color: darkred" class="oi oi-x"></span>
+                                            </a>
+                                        </a>
+                                    </button>
+                                }
+                            }
+                        </div>
+                        @foreach (var softskill in Emp.Softskills)
+                        {
+                            if (!_projectActivity.SoftSkills.Contains(softskill))
+                            {
+                                <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { _projectActivity.SoftSkills.Add(softskill); })>
+                                    @softskill
+                                </button>
+                            }
+                        }
+
+
+                        <!------ Hard Skills ---------->
+                        <div class="form-group">
+                            <label class="mr-3 mt-2">Hardskill: </label>
+                            @if (_projectActivity.HardSkills.Any())
+                            {
+                                @foreach (var hardskilll in _projectActivity.HardSkills)
+                                {
+                                    <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.HardSkills.RemoveAll(x => x.Equals(hardskilll)); })>
+                                        <a>
+                                            <a class="showRemove"> @hardskilll </a>
+                                            <a class="remove">
+                                                <span style="color: darkred" class="oi oi-x"></span>
+                                            </a>
+                                        </a>
+                                    </button>
+                                }
+                            }
+                        </div>
+
+
+                        <input class="form-control" type="text" placeholder="Suche Hardskill..."
+                               @bind="Filter"
+                               @bind:event="oninput">
+                        @foreach (var hardskill in Emp.Hardskills)
+                        {
+                            if (!_projectActivity.HardSkills.Contains(hardskill.Description))
+                            {
+                                <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { _projectActivity.HardSkills.Add(hardskill.Description); })>
+                                    @hardskill.Description
+                                </button>
+                            }
+                        }
+                    </div>
+
+                    <div class="float-right">
+                        <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { ShowPopAdd = !ShowPopAdd; })">
+                            <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
+                        </button>
+                        <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { SetProjectActivity(_projectActivity); ShowPopAdd = !ShowPopAdd;})">
                             <span class="oi oi-document" aria-hidden="true"></span> Speichern
                         </button>
                     </div>
@@ -318,6 +420,7 @@ else
     private bool _pageIsLoaded = false;
     public bool ShowPopUpdate { get; set; }
     public bool ShowPopCreate { get; set; }
+    public bool ShowPopAdd { get; set; }
     private Dictionary<int, bool> _booleanProj = new Dictionary<int, bool>();
 
     public Employee Emp { get; set; }
@@ -357,15 +460,8 @@ else
 
     public void SetProjectActivity(ProjectActivity activity)
     {
-        _projectActivityService.SetProjectActivity(Id, ProjectId, activity.Description);
-        foreach (var activities in _projectActivityService.GetEmployeeProjectActivities(Id, ProjectId))
-        {
-            if (activities.Description == activity.Description)
-            {
-                _projectActivityService.UpdateProjectActivityEmployee(Id, activity.ProjectID, activity);   
-            }
-        }
-        
+        _projectActivityService.SetProjectActivity(Id, ProjectId, activity);
+        UpdateLists();
     //_navManager.NavigateTo("/employeeProject/" + Emp.EmployeeID, forceLoad: true);
     }
 
@@ -400,6 +496,17 @@ else
         }
 
         ShowPopUpdate = !ShowPopUpdate;
+    }
+    
+    private void ShowAdd(ProjectActivity activity)
+    {
+        if (!ShowPopUpdate)
+        {
+            ProjectId = activity.ProjectID;
+            _projectActivity = new ProjectActivity();
+        }
+
+        ShowPopAdd = !ShowPopAdd;
     }
 
     private void ShowCreate(int projId)

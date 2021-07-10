@@ -13,8 +13,7 @@ namespace AVATI.Data
         public int EmployeeID { get; set; }
         public int ProjectActivityID { get; set; }
         public List<string> SoftSkills { get; set; } = new List<string>();
-        public List<Hardskill> HardSkills { get; set; } = new List<Hardskill>();
-        public List<string> HardSkillsDesc { get; set; } = new List<string>();
+        public List<string> HardSkills { get; set; } = new List<string>();
 
         private sealed class DescriptionEqualityComparer : IEqualityComparer<ProjectActivity>
         {

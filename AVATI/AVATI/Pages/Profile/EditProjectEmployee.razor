@@ -62,11 +62,11 @@
                                                                             <!------ Hard Skills ---------->
                                                                             <div class="form-group">
                                                                                 <label class="mr-3 mt-2">Hardskill: </label>
-                                                                                @if (activity.HardSkillsDesc.Any())
+                                                                                @if (activity.HardSkills.Any())
                                                                                 {
-                                                                                    @foreach (var hardskilll in activity.HardSkillsDesc)
+                                                                                    @foreach (var hardskilll in activity.HardSkills)
                                                                                     {
-                                                                                        <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { activity.HardSkillsDesc.RemoveAll(x => x.Equals(hardskilll)); })>
+                                                                                        <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { activity.HardSkills.RemoveAll(x => x.Equals(hardskilll)); })>
                                                                                             <a>
                                                                                                 <a class="showRemove"> @hardskilll </a>
                                                                                                 <a class="remove">
@@ -84,9 +84,9 @@
                                                                                    @bind:event="oninput">
                                                                             @foreach (var hardskill in Emp.Hardskills)
                                                                             {
-                                                                                if (!activity.HardSkillsDesc.Contains(hardskill.Description))
+                                                                                if (!activity.HardSkills.Contains(hardskill.Description))
                                                                                 {
-                                                                                    <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { activity.HardSkillsDesc.Add(hardskill.Description); })>
+                                                                                    <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { activity.HardSkills.Add(hardskill.Description); })>
                                                                                         @hardskill.Description
                                                                                     </button>
                                                                                 }
