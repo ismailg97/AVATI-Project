@@ -71,7 +71,7 @@ else
 
                             @if (_loadSubfinished[category])
                             {
-                                <EditTreeElement @ref="_elements[category]" Subcats="@_subcatsofCategory[category]" Uppercat="@category" 
+                                <EditTreeElement @ref="_elements[category]" Subcats="@_subcatsofCategory[category]" Uppercat="@category" Abstract="@Abstract"
                                                  UpperElement="@this" ShowHardskills="@_showSubHardskills[category]" ShowCategorys="@_showSubCategorys[category]"
                                                  RenameProblem="@_renameProblem[category]" ContainsJustHardskills="@_containsJustHardskills[category]"/>
                             }
@@ -174,7 +174,10 @@ else
     
     [Parameter]
     public EditTreeElement UpperElement { get; set; }
-        
+
+    [Parameter]
+    public BasicDataAbstract Abstract { get; set; }
+
     [Parameter]
     public List<string> Subcats { get; set; }
 
@@ -259,9 +262,7 @@ else
             else
             {
                 if (!_categorys.Contains(description))
-                {
                     _categorys.Add(description);
-                }
                 _subcatsofCategory.TryAdd(description, skillOrCat.Subcat);
                 _containsJustHardskills.TryAdd(description, await _hardskillService.ContainsJustHardskills(description));
                 _containsJustCategorys.TryAdd(description, !await _hardskillService.ContainsAnyHardskills(description));
@@ -308,6 +309,7 @@ else
         };
         await _hardskillService.CreateHardskillCategory(hardskillcat);
         ShowingNew();
+        await Abstract.UpdateHardskills();
         if (UpperTree != null)
             await UpperTree.Loading();
         if(UpperElement != null)
@@ -340,6 +342,7 @@ else
         
         await _hardskillService.UpdateHardskillCategory(category, _rename[category]);
         ShowingRename(category);
+        await Abstract.UpdateHardskills();
         if (UpperTree != null)
             await UpperTree.Loading();
         if(UpperElement != null)
@@ -349,6 +352,7 @@ else
     private async Task DeleteCategory(string category)
     {
         await _hardskillService.DeleteHardskillCategory(category);
+        await Abstract.UpdateHardskills();
         if (UpperTree != null)
             await UpperTree.Loading();
         if(UpperElement != null)
@@ -357,9 +361,10 @@ else
     
     private async Task DeleteHardskill(string hardskill)
     {
-        var deleteSub = new List<string>(Subcats);
+        var deleteSub = new List<string>(_hardskills);
         deleteSub.Remove(hardskill);
         await _hardskillService.EditHardskillsCategory(Uppercat, deleteSub);
+        await Abstract.UpdateHardskills();
         if (UpperTree != null)
             await UpperTree.Loading();
         if(UpperElement != null)
@@ -421,7 +426,12 @@ else
     {
         _showRename[category] = !_showRename[category];
         if (_showRename[category])
-            _renameProblem[category] = 1;
+        {
+            if(_showExistError[category] || _showEmptyError[category])
+                _renameProblem[category] = 2;
+            else
+                _renameProblem[category] = 1;
+        }
         else
             _renameProblem[category] = 0;
         StateHasChanged();

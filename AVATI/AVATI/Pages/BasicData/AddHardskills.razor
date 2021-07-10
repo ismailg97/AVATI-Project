@@ -1,4 +1,5 @@
 ﻿@using AVATI.Data
+@using System.Security.Cryptography
 
 @inject IHardskillService _hardskillService
 
@@ -228,6 +229,7 @@
     _showEmptyErrorHardskill = false;
     _showExistErrorHardskill = false;
     _finishedLoadPage = false;
+    _cat = "";
     _toDeleteSkills.Clear();
     _hardskills.Clear();
     Subcat.Clear();
@@ -235,9 +237,9 @@
     
     var allSkills = await _hardskillService.GetAllHardskills();
 
-    foreach (var hardskill in allSkills.ToList())
+    foreach (var hardskill in allSkills.ToList().Where(x => x.Uppercat == null || !x.Uppercat.Any()))
     {
-      if ((hardskill.Uppercat == null || !hardskill.Uppercat.Any()) && !_hardskills.Contains(hardskill.Description))
+      if (!_hardskills.Contains(hardskill.Description))
         _hardskills.Add(hardskill.Description);
     }
     
@@ -252,10 +254,9 @@
       foreach(var description in Uppercat.Subcat)
       {
         var hardskill = await _hardskillService.GetHardskill(description);
-        if (hardskill != null)
+        if (hardskill != null && !Subcat.Contains(description))
         {
-          if(!Subcat.Contains(description))
-            Subcat.Add(description);
+          Subcat.Add(description);
         }
       }
     }
@@ -280,8 +281,8 @@
         foreach (var subcat in category.Subcat)
         {
           var hardskill = await _hardskillService.GetHardskill(subcat);
-          if (hardskill != null)
-            subCats.Add(hardskill.Description);
+          if (hardskill != null && !subCats.Contains(subcat))
+            subCats.Add(subcat);
         }
 
         SubHardskills.TryAdd(cat, new List<string>(subCats));
@@ -308,8 +309,11 @@
     {
       Subcat.Remove(description);
       if (hardskill.Uppercat == null || !hardskill.Uppercat.Any())
-        _hardskills.Add(description);
-      else if(hardskill.Uppercat.Contains(Description))
+      {
+        if(!_hardskills.Contains(description))
+          _hardskills.Add(description);
+        
+      } else if(hardskill.Uppercat.Contains(Description) && !_toDeleteSkills.Contains(description))
         _toDeleteSkills.Add(description);
     }
     else
