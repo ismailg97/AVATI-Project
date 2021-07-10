@@ -175,6 +175,15 @@ namespace AVATI.Data
                 } 
             }
             
+            foreach (var hard in emp.HardSkillLevel)
+            {
+                if (HardSkillList.Find(x => x.Equals(hard.Item1.Description)) == null)
+                {
+                    db.Query("INSERT INTO Employee_Hardskill VALUES (@id, @hardsk,@level)",
+                        new {hardsk = hard.Item1.Description, id = emp.EmployeeID, level=hard.Item2});
+                } 
+            }
+            
             
             //db.Query("DELETE FROM Employee_Hardskill WHERE EmployeeID = @ID", new {ID = emp.EmployeeID});
             //if (emp.HardSkillLevel.Any())
@@ -213,6 +222,15 @@ namespace AVATI.Data
                 if (emp.Softskills.Find(x => x.Equals(soft)) == null)
                 {
                     db.Query("DELETE FROM Employee_Softskill WHERE Softskill = @softsk AND EmployeeID=@id",
+                        new {softsk = soft, id = emp.EmployeeID});
+                } 
+            }
+            
+            foreach (var soft in emp.Softskills)
+            {
+                if (SoftSkillList.Find(x => x.Equals(soft)) == null)
+                {
+                    db.Query("INSERT INTO Employee_Softskill VALUES(@id, @softsk)",
                         new {softsk = soft, id = emp.EmployeeID});
                 } 
             }

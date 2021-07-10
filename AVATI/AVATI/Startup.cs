@@ -17,8 +17,12 @@ using AVATI.Data.EmployeeDetailFiles;
 using AVATI.Pages;
 using AVATI.Pages.Project;
 using BlazorDownloadFile;
+using Blazored.LocalStorage;
 using Dapper;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace AVATI
 {
@@ -39,6 +43,7 @@ namespace AVATI
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddBlazorContextMenu();
@@ -57,6 +62,10 @@ namespace AVATI
             services.AddSingleton<DatabaseUtils>();
             services.AddSingleton<IProjektService, ProjectService>();
             services.AddSingleton<ProjectPurposeService>();
+            //services.AddOptions();
+            //services.AddBlazoredLocalStorage();
+            //services.AddAuthorizationCore();
+            //services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
