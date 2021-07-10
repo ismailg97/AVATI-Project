@@ -13,8 +13,8 @@
         <EditForm Model="@EmployeeDetailView" OnValidSubmit="@UpdateEmployeeDetail">
             <DataAnnotationsValidator/>
             <ValidationSummary/>
-            <div class="modal fade show d-block" data-bs-backdrop="static" id="exampleModal" role="dialog">
-                <div class="modal-dialog" style="min-width: 1850px" role="document">
+            <div class="modal fade show d-block overflow-auto" style="min-width:100%; max-height: 90%" data-bs-backdrop="static" id="exampleModal" role="dialog">
+                <div class="modal-dialog" role="document" style="min-width:100%">
                     <div class="modal-content bg-light text-black">
                         <div class="modal-header">
                             <h5 class="modal-title font-weight-bolder text-center" id="titleLabel">Detailansicht</h5>
@@ -28,7 +28,7 @@
                                 </div>
                             <div class="row justify-content-md-center">
                                 <div class="card text-black border-dark ml-5" style="width: 25%">
-                                    <img src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" class="card-img-top" alt=""/>
+                                    <img class="card-img-top"  src="@_employeeService.GetEmployeeProfile(EmpId).Image" style="border:2px solid black" alt=""/>
                                     <div class="card-body pb-3 pt-3">
                                         <h5 class="card-title">@_employeeService.GetEmployeeProfile(EmpId).FirstName @_employeeService.GetEmployeeProfile(EmpId).LastName</h5>
                                         <div class="card-title text-left">
@@ -191,6 +191,7 @@
         EmployeeDetailView = await detail;
         EmployeeAttributes = _employeeService.GetEmployeeProfile(EmpId);
         Console.WriteLine(EmpId.ToString() + PropId.ToString());
+        await _employeeDetailService.GetEmployeeDetail(EmpId, PropId);
         StateHasChanged();
     }
 

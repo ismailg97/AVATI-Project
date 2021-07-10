@@ -17,6 +17,8 @@ namespace AVATI.Data.EmployeeDetailFiles
         public List<string> Roles { get; set; } = new List<string>();
         public List<Tuple<string, LanguageLevel>> Languages { get; set; } = new List<Tuple<string, LanguageLevel>>();
 
+        public List<ProjectActivity> ProjectActivities { get; set; } = new List<ProjectActivity>();
+        
         [Range(0, 100, ErrorMessage = "Rabat muss zwischen 0 und 100% liegen")]
         public int Discount;
     }

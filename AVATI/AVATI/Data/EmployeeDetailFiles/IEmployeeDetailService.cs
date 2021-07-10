@@ -15,5 +15,9 @@ namespace AVATI.Data.EmployeeDetailFiles
         public List<EmployeeDetail> GetAllEmployeeDetail(int proposalId);
 
         public Task<bool> UpdateEmployeeDetail(int propId, int empId, EmployeeDetail employeeDetail);
+        
+        //public List<ProjectActivity> GetAllProjectActivites(int propId, int empId);
+
+        //public bool UpdateProjectActivities(int propId, int empId, int projectactivityId);
     }
 }
