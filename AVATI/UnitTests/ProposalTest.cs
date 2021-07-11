@@ -9,7 +9,7 @@ using Microsoft.Data.SqlClient;
 using NUnit.Framework;
 namespace UnitTests
 {
-    public class Tests
+    public class ProposalTest
     {
         public void Setup()
         {
