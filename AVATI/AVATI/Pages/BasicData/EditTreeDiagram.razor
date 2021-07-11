@@ -36,10 +36,12 @@
                     else if (_showEmptyError)
                     {
                         <p class="errormessage"><b>Die Bezeichnung ist erforderlich</b></p>
+                    } else if (_showTooLongError) {
+                        <p class="errormessage"><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></p>
                     }
                 }
 
-                @if (_loadfinished)
+                @if (Loadfinished)
                 {
                     <EditTreeElement @ref="@_element" Subcats="@_subcat" Uppercat="@Description" Abstract="@Abstract"
                                      ShowHardskills="@_showSubHardskills" ShowCategorys="@_showSubCategorys" UpperTree="@this"
@@ -101,7 +103,7 @@ else
 
     private bool _showSubCategorys;
 
-    private bool _loadfinished = true;
+    public bool Loadfinished { get; set; }
 
     private bool _loadPagefinished;
 
@@ -109,10 +111,13 @@ else
 
     private bool _showEmptyError;
 
+    private bool _showTooLongError;
+
     private int _renameProblem;
 
     protected override void OnInitialized()
     {
+        Loadfinished = true;
         _loadPagefinished = false;
     }
 
@@ -124,6 +129,7 @@ else
         _showSubHardskills = false;
         _showExistError = false;
         _showEmptyError = false;
+        _showTooLongError = false;
         var category = await _hardskillService.GetHardskillCategory(Description);
         _subcat = category.Subcat;
         _showRename = false;
@@ -141,10 +147,11 @@ else
 
     private async Task Update()
     {
-        if (string.IsNullOrEmpty(_rename) || string.IsNullOrWhiteSpace(_rename))
+        if (!_hardskillService.CheckEmptyHardskill(_rename))
         {
-            _showExistError = false;
             _showEmptyError = true;
+            _showExistError = false;
+            _showTooLongError = false;
             _renameProblem = 2;
             StateHasChanged();
             return;
@@ -152,20 +159,30 @@ else
         _renameProblem = 1;
         _showEmptyError = false;
 
-        if (!await _hardskillService.CheckDescriptionHardskill(_rename) && _rename != Description)
+        if (!await _hardskillService.CheckExistHardskill(_rename) && _rename != Description)
         {
-            _showEmptyError = false;
             _showExistError = true;
+            _showTooLongError = false;
             _renameProblem = 2;
             StateHasChanged();
             return;
         }
         _renameProblem = 1;
         _showExistError = false;
+        
+        if (!_hardskillService.CheckLengthHardskill(_rename))
+        {
+            _showTooLongError = true;
+            _renameProblem = 2;
+            StateHasChanged();
+            return;
+        }
+        _renameProblem = 1;
+        _showTooLongError = false;
 
         _loadPagefinished = false;
         StateHasChanged();
-        await _hardskillService.UpdateHardskillCategory(Description, _rename);
+        await _hardskillService.RenameHardskillCategory(Description, _rename);
         await Abstract.UpdateCategorys();
         await Abstract.UpdateHardskills();
         _loadPagefinished = true;
@@ -232,12 +249,12 @@ else
     
     public async Task Loading()
     {
-        _loadfinished = false;
+        Loadfinished = false;
         StateHasChanged();
         _subcat = (await _hardskillService.GetHardskillCategory(Description))?.Subcat;
         _containsJustHardskills = await _hardskillService.ContainsJustHardskills(Description);
         _containsJustCategorys = !await _hardskillService.ContainsAnyHardskills(Description);
-        _loadfinished = true;
+        Loadfinished = true;
         StateHasChanged();
     }
 }

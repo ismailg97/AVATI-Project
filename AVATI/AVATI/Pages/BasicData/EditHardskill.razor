@@ -21,6 +21,11 @@
                        <div class="errormessage">
                          <a><b>Die Bezeichnung ist erforderlich</b></a>
                        </div> 
+                     } else if (_showTooLongError)
+                     {
+                       <div class="errormessage">
+                         <a><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></a>
+                       </div>
                      }
                      <div class="modal-body">
                        <label class="form-label">Bezeichnung:</label>
@@ -85,6 +90,8 @@
 
   private bool _showExistError;
 
+  private bool _showTooLongError;
+
   protected override async Task OnInitializedAsync()
   {
     _allCategorys = await _hardskillService.GetAllDesCategorys();
@@ -94,28 +101,39 @@
   {
     _showEmptyError = false;
     _showExistError = false;
+    _showTooLongError = false;
     NewHardskill.Description = OldHardskill?.Description;
     UpperCat = OldHardskill?.Uppercat;
   }
 
   private async Task Update()
   {
-    if (string.IsNullOrEmpty(NewHardskill.Description) || string.IsNullOrWhiteSpace(NewHardskill.Description))
+    if (!_hardskillService.CheckEmptyHardskill(NewHardskill.Description))
     {
-      _showExistError = false;
       _showEmptyError = true;
+      _showExistError = false;
+      _showTooLongError = false;
       StateHasChanged();
       return;
     }
     _showEmptyError = false;
 
-    if (NewHardskill.Description != OldHardskill.Description && !await _hardskillService.CheckDescriptionHardskill(NewHardskill.Description))
+    if (!await _hardskillService.CheckExistHardskill(NewHardskill.Description) && NewHardskill.Description != OldHardskill.Description)
     {
-      _showEmptyError = false;
       _showExistError = true;
+      _showTooLongError = false;
       StateHasChanged();
       return;
     }
+    _showExistError = false;
+
+    if (!_hardskillService.CheckLengthHardskill(NewHardskill.Description))
+    {
+      _showTooLongError = true;
+      StateHasChanged();
+      return;
+    }
+    _showTooLongError = false;
     
     NewHardskill.Subcat = null;
 
