@@ -66,8 +66,8 @@
                                     <div class="card-body text-left">
                                         @foreach (var proj in _projectsWithActivities.Keys)
                                         {
-                                            <h5 class="text-center font-weight-bolder" style=@(EmployeeDetailView.ProjectActivities.Count(e => e.ProjectID == proj.ProjectID) == 0 ? "color: red" : "color: green")>Projekt: @proj.Projecttitel</h5>
-                                            <div class="row">
+                                            <h5 class="font-weight-bolder" style=@(EmployeeDetailView.ProjectActivities.Count(e => e.ProjectID == proj.ProjectID) == 0 ? "color: red" : "color: green")>Projekt <b> @proj.Projecttitel</b>:</h5>
+                                            <div class="row mb-2 mt-2">
                                                 @foreach (var projectActivity in _projectsWithActivities[proj])
                                                 {
                                                     if (EmployeeDetailView.ProjectActivities.Exists(e => e.ProjectActivityID == projectActivity.ProjectActivityID))

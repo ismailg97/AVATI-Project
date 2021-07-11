@@ -20,9 +20,12 @@
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d0e9fd60_002Dd5bd_002D4df1_002D9d7d_002Dc956a756ed4a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ServiceForDatasTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.ServiceForDatasTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.ServiceForDatasTest&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+    &lt;ProjectFile&gt;CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D/f:UnitTest1.cs&lt;/ProjectFile&gt;&#xD;
+  &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	
 	
