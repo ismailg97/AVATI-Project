@@ -18,7 +18,7 @@ namespace UnitTests
         {
             string json = File.ReadAllText("appsettings.json");
             JObject jObject = JObject.Parse(json);
-            var name = (string) jObject["ConnectionStrings"]["AVATI-Database"];
+            var name = (string) jObject["ConnectionStrings"]["TEST-Database"];
             Console.WriteLine(name);
             Connection =
                 name;

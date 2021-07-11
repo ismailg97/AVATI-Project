@@ -2,19 +2,15 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/AnalysisEnabled/@EntryValue">VISIBLE_FILES</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/SweaWarningsMode/@EntryValue">ShowAndRun</s:String>
 	<s:String x:Key="/Default/CodeInspection/PencilsConfiguration/ActualSeverity/@EntryValue">INFO</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4dc71183_002Db914_002D47a3_002D8ae7_002D40d8c755154e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Tests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=96ce6e43_002Df420_002D4999_002Da5f0_002D6c27e3d89b2f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="EmployeeDetailTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.Tests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.ServiceForDatasTest.TestGetHardskillMethod&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.ServiceForDatasTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6b2c73ec_002D6df9_002D49d7_002D90b1_002D0b08a115d155/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ServiceForDatasTest #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.ServiceForDatasTest&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.EmployeeDetailTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.ProposalTest&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	
+	
+	
 	
 	
 	

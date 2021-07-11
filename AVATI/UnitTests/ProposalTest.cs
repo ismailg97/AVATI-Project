@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AVATI.Data;
 using AVATI.Data.ValidationAttributes;
 using Dapper;
 using Microsoft.Data.SqlClient;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
 namespace UnitTests
@@ -18,8 +20,12 @@ namespace UnitTests
         [SetUp]
         public void Setup()
         {
+            string json = File.ReadAllText("appsettings.json");
+            JObject jObject = JObject.Parse(json);
+            var name = (string) jObject["ConnectionStrings"]["TEST-Database"];
+            Console.WriteLine(name);
             connection =
-                "data source=2003:C7:8F15:437F:749E:490A:F848:8943, 1433;initial catalog=AVATI;user id=sa;password=AVATIPassword1";
+                name;
         }
 
         public static IEnumerable<TestCaseData> GetDateTests()
