@@ -31,15 +31,14 @@ else
 {
     <EditForm Model="@Project" OnValidSubmit="@Save">
     <DataAnnotationsValidator/>
-    <ValidationSummary/>
     <div class="row col h-100">
     <div class="text-left col">
     <div class="column">
-        <h3 class="text-lg-left font-weight-bold">Projekt: <em> @Project.Projecttitel</em> editieren</h3>
+        <h3 class="text-lg-left font-weight-bold">Projekt: <em> @Project.Projecttitel</em></h3>
         <div class="form-group row">
             <label class="col-sm-3 col-form-label font-weight-bold">Titel</label>
             <div class="col-sm-9">
-                <InputText id="projekttitel" class="form-control" @bind-Value="Project.Projecttitel"></InputText>
+                <InputText id="projekttitel" class="form-control" @bind-Value="Project.Projecttitel" required></InputText>
             </div>
         </div>
 
@@ -65,7 +64,7 @@ else
                         <button class="btn btn-outline-dark">@branche</button>
                     }
                 </div>
-                <button class="btn btn-info col" @onclick="() => { PopAddFieldToProject(); }">
+                <button class="btn btn-info col" type="button" @onclick="() => { PopAddFieldToProject(); }">
                     <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span> Edit Branchen
                 </button>
             </div>
@@ -181,6 +180,7 @@ else
             <th scope="col">Zweck</th>
             <th scope="col"></th>
             <th scope="col">Gelöst durch...</th>
+            <th scope="col"></th>
             <th scope="col">
                 <div class="form-group text-right">
                     <button type="button" class="btn btn-info text-right" @onclick="(() => { AddProjectPurposeToProject(ID); })">+ Projektzweck</button>
@@ -208,14 +208,16 @@ else
                         <button type="button" class="btn btn-danger" @onclick="() => { DeleteFromProjectPurpose(purpose); }">
                             <span class="oi oi-trash" aria-hidden="true"></span>
                         </button>
-                        
+
                     </td>
                     @if (_projectActivity.GetProjectActivity(purpose.Purpose) == null)
                     {
                         <td>[null]</td>
                         <td></td>
                         <td>
-                            <button type="button" class="btn btn-info" @onclick="() => { AddPurposeToActivity(purpose); }">+ | Edit</button>
+                            <button type="button" class="btn btn-info" @onclick="() => { AddPurposeToActivity(purpose); }">
+                                <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span> Edit
+                            </button>
                         </td>
                     }
                     else if (@_projectActivity.GetProjectActivity(purpose.Purpose) != null)
@@ -223,7 +225,9 @@ else
                         <td>@_projectActivity.GetProjectActivity(purpose.Purpose)</td>
                         <td></td>
                         <td>
-                            <button type="button" class="btn btn-info" @onclick="() => { AddPurposeToActivity(purpose); }">+ | Edit</button>
+                            <button type="button" class="btn btn-info" @onclick="() => { AddPurposeToActivity(purpose); }">
+                                <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span> Edit
+                            </button>
                         </td>
                     }
                 </tr>
@@ -231,9 +235,9 @@ else
             </tbody>
         </table>
     </div>
-
+    <ValidationSummary/>
     <div class="form-group text-right">
-        <button type="submit" class="btn btn-info">
+        <button type="submit" class="btn btn-success">
             <span class="oi oi-document" aria-hidden="true"></span> Zurück zur Übersicht
         </button>
     </div>
@@ -241,6 +245,8 @@ else
     </div>
     </EditForm>
 }
+
+
 
 
 @code {
@@ -351,4 +357,5 @@ else
     {
         _navigationManager.NavigateTo("/Projektübersicht");
     }
+
 }
