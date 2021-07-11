@@ -35,6 +35,11 @@
                              <a><b>Die Bezeichnung ist erforderlich</b></a>
                            </div>
                            
+                         } else if (_showTooLongErrorCategory)
+                         {
+                           <div class="errormessage">
+                             <a><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></a>
+                           </div>
                          }
 
                          @if (ShowCreateCat)
@@ -93,8 +98,13 @@
                              <div class="errormessage">
                                <a><b>Die Bezeichnung ist erforderlich</b></a>
                              </div>
-                           
+                           } else if (_showTooLongErrorHardskill)
+                           {
+                             <div class="errormessage">
+                               <a><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></a>
+                             </div>
                            }
+                           
                            <div class="distance">
                              <label>Bezeichnung des Hardskills:</label>
                              <input class="form-control" style="display: inline;" type="text" @bind="_hardskill"/>
@@ -218,16 +228,22 @@
 
   private bool _showExistErrorCategory;
   
+  private bool _showTooLongErrorCategory;
+  
   private bool _showEmptyErrorHardskill;
 
   private bool _showExistErrorHardskill;
+
+  private bool _showTooLongErrorHardskill;
 
   protected override async Task OnParametersSetAsync()
   {
     _showEmptyErrorCategory = false;
     _showExistErrorCategory = false;
+    _showTooLongErrorCategory = false;
     _showEmptyErrorHardskill = false;
     _showExistErrorHardskill = false;
+    _showTooLongErrorHardskill = false;
     _finishedLoadPage = false;
     _cat = "";
     _toDeleteSkills.Clear();
@@ -335,24 +351,33 @@
   {
     if (ShowCreateCat)
     {
-      if (string.IsNullOrEmpty(_cat) || string.IsNullOrWhiteSpace(_cat))
+      if (!_hardskillService.CheckEmptyHardskill(_cat))
       {
-        _showExistErrorCategory = false;
         _showEmptyErrorCategory = true;
+        _showExistErrorCategory = false;
+        _showTooLongErrorCategory = false;
         StateHasChanged();
         return;
       }
       _showEmptyErrorCategory = false;
 
-      if (!await _hardskillService.CheckDescriptionHardskill(_cat))
+      if (!await _hardskillService.CheckExistHardskill(_cat))
       {
-        _showEmptyErrorCategory = false;
         _showExistErrorCategory = true;
+        _showTooLongErrorCategory = false;
         StateHasChanged();
         return;
       }
       _showExistErrorCategory = false;
-      
+
+      if (!_hardskillService.CheckLengthHardskill(_cat))
+      {
+        _showTooLongErrorCategory = true;
+        StateHasChanged();
+        return;
+      }
+      _showTooLongErrorCategory = false;
+
       var cat = new Hardskill()
       {
           Description = _cat,
@@ -368,36 +393,58 @@
     }
     else
     {
+      if (TreeDiagram != null)
+        TreeDiagram.Loadfinished = false;
+      else
+        TreeElement.LoadSubfinished[Description] = false;
+      StateHasChanged();
+      
       await _hardskillService.EditHardskillsCategory(Description, Subcat);
       _show = !_show;
       Subcat.Clear();
       if (TreeDiagram != null)
+      {
         await TreeDiagram.Loading();
+        TreeDiagram.Loadfinished = true;
+      }
       else
+      {
         await TreeElement.Loading(Description);
+        TreeElement.LoadSubfinished[Description] = true;
+      }
+      StateHasChanged();
     }
   }
 
   private async Task CreateHardskill()
   {
-    if (string.IsNullOrEmpty(_hardskill) || string.IsNullOrWhiteSpace(_hardskill))
+    if (!_hardskillService.CheckEmptyHardskill(_hardskill))
     {
-      _showExistErrorHardskill = false;
       _showEmptyErrorHardskill = true;
+      _showExistErrorHardskill = false;
+      _showTooLongErrorHardskill = false;
       StateHasChanged();
       return;
     }
     _showEmptyErrorHardskill = false;
 
-    if (!await _hardskillService.CheckDescriptionHardskill(_hardskill))
+    if (!await _hardskillService.CheckExistHardskill(_hardskill))
     {
-      _showEmptyErrorHardskill = false;
       _showExistErrorHardskill = true;
+      _showTooLongErrorHardskill = false;
       StateHasChanged();
       return;
     }
     _showExistErrorHardskill = false;
-    
+
+    if (!_hardskillService.CheckLengthHardskill(_hardskill))
+    {
+      _showTooLongErrorHardskill = true;
+      StateHasChanged();
+      return;
+    }
+    _showTooLongErrorHardskill = false;
+
     var hardskill = new Hardskill()
     {
       Description = _hardskill,

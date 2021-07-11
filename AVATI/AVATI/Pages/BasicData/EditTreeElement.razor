@@ -19,6 +19,8 @@
                     <p class="errormessage"><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></p>
                 } else if (_showEmptyErrorNew) {
                     <p class="errormessage"><b>Die Bezeichnung ist erforderlich</b></p>
+                } else if (_showTooLongErrorNew) {
+                    <p class="errormessage"><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></p>
                 }
             </li>
         }
@@ -66,10 +68,12 @@ else
                                 else if (_showEmptyError[category])
                                 {
                                     <p class="errormessage"><b>Die Bezeichnung ist erforderlich</b></p>
+                                } else if (_showTooLongError[category]) {
+                                    <p class="errormessage"><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></p>
                                 }
                             }
 
-                            @if (_loadSubfinished[category])
+                            @if (LoadSubfinished[category])
                             {
                                 <EditTreeElement @ref="_elements[category]" Subcats="@_subcatsofCategory[category]" Uppercat="@category" Abstract="@Abstract"
                                                  UpperElement="@this" ShowHardskills="@_showSubHardskills[category]" ShowCategorys="@_showSubCategorys[category]"
@@ -122,10 +126,10 @@ else
                     @if (_showExistErrorNew)
                     {
                         <p class="errormessage"><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></p>
-                    }
-                    else if (_showEmptyErrorNew)
-                    {
+                    } else if (_showEmptyErrorNew) { 
                         <p class="errormessage"><b>Die Bezeichnung ist erforderlich</b></p>
+                    } else if (_showTooLongErrorNew) {
+                        <p class="errormessage"><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></p>
                     }
                     <ul>
                         @foreach (var category in _categorys)
@@ -226,11 +230,15 @@ else
 
     private Dictionary<string, bool> _showEmptyError = new();
 
+    private Dictionary<string, bool> _showTooLongError = new();
+
     private bool _showExistErrorNew;
 
     private bool _showEmptyErrorNew;
 
-    private Dictionary<string, bool> _loadSubfinished = new();
+    private bool _showTooLongErrorNew;
+    
+    public Dictionary<string, bool> LoadSubfinished {get; set; } = new();
 
     private Dictionary<string, int> _renameProblem = new();
 
@@ -250,6 +258,7 @@ else
     {
         _showExistErrorNew = false;
         _showEmptyErrorNew = false;
+        _showTooLongErrorNew = false;
         _showNew = false;
         foreach(var description in Subcats)
         {
@@ -273,7 +282,8 @@ else
                 _showSubCategorys.TryAdd(description, true);
                 _showExistError.TryAdd(description, false);
                 _showEmptyError.TryAdd(description, false);
-                _loadSubfinished.TryAdd(description, true);
+                _showTooLongError.TryAdd(description, false);
+                LoadSubfinished.TryAdd(description, true);
                 _renameProblem.TryAdd(description, 0);
             }
         }
@@ -282,24 +292,38 @@ else
 
     private async Task CreateCategory()
     {
-        if (string.IsNullOrEmpty(_newCategory) || string.IsNullOrWhiteSpace(_newCategory))
+        if (!_hardskillService.CheckEmptyHardskill(_newCategory))
         {
-            _showExistErrorNew = false;
             _showEmptyErrorNew = true;
+            _showExistErrorNew = false;
+            _showTooLongErrorNew = false;
             StateHasChanged();
             return;
         }
         _showEmptyErrorNew = false;
 
-        if (!await _hardskillService.CheckDescriptionHardskill(_newCategory))
+        if (!await _hardskillService.CheckExistHardskill(_newCategory))
         {
-            _showEmptyErrorNew = false;
             _showExistErrorNew = true;
+            _showTooLongErrorNew = false;
             StateHasChanged();
             return;
         }
         _showExistErrorNew = false;
-        
+
+        if (!_hardskillService.CheckLengthHardskill(_newCategory))
+        {
+            _showTooLongErrorNew = true;
+            StateHasChanged();
+            return;
+        }
+        _showTooLongErrorNew = false;
+
+        if (UpperTree != null)
+            UpperTree.Loadfinished = false;
+        if(UpperElement != null)
+            UpperElement.LoadSubfinished[Uppercat] = false;
+        StateHasChanged();
         Hardskill hardskillcat = new()
         {
             Description = _newCategory,
@@ -311,17 +335,25 @@ else
         ShowingNew();
         await Abstract.UpdateHardskills();
         if (UpperTree != null)
+        {
             await UpperTree.Loading();
-        if(UpperElement != null)
+            UpperTree.Loadfinished = true;
+        }
+        if (UpperElement != null)
+        {
             await UpperElement.Loading(Uppercat);
+            UpperElement.LoadSubfinished[Uppercat] = true;
+        }
+        StateHasChanged();
     }
     
     private async Task UpdateCategory(string category)
     {
-        if (string.IsNullOrEmpty(_rename[category]) || string.IsNullOrWhiteSpace(_rename[category]))
+        if (!_hardskillService.CheckEmptyHardskill(_rename[category]))
         {
-            _showExistError[category] = false;
             _showEmptyError[category] = true;
+            _showExistError[category] = false;
+            _showTooLongError[category] = false;
             _renameProblem[category] = 2;
             StateHasChanged();
             return;
@@ -329,46 +361,92 @@ else
         _renameProblem[category] = 1;
         _showEmptyError[category] = false;
 
-        if (!await _hardskillService.CheckDescriptionHardskill(_rename[category]) && _rename[category] != category)
+        if (!await _hardskillService.CheckExistHardskill(_rename[category]) && _rename[category] != category)
         {
-            _showEmptyError[category] = false;
             _showExistError[category] = true;
+            _showTooLongError[category] = false;
             _renameProblem[category] = 2;
             StateHasChanged();
             return;
         }
         _renameProblem[category] = 1;
         _showExistError[category] = false;
-        
-        await _hardskillService.UpdateHardskillCategory(category, _rename[category]);
+
+        if (!_hardskillService.CheckLengthHardskill(_rename[category]))
+        {
+            _showTooLongError[category] = true;
+            _renameProblem[category] = 2;
+            StateHasChanged();
+            return;
+        }
+        _renameProblem[category] = 1;
+        _showTooLongError[category] = false;
+
+        if (UpperTree != null)
+            UpperTree.Loadfinished = false;
+        if(UpperElement != null)
+            UpperElement.LoadSubfinished[Uppercat] = false;
+        StateHasChanged();
+        await _hardskillService.RenameHardskillCategory(category, _rename[category]);
         ShowingRename(category);
         await Abstract.UpdateHardskills();
         if (UpperTree != null)
+        {
             await UpperTree.Loading();
-        if(UpperElement != null)
+            UpperTree.Loadfinished = true;
+        }
+        if (UpperElement != null)
+        {
             await UpperElement.Loading(Uppercat);
+            UpperElement.LoadSubfinished[Uppercat] = true;
+        }
+        StateHasChanged();
     }
 
     private async Task DeleteCategory(string category)
     {
+        if (UpperTree != null)
+            UpperTree.Loadfinished = false;
+        if(UpperElement != null)
+            UpperElement.LoadSubfinished[Uppercat] = false;
+        StateHasChanged();
         await _hardskillService.DeleteHardskillCategory(category);
         await Abstract.UpdateHardskills();
         if (UpperTree != null)
+        {
             await UpperTree.Loading();
-        if(UpperElement != null)
+            UpperTree.Loadfinished = true;
+        }
+        if (UpperElement != null)
+        {
             await UpperElement.Loading(Uppercat);
+            UpperElement.LoadSubfinished[Uppercat] = true;
+        }
+        StateHasChanged();
     }
     
     private async Task DeleteHardskill(string hardskill)
     {
+        if (UpperTree != null)
+            UpperTree.Loadfinished = false;
+        if(UpperElement != null)
+            UpperElement.LoadSubfinished[Uppercat] = false;
+        StateHasChanged();
         var deleteSub = new List<string>(_hardskills);
         deleteSub.Remove(hardskill);
         await _hardskillService.EditHardskillsCategory(Uppercat, deleteSub);
         await Abstract.UpdateHardskills();
         if (UpperTree != null)
+        {
             await UpperTree.Loading();
-        if(UpperElement != null)
+            UpperTree.Loadfinished = true;
+        }
+        if (UpperElement != null)
+        {
             await UpperElement.Loading(Uppercat);
+            UpperElement.LoadSubfinished[Uppercat] = true;
+        }
+        StateHasChanged();
     }
     
     private bool IsInList(string description)
@@ -445,13 +523,9 @@ else
 
     public async Task Loading(string category)
     {
-        _loadSubfinished[category] = false;
-        StateHasChanged();
         _subcatsofCategory[category] = (await _hardskillService.GetHardskillCategory(category))?.Subcat;
         _containsJustHardskills[category] = await _hardskillService.ContainsJustHardskills(category);
         _containsJustCategorys[category] = !await _hardskillService.ContainsAnyHardskills(category);
-        _loadSubfinished[category] = true;
-        StateHasChanged();
     }
 
 }

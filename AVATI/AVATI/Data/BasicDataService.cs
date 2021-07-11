@@ -159,5 +159,15 @@ namespace AVATI.Data
 
             return true;
         }
+        
+        public bool CheckEmptyBasicData(string description)
+        {
+            return !(string.IsNullOrEmpty(description) || string.IsNullOrWhiteSpace(description));
+        }
+
+        public bool CheckLengthBasicData(string description)
+        {
+            return description.Length <= 150;
+        }
     }
 }

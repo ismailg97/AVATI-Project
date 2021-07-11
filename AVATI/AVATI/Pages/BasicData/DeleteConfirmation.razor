@@ -71,9 +71,10 @@
                 break;
             default:
                 await _hardskillService.DeleteHardskill(Description);
+                Showing();
                 await Abstract.UpdateHardskills();
                 await Abstract.UpdateCategorys();
-                break;
+                return;
         }
         Showing();
         //_navigationManager.NavigateTo(_navigationManager.Uri, true);

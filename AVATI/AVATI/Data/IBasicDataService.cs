@@ -35,5 +35,9 @@ namespace AVATI.Data
         public bool CheckDescriptionField(string description);
 
         public bool CheckDescriptionRole(string description);
+        
+        public bool CheckEmptyBasicData(string description);
+
+        public bool CheckLengthBasicData(string description);
     }
 }
