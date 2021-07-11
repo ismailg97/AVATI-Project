@@ -35,7 +35,7 @@
             <div class="profile-img">
                 @if (Emp.Image == null)
                 {
-                    <img class="rounded" src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" style="margin-left: -45px" width="300" height="200" alt=""/>
+                    <img class="rounded" src="@_employee.GetDefaultPicture()" style="margin-left: -45px" width="300" height="200" alt=""/>
                 }
                 else
                 {
@@ -66,7 +66,7 @@
                         <!------ RC-Level ---------->
                         <div class="col-6">
                             <div class="card-title small font-weight-light lead text-left">Rate-Card Level</div>
-                            <input class="form-control" min="1" max="7" type="number" @bind=@_changeValue  id="example-number-input"/>
+                            <InputNumber class="form-control" min="1" max="7" type="number" @bind-Value=@Emp.Rc  id="example-number-input"/>
                         </div>
                         <!------ Employment Time ---------->
                         <div class="col-6">
@@ -440,7 +440,6 @@ else
     private bool _booleanHardSkill = false;
     private bool _pageIsLoaded = false;
     private bool _booleanProj = false;
-    private int _changeValue;
     //private bool _booleanName;
 
 
@@ -470,8 +469,8 @@ else
 
     public void EditProfiles()
     {
-        Emp.Rc = _changeValue;
-        Console.WriteLine("test");
+        
+        
         _employee.EditEmployeeProfile(Emp);
         _navManager.NavigateTo("profile/" + Emp.EmployeeID);
     }

@@ -16,24 +16,27 @@ namespace AVATI.Data
         {
             _localStorageService = localStorageService;
         }
-        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+        public override Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var state = new AuthenticationState(new ClaimsPrincipal());
-            string username = await _localStorageService.GetItemAsStringAsync("Username");
-            string empType = await _localStorageService.GetItemAsStringAsync("EmployeeType");
-            if (!string.IsNullOrEmpty(username))
-            {
-                var identity = new ClaimsIdentity(new[]
+            var identity = new ClaimsIdentity();
+            var user = new ClaimsPrincipal(identity);
+            return Task.FromResult(new AuthenticationState(user));
+            
+            
+           
+        }
+
+        public void MarkUserAsAuthenticated(string username, string empType)
+        {
+            var identity = new ClaimsIdentity(new[]
                 {
                     new Claim(ClaimTypes.Name, username),
                     new Claim(ClaimTypes.Role, empType)
-                }, "test authentication type");
-                
-                state = new AuthenticationState(new ClaimsPrincipal(identity));
-            }
+                }, "api authentication type");
+
+            var user = new ClaimsPrincipal(identity);
             
-            NotifyAuthenticationStateChanged(Task.FromResult(state));
-            return state;
+            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
         }
     }
 }

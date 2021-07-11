@@ -1,6 +1,8 @@
 ﻿@page "/Login"
 @using AVATI.Data
-
+@using Blazored.LocalStorage
+@inject ILocalStorageService _localStorageService
+@inject AuthenticationStateProvider _authenticationStateProvider
 @inject ILoginService _login
 @inject NavigationManager _navManager
 
@@ -65,7 +67,7 @@
     public int Id { get; set; }
     public string empType { get; set; }
 
-    private async void LoginCheck()
+    private void LoginCheck()
     {
         Id = _login.LogIn(Log.Username, Log.Password);
         if (Id == -1)
@@ -75,9 +77,11 @@
         else
         {
             empType=_login.Login_EmpType(Id);
-            //await _localStorageService.SetItemAsync<string>("Username", Log.Username);
-            //await _localStorageService.SetItemAsync<string>("EmployeeType", empType);
+    //await _localStorageService.SetItemAsync<string>("Username", Log.Username);
+            //await _localStorageService.SetItemAsync("EmployeeType", empType);
+            //((CustomAuthStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(Log.Username, empType);
             //await _authenticationStateProvider.GetAuthenticationStateAsync();
+            //_navManager.NavigateTo("");
             _navManager.NavigateTo("/profile/" + Id );
         }
     }

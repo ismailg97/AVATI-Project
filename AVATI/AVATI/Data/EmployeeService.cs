@@ -329,6 +329,14 @@ namespace AVATI.Data
             return true;
         }
 
+        public string GetDefaultPicture()
+        {
+            using DbConnection db = GetConnection();
+            string defaultImage =
+                db.QuerySingle<string>("SELECT Image FROM Employee WHERE Firstname = 'PLACE' AND Lastname = 'HOLDER'");
+            return defaultImage;
+        }
+
         public bool? GetSatus(int employeeId)
         {
             using DbConnection db = GetConnection();
