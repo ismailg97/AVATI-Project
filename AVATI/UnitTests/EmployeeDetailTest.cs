@@ -51,7 +51,9 @@ namespace UnitTests
         [TestCase(4)]
         [TestCase(5)]
         [TestCase(6)]
+        [TestCase(7)]
 
+        [Test]
         public void TestInput(int rc)
         {
             var empService =
