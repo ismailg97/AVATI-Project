@@ -17,6 +17,6 @@ namespace AVATI.Data
         public bool AddActivity(string description);
         public bool UpdateProjectActivity(int proposalId, List<ProjectActivity> activities);
         public bool UpdateProjectActivityEmployee(int EmpId, int ProjId,ProjectActivity activity);
-
+        public string GetProjectActivity(string description);
     }
 }

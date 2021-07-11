@@ -359,5 +359,21 @@ namespace AVATI.Data
             return true;
         }
 
+        public string GetProjectActivity(string description)
+        {
+            using IDbConnection db = GetConnection();
+            
+            string temp1 = db.QuerySingle<string>(
+                "SELECT Projectactivity FROM ProjectPurpose WHERE Purpose = @desc", new
+                {
+                    desc = description
+                });
+
+            return temp1;
+        }
+        
+        
+        
+        
     }
 }

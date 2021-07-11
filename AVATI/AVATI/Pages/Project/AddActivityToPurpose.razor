@@ -81,10 +81,7 @@
             purpose.AssignedProjectActivity = activity;
             _purposeService.UpdatePurpose(purpose);
             _activitiesFromProject.Remove(activity);
-        }
-        else 
-        {
-            
+            Abstract.Update();
         }
         StateHasChanged();
     }
@@ -96,6 +93,7 @@
         purpose.AssignedProjectActivity = null;
         _purposeService.UpdatePurpose(purpose);
         StateHasChanged();
+        Abstract.Update();
     }
 
     public void Showing(ProjectPurpose purp, int projectID)

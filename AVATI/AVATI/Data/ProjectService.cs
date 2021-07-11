@@ -24,6 +24,7 @@ namespace AVATI.Data
         {
             ConnectionString = connection;
         }
+        
         public DbConnection GetConnection()
         {
             return new SqlConnection
