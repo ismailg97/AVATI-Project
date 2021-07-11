@@ -1,10 +1,13 @@
 @using AVATI.Data
 @using AVATI.Data.EmployeeDetailFiles
 @using DocumentFormat.OpenXml.Drawing
+@using DocumentFormat.OpenXml.Office2010.Excel
 
 @inject IProposalService _proposal
 @inject IEmployeeService _employeeService
 @inject IEmployeeDetailService _employeeDetailService
+@inject IProjectActivityService _activity
+@inject IProjektService _project
 
 @if (ShowEdit)
 {
@@ -28,7 +31,7 @@
                                 </div>
                             <div class="row justify-content-md-center">
                                 <div class="card text-black border-dark ml-5" style="width: 25%">
-                                    <img class="card-img-top"  src="@_employeeService.GetEmployeeProfile(EmpId).Image" style="border:2px solid black" alt=""/>
+                                    <img class="card-img-top"  src="@_employeeService.GetEmployeeProfile(EmpId).Image" style="border:2px solid black; min-height: 50%; max-height: 50%" alt=""/>
                                     <div class="card-body pb-3 pt-3">
                                         <h5 class="card-title">@_employeeService.GetEmployeeProfile(EmpId).FirstName @_employeeService.GetEmployeeProfile(EmpId).LastName</h5>
                                         <div class="card-title text-left">
@@ -59,9 +62,25 @@
                                     </div>
                                 </div>
                                 <div class="card col border-secondary ml-2" style="max-width: 20%">
-                                    <div class="card-header text-left bg-transparent border-secondary">Projekt(e)</div>
+                                    <div class="card-header text-left bg-transparent border-secondary">Projekt(e) + Tätigkeit(en)</div>
                                     <div class="card-body text-left">
-
+                                        @foreach (var proj in _projectsWithActivities.Keys)
+                                        {
+                                            <h5 class="text-center font-weight-bolder" style=@(EmployeeDetailView.ProjectActivities.Count(e => e.ProjectID == proj.ProjectID) == 0 ? "color: red" : "color: green")>Projekt: @proj.Projecttitel</h5>
+                                            <div class="row">
+                                                @foreach (var projectActivity in _projectsWithActivities[proj])
+                                                {
+                                                    if (EmployeeDetailView.ProjectActivities.Exists(e => e.ProjectActivityID == projectActivity.ProjectActivityID))
+                                                    {
+                                                        <button type="button" class="btn btn-success btn-sm" @onclick=@(() => { EmployeeDetailView.ProjectActivities.RemoveAll(e => e.ProjectActivityID == projectActivity.ProjectActivityID); })>@projectActivity.Description</button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button type="button" class="btn btn-outline-dark btn-sm" @onclick=@(() => { EmployeeDetailView.ProjectActivities.Add(projectActivity); })>@projectActivity.Description</button>
+                                                    }
+                                                }
+                                            </div>                                                  
+                                        }
                                     </div>
                                 </div>
                                 <div class="col" style="width: 55%">
@@ -180,6 +199,7 @@
     public Data.Employee EmployeeAttributes;
     public bool ShowEdit { get; set; }
     public bool ShowBackdrop { get; private set; }
+    private Dictionary<Project, List<ProjectActivity>> _projectsWithActivities = new();
 
     public async Task Show(int employeeId, int proposalId)
     {
@@ -191,6 +211,23 @@
         EmployeeDetailView = await detail;
         EmployeeAttributes = _employeeService.GetEmployeeProfile(EmpId);
         Console.WriteLine(EmpId.ToString() + PropId.ToString());
+        _projectsWithActivities.Clear();
+        foreach (var proAct in _activity.GetProjectActivitiesEmployee(EmpId))
+        {
+            if (proAct.Description == null)
+            {
+                continue;
+            }
+            var project = _project.GetProject(proAct.ProjectID);
+            if (_projectsWithActivities.ContainsKey(project))
+            {
+                _projectsWithActivities[project].Add(proAct);
+            }
+            else
+            {
+                _projectsWithActivities.Add(project, new List<ProjectActivity>() {proAct});
+            }
+        }
         await _employeeDetailService.GetEmployeeDetail(EmpId, PropId);
         StateHasChanged();
     }
@@ -210,9 +247,12 @@
         await Task.Delay(1000);
         _visibleSafe = false;
         Console.WriteLine(EmployeeDetailView.Discount);
+        
         StateHasChanged();
     }
 
+    //IN EMPLOYEEDETAIL.ProjectActivities findest du alle aktivitäten, um die zugehörigen projekte zu kriegen musst du dir das separat holen
+    
     public async Task CreateDocument()
     {
         await Task.Delay(100);
