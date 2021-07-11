@@ -35,7 +35,7 @@
                             }
                         }
                     </div>
-                    <hr class="mx-2"/>                                                                                  <!--line divider -->
+                    <hr class="mx-2"/>                                  <!--line divider -->
                     <label class="font-weight-bold ">Branchen im Projekt:</label>
                     <div class="list-group col overflow-auto text-center border-dark" style="height: 250px">
                         @foreach (var field in _projectToEdit.Fields)
@@ -84,7 +84,6 @@
         _show = !_show;
         _projectToEdit = _projectService.GetProject(id);
         fields = _basic.GetAllFields();
-        StateHasChanged();
     }
     
 
