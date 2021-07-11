@@ -14,18 +14,24 @@ namespace AVATI.Data
     public class ProposalService : IProposalService
     {
         private readonly IConfiguration _configuration;
+
+        private string _connectionString;
         public List<Proposal> Proposals { get; set; }
         private readonly EmployeeDetailService _employeeDetailService;
         public DbConnection GetConnection()
         {
-
+            if (_connectionString != null)
+            {
+                return new SqlConnection
+                    (_connectionString);
+            }
             return new SqlConnection
                 (_configuration.GetConnectionString("AVATI-Database"));
         }
 
         public ProposalService(string connectionString)
         {
-            
+            _connectionString = connectionString;
         }
         public ProposalService(IConfiguration configuration)
         {
@@ -93,6 +99,10 @@ namespace AVATI.Data
         {
             using DbConnection db = GetConnection();
             int idToUSe = id;
+            if (proposal.ProposalTitle.Length > 70 || proposal.ProposalTitle is null or "")
+            {
+                return false;
+            }
             var result = db.Query<Proposal>("SELECT * FROM Proposal WHERE ProposalID = @propId",
                 new {propId = id});
             if (result.FirstOrDefault() == null)

@@ -9,17 +9,13 @@
     &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.ServiceForDatasTest&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6b2c73ec_002D6df9_002D49d7_002D90b1_002D0b08a115d155/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ServiceForDatasTest #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6b2c73ec_002D6df9_002D49d7_002D90b1_002D0b08a115d155/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ServiceForDatasTest #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.ServiceForDatasTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.EmployeeDetailTest&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ac86ca75_002D5196_002D4b57_002Daa09_002Dd809b91191c9/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ServiceForDatasTest #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.ServiceForDatasTest&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.EmpDetailTests.TestForValidEmpDetail&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
+	
 	
 	
 	
