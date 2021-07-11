@@ -12,10 +12,16 @@ namespace AVATI.Data
     public class HardskillService: IHardskillService
     {
         private IConfiguration _config;
+        private bool _toTest = false;
         
         public HardskillService(IConfiguration config)
         {
             _config = config;
+        }
+        
+        public HardskillService(bool toTest)
+        {
+            _toTest = toTest;
         }
 
         public async Task<Hardskill> GetHardskillOrCategory(string description)
@@ -25,6 +31,8 @@ namespace AVATI.Data
         
         private IDbConnection GetConnection()
         {
+            if(_toTest)
+                return new SqlConnection("data source=192.168.2.143, 1433;initial catalog=Testdatenbank;user id=sa;password=AVATIPassword1");
             return new SqlConnection(_config.GetConnectionString("AVATI-Database"));
         }
 
@@ -75,8 +83,7 @@ namespace AVATI.Data
         {
             using var db = GetConnection();
             var deleteUppercat = "DELETE FROM Hardskill_Subcat WHERE Subcat = @hardskill";
-            var deleteURows = await db.ExecuteAsync(deleteUppercat, new{ hardskill = description });
-            if (deleteURows > 1) return false;
+            await db.ExecuteAsync(deleteUppercat, new{ hardskill = description });
             var deleteSkill = "DELETE FROM Hardskill WHERE Description = @hardskill";
             var deleteSRows = await db.ExecuteAsync(deleteSkill, new{ hardskill = description });
             return deleteSRows == 1;
@@ -125,7 +132,7 @@ namespace AVATI.Data
                 {
                     var deletecatRows = await db.ExecuteAsync("DELETE FROM Hardskill_Subcat WHERE Subcat = @subcat AND Uppercat = @uppercat", 
                         new { uppercat = hardskillcat.Uppercat[0], subcat = skill });
-                    if (deletecatRows != 1) return false;
+                    if (deletecatRows > 1) return false;
                 }
 
                 uppercatRows = await db.ExecuteAsync("INSERT INTO Hardskill_Subcat (Uppercat, Subcat) VALUES (@uppercat, @subcat)", 
@@ -144,7 +151,7 @@ namespace AVATI.Data
             return true;
         }
 
-        public async Task<bool> UpdateHardskillCategory(string oldDescription, string newDescription)
+        public async Task<bool> RenameHardskillCategory(string oldDescription, string newDescription)
         {
             using var db = GetConnection();
             var updateCat = "UPDATE Hardskill SET Description = @newD WHERE Description = @oldD;" +
@@ -202,10 +209,13 @@ namespace AVATI.Data
             var subCategorys = (await db.QueryAsync<string>("SELECT Subcat FROM Hardskill_Subcat WHERE Uppercat = @cat", 
                 new{ cat = description })).ToList();
 
+            if (!subCategorys.Any()) return false;
+
             foreach (var subCat in subCategorys)
             {
-                if (!(await db.QueryAsync<bool>("SELECT IsHardskill FROM Hardskill WHERE Description = @sub",
-                    new {sub = subCat})).Single()) return false;
+                var isHardskill = (await db.QueryAsync<bool>("SELECT IsHardskill FROM Hardskill WHERE Description = @sub",
+                    new {sub = subCat})).Single();
+                if (!isHardskill) return false;
             }
 
             return true;
@@ -245,6 +255,7 @@ namespace AVATI.Data
         {
             using var db = GetConnection();
             var cat = await GetHardskillCategory(hardskillcat);
+            var copyHardskills = new List<string>(hardskills);
             
             if (cat?.Subcat == null) return false;
             
@@ -254,9 +265,9 @@ namespace AVATI.Data
                     "SELECT IsHardskill FROM Hardskill WHERE Description = @skillOrCat",
                     new {skillOrCat = skill})).Single();
                 if (!isHardskill) continue;
-                if (hardskills.Exists(x => x == skill))
+                if (copyHardskills.Exists(x => x == skill))
                 {
-                    hardskills.Remove(skill);
+                    copyHardskills.Remove(skill);
                     continue;
                 }
                 
@@ -265,7 +276,7 @@ namespace AVATI.Data
                 if (deleteSub != 1) return false; 
             }
             
-            foreach (var hardskill in hardskills)
+            foreach (var hardskill in copyHardskills)
             {
                 var isHardskill = (await db.QueryAsync<bool>(
                     "SELECT IsHardskill FROM Hardskill WHERE Description = @skillOrCat",
@@ -331,7 +342,7 @@ namespace AVATI.Data
             return allRoots;
         }
 
-        public async Task<bool> CheckDescriptionHardskill(string description)
+        public async Task<bool> CheckExistHardskill(string description)
         {
             using var db = GetConnection();
             var trimDesc = description.Replace(" ", "");
@@ -345,41 +356,14 @@ namespace AVATI.Data
             return true;
         }
 
-        private async Task<List<string>> AllSubCatsOfCategory(string category)
+        public bool CheckEmptyHardskill(string description)
         {
-            using var db = GetConnection();
-            var subCats = (await db.QueryAsync<string>(
-                "SELECT Subcat FROM Hardskill_Subcat WHERE Uppercat = @uppercat AND Subcat in (SELECT Description FROM Hardskill WHERE IsHardskill = 0)",
-                new {uppercat = category})).ToList();
-            var subCatsReturn = new List<string>(subCats);
-            foreach (var subCat in subCats)
-            {
-                subCatsReturn.AddRange( await AllSubCatsOfCategory(subCat));
-            }
-
-            return subCatsReturn;
-        }
-        
-        private async Task<List<string>> AllUpperCatsOfCategory(string category)
-        {
-            using var db = GetConnection();
-            var upperCat = (await db.QueryAsync<string>(
-                "SELECT Uppercat FROM Hardskill_Subcat WHERE Subcat = @subcat",
-                new { subcat = category })).SingleOrDefault();
-            var upperCatReturn = new List<string>();
-            if (upperCat == null)
-                return upperCatReturn;
-            upperCatReturn.Add(upperCat);
-            upperCatReturn.AddRange(await AllUpperCatsOfCategory(upperCat));
-
-            return upperCatReturn;
+            return !(string.IsNullOrEmpty(description) || string.IsNullOrWhiteSpace(description));
         }
 
-        public async Task<List<string>> AllCategorysOfCategory(string category)
+        public bool CheckLengthHardskill(string description)
         {
-            var allCategorys = await AllUpperCatsOfCategory(category);
-            allCategorys.AddRange(await AllSubCatsOfCategory(category));
-            return allCategorys;
+            return description.Length <= 150;
         }
     }
 }

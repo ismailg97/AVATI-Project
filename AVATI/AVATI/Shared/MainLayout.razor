@@ -1,40 +1,62 @@
-﻿@inherits LayoutComponentBase
+﻿@using DocumentFormat.OpenXml.Drawing
+@inherits LayoutComponentBase
+
 <div class="page">
     <div style="@SidebarWidth" class="sidebar">
         <button class="closeButton" @onclick="CloseNav">
             <span class="oi oi-menu"></span>
         </button>
         <ul class="nav flex-column">
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="/profile/16" Match="NavLinkMatch.All">
-                    <span class="oi oi-person" aria-hidden="true"></span> Profil
-                </NavLink>
-            </li>
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="/Projektübersicht">
-                    <span class="oi oi-clipboard" aria-hidden="true"></span> Projektübersicht
-                </NavLink>
-            </li>
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="/ProposalOverview">
-                    <span class="oi oi-spreadsheet" aria-hidden="true" id="proposalOverview"></span> Angebotsübersicht
-                </NavLink>
-            </li>
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="/SearchEmployee">
-                    <span class="oi oi-magnifying-glass" aria-hidden="true"></span> Mitarbeitersuche
-                </NavLink>
-            </li>
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="/BasicDataAbstract">
-                    <span class="oi oi-list" aria-hidden="true"></span> Basisdatenübersicht
-                </NavLink>
-            </li>
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="/ProjectActivities">
-                    <span class="oi oi-task" aria-hidden="true"></span> Projekttätigkeiten
-                </NavLink>
-            </li>
+            
+            <AuthorizeView>
+                <NotAuthorized>
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link" href="/Login">
+                            <span class="oi oi-account-login" aria-hidden="true"></span> Login
+                        </NavLink>
+                    </li>
+                
+                
+
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link" href="/profile/16" Match="NavLinkMatch.All">
+                            <span class="oi oi-person" aria-hidden="true"></span> Profil
+                        </NavLink>
+                    </li>
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link" href="/Projektübersicht">
+                            <span class="oi oi-clipboard" aria-hidden="true"></span> Projektübersicht
+                        </NavLink>
+                    </li>
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link" href="/ProposalOverview">
+                            <span class="oi oi-spreadsheet" aria-hidden="true" id="proposalOverview"></span> Angebotsübersicht
+                        </NavLink>
+                    </li>
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link" href="/SearchEmployee">
+                            <span class="oi oi-magnifying-glass" aria-hidden="true"></span> Mitarbeitersuche
+                        </NavLink>
+                    </li>
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link" href="/BasicDataAbstract">
+                            <span class="oi oi-list" aria-hidden="true"></span> Basisdatenübersicht
+                        </NavLink>
+                    </li>
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link" href="/ProjectActivities">
+                            <span class="oi oi-task" aria-hidden="true"></span> Projekttätigkeiten
+                        </NavLink>
+                    </li>
+                </NotAuthorized>
+                <Authorized>
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link" @OnClick="LogOut">
+                            <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
+                        </NavLink>
+                    </li>
+                </Authorized>
+            </AuthorizeView>
         </ul>
     </div>
     <div class="top-row px-4" style="@MainMargin">
@@ -64,4 +86,11 @@
     private string MainMargin => $"margin-left: {_width}px;";
     void OpenNav() => _width = 300;
     void CloseNav() => _width = 0;
+
+
+    private void LogOut()
+    {
+        //_localStorageService.RemoveItem("username");
+        //_localStorageService.RemoveItem("EmployeeType");
+    }
 }

@@ -31,8 +31,6 @@ namespace UnitTests
             testCaseData.Add(new TestCaseData(DateTime.Now.AddDays(12), DateTime.Now.AddDays(99), true));
             testCaseData.Add(new TestCaseData(DateTime.Now.AddDays(99), DateTime.Now.AddDays(12), false));
             testCaseData.Add(new TestCaseData(DateTime.Now.AddDays(0), DateTime.Now.AddDays(0), true));
-            testCaseData.Add(new TestCaseData(DateTime.Now.AddDays(-400), DateTime.Now.AddDays(-500), false));
-            testCaseData.Add(new TestCaseData(DateTime.Now.AddDays(-400), DateTime.Now.AddDays(-300), false));
             return testCaseData.AsEnumerable();
         }
         

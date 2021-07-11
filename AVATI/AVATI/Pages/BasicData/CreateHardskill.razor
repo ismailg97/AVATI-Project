@@ -20,6 +20,11 @@
                        <div class="errormessage">
                          <a><b>Die Bezeichnung ist erforderlich</b></a>
                         </div>
+                     } else if (_showTooLongError)
+                     {
+                       <div class="errormessage">
+                         <a><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></a>
+                       </div>
                      }
                      <div class="modal-body">
                        <label class="form-label">Bezeichnung:</label>
@@ -82,6 +87,8 @@
 
   private bool _showExistError;
 
+  private bool _showTooLongError;
+
   protected override async Task OnInitializedAsync()
   {
     _allCategorys = await _hardskillService.GetAllDesCategorys();
@@ -91,6 +98,7 @@
   {
     _showEmptyError = false;
     _showExistError = false;
+    _showTooLongError = false;
     Description = "";
     UpperCat.Clear();
 
@@ -98,24 +106,33 @@
 
   private async Task Create()
   {
-    if (string.IsNullOrEmpty(_hardskill.Description) || string.IsNullOrWhiteSpace(_hardskill.Description))
+    if (!_hardskillService.CheckEmptyHardskill(_hardskill.Description))
     {
-      _showExistError = false;
       _showEmptyError = true;
+      _showExistError = false;
+      _showTooLongError = false;
       StateHasChanged();
       return;
     }
     _showEmptyError = false;
 
-    if (!await _hardskillService.CheckDescriptionHardskill(_hardskill.Description))
+    if (!await _hardskillService.CheckExistHardskill(_hardskill.Description))
     {
-      _showEmptyError = false;
       _showExistError = true;
+      _showTooLongError = false;
       StateHasChanged();
       return;
     }
-    
     _showExistError = false;
+
+    if (!_hardskillService.CheckLengthHardskill(_hardskill.Description))
+    {
+      _showTooLongError = true;
+      StateHasChanged();
+      return;
+    }
+    _showTooLongError = false;
+    
     var hardskill = new Hardskill
     {
       Description = _hardskill.Description,
@@ -129,7 +146,6 @@
     _hardskill.Description = "";
     await Abstract.UpdateCategorys();
     await Abstract.UpdateHardskills();
-  //_navigationManager.NavigateTo(_navigationManager.Uri, true);
   }
 
   private void UpperCatList(string description)

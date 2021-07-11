@@ -258,7 +258,7 @@ namespace AVATI.Data.EmployeeDetailFiles
             }
 
             foreach (var projectactId in db.Query<int>(
-                "SELECT ProjectActivityID FROM ProjectActivity_Project_Employee p LEFT JOIN EmployeeDetail_ProjectActivity e ON p.ProjectActivityID = e.ProjectActivityID WHERE EmployeeID = @empId and ProposalID = @propId and InDetail = 1",
+                "SELECT p.ProjectActivityID FROM ProjectActivity_Project_Employee p LEFT JOIN EmployeeDetail_ProjectActivity e ON p.ProjectActivityID = e.ProjectActivityID WHERE EmployeeID = @empId and ProposalID = @propId and InDetail = 1",
                 new {propId = proposalId, empId = emp}))
             {
                 db.Execute("INSERT INTO EmployeeDetail_ProjectActivity VALUES (@proactId, @newPropId, 1)", 
@@ -338,7 +338,7 @@ namespace AVATI.Data.EmployeeDetailFiles
             db.Execute("DELETE FROM EmployeeDetail_Role WHERE EmployeeId = @empId and ProposalID = @propId",
                 new {empId = employeeId, propId = proposalId});
             db.Execute(
-                "DELETE FROM EmployeeDetail_ProjectActivity WHERE ProposalID = @propId AND ProjectActivityID IN (SELECT ProjectActivityID WHERE EmployeeID = @empId)",
+                "DELETE FROM EmployeeDetail_ProjectActivity WHERE ProposalID = @propId AND ProjectActivityID IN (SELECT ProjectActivityID FROM ProjectActivity_Project_Employee WHERE EmployeeID = @empId)",
                  new{ empId = employeeId, propId = proposalId });
             return true;
         }

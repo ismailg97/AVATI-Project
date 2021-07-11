@@ -1,8 +1,9 @@
 ﻿@page "/Login"
 @using AVATI.Data
-@using DocumentFormat.OpenXml.Office2010.Excel
+
 @inject ILoginService _login
 @inject NavigationManager _navManager
+
 
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <!------ Include the above in your HEAD tag ---------->
@@ -64,7 +65,7 @@
     public int Id { get; set; }
     public string empType { get; set; }
 
-    private void LoginCheck()
+    private async void LoginCheck()
     {
         Id = _login.LogIn(Log.Username, Log.Password);
         if (Id == -1)
@@ -74,6 +75,9 @@
         else
         {
             empType=_login.Login_EmpType(Id);
+            //await _localStorageService.SetItemAsync<string>("Username", Log.Username);
+            //await _localStorageService.SetItemAsync<string>("EmployeeType", empType);
+            //await _authenticationStateProvider.GetAuthenticationStateAsync();
             _navManager.NavigateTo("/profile/" + Id );
         }
     }

@@ -40,6 +40,9 @@
                       } else if (_showEmptyError)
                       {
                         <a style="color: red; margin-bottom: 20px;"><b>Die Bezeichnung ist erforderlich</b></a>
+                      } else if (_showTooLongError)
+                      {
+                        <a style="color: red; margin-bottom: 20px;"><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></a>
                       }                      
                       <input class="form-control col-7" type="text" id="softskill" @bind="NewDescription"/>
                     </div>
@@ -72,31 +75,43 @@
   private bool _showEmptyError;
 
   private bool _showExistError;
+  
+  private bool _showTooLongError;
 
   protected override void OnParametersSet()
   {
     NewDescription = OldDescription;
     _showEmptyError = false;
     _showExistError = false;
+    _showTooLongError = false;
   }
 
   private void Update()
   {
-    if (string.IsNullOrEmpty(NewDescription) || string.IsNullOrWhiteSpace(NewDescription))
+    if (!_basicDataService.CheckEmptyBasicData(NewDescription))
     {
-      _showExistError = false;
       _showEmptyError = true;
+      _showExistError = false;
+      _showTooLongError = false;
       return;
     }
     _showEmptyError = false;
 
     if (CheckDescription() && NewDescription != OldDescription)
     {
-      _showEmptyError = false;
       _showExistError = true;
+      _showTooLongError = false;
       return;
     }
     _showExistError = false;
+
+    if (!_basicDataService.CheckLengthBasicData(NewDescription))
+    {
+      _showTooLongError = true;
+      return;
+    }
+    _showTooLongError = false;
+    
     switch (Type)
     {
       case BasicDataType.SoftSkill:
