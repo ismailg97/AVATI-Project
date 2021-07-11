@@ -46,8 +46,18 @@ namespace AVATI.Data
                     dateBeg = project.Projectbeginning.ToString("d", DateTimeFormatInfo.InvariantInfo),
                     dateEnd = project.Projectend.ToString("d", DateTimeFormatInfo.InvariantInfo)
                 });
+            var projectId = db.QuerySingle<int>("SELECT max(ProjectID) FROM Project");
             foreach (var emp in project.Employees)
             {
+                Console.WriteLine(emp.FirstName);
+                db.Execute("INSERT INTO ProjectActivity_Project_Employee VALUES(@ProID, @EmplId, NULL)",
+                    new {ProID = projectId, EmplId = emp.EmployeeID});
+            }
+
+            foreach (var field in project.Fields)
+            {
+                Console.WriteLine(field);
+                db.Execute("INSERT INTO Project_Field VALUES(@pro, @f)", new {f = field, pro = projectId});
             }
 
             return true;
