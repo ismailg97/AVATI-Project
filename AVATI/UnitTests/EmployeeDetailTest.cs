@@ -1,6 +1,10 @@
+using System;
+using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AVATI.Data;
 using AVATI.Data.EmployeeDetailFiles;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
 namespace UnitTests
@@ -12,8 +16,12 @@ namespace UnitTests
         [SetUp]
         public void Setup()
         {
+            string json = File.ReadAllText("appsettings.json");
+            JObject jObject = JObject.Parse(json);
+            var name = (string) jObject["ConnectionStrings"]["AVATI-Database"];
+            Console.WriteLine(name);
             Connection =
-                "data source=2003:C7:8F15:437F:749E:490A:F848:8943, 1433;initial catalog=AVATI;user id=sa;password=AVATIPassword1";
+                name;
         }
 
         [Test]
