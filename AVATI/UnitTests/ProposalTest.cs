@@ -1,22 +1,31 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using AVATI.Data;
 using AVATI.Data.ValidationAttributes;
+using Dapper;
+using Microsoft.Data.SqlClient;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+
 namespace UnitTests
 {
-    public class Tests
+    public class ProposalTest
     {
+        public string connection;
+
+        [SetUp]
         public void Setup()
         {
-            var proposalList = new List<Proposal>();
-            proposalList.Add(new Proposal()
-            {
-                ProposalTitle = "ThisShouldBeFine:)", AdditionalInfo = "Nothingspecail",
-                Start = DateTime.Now.AddDays(-12), End = DateTime.Now.AddDays(12)
-            });
+            string json = File.ReadAllText("appsettings.json");
+            JObject jObject = JObject.Parse(json);
+            var name = (string) jObject["ConnectionStrings"]["TEST-Database"];
+            Console.WriteLine(name);
+            connection =
+                name;
         }
 
         public static IEnumerable<TestCaseData> GetDateTests()
@@ -31,7 +40,7 @@ namespace UnitTests
             testCaseData.Add(new TestCaseData(DateTime.Now.AddDays(0), DateTime.Now.AddDays(0), true));
             return testCaseData.AsEnumerable();
         }
-        
+
         [TestCase("asadsasddsa", "asdasddsasadadsadsdas", true)]
         [TestCase("^^__^^!!!@@@loAAAA", "öäöääöäöäö??!!!", true)]
         [TestCase("", "asdasddsasadadsadsdas", false)]
@@ -45,7 +54,8 @@ namespace UnitTests
         [TestCase(
             "DieserTitelistvielzulangdaswäredochvielzuvielfürdiedatenbanklieberetwaskürzerfassenkeinmenschmöchtes" +
             "ovieltextlesenaberdasistnurmeinepersönlichemeinung" +
-            "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", ":)", false)]
+            "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
+            ":)", false)]
         public void ProposalTest1(string proposalTitle, string proposalAddInfo, bool isValid)
         {
             var proposal = new Proposal() {ProposalTitle = proposalTitle, AdditionalInfo = proposalAddInfo};
@@ -81,7 +91,72 @@ namespace UnitTests
                 });
         }
 
-        
-        
+        [Test]
+        public async Task TestAvailableProposals()
+        {
+            var proposalService =
+                new ProposalService(
+                    connection);
+            var result = proposalService.GetAllProposals();
+            var list = await result;
+            Assert.IsNotNull(list);
+            foreach (var proposal in list)
+            {
+                Assert.IsTrue(proposal.ProposalTitle != null);
+                Assert.IsTrue(proposal.ProposalID != 0);
+                Assert.IsTrue(proposal.Employees != null);
+                Assert.IsTrue(proposal.Fields != null);
+                Assert.IsTrue(proposal.Hardskills != null);
+                Assert.IsTrue(proposal.Softskills != null);
+                Assert.IsTrue(proposal.AdditionalInfo != null);
+                Assert.IsTrue(proposal.AltRc != null);
+                Assert.IsTrue(proposal.End >= proposal.Start);
+            }
+
+            proposalService.UpdateProposal(0, new Proposal() {ProposalTitle = "A small test"});
+            Assert.IsNotNull(proposalService.GetAllProposals().Result
+                .Find(e => e.ProposalTitle.Equals("A small test")));
+        }
+
+        [TestCase(
+            "asdfjaoiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii" +
+            "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii", false)]
+        [TestCase("", false)]
+        [TestCase("Thine hollowed heavens", true)]
+        [TestCase(
+            "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPPPPPPPPPPPSLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOCKkkkkkkkk", false)]
+        public async Task TestDbManipulation(string proposalTitle, bool isValid)
+        {
+            var proposalService =
+                new ProposalService(
+                    connection);
+            var result = proposalService.GetAllProposals();
+            var list = await result;
+            if (list.Count == 0)
+            {
+                if (isValid)
+                {
+                    
+                    Assert.IsTrue(proposalService.UpdateProposal(0, new Proposal() {ProposalTitle = proposalTitle}));
+                }
+                else
+                {
+                    Assert.IsFalse(proposalService.UpdateProposal(0, new Proposal() {ProposalTitle = proposalTitle}));
+                }
+            }
+            else
+            {
+                list[0].ProposalTitle = proposalTitle;
+                if (isValid)
+                {
+                    Assert.IsTrue(proposalService.UpdateProposal(list[0].ProposalID, list[0]));
+                }
+                else
+                {
+                    Assert.IsFalse(proposalService.UpdateProposal(list[0].ProposalID, list[0]));
+                }
+            }
+            
+        }
     }
 }

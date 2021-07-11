@@ -11,10 +11,16 @@ namespace AVATI.Data.EmployeeDetailFiles
 {
     public class EmployeeDetailService : IEmployeeDetailService
     {
+        private string _connection;
+        
         private readonly IConfiguration _configuration;
 
         public DbConnection GetConnection()
         {
+            if (_connection != null)
+            {
+                return new SqlConnection(_connection);
+            }
             return new SqlConnection
                 (_configuration.GetConnectionString("AVATI-Database"));
         }
@@ -25,6 +31,11 @@ namespace AVATI.Data.EmployeeDetailFiles
             EmployeeDetails = new List<EmployeeDetail>();
         }
 
+        public EmployeeDetailService(string connect)
+        {
+            _connection = connect;
+        }
+        
         public List<EmployeeDetail> EmployeeDetails;
         
 
@@ -394,7 +405,8 @@ namespace AVATI.Data.EmployeeDetailFiles
 
             return employeeList;
         }
-
+        
+        
         public LanguageLevel GetLanguageLevel(string s)
         {
             if (s == "A1")

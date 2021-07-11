@@ -31,8 +31,7 @@
                             <ValidationSummary/>
                             <div class="form-group">
                                 <label for="title">Angebotstitel </label>
-                                <InputText id="title" class="form-control" @bind-Value="@Proposal.ProposalTitle" placeholder="Titel"></InputText>
-
+                                <InputText id="title" class="form-control" @bind-Value="Proposal.ProposalTitle" placeholder="Titel"/>
                             </div>
                             <div class="row mb-2">
                                 <div class="col">
@@ -40,7 +39,7 @@
                                     <InputDate id="start" class="form-control col" @bind-Value="Proposal.Start"/>
                                 </div>
                                 <div class="col">
-                                    <label for="ende">Vsl. Ende </label>
+                                    <label for="end">Vsl. Ende </label>
                                     <InputDate id="end" class="form-control col" @bind-Value="Proposal.End"/>
                                 </div>
 

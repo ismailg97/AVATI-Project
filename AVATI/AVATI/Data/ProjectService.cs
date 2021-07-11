@@ -13,18 +13,22 @@ namespace AVATI.Data
 {
     public class ProjectService : IProjektService
     {
-        private readonly IConfiguration _configuration;
         public List<Project> Projects { get; set; }
-
+        private string ConnectionString; //global connectionstring
+        
         public ProjectService(IConfiguration configuration)
         {
-            _configuration = configuration;
+            ConnectionString = configuration.GetConnectionString("AVATI-Database");
         }
-
+        public ProjectService(string connection) //for testing database connections -> for testpurposes
+        {
+            ConnectionString = connection;
+        }
+        
         public DbConnection GetConnection()
         {
             return new SqlConnection
-                (_configuration.GetConnectionString("AVATI-Database"));
+                (ConnectionString);
         }
 
         public bool CreateProject(Project project)
@@ -42,8 +46,18 @@ namespace AVATI.Data
                     dateBeg = project.Projectbeginning.ToString("d", DateTimeFormatInfo.InvariantInfo),
                     dateEnd = project.Projectend.ToString("d", DateTimeFormatInfo.InvariantInfo)
                 });
+            var projectId = db.QuerySingle<int>("SELECT max(ProjectID) FROM Project");
             foreach (var emp in project.Employees)
             {
+                Console.WriteLine(emp.FirstName);
+                db.Execute("INSERT INTO ProjectActivity_Project_Employee VALUES(@ProID, @EmplId, NULL)",
+                    new {ProID = projectId, EmplId = emp.EmployeeID});
+            }
+
+            foreach (var field in project.Fields)
+            {
+                Console.WriteLine(field);
+                db.Execute("INSERT INTO Project_Field VALUES(@pro, @f)", new {f = field, pro = projectId});
             }
 
             return true;

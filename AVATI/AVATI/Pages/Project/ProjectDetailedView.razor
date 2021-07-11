@@ -6,6 +6,7 @@
 @inject ProjectPurposeService _projectPurpose
 @inject IProjectActivityService _activity
 @inject IProjektService _projectService
+@inject IProjectActivityService _projectActivity
 
 <div class="container">
     <div class="row">
@@ -157,13 +158,13 @@
                             {
                                 <tr>
                                     <td>@purpose.Purpose</td>
-                                    @if (purpose.AssignedProjectActivity == null)
+                                    @if (_projectActivity.GetProjectActivity(purpose.Purpose) == null)
                                     {
-                                        <td>[Keine Tätigkeit zugewiesen!]</td>
+                                        <td>[null]</td>
                                     }
                                     else
                                     {
-                                        <td>@purpose.AssignedProjectActivity</td>
+                                        <td>@_projectActivity.GetProjectActivity(purpose.Purpose)</td>
                                     }
                                 </tr>
                             }

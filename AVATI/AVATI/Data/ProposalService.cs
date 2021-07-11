@@ -14,16 +14,25 @@ namespace AVATI.Data
     public class ProposalService : IProposalService
     {
         private readonly IConfiguration _configuration;
-        public List<Proposal> Proposals { get; set; }
-        private EmployeeDetailService _employeeDetailService;
 
+        private string _connectionString;
+        public List<Proposal> Proposals { get; set; }
+        private readonly EmployeeDetailService _employeeDetailService;
         public DbConnection GetConnection()
         {
+            if (_connectionString != null)
+            {
+                return new SqlConnection
+                    (_connectionString);
+            }
             return new SqlConnection
                 (_configuration.GetConnectionString("AVATI-Database"));
         }
 
-
+        public ProposalService(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
         public ProposalService(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -81,7 +90,7 @@ namespace AVATI.Data
 
             db.Execute("INSERT INTO EmployeeDetail VALUES(@prop, @emp, @oldRc, 0)",
                 new {prop = propId, emp = empl, oldRc = rc});
-            
+
 
             return true;
         }
@@ -90,6 +99,10 @@ namespace AVATI.Data
         {
             using DbConnection db = GetConnection();
             int idToUSe = id;
+            if (proposal.ProposalTitle.Length > 70 || proposal.ProposalTitle is null or "")
+            {
+                return false;
+            }
             var result = db.Query<Proposal>("SELECT * FROM Proposal WHERE ProposalID = @propId",
                 new {propId = id});
             if (result.FirstOrDefault() == null)
@@ -164,7 +177,6 @@ namespace AVATI.Data
             if (db.Query<Proposal>("SELECT * FROM PROPOSAL WHERE ProposalId = @propID", new {propId = proposalId})
                 .FirstOrDefault() == null)
             {
-                
                 return false;
             }
             else
@@ -184,49 +196,51 @@ namespace AVATI.Data
             {
                 return 0;
             }
-            else
+
+            if (temp.ProposalTitle.Contains("[KOPIE]"))
             {
-                temp.Start = db.QuerySingle<DateTime>("SELECT ProposalBegin from Proposal WHERE ProposalId = @proId",
-                    new {proId = proposalId});
-                temp.End = db.QuerySingle<DateTime>("SELECT ProposalEnd from Proposal WHERE ProposalId = @proId",
-                    new {proId = proposalId});
-                db.Execute("INSERT INTO Proposal VALUES(@proposalTitle, @Info, @beg, @end)",
-                    new
-                    {
-                        proposalTitle = temp.ProposalTitle + " [KOPIE]",
-                        Info = temp.AdditionalInfo ?? "[Keine Zusatzinformationen]",
-                        beg = temp.Start.ToString("d", DateTimeFormatInfo.InvariantInfo),
-                        end = temp.End.ToString("d", DateTimeFormatInfo.InvariantInfo)
-                    });
-                int newId = db.Query<int>("SELECT max(ProposalID) from Proposal").First();
-                foreach (var hardskill in db.Query<string>(
-                    "SELECT Hardskill FROM Proposal_Hardskill WHERE ProposalID = @propId", new {propId = proposalId}))
-                {
-                    db.Execute("INSERT INTO Proposal_Hardskill VALUES(@id, @desc)", new {id = newId, desc = hardskill});
-                }
-
-                foreach (var field in db.Query<string>("SELECT Field FROM Proposal_Fields WHERE ProposalID = @propId",
-                    new {propId = proposalId}))
-                {
-                    db.Execute("INSERT INTO Proposal_Fields VALUES(@id, @desc)", new {id = newId, desc = field});
-                }
-
-                foreach (var softskill in db.Query<string>(
-                    "SELECT Softskill FROM Proposal_Softskill WHERE ProposalID = @propId", new {propId = proposalId}))
-                {
-                    db.Execute("INSERT INTO Proposal_Softskill VALUES(@id, @desc)", new {id = newId, desc = softskill});
-                }
-
-                foreach (var emp in db.Query<int>("SELECT EmployeeId from EmployeeDetail WHERE ProposalID = @propId",
-                    new {propId = proposalId}))
-                {
-                    _employeeDetailService.CopyDetail(proposalId, newId, emp);
-                }
-
-                return newId;
+                temp.ProposalTitle = temp.ProposalTitle.Remove(temp.ProposalTitle.Length -7);
             }
+            temp.Start = db.QuerySingle<DateTime>("SELECT ProposalBegin from Proposal WHERE ProposalId = @proId",
+                new {proId = proposalId});
+            temp.End = db.QuerySingle<DateTime>("SELECT ProposalEnd from Proposal WHERE ProposalId = @proId",
+                new {proId = proposalId});
+            db.Execute("INSERT INTO Proposal VALUES(@proposalTitle, @Info, @beg, @end)",
+                new
+                {
+                    proposalTitle = temp.ProposalTitle + " [KOPIE]",
+                    Info = temp.AdditionalInfo ?? "[Keine Zusatzinformationen]",
+                    beg = temp.Start.ToString("d", DateTimeFormatInfo.InvariantInfo),
+                    end = temp.End.ToString("d", DateTimeFormatInfo.InvariantInfo)
+                });
+            int newId = db.Query<int>("SELECT max(ProposalID) from Proposal").First();
+            foreach (var hardskill in db.Query<string>(
+                "SELECT Hardskill FROM Proposal_Hardskill WHERE ProposalID = @propId", new {propId = proposalId}))
+            {
+                db.Execute("INSERT INTO Proposal_Hardskill VALUES(@id, @desc)", new {id = newId, desc = hardskill});
+            }
+
+            foreach (var field in db.Query<string>("SELECT Field FROM Proposal_Fields WHERE ProposalID = @propId",
+                new {propId = proposalId}))
+            {
+                db.Execute("INSERT INTO Proposal_Fields VALUES(@id, @desc)", new {id = newId, desc = field});
+            }
+
+            foreach (var softskill in db.Query<string>(
+                "SELECT Softskill FROM Proposal_Softskill WHERE ProposalID = @propId", new {propId = proposalId}))
+            {
+                db.Execute("INSERT INTO Proposal_Softskill VALUES(@id, @desc)", new {id = newId, desc = softskill});
+            }
+
+            foreach (var emp in db.Query<int>("SELECT EmployeeId from EmployeeDetail WHERE ProposalID = @propId",
+                new {propId = proposalId}))
+            {
+                _employeeDetailService.CopyDetail(proposalId, newId, emp);
+            }
+
+            return newId;
         }
-        
+
 
         public Proposal GetProposal(int proposalId)
         {

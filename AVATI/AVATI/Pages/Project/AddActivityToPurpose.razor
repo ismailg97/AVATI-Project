@@ -39,13 +39,13 @@
                     <hr class="mx-2"/> <!--line divider -->
                     <label class="font-weight-bold ">Zugewiesene Tätigkeit:</label>
                     <div class="list-group col overflow-auto text-center border-dark" style="height: 100px">
-                        @if (purpose.AssignedProjectActivity == null)
+                        @if (purpose.AssignedProjectActivity == null || purpose.AssignedProjectActivity.Description == null)
                         {
                             <label>[Keine Tätigkeit zugewiesen]</label>
                         }
                         else if (purpose.AssignedProjectActivity != null)
                         {
-                            <button type="button" class="btn btn-outline-dark" @onclick="() => { RemoveAssignedActivity();}">@purpose.AssignedProjectActivity.Description</button>
+                            <button type="button" class="btn btn-outline-dark" @onclick="() => { RemoveAssignedActivity(); }">@purpose.AssignedProjectActivity.Description</button>
                         }
                     </div>
                     <div class="div float-right">
@@ -60,47 +60,57 @@
 {
     <div class="modal-backdrop fade show"></div>
 }
+
 @code{
     private ProjectPurpose purpose;
     private List<ProjectActivity> _activitiesFromProject;
-    
+
     [Parameter]
     public int ID { get; set; }
 
     public int EmployeeID { get; set; }
     private bool _show { get; set; }
-    
+
     [Parameter]
     public Projectedit Abstract { get; set; }
 
     public void UpdatePurpose(ProjectActivity activity)
     {
-        purpose.AssignedProjectActivity = activity;
-        _purposeService.UpdatePurpose(purpose);
-        _activitiesFromProject.Remove(activity);
+        if (purpose.AssignedProjectActivity == null || string.IsNullOrEmpty(purpose.AssignedProjectActivity.Description))
+        {
+            purpose.AssignedProjectActivity = activity;
+            _purposeService.UpdatePurpose(purpose);
+            _activitiesFromProject.Remove(activity);
+            Abstract.Update();
+        }
         StateHasChanged();
     }
 
     public void RemoveAssignedActivity()
     {
         _activitiesFromProject.Add(purpose.AssignedProjectActivity);
+        
         purpose.AssignedProjectActivity = null;
         _purposeService.UpdatePurpose(purpose);
         StateHasChanged();
+        Abstract.Update();
     }
-    
+
     public void Showing(ProjectPurpose purp, int projectID)
     {
         _show = !_show;
         ID = projectID;
-        
+
         purpose = _purposeService.GetProjectPurpose(purp.Purpose);
         _activitiesFromProject = _projectActivity.GetProjectActivitiesProject(projectID);
-
-        if (purpose.AssignedProjectActivity != null)
+        foreach (var activ in _activitiesFromProject.ToList())
         {
-            _activitiesFromProject.Remove(purpose.AssignedProjectActivity);
+            if (activ.Description == purpose.AssignedProjectActivity.Description)
+            {
+                _activitiesFromProject.Remove(activ);
+            }
         }
+        Abstract.Update();
         StateHasChanged();
     }
 
@@ -116,4 +126,5 @@
         Abstract.Update();
         StateHasChanged();
     }
+
 }

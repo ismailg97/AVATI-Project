@@ -141,5 +141,14 @@ namespace AVATI.Data
             purpose.AssignedProjectActivity = temp; 
             return purpose;
         }
+
+        public string GetAssignedProjectactivityString(string description)
+        {
+            using DbConnection db = GetConnection();
+
+            var result = db.Query("Select ProjectActivity from Projectpurpose where Purpose = @name",
+                new {name = description});
+            return result.ToString();
+        }
     }
 }
