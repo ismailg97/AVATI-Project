@@ -61,7 +61,7 @@ else
                     }
                     @foreach (var branche in Project.Fields)
                     {
-                        <button class="btn btn-outline-dark">@branche</button>
+                        <button type="button" class="btn btn-outline-dark">@branche</button>
                     }
                 </div>
                 <button class="btn btn-info col" type="button" @onclick="() => { PopAddFieldToProject(); }">

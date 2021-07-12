@@ -234,7 +234,9 @@
 
                                     @if (Id != 0 && _proposal.GetProposal(Id).Employees.Find(e => e.EmployeeID == employee.EmployeeID) == null)
                                     {
-                                        <button class="btn btn-outline-success" id="employeeAdd" @onclick=@(() => { _proposal.AddEmployee(Id, employee.EmployeeID, employee.Rc); employeeList.Add(employee); StateHasChanged(); })> <span class="oi oi-plus"></span></button>
+                                        <button class="btn btn-outline-success" id="employeeAdd" @onclick=@(() => { _proposal.AddEmployee(Id, employee.EmployeeID, employee.Rc); employeeList.Add(employee); StateHasChanged(); })>
+                                            <span class="oi oi-plus"></span>
+                                        </button>
                                     }
                                 </td>
                             }
@@ -315,7 +317,9 @@
                         </div>
                     </td>
                     <td style="width: 10%" class="text-center">
-                        <button class="btn btn-outline-danger" id="employeeRemove" @onclick=@(() => { _proposal.RemoveEmployee(Id, employee.EmployeeID); employeeList.Remove(employee); StateHasChanged(); })><span class="oi oi-x"></span></button>
+                        <button class="btn btn-outline-danger" id="employeeRemove" @onclick=@(() => { _proposal.RemoveEmployee(Id, employee.EmployeeID); employeeList.Remove(employee); StateHasChanged(); })>
+                            <span class="oi oi-x"></span>
+                        </button>
 
                     </td>
                 </tr>

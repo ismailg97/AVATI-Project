@@ -42,7 +42,7 @@
                     <img class="rounded" src="@Emp.Image" style="margin-left: -45px" width="300" height="200" alt=""/>
                 }
                 <div class="file btn btn-lg btn-primary" style="margin-top: 50px; margin-left: -30px">
-                    <InputFile class="rounded" type="file" id="empImage" OnChange="HandlePhotoSelected"  name="file"/>
+                    <InputFile class="rounded" type="file" id="empImage" OnChange="HandlePhotoSelected" name="file"/>
                 </div>
             </div>
         </div>
@@ -66,7 +66,7 @@
                         <!------ RC-Level ---------->
                         <div class="col-6">
                             <div class="card-title small font-weight-light lead text-left">Rate-Card Level</div>
-                            <InputNumber class="form-control" min="1" max="7" type="number" @bind-Value=@Emp.Rc  id="example-number-input"/>
+                            <InputNumber class="form-control" min="1" max="7" type="number" @bind-Value=@Emp.Rc id="example-number-input"/>
                         </div>
                         <!------ Employment Time ---------->
                         <div class="col-6">
@@ -90,30 +90,28 @@
         </div>
 
         <!------ Edit Profile Button ---------->
-        <div class="col-md-2">
-            <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Bestätigen"/>
-
+        <div class="form-group col">
+            <button type="submit" class="form-group btn btn-success m-2">
+                <span class="oi oi-document" aria-hidden="true"></span> Bestätigen
+            </button>
 
             <!------ Return Button ---------->
-
-            <a style="margin-top: 20px" href="/profile/@Emp.EmployeeID">
-                <input type="button" class="profile-edit-btn" name="btnAddMore" value="Zurück"/>
-            </a>
+            <button type="button" class="form-group btn btn-danger m-2" @onclick="() => { NavigateToProjectEdit(Emp.EmployeeID); }">
+                <span class="oi oi-x" aria-hidden="true"></span> Abbrechen
+            </button>
         </div>
     </div>
 
 
-    <form class="backdrop">
-
     <!------ Skills ---------->
     <div class="form-col">
 
-        <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
+        <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider"><b>Skills</b></div>
 
 
         <!------ Hard Skills ---------->
         <div class=" form-group">
-            <label class="mr-3 mt-2">Hard Skills: </label>
+            <label class="mr-3 mt-2"><b>Hard Skills:</b> </label>
             @foreach (var hardskill in Emp.Hardskills)
             {
                 @if (Emp.HardSkillLevel.Any())
@@ -195,7 +193,7 @@
 
     <!------ Soft Skills ---------->
     <div class="form-group">
-        <label class="mr-3 mt-2">Softskills: </label>
+        <label class="mr-3 mt-2"><b>Softskills:</b> </label>
         @foreach (var softskilll in Emp.Softskills)
         {
             <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Softskills.Remove(softskilll); })>
@@ -222,7 +220,7 @@
 
     <!------ Rollen ---------->
     <div class="form-group">
-        <label class="mr-3 mt-2">Rollen: </label>
+        <label class="mr-3 mt-2"><b>Rollen:</b> </label>
         @foreach (var empRoles in Emp.Roles)
         {
             <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Roles.Remove(empRoles); })>
@@ -250,7 +248,7 @@
     <!------ Fields ---------->
 
     <div class="form-group">
-        <label class="mr-3 mt-2">Branchenwissen: </label>
+        <label class="mr-3 mt-2"><b>Branchenwissen:</b> </label>
         @foreach (var empField in Emp.Field)
         {
             <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Field.Remove(empField); })>
@@ -278,7 +276,7 @@
     <!------ Languages ---------->
 
     <div class=" form-group">
-        <label class="mr-3 mt-2">Sprachen: </label>
+        <label class="mr-3 mt-2"><b>Sprachen:</b> </label>
         @foreach (var language in Emp.Language)
         {
             @if (Emp.Language.Any())
@@ -363,23 +361,20 @@
         }
     }
 
-    <div style="margin-top: 20px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
+    <div style="margin-top: 20px; border-width: medium; color: black" class="dropdown-divider"><b>Skills</b></div>
 
     <!---Projects --->
     <div class="form-group ">
-        <label class="mr-3 mt-2">Projekte: </label>
+        <label class="mr-3 mt-2"><b>Projekte: </b></label>
         <table align="left" style="text-align: left" class="table table-striped align-middle">
-            <tr>
+            <tr style="background-color: #7a7a7a">
                 <th class="text-left">Projekt</th>
+                
                 <th class="text-left">Projekttätigkeit</th>
                 <th class="text-left">Hardskills</th>
                 <th class="text-left">Softskills</th>
                 <th>
-                    <a href="/employeeProject/@Emp.EmployeeID">
-                        <button style="margin-left: -120px" type="button" class="profile-edit-btn btn btn-outline-warning">
-                            Bearbeiten
-                        </button>
-                    </a>
+                    <button type="button" class="btn btn-info" @onclick="() => { NavigateToEmployeeProject(Emp.EmployeeID); }">Bearbeiten</button>
                 </th>
             </tr>
             @if (_projctActivityService.GetProjectActivitiesEmployee(Id).Any())
@@ -390,7 +385,7 @@
                         <td class="text-left">@_projektService.GetProject(activity.ProjectID).Projecttitel</td>
                         <td class="text-left">@activity.Description</td>
                         <td class="text-left">@string.Join(" | ", activity.HardSkills)</td>
-                        <td class="text-left"> @string.Join(" | ", activity.SoftSkills)</td>
+                        <td class="text-left">@string.Join(" | ", activity.SoftSkills)</td>
                     </tr>
                 }
             }
@@ -404,7 +399,6 @@
         </table>
     </div>
 
-    </form>
     </EditForm>
 }
 else
@@ -461,7 +455,7 @@ else
     }
 
 
-    public void EditProject()
+    public void NavigatoToEditProject()
     {
         _navManager.NavigateTo("/employeeProject/@Emp.EmployeeId");
     }
@@ -469,8 +463,6 @@ else
 
     public void EditProfiles()
     {
-        
-        
         _employee.EditEmployeeProfile(Emp);
         _navManager.NavigateTo("profile/" + Emp.EmployeeID);
     }
@@ -481,7 +473,7 @@ else
         _booleanProj = !_booleanProj;
     }
 
-    
+
     public void HandleHardSkillClick(Hardskill hardskill)
     {
         _hardSkillLevel.Showing(Emp, hardskill);
@@ -509,16 +501,22 @@ else
 
     private async Task HandlePhotoSelected(InputFileChangeEventArgs obj)
     {
-        
         var imageFile = obj.File;
         string imgType = imageFile.ContentType;
         var buffer = new byte[imageFile.Size];
         await imageFile.OpenReadStream().ReadAsync(buffer);
-        var imgUrl =$"data:{imgType};base64,{Convert.ToBase64String(buffer)}";
+        var imgUrl = $"data:{imgType};base64,{Convert.ToBase64String(buffer)}";
         Emp.Image = imgUrl;
-
     }
 
-   
+    public void NavigateToProjectEdit(int EmployeeID)
+    {
+        _navManager.NavigateTo("/profile/" + Emp.EmployeeID);
+    }
+
+    public void NavigateToEmployeeProject(int EmployeeID)
+    {
+        _navManager.NavigateTo("/employeeProject/"+EmployeeID);
+    }
 
 }
