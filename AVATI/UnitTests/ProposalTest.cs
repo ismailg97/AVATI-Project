@@ -23,7 +23,6 @@ namespace UnitTests
             string json = File.ReadAllText("appsettings.json");
             JObject jObject = JObject.Parse(json);
             var name = (string) jObject["ConnectionStrings"]["TEST-Database"];
-            Console.WriteLine(name);
             connection =
                 name;
         }
@@ -150,10 +149,12 @@ namespace UnitTests
                 if (isValid)
                 {
                     Assert.IsTrue(proposalService.UpdateProposal(list[0].ProposalID, list[0]));
+                    Assert.IsTrue(proposalService.GetProposal(list[0].ProposalID) != null && proposalService.GetProposal(list[0].ProposalID).ProposalTitle == proposalTitle);
                 }
                 else
                 {
                     Assert.IsFalse(proposalService.UpdateProposal(list[0].ProposalID, list[0]));
+                    Assert.IsTrue(proposalService.GetProposal(list[0].ProposalID) != null && proposalService.GetProposal(list[0].ProposalID).ProposalTitle != proposalTitle);
                 }
             }
             

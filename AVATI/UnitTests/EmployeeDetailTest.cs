@@ -76,6 +76,7 @@ namespace UnitTests
                 foreach (var detail in empDetail)
                 {
                     propService.UpdateAltRc(proposal.ProposalID, detail.EmployeeId, rc);
+                    Assert.IsTrue(empService.GetEmployeeDetail(detail.EmployeeId, proposal.ProposalID).Result != null);
                     Assert.IsTrue(empService.GetEmployeeDetail(detail.EmployeeId, proposal.ProposalID).Result.Rc == rc);
                 }
             }
