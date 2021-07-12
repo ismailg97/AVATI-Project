@@ -5,9 +5,11 @@
 @inject IEmployeeService _employee
 @inject IProjectActivityService _projctActivityService
 @inject IProjektService _projektService
+@inject AuthenticationStateProvider _authenticationStateProvider
 
 
 <h3 class="text-left">Profil</h3>
+
 
 <div class="container backdrop emp-profile">
     <form>
@@ -184,7 +186,7 @@
                                     <tr>
                                         <td class="text-left">@_projektService.GetProject(activity.ProjectID).Projecttitel</td>
                                         <td class="text-left">@activity.Description</td>
-                                        </tr>
+                                    </tr>
                                 }
                             }
                             else
@@ -203,7 +205,9 @@
 </div>
 
 
-@code {
+
+
+    @code {
 
 
     private bool _booleanLang = false;
@@ -224,6 +228,7 @@
 
     protected override void OnInitialized()
     {
+        _authenticationStateProvider.GetAuthenticationStateAsync();
         Emp = _employee.GetEmployeeProfile(Id);
     }
 
