@@ -3,9 +3,6 @@
 
 
 @using AVATI.Data
-@using DocumentFormat.OpenXml.Drawing
-@using DocumentFormat.OpenXml.InkML
-@using System.Diagnostics
 
 @inject IProjektService _projektService
 @inject JsonImport _jsonImport
@@ -17,12 +14,12 @@
 
 <DeleteConfirmationProjectEmployee @ref="_deleteConfirmation" ProjectActivity="@_projectActivity" Abstract="@this"></DeleteConfirmationProjectEmployee>
 
-<h3>Projektübersicht</h3>
 
 @if (_pageIsLoaded)
 {
-    <EditForm Model="@ProjActivity">
-        <table id="table" data-show-refresh="true" class="table align-middle table-striped mb-5">
+    <h3>Beteiligte Projekte von @_employeeService.GetEmployeeProfile(Id).FirstName @_employeeService.GetEmployeeProfile(Id).LastName</h3>
+    <EditForm Model="@ProjActivity" OnValidSubmit="@Save">
+        <table id="table" data-show-refresh="true" class="table form-group align-middle table-striped mb-5">
             <thead>
             <div class="form-group">
                 <input class="form-control" type="text" placeholder="Suche Projekt..."
@@ -31,8 +28,9 @@
             </div>
             <tr>
                 <th scope="col">Projekttitel</th>
-                <th scope="col">Projektbeschreibung</th>
+                <th scope="col">DURCH HARD UND SOFT SKILLS ERSETZEN</th>
                 <th scope="col">Projekttätigkeit</th>
+                <th scope="col"></th>
             </tr>
             </thead>
             <tbody>
@@ -43,12 +41,18 @@
                     Project proj = _projektService.GetProject(activity.ProjectID);
                     <tr>
                         <td>@proj.Projecttitel</td>
-                        <td>@proj.Projectdescription</td>
+                        <td></td>
                         <td>@activity.Description</td>
                         <td>
-                            <button type="button" @onclick="(() => { ShowUpdate(activity); })" class="btn btn-secondary oi oi-pencil"></button>
-                            <button type="button" @onclick="(() => { DeleteProjectActivity(activity); })" class="btn btn-danger oi oi-trash">Löschen</button>
-                            <button type="button" @onclick="(() => { ShowAdd(activity); })" class="btn btn-success oi oi-plus"></button>
+                            <button type="button" class="btn btn-info" @onclick="(() => { ShowUpdate(activity); })">
+                                <span class="oi oi-pencil"></span>
+                            </button>
+                            <button type="button" class="btn btn-danger" @onclick="(() => { DeleteProjectActivity(activity); })">
+                                <span class="oi oi-trash"></span>
+                            </button>
+                            <button type="button" class="btn btn-success" @onclick="(() => { ShowAdd(activity); })">
+                                <span class="oi oi-plus"></span>
+                            </button>
                         </td>
                     </tr>
                 }
@@ -92,6 +96,11 @@
             }
             </tbody>
         </table>
+        <div class="form-group text-right">
+            <button type="submit" class="btn btn-success">
+                <span class="oi oi-document" aria-hidden="true"></span> Zurück
+            </button>
+        </div>
     </EditForm>
 }
 else
@@ -324,11 +333,12 @@ else
                             <label class="mr-3 mt-2">Projektaktivität: </label>
                             <select>
                                 <option value="" selected disabled>Bitte wählen Sie eine Projekttätigkeit aus</option>
-                                @foreach(var activities in _projectActivityService.GetProjectActivitiesProject(ProjectId).Where(x => !_projectActivityService.GetEmployeeProjectActivities(Id, ProjectId).Exists(k => k.ProjectActivityID == x.ProjectActivityID))){
-        <option @onclick="(() => { _projectActivity.Description = activities.Description; })">@activities.Description</option>
-    }
-                                       
-                               
+                                @foreach (var activities in _projectActivityService.GetProjectActivitiesProject(ProjectId).Where(x => !_projectActivityService.GetEmployeeProjectActivities(Id, ProjectId).Exists(k => k.ProjectActivityID == x.ProjectActivityID)))
+                                {
+                                    <option @onclick="(() => { _projectActivity.Description = activities.Description; })">@activities.Description</option>
+                                }
+
+
                             </select>
                         </div>
 
@@ -521,5 +531,10 @@ else
         }
 
         ShowPopCreate = !ShowPopCreate;
+    }
+
+    public void Save()
+    {
+        _navManager.NavigateTo("/profile/update/" + Emp.EmployeeID);
     }
 }
