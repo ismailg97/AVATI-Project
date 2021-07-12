@@ -23,8 +23,8 @@
 
 @if (_pageIsLoaded)
 {
-    <h3>Profil</h3>
-
+    <h3>Profil editieren...</h3>
+    <hr style="padding: 0.5%"/>
     <!------ Gets Employee with the same Id as the Router Parameter ---------->
     <EditForm Model="@Emp" OnValidSubmit="@EditProfiles">
 
@@ -35,20 +35,20 @@
             <div class="profile-img">
                 @if (Emp.Image == null)
                 {
-                    <img class="rounded" src="@_employee.GetDefaultPicture()" style="margin-left: -45px" width="300" height="200" alt=""/>
+                    <img class=" form-group" src="@_employee.GetDefaultPicture()" width="300" height="200" alt=""/>
                 }
                 else
                 {
-                    <img class="rounded" src="@Emp.Image" style="margin-left: -45px" width="300" height="200" alt=""/>
+                    <img class=" form-group" src="@Emp.Image" width="300" height="200" alt=""/>
                 }
-                <div class="file btn btn-lg btn-primary" style="margin-top: 50px; margin-left: -30px">
-                    <InputFile class="rounded" type="file" id="empImage" OnChange="HandlePhotoSelected" name="file"/>
-                </div>
+                <label class="form-group border-dark border-1" for="File" style="border-color: #5c636a;"></label>
+                <button type="button" class="form-group btn btn-secondary">
+                    <InputFile class="" type="file" id="File" OnChange="HandlePhotoSelected" name="file"/>
+                </button>
             </div>
         </div>
         <div class="col-md-6">
             <div class="profile-head">
-
                 <div class="form-group">
                     <div class="row">
                         <!------ First Name ---------->
@@ -366,10 +366,9 @@
     <!---Projects --->
     <div class="form-group ">
         <label class="mr-3 mt-2"><b>Projekte: </b></label>
-        <table align="left" style="text-align: left" class="table table-striped align-middle">
+        <table style="text-align: left" class="table table-striped align-middle">
             <tr style="background-color: #7a7a7a">
-                <th class="text-left">Projekt</th>
-                
+                <th class="text-left">Titel</th>
                 <th class="text-left">Projekttätigkeit</th>
                 <th class="text-left">Hardskills</th>
                 <th class="text-left">Softskills</th>
@@ -386,6 +385,7 @@
                         <td class="text-left">@activity.Description</td>
                         <td class="text-left">@string.Join(" | ", activity.HardSkills)</td>
                         <td class="text-left">@string.Join(" | ", activity.SoftSkills)</td>
+                        <td></td>
                     </tr>
                 }
             }
@@ -425,7 +425,7 @@ else
     public string Input { get; set; }
     public bool Clicked { get; set; } = false;
     private string Filter { get; set; }
-    public Employee Emp = new Employee();
+    public Employee Emp { get; set; }
     public string WorkExperience;
     public List<Hardskill> HardskillList = new List<Hardskill>();
     public List<string> ProjList = new List<string>();
