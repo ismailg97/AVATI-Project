@@ -133,7 +133,7 @@
         <div style="border-color: black" class="form-group col-md-4">
             <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
             <!------ Languages ---------->
-            <div class="form-group small text-left">
+            <div class="form-group">
                 <button type="button" class="btn btn-outline-secondary form-group" @onclick="(() => { CollLang(); })">Sprachen <span class="oi oi-list" aria-hidden="true"></span></button>
                 <div class="card-text @(_booleanLang ? "" : "collapse")">
                     @if (Emp.Language.Any())
@@ -161,7 +161,7 @@
                 <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
 
                 <!------ Projects ---------->
-                <div class="form-group small text-left">
+                <div class="form-group">
                     <button type="button" class="btn btn-outline-secondary form-group" @onclick="(() => { CollProj(); })">Projekte <span class="oi oi-list" aria-hidden="true"></span></button>
                     <div class="card-text @(_booleanProj ? "" : "collapse")">
                         <table style="text-align: left" class="table align-middle">
