@@ -122,6 +122,7 @@ else
                         <div class="form-group">
                             <label class="mr-3 mt-2">Projektaktivität: </label>
                             <select >
+                                <option value="" selected disabled>Bitte wählen Sie eine Projekttätigkeit aus</option>
                                 @foreach (var activities in _projectActivityService.GetAllProjectActivities())
                                 {
                                     <option value="" @onclick="(() => { _projectActivity.Description = activities.Description; })">@activities.Description</option>
@@ -322,10 +323,12 @@ else
                         <div class="form-group">
                             <label class="mr-3 mt-2">Projektaktivität: </label>
                             <select>
-                                @foreach (var activities in _projectActivityService.GetAllProjectActivities())
-                                {
-                                    <option @onclick="(() => { _projectActivity.Description = activities.Description; })">@activities.Description</option>
-                                }
+                                <option value="" selected disabled>Bitte wählen Sie eine Projekttätigkeit aus</option>
+                                @foreach(var activities in _projectActivityService.GetProjectActivitiesProject(ProjectId).Where(x => !_projectActivityService.GetEmployeeProjectActivities(Id, ProjectId).Exists(k => k.ProjectActivityID == x.ProjectActivityID))){
+        <option @onclick="(() => { _projectActivity.Description = activities.Description; })">@activities.Description</option>
+    }
+                                       
+                               
                             </select>
                         </div>
 
@@ -443,7 +446,6 @@ else
         foreach (var pA in _projectActivityService.GetProjectActivitiesEmployee(Id))
         {
             _booleanProj.Add(pA.ProjectActivityID, false);
-            
         }
         _pageIsLoaded = true;
     }
@@ -481,7 +483,7 @@ else
     {
         _booleanProj[id] = !_booleanProj[id];
     }
-    
+
 
     public void UpdateLists()
     {
@@ -497,13 +499,14 @@ else
 
         ShowPopUpdate = !ShowPopUpdate;
     }
-    
+
     private void ShowAdd(ProjectActivity activity)
     {
-        if (!ShowPopUpdate)
+        if (!ShowPopAdd)
         {
             ProjectId = activity.ProjectID;
             _projectActivity = new ProjectActivity();
+            ProjActivity = activity;
         }
 
         ShowPopAdd = !ShowPopAdd;

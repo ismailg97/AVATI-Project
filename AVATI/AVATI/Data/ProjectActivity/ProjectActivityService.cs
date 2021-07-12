@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using Dapper;
+using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Drawing.Charts;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -70,7 +71,6 @@ namespace AVATI.Data
             }
             
             
-            
             List<string> SoftSkillList = new List<string>(db.Query<string>(
                 "SELECT Softskill FROM ProjectActivity_Softskill WHERE ProjectActivityID=@projActivityID", new { projActivityID = ProjectActivityID}));
             foreach (var soft in SoftSkillList)
@@ -102,16 +102,17 @@ namespace AVATI.Data
         {
             using IDbConnection db = GetConnection();
             var returnVal =
-                db.Query<string>(
-                    "Select ProjectActivity from ProjectActivity_Project_Employee WHERE ProjectActivityID = @projActivityID",
+                db.QuerySingle<int>(
+                    "Select ProjectActivityID from ProjectActivity_Project_Employee WHERE ProjectActivityID = @projActivityID",
                     new
                     {
                         projActivityID = ProjectActivityID
                     });
-            if (returnVal.FirstOrDefault() == null)
+            if (returnVal == null)
             {
                 return false;
             }
+            
             
             db.Execute("Delete from ProjectActivity_Hardskill WHERE ProjectActivityID = @ProjectActivityId",new
             {
@@ -155,10 +156,59 @@ namespace AVATI.Data
         public List<ProjectActivity> GetEmployeeProjectActivities(int EmployeeId, int ProjectId)
         {
             using IDbConnection db = GetConnection();
-            List<ProjectActivity> tempList = new List<ProjectActivity>(db.Query<ProjectActivity>(
-                "SELECT * FROM ProjectActivity_Project_Employee WHERE EmployeeId = @emp AND ProjectId = @pro",
-                new {emp = EmployeeId, pro = ProjectId}));
-            return tempList;
+            
+            //List<ProjectActivity> tempList = new List<ProjectActivity>(db.Query<ProjectActivity>(
+            //    "SELECT * FROM ProjectActivity_Project_Employee WHERE EmployeeId = @emp AND ProjectId = @pro",
+            //    new {emp = EmployeeId, pro = ProjectId}));
+            //foreach (var projA in tempList)
+            //{
+            //    Console.WriteLine(projA.Description);
+            //}
+            //return tempList;
+            
+            
+            List<ProjectActivity> projALIst = new List<ProjectActivity>();
+            List<int> tempList = db.Query<int>(
+                "SELECT ProjectActivityID FROM ProjectActivity_Project_Employee WHERE EmployeeID = @id AND ProjectId = @proj ", new
+                {
+                    id = EmployeeId, proj = ProjectId
+                }).ToList();
+            foreach (var projA in tempList)
+            {
+                //Console.WriteLine(projA);
+                projALIst.Add(new ProjectActivity()
+                {
+                    EmployeeID = EmployeeId, 
+                    Description = db.QuerySingle<string>(
+                        "SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectActivityID = @pr ", new
+                        {
+                            pr = projA
+                        }),
+                    ProjectID = db.QuerySingle<int>("SELECT ProjectID FROM ProjectActivity_Project_Employee WHERE ProjectActivityID = @pr", new
+                    {
+                        pr = projA
+                    }),
+                    HardSkills = db.Query<string>("SELECT Hardskill FROM ProjectActivity_Hardskill WHERE ProjectActivityID = @pr ", new
+                    {
+                        pr = projA
+                    }).ToList(),
+                    SoftSkills = db.Query<string>("SELECT Softskill FROM ProjectActivity_Softskill WHERE ProjectActivityID = @pr ", new
+                    {
+                        pr = projA
+                    }).ToList(),
+                    ProjectActivityID = projA,
+                    
+                });
+                
+
+            }
+
+            foreach (var proA in projALIst)
+            {
+                Console.WriteLine(proA.Description);
+            }
+            return projALIst;
+            
         }
 
         public List<ProjectActivity> GetProjectActivitiesProject(int ProjectID)
@@ -301,11 +351,13 @@ namespace AVATI.Data
         public bool UpdateProjectActivityEmployee(int EmpId,int ProjId, ProjectActivity activity)
         {
             using IDbConnection db = GetConnection();
+            
+            // 
             db.Query("UPDATE ProjectActivity_Project_Employee SET ProjectActivity=@newDesc WHERE EmployeeID=@empID AND ProjectID=@projID AND ProjectActivityID=@projActivityID ",
                 new { projID=ProjId, empID=EmpId, newDesc = activity.Description ,projActivityID=activity.ProjectActivityID});
             
             
-            
+            //Get Hardskills of Project Activity from Database ProjectActivity_Hardskill
             List<string> HardSkillList = new List<string>(db.Query<string>(
                 "SELECT Hardskill FROM ProjectActivity_Hardskill WHERE EmployeeID =@id AND ProjectActivityID=@projActivityID", new {id = EmpId, projActivityID=activity.ProjectActivityID}));
             foreach (var hard in HardSkillList)
@@ -330,10 +382,11 @@ namespace AVATI.Data
                 }
             }
             
-            
-            
+            //Get Softskills of Project Activity from Database ProjectActivity_Hardskill 
             List<string> SoftSkillList = new List<string>(db.Query<string>(
                 "SELECT Softskill FROM ProjectActivity_Softskill WHERE EmployeeID =@id AND ProjectActivityID=@projActivityID", new {id = EmpId, projActivityID = activity.ProjectActivityID}));
+            
+            //Delete Hardskills of Project Activity from Database ProjectActivity_Hardskill where 
             foreach (var soft in SoftSkillList)
             {
                 if (activity.SoftSkills.Find(x => x.Equals(soft)) == null)
