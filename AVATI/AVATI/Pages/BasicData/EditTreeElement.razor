@@ -3,7 +3,7 @@
 
 @inject IHardskillService _hardskillService
 
-<AddHardskills @ref="_addHardskills" Description="@_categoryToAdd" TreeElement="@this"/>
+<AddHardskills @ref="_addHardskills" Description="@_categoryToAdd" TreeElement="@this" Abstract="@Abstract"/>
 
 @if(Subcats == null || !Subcats.Any())
 {
@@ -45,11 +45,11 @@ else
                             @if (!_showRename[category])
                             {
                                 <ContextMenu Id="@category">
-                                    <Item OnClick="() => DeleteCategory(category)">Löschen <span class="oi oi-trash"></span></Item>
+                                    <Item OnClick="() => DeleteCategory(category)"><span class="oi oi-trash"></span> Löschen</Item>
 
-                                    <Item OnClick="() => ShowingRename(category)">Umbenennen <span class="oi oi-pencil"></span></Item>
+                                    <Item OnClick="() => ShowingRename(category)"><span class="oi oi-pencil"></span> Umbenennen</Item>
 
-                                    <Item OnClick="() => ShowingAddHardskills(category)">Hardskills hinzufügen <span class="oi oi-plus"></span></Item>
+                                    <Item OnClick="() => ShowingAddHardskills(category)"><span class="oi oi-plus"></span> Hardskills hinzufügen</Item>
                                 </ContextMenu>
 
                                 <ContextMenuTrigger MenuId="@category">
@@ -105,7 +105,7 @@ else
                         var id = hardskill + Uppercat;
                         <li>
                             <ContextMenu Id="@id">
-                                <Item OnClick="() => DeleteHardskill(hardskill)">Aus Kategorie löschen <span class="oi oi-trash"></span></Item>
+                                <Item OnClick="() => DeleteHardskill(hardskill)"><span class="oi oi-trash"></span> Aus Kategorie löschen</Item>
                             </ContextMenu>
 
                             <ContextMenuTrigger MenuId="@id">
@@ -262,7 +262,8 @@ else
         _showNew = false;
         foreach(var description in Subcats)
         {
-            var skillOrCat = await _hardskillService.GetHardskillOrCategory(description);
+            var taskSkillOrCat = _hardskillService.GetHardskillOrCategory(description);
+            var skillOrCat = await taskSkillOrCat;
             if (skillOrCat.IsHardskill)
             {
                 if(!_hardskills.Contains(description))
@@ -273,8 +274,10 @@ else
                 if (!_categorys.Contains(description))
                     _categorys.Add(description);
                 _subcatsofCategory.TryAdd(description, skillOrCat.Subcat);
-                _containsJustHardskills.TryAdd(description, await _hardskillService.ContainsJustHardskills(description));
-                _containsJustCategorys.TryAdd(description, !await _hardskillService.ContainsAnyHardskills(description));
+                var taskJustH = _hardskillService.ContainsJustHardskills(description);
+                _containsJustHardskills.TryAdd(description, await taskJustH);
+                var taskJustC = _hardskillService.ContainsAnyHardskills(description);
+                _containsJustCategorys.TryAdd(description, !await taskJustC);
                 _elements.TryAdd(description, new EditTreeElement());
                 _showRename.TryAdd(description, false);
                 _rename.TryAdd(description, description);
@@ -360,7 +363,7 @@ else
         }
         _renameProblem[category] = 1;
         _showEmptyError[category] = false;
-
+        
         if (!await _hardskillService.CheckExistHardskill(_rename[category]) && _rename[category] != category)
         {
             _showExistError[category] = true;
@@ -432,9 +435,7 @@ else
         if(UpperElement != null)
             UpperElement.LoadSubfinished[Uppercat] = false;
         StateHasChanged();
-        var deleteSub = new List<string>(_hardskills);
-        deleteSub.Remove(hardskill);
-        await _hardskillService.EditHardskillsCategory(Uppercat, deleteSub);
+        await _hardskillService.DeleteHardskillOutOfCategory(Uppercat, hardskill);
         await Abstract.UpdateHardskills();
         if (UpperTree != null)
         {
@@ -521,11 +522,21 @@ else
         _addHardskills.Showing();
     }
 
+    public void LoadSubfinishing(string category)
+    {
+        LoadSubfinished[category] = !LoadSubfinished[category];
+        StateHasChanged();
+    }
+
     public async Task Loading(string category)
     {
-        _subcatsofCategory[category] = (await _hardskillService.GetHardskillCategory(category))?.Subcat;
-        _containsJustHardskills[category] = await _hardskillService.ContainsJustHardskills(category);
-        _containsJustCategorys[category] = !await _hardskillService.ContainsAnyHardskills(category);
+        var tasksubcats = _hardskillService.GetHardskillCategory(category);
+        _subcatsofCategory[category] = (await tasksubcats)?.Subcat;
+        var taskJustH = _hardskillService.ContainsJustHardskills(category);
+        _containsJustHardskills[category] = await taskJustH;
+        var taskJustC = _hardskillService.ContainsAnyHardskills(category);
+        _containsJustCategorys[category] = !await taskJustC;
+        StateHasChanged();
     }
 
 }

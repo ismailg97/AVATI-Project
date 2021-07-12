@@ -2,7 +2,7 @@
 
 @inject IHardskillService _hardskillService
 
-<AddHardskills @ref="_addHardskills" Description="@Description" TreeDiagram="@this"/>
+<AddHardskills @ref="_addHardskills" Description="@Description" TreeDiagram="@this" Abstract="@Abstract"/>
 
 @if (_loadPagefinished)
 {
@@ -130,11 +130,13 @@ else
         _showExistError = false;
         _showEmptyError = false;
         _showTooLongError = false;
-        var category = await _hardskillService.GetHardskillCategory(Description);
-        _subcat = category.Subcat;
+        var taskCategory =  _hardskillService.GetHardskillCategory(Description);
+        _subcat = (await taskCategory).Subcat;
         _showRename = false;
-        _containsJustHardskills = await _hardskillService.ContainsJustHardskills(Description);
-        _containsJustCategorys = !await _hardskillService.ContainsAnyHardskills(Description);
+        var taskJustH = _hardskillService.ContainsJustHardskills(Description);
+        _containsJustHardskills = await taskJustH;
+        var taskJustC = _hardskillService.ContainsAnyHardskills(Description);
+        _containsJustCategorys = !await taskJustC;
         _loadPagefinished = true;
     }
 
@@ -249,12 +251,12 @@ else
     
     public async Task Loading()
     {
-        Loadfinished = false;
-        StateHasChanged();
-        _subcat = (await _hardskillService.GetHardskillCategory(Description))?.Subcat;
-        _containsJustHardskills = await _hardskillService.ContainsJustHardskills(Description);
-        _containsJustCategorys = !await _hardskillService.ContainsAnyHardskills(Description);
-        Loadfinished = true;
+        var taskCategory = _hardskillService.GetHardskillCategory(Description);
+        _subcat = (await taskCategory)?.Subcat;
+        var taskJustH = _hardskillService.ContainsJustHardskills(Description);
+        _containsJustHardskills = await taskJustH;
+        var taskJustC = _hardskillService.ContainsAnyHardskills(Description);
+        _containsJustCategorys = !await taskJustC;
         StateHasChanged();
     }
 }

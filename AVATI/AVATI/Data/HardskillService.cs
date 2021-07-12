@@ -4,24 +4,27 @@ using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace AVATI.Data
 {
     public class HardskillService: IHardskillService
     {
         private IConfiguration _config;
-        private bool _toTest = false;
+        private bool _toTest;
         
         public HardskillService(IConfiguration config)
         {
+            _toTest = false;
             _config = config;
         }
         
-        public HardskillService(bool toTest)
+        public HardskillService()
         {
-            _toTest = toTest;
+            _toTest = true;
         }
 
         public async Task<Hardskill> GetHardskillOrCategory(string description)
@@ -31,9 +34,11 @@ namespace AVATI.Data
         
         private IDbConnection GetConnection()
         {
-            if(_toTest)
-                return new SqlConnection("data source=192.168.2.143, 1433;initial catalog=Testdatenbank;user id=sa;password=AVATIPassword1");
-            return new SqlConnection(_config.GetConnectionString("AVATI-Database"));
+            if (!_toTest) return new SqlConnection(_config.GetConnectionString("AVATI-Database"));
+            var json = File.ReadAllText("appsettings.json");
+            var jObject = JObject.Parse(json);
+            var name = (string) jObject["ConnectionStrings"]?["TEST-Database"];
+            return new SqlConnection(name);
         }
 
         public async Task<bool> CreateHardskill(Hardskill hardskill)
@@ -364,6 +369,14 @@ namespace AVATI.Data
         public bool CheckLengthHardskill(string description)
         {
             return description.Length <= 150;
+        }
+
+        public async Task<bool> DeleteHardskillOutOfCategory(string category, string hardskill)
+        {
+            using var db = GetConnection();
+            var deleteRows = await db.ExecuteAsync("DELETE FROM Hardskill_Subcat WHERE Uppercat = @upperCat AND Subcat = @subCat",
+                new{ upperCat = category, subcat = hardskill });
+            return deleteRows == 1;
         }
     }
 }

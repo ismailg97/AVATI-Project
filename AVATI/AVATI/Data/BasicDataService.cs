@@ -4,22 +4,35 @@ using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using System.IO;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace AVATI.Data
 {
     public class BasicDataService: IBasicDataService
     {
         private readonly IConfiguration _config;
+        private bool _toTest;
         
         public BasicDataService(IConfiguration config)
         {
+            _toTest = false;
             _config = config;
+        }
+
+        public BasicDataService()
+        {
+            _toTest = true;
         }
 
         private IDbConnection GetConnection()
         {
-            return new SqlConnection(_config.GetConnectionString("AVATI-Database"));
+            if (!_toTest) return new SqlConnection(_config.GetConnectionString("AVATI-Database"));
+            var json = File.ReadAllText("appsettings.json");
+            var jObject = JObject.Parse(json);
+            var name = (string) jObject["ConnectionStrings"]?["TEST-Database"];
+            return new SqlConnection(name);
         }
 
         public bool CreateSoftSkill(string description)

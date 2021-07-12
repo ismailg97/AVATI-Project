@@ -160,8 +160,12 @@
                        </div>
                      </div>
                      <div class="modal-footer">
-                       <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">Abbrechen</button>
-                       <button type="button" class="btn btn-success" @onclick="AddingHardskills">Speichern</button>
+                       <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">
+                         <span class="oi oi-circle-x" aria-hidden="true"></span>Abbrechen
+                       </button>
+                       <button type="button" class="btn btn-success" @onclick="AddingHardskills">
+                         <span class="oi oi-document" aria-hidden="true"></span>Speichern
+                       </button>
                      </div>
                    }
                    else
@@ -204,7 +208,7 @@
   
   private Hardskill Uppercat { get; set; }
   
-  private bool _finishedLoadPage = false;
+  private bool _finishedLoadPage;
 
   private bool _finishedLoadCats = true;
 
@@ -212,13 +216,13 @@
 
   private string _cat;
   
-  private bool _show = false;
+  private bool _show;
 
-  private bool _showCat = false;
+  private bool _showCat;
 
-  private bool _showCreateSkill = false;
+  private bool _showCreateSkill;
 
-  private bool ShowCreateCat { get; set; } = false;
+  private bool ShowCreateCat { get; set; }
 
   private List<string> _toDeleteSkills = new();
 
@@ -236,15 +240,24 @@
 
   private bool _showTooLongErrorHardskill;
 
+  protected override void OnInitialized()
+  {
+    _show = false;
+  }
+
   protected override async Task OnParametersSetAsync()
   {
+    _finishedLoadPage = false;
+    _finishedLoadCats = true;
+    _showCat = false;
+    _showCreateSkill = false;
+    ShowCreateCat = false;
     _showEmptyErrorCategory = false;
     _showExistErrorCategory = false;
     _showTooLongErrorCategory = false;
     _showEmptyErrorHardskill = false;
     _showExistErrorHardskill = false;
     _showTooLongErrorHardskill = false;
-    _finishedLoadPage = false;
     _cat = "";
     _toDeleteSkills.Clear();
     _hardskills.Clear();
@@ -320,24 +333,25 @@
   {
     var hardskill = await _hardskillService.GetHardskill(description);
     if (hardskill == null) return;
-    
+    var upperCat = hardskill.Uppercat;
+
     if (Subcat.Contains(description))
     {
       Subcat.Remove(description);
-      if (hardskill.Uppercat == null || !hardskill.Uppercat.Any())
+      if (upperCat == null || !upperCat.Any())
       {
         if(!_hardskills.Contains(description))
           _hardskills.Add(description);
         
-      } else if(hardskill.Uppercat.Contains(Description) && !_toDeleteSkills.Contains(description))
+      } else if(upperCat.Contains(Description) && !_toDeleteSkills.Contains(description))
         _toDeleteSkills.Add(description);
     }
     else
     {
       Subcat.Add(description);
-      if (hardskill.Uppercat == null || !hardskill.Uppercat.Any())
+      if (upperCat == null || !upperCat.Any())
         _hardskills.Remove(description);
-      else if(hardskill.Uppercat.Contains(Description))
+      else if(upperCat.Contains(Description))
         _toDeleteSkills.Remove(description);
     }
   }
@@ -397,10 +411,11 @@
         TreeDiagram.Loadfinished = false;
       else
         TreeElement.LoadSubfinished[Description] = false;
-      StateHasChanged();
       
       await _hardskillService.EditHardskillsCategory(Description, Subcat);
       _show = !_show;
+      if(Abstract != null)
+        await Abstract.UpdateHardskills();
       Subcat.Clear();
       if (TreeDiagram != null)
       {
@@ -412,7 +427,6 @@
         await TreeElement.Loading(Description);
         TreeElement.LoadSubfinished[Description] = true;
       }
-      StateHasChanged();
     }
   }
 

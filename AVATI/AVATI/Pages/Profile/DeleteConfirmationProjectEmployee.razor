@@ -41,7 +41,7 @@
 
     private void Delete()
     {
-        _projectActivity.DeleteProjectActivityEmployee(ProjectActivity.ProjectActivityID);
+        _projectActivity.DeleteProjectActivityToEmployee(ProjectActivity.ProjectActivityID);
         Abstract?.UpdateLists();
         Showing();
         //_navigationManager.NavigateTo(_navigationManager.Uri, true);

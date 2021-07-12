@@ -4,6 +4,6 @@
     {
         public string Purpose { get; set; }
         public int ProjectID { get; set; }
-        public ProjectActivity AssignedProjectActivity { get; set; }
+        public string AssignedProjectActivity { get; set; }
     }
 }
