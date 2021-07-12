@@ -60,7 +60,7 @@ namespace AVATI.Data
                     new {ProID = projectId, EmplId = emp.EmployeeID});
             }
 
-            foreach (var field in tempFields)
+            foreach (var field in project.Fields)
             {
                 Console.WriteLine(field);
                 db.Execute("INSERT INTO Project_Field VALUES(@pro, @f)", new {f = field, pro = projectId});
