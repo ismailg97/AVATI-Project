@@ -1,22 +1,23 @@
 ﻿using System.Collections.Generic;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 
 namespace AVATI.Data
 {
     public interface IProjectActivityService
     {
-        public bool SetProjectActivity(int EmpId, int ProjId, ProjectActivity activity);
-        public bool DeleteProjectActivityEmployee(int ProjectActivityID);
-
-        public bool DeleteProjectActivity(string Description);
-        public List<ProjectActivity> GetEmployeeProjectActivities(int EmployeeId, int ProjectId);
-        public List<ProjectActivity> GetProjectActivitiesProject(int ProjectID);
-
-        public List<ProjectActivity> GetAllProjectActivities();
-        public List<ProjectActivity> GetProjectActivitiesEmployee(int EmployeeId);
-        public bool UpdateActivity(string oldDescription, string newDescription);
-        public bool AddActivity(string description);
-        public bool UpdateProjectActivity(int proposalId, List<ProjectActivity> activities);
-        public bool UpdateProjectActivityEmployee(int EmpId, int ProjId,ProjectActivity activity);
-        public string GetProjectActivity(string description);
+        public bool SetProjectActivityToEmployee(ProjectActivity activity);
+        public bool UpdateProjectActivityToEmployee(ProjectActivity activity);
+        public bool DeleteProjectActivityToEmployee(int projectActivityId);
+        public List<ProjectActivity> GetProjectActivitiesOfEmployee(int employeeId);
+        public List<string> GetActivitiesDesOfProject(int projectId);
+        public Dictionary<string, List<int>> GetActivitiesWithEmployeesGrouped(int projectId);
+        public List<ProjectActivity> GetEmployeeProjectActivities(int employeeId, int projectId);
+        public string GetProjectActivityForPurpose(string purpose);
+        public bool SetProjectActivitiesToProject(int projectId, List<string> activities);
+        public bool AddGlobalProjectActivity(string description);
+        public bool UpdateGlobalProjectActivity(string oldDescription, string newDescription);
+        public bool DeleteGlobalProjectActivity(string description);
+        public List<string> GetAllGlobalProjectActivities();
+        public bool IsGlobal(string description);
     }
 }

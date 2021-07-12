@@ -23,9 +23,9 @@
                 <div class="form-group">
                     <label class="mr-3 mt-2">Projektaktivität: </label>
                     <select>
-                        @foreach (var activities in _projectActivity.GetAllProjectActivities())
+                        @foreach (var activities in _projectActivity.GetAllGlobalProjectActivities())
                         {
-                            <option @onclick="(() => { ProjectActivity.Description = activities.Description; })">@activities.Description</option>
+                            <option @onclick="(() => { ProjectActivity.Description = activities; })">@activities</option>
                         }
                     </select>
                 </div>
@@ -139,7 +139,7 @@
 
     private void Edit()
     {
-        _projectActivity.UpdateProjectActivityEmployee(activity.EmployeeID, activity.ProjectID, activity);
+        _projectActivity.UpdateProjectActivityToEmployee(activity);
         Abstract?.UpdateLists();
         Showing();
     //_navigationManager.NavigateTo(_navigationManager.Uri, true);

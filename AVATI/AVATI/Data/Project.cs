@@ -18,7 +18,7 @@ namespace AVATI.Data
         [StringLength(150, ErrorMessage = "Projektbeschreibung ist zu lang (150 Zeichen)")]
         public string Projectdescription { get; set; }
         public List<ProjectPurpose> Projectpurpose { get; set; } = new List<ProjectPurpose>();
-        public List<ProjectActivity> ProjectActivities { get; set; } = new List<ProjectActivity>();
+        public List<string> ProjectActivities { get; set; } = new List<string>();
         public DateTime Projectbeginning { get; set; }
         public DateTime Projectend { get; set; }
         public List<string> Fields { get; set; } = new List<string>();

@@ -32,20 +32,20 @@
                         {
                             @foreach (var activity in _activitiesFromProject)
                             {
-                                <button type="button" class="btn btn-outline-dark" @onclick=@(() => { UpdatePurpose(activity); })>@activity.Description</button>
+                                <button type="button" class="btn btn-outline-dark" @onclick=@(() => { UpdatePurpose(activity); })>@activity</button>
                             }
                         }
                     </div>
                     <hr class="mx-2"/> <!--line divider -->
                     <label class="font-weight-bold ">Zugewiesene Tätigkeit:</label>
                     <div class="list-group col overflow-auto text-center border-dark" style="height: 100px">
-                        @if (purpose.AssignedProjectActivity == null || purpose.AssignedProjectActivity.Description == null)
+                        @if (purpose.AssignedProjectActivity == null || purpose.AssignedProjectActivity == null)
                         {
                             <label>[Keine Tätigkeit zugewiesen]</label>
                         }
                         else if (purpose.AssignedProjectActivity != null)
                         {
-                            <button type="button" class="btn btn-outline-dark" @onclick="() => { RemoveAssignedActivity(); }">@purpose.AssignedProjectActivity.Description</button>
+                            <button type="button" class="btn btn-outline-dark" @onclick="() => { RemoveAssignedActivity(); }">@purpose.AssignedProjectActivity</button>
                         }
                     </div>
                     <div class="div float-right">
@@ -63,7 +63,7 @@
 
 @code{
     private ProjectPurpose purpose;
-    private List<ProjectActivity> _activitiesFromProject;
+    private List<string> _activitiesFromProject;
 
     [Parameter]
     public int ID { get; set; }
@@ -74,9 +74,9 @@
     [Parameter]
     public Projectedit Abstract { get; set; }
 
-    public void UpdatePurpose(ProjectActivity activity)
+    public void UpdatePurpose(string activity)
     {
-        if (purpose.AssignedProjectActivity == null || string.IsNullOrEmpty(purpose.AssignedProjectActivity.Description))
+        if (purpose.AssignedProjectActivity == null || string.IsNullOrEmpty(purpose.AssignedProjectActivity))
         {
             purpose.AssignedProjectActivity = activity;
             _purposeService.UpdatePurpose(purpose);
@@ -102,10 +102,10 @@
         ID = projectID;
 
         purpose = _purposeService.GetProjectPurpose(purp.Purpose);
-        _activitiesFromProject = _projectActivity.GetProjectActivitiesProject(projectID);
+        _activitiesFromProject = _projectActivity.GetActivitiesDesOfProject(projectID);
         foreach (var activ in _activitiesFromProject.ToList())
         {
-            if (activ.Description == purpose.AssignedProjectActivity.Description)
+            if (activ == purpose.AssignedProjectActivity)
             {
                 _activitiesFromProject.Remove(activ);
             }

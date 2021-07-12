@@ -82,7 +82,8 @@ else if(!ContainsJustHardskills)
     {
         foreach (var description in Subcats)
         {
-            var skillOrCat = await _hardskillService.GetHardskillOrCategory(description);
+            var taskSkillOrCat = _hardskillService.GetHardskillOrCategory(description);
+            var skillOrCat = await taskSkillOrCat;
             
             if(skillOrCat.IsHardskill)
             {
@@ -93,8 +94,10 @@ else if(!ContainsJustHardskills)
                 if(!_categorys.Contains(description))
                     _categorys.Add(description);
                 _subcatsofCategory.TryAdd(description, skillOrCat.Subcat);
-                _containsJustHardskills.TryAdd(description, await _hardskillService.ContainsJustHardskills(description));
-                _containsJustCategorys.TryAdd(description, !await _hardskillService.ContainsAnyHardskills(description));
+                var taskJustH = _hardskillService.ContainsJustHardskills(description);
+                _containsJustHardskills.TryAdd(description, await taskJustH);
+                var taskJustC = _hardskillService.ContainsAnyHardskills(description);
+                _containsJustCategorys.TryAdd(description, !await taskJustC);
                 _showSubHardskills.TryAdd(description, false);
                 _showSubCategorys.TryAdd(description, true);
             }

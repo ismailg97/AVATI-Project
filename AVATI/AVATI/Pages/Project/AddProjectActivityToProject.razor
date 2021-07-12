@@ -28,9 +28,9 @@
                         {
                             @foreach (var activity in _activities)
                             {
-                                if (_activitiesInProject.Find(e => e.Description.Equals(activity.Description)) == null)
+                                if (_activitiesInProject.Find(e => e.Equals(activity)) == null)
                                 {
-                                    <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _activitiesInProject.Add(activity); })>@activity.Description</button>
+                                    <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _activitiesInProject.Add(activity); })>@activity</button>
                                 }
                             }
                         }
@@ -40,7 +40,13 @@
                     <div class="list-group col overflow-auto text-center border-dark" style="height: 325px">
                         @foreach (var activity in _activitiesInProject)
                         {
-                            <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _activitiesInProject.Remove(activity); })>@activity.Description</button>
+                            if (!_projectActivity.IsGlobal(activity))
+                            {
+                                <button type="button" class="btn btn-outline-danger" @onclick=@(() => { _activitiesInProject.Remove(activity); })>@activity</button>    
+                            }
+                            else {
+                                <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _activitiesInProject.Remove(activity); })>@activity</button>
+                            }
                         }
                     </div>
                     <div class="div float-right">
@@ -67,20 +73,26 @@
 
     public int EmployeeID { get; set; }
 
-    private List<ProjectActivity> _activities;
-    private List<ProjectActivity> _activitiesInProject;
+    private List<string> _activities;
+    private List<string> _activitiesInProject;
     private bool _show = false;
     private string Activity { get; set; }
     
     [Parameter]
     public Projectedit Abstract { get; set; }
     
-    public void Showing(int Id)
+    public void Showing(int id)
     {
-        ID = Id;
+        _activitiesInProject = new List<string>();
+        ID = id;
         _show = !_show;
-        _activitiesInProject = _projectActivity.GetProjectActivitiesProject(Id);
-        _activities = _projectActivity.GetAllProjectActivities();
+        var activities = _projectActivity.GetActivitiesDesOfProject(id);
+        
+        foreach (var activity in activities)
+        {
+            _activitiesInProject.Add(activity);
+        }
+        _activities = _projectActivity.GetAllGlobalProjectActivities();
         StateHasChanged();
     }
 
@@ -90,10 +102,10 @@
         StateHasChanged();
     }
 
-    public void Submit(int ID)
+    public void Submit(int id)
     {
         _show = !_show;
-        _projectActivity.UpdateProjectActivity(ID, _activitiesInProject);
+        _projectActivity.SetProjectActivitiesToProject(id, _activitiesInProject);
         Abstract.Update();
         StateHasChanged();
     }

@@ -61,11 +61,10 @@ namespace AVATI
             services.AddSingleton<IEmployeeService, EmployeeService>();
             services.AddBlazorDownloadFile();
             services.AddSingleton<IEmployeeDetailService, EmployeeDetailService>();
-            services.AddSingleton<IProjectActivityService, ProjectActivityService>();
+            services.AddSingleton<IProjectActivityService, ProjectActivityService2>();
             services.AddSingleton<DatabaseUtils>();
             services.AddSingleton<IProjektService, ProjectService>();
             services.AddSingleton<ProjectPurposeService>();
-           
             services.AddOptions();
             services.AddBlazoredLocalStorage();
             services.AddAuthorizationCore();

@@ -23,7 +23,7 @@ else
         <DataAnnotationsValidator/>
         <div class="container col">
             <h2 class="mb-3">Globale Projekttätigkeiten</h2>
-            <p>Hier können Sie Tätigkeiten einem Projekt hinzufügen, editieren und löschen. Diese stehen als Auswahlmöglichkeit für alle Projekte zur Verfügung. </p>
+            <p>Hier können Sie Tätigkeiten im Projekt hinzufügen, verwalten, editieren und löschen. Diese stehen als Auswahlmöglichkeit für alle Projekte zur Verfügung. </p>
             <hr/>
             <div class="row">
                 <div class="col-8">
@@ -39,23 +39,23 @@ else
                             </tr>
                             </thead>
                             <tbody>
-                            @if (!_projectActivityService.GetAllProjectActivities().Any())
+                            @if (!_projectActivityService.GetAllGlobalProjectActivities().Any())
                             {
                                 <tr>
                                     <td>[Keine Aktivitäten hinzugefügt!]</td>
                                 </tr>
                             }
-                            @foreach (var activity in _projectActivityService.GetAllProjectActivities())
+                            @foreach (var activity in _projectActivityService.GetAllGlobalProjectActivities())
                             {
-                                @if (filterSearch == null || activity.Description.Contains(filterSearch, StringComparison.OrdinalIgnoreCase))
+                                @if (filterSearch == null || activity.Contains(filterSearch, StringComparison.OrdinalIgnoreCase))
                                 {
                                     <tr>
-                                        <td>@activity.Description</td>
+                                        <td>@activity</td>
                                         <td>
-                                            <button type="button" class="btn btn-info text-right" @onclick="() => { ShowUpdate(activity.Description); }">
+                                            <button type="button" class="btn btn-info text-right" @onclick="() => { ShowUpdate(activity); }">
                                                 <span class="oi oi-pencil"></span>
                                             </button>
-                                            <button type="button" class="btn btn-danger text-right" @onclick="(() => { ShowDelete(activity.Description); })">
+                                            <button type="button" class="btn btn-danger text-right" @onclick="(() => { ShowDelete(activity); })">
                                                 <span class="oi oi-trash"></span>
                                             </button>
                                         </td>
@@ -148,13 +148,13 @@ else
 
     public void AddProjectActivity(string description)
     {
-        _projectActivityService.AddActivity(description);
+        _projectActivityService.AddGlobalProjectActivity(description);
         StateHasChanged();
     }
 
     public void UpdateActivity(string old, string newstring)
     {
-        _projectActivityService.UpdateActivity(old, newstring);
+        _projectActivityService.UpdateGlobalProjectActivity(old, newstring);
         StateHasChanged();
     }
 
@@ -181,7 +181,7 @@ else
 
     public void DeleteActivity(string description)
     {
-        _projectActivityService.DeleteProjectActivity(description);
+        _projectActivityService.DeleteGlobalProjectActivity(description);
         StateHasChanged();
     }
 

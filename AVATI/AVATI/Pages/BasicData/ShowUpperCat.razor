@@ -26,17 +26,10 @@
     
     public Hardskill Hardskill { get; set; }
 
-    /*private bool _loadPageFinished;
-
-    protected override void OnInitialized()
-    {
-        _loadPageFinished = false;
-    }*/
-
     protected override async Task OnParametersSetAsync()
     {
-        Hardskill = await _hardskillService.GetHardskillOrCategory(Description);
-        //_loadPageFinished = true;
+        var taskHardskill = _hardskillService.GetHardskillOrCategory(Description);
+        Hardskill = await taskHardskill;
     }
 
 }

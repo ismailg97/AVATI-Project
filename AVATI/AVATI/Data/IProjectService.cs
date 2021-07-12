@@ -6,14 +6,14 @@ namespace AVATI.Data
     {
         public bool CreateProject(Project project);
         public bool UpdateProject(Project project);
-        public bool DeleteProject(int projectID);
-        public Project GetProject(int projectID);
+        public bool DeleteProject(int projectId);
+        public Project GetProject(int projectId);
         public List<Project> GetAllProjects();
         
-        public List<string> GetAllFieldsFromOneProject(int ProjectID);
+        public List<string> GetAllFieldsFromOneProject(int projectId);
 
-        public bool DeleteEmployeeFromProject(int ProjectID, int EmployeeID);
+        public bool DeleteEmployeeFromProject(int projectId, int employeeId);
 
-        public bool UpdateFieldsFromProject(int ProjectID, List<string> fields);
+        public bool UpdateFieldsFromProject(int projectId, List<string> fields);
     }
 }

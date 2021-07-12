@@ -7,6 +7,7 @@
 @inject IProjectActivityService _activity
 @inject IProjektService _projectService
 @inject IProjectActivityService _projectActivity
+@inject IEmployeeService _employeeService
 
 <div class="container">
     <div class="row">
@@ -64,22 +65,25 @@
                                 <td></td>
                             </tr>
                         }
-                        @foreach (var field in _project.ProjectActivities)
+                        @foreach (var activity in _activitesGroupedemp.Keys)
                         {
                             <tr>
-                                <td>@field.Description</td>
-                                @if (_project.Employees.Find(x => x.EmployeeID == field.EmployeeID) == null)
-                                {
-                                    <td>[Kein zugewiesener Mitarbeiter]</td>
-                                    <td></td>
-                                }
-                                else
-                                {
-                                    <td>
-                                        @_project.Employees.Find(x => x.EmployeeID == field.EmployeeID).FirstName
-                                        @_project.Employees.Find(x => x.EmployeeID == field.EmployeeID).LastName
-                                    </td>
-                                }
+                                <td>@activity</td>
+                                    @if (_activitesGroupedemp[activity].Any())
+                                    {
+                                        <ul>
+                                            @foreach (var employeeId in _activitesGroupedemp[activity])
+                                            {
+                                                var employee = _employeeService.GetEmployeeProfile(employeeId);
+            
+                                                <li>@employee.FirstName @employee.LastName</li>
+                                            }
+                                        </ul>
+                                    }
+                                    else
+                                    {
+                                        <a>[Kein Mitarbeiter hat sich zugewiesen!]</a>
+                                    }
                             </tr>
                         }
                         </tbody>
@@ -158,13 +162,13 @@
                             {
                                 <tr>
                                     <td>@purpose.Purpose</td>
-                                    @if (_projectActivity.GetProjectActivity(purpose.Purpose) == null)
+                                    @if (_projectActivity.GetProjectActivityForPurpose(purpose.Purpose) == null)
                                     {
                                         <td>[null]</td>
                                     }
                                     else
                                     {
-                                        <td>@_projectActivity.GetProjectActivity(purpose.Purpose)</td>
+                                        <td>@_projectActivity.GetProjectActivityForPurpose(purpose.Purpose)</td>
                                     }
                                 </tr>
                             }
@@ -192,10 +196,13 @@
 
     public Project _project { get; set; }
 
+    private Dictionary<string, List<int>> _activitesGroupedemp;
+
     protected override void OnInitialized()
     {
+        _activitesGroupedemp = _projectActivity.GetActivitiesWithEmployeesGrouped(ID);
         _project = _projectService.GetProject(ID);
-        _project.ProjectActivities = _activity.GetProjectActivitiesProject(ID);
+        _project.ProjectActivities = _activity.GetActivitiesDesOfProject(ID);
     }
 
 }

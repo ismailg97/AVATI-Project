@@ -150,10 +150,21 @@ namespace UnitTests
             return testCaseData.AsEnumerable();
         }
 
+        [Test]
+        public async Task TestGetAllFunctions()
+        {
+            var testHardskillService = new HardskillService();
+            Assert.IsNotNull(await testHardskillService.GetAllHardskills());
+            Assert.IsNotNull(await testHardskillService.GetAllHardskillCategorys());
+            Assert.IsNotNull(await testHardskillService.GetAllDesCategorys());
+            Assert.IsNotNull(await testHardskillService.GetAllDesHardskills());
+            Assert.IsNotNull(await testHardskillService.GetAllRoots());
+        }
+
         [TestCaseSource("GetDataGetHardskill")]
         public async Task TestGetHardskill(string skill, List<string> upperCat, bool exists)
         {
-            var testHardskillService = new HardskillService(true);
+            var testHardskillService = new HardskillService();
             var hardskill = await testHardskillService.GetHardskill(skill);
             if(exists)
                 Assert.IsNotNull(hardskill);
@@ -170,7 +181,7 @@ namespace UnitTests
         [TestCaseSource("GetDataGetCategory")]
         public async Task TestGetCategory(string cat, string upperCat, List<string> subCat, bool exists)
         {
-            var testHardskillService = new HardskillService(true);
+            var testHardskillService = new HardskillService();
             var category = await testHardskillService.GetHardskillCategory(cat);
             if(exists)
                 Assert.IsNotNull(category);
@@ -198,7 +209,7 @@ namespace UnitTests
         [TestCase("dsfdsfdsssssssssssdfds", false)]
         public async Task TestContainsAnyHardskills(string category, bool contains)
         {
-            var testHardskillService = new HardskillService(true);
+            var testHardskillService = new HardskillService();
             Assert.IsTrue(await testHardskillService.ContainsAnyHardskills(category) == contains);
         }
 
@@ -213,7 +224,7 @@ namespace UnitTests
         [TestCase("dsfdsfdsssssssssssdfds", false)]
         public async Task TestContainsJustHardskills(string category, bool contains)
         {
-            var testHardskillService = new HardskillService(true);
+            var testHardskillService = new HardskillService();
             Assert.IsTrue(await testHardskillService.ContainsJustHardskills(category) == contains);
         }
 
@@ -225,7 +236,7 @@ namespace UnitTests
         [TestCase("Fdsds      ", true)]
         public void TestCheckIsEmptyHardskill(string description, bool shouldPass)
         {
-            var testHardskillService = new HardskillService(true);
+            var testHardskillService = new HardskillService();
             Assert.IsTrue(testHardskillService.CheckEmptyHardskill(description) == shouldPass);
         }
 
@@ -235,33 +246,35 @@ namespace UnitTests
         [TestCase("sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss" +
                   "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss", true)]
         [TestCase("Fdsds", true)]
+        [TestCase("h", true)]
         public void TestCheckIsTooLongHardskill(string description, bool shouldPass)
         {
-            var testHardskillService = new HardskillService(true);
+            var testHardskillService = new HardskillService();
             Assert.IsTrue(testHardskillService.CheckLengthHardskill(description) == shouldPass);
         }
 
         [TestCase("SonarQube", false)]
         [TestCase("  sonar  qube ", false)]
         [TestCase("Jira", false)]
-        [TestCase("jira", false)]
+        [TestCase(" jira", false)]
+        [TestCase("Ji-ra", true)]
         [TestCase("Systemisches Projektmanagement", false)]
         [TestCase("  SyStemisches    prOjektManagement  ", false)]
-        [TestCase("CloudFoundrY  ", false)]
+        [TestCase(" Cloud FoundrY  ", false)]
         [TestCase("Bash", false)]
         [TestCase("Fdsdssddsd", true)]
         [TestCase("fjksdfjks", true)]
         [TestCase("NewHardskill", true)]
         public async Task TestCheckExistHardskill(string description, bool shouldPass)
         {
-            var testHardskillService = new HardskillService(true);
+            var testHardskillService = new HardskillService();
             Assert.IsTrue(await testHardskillService.CheckExistHardskill(description) == shouldPass);
         }
 
         [TestCaseSource("GetDataCudHardskill")]
         public async Task TestCudHardskill(Hardskill oldHardskill, Hardskill newHardskill)
         {
-            var testHardskillService = new HardskillService(true);
+            var testHardskillService = new HardskillService();
             
             //----Testing Create----
             Assert.IsTrue(await testHardskillService.CreateHardskill(oldHardskill));
@@ -336,7 +349,7 @@ namespace UnitTests
         [TestCaseSource("GetDataCudCategory")]
         public async Task TestCudCategory(List<string> hardskills, Hardskill oldCategory, Hardskill newCategory)
         {
-            var testHardskillService = new HardskillService(true);
+            var testHardskillService = new HardskillService();
             
             //Creating Pseudo-Hardskills
             foreach (var hardskill in hardskills)
@@ -470,6 +483,12 @@ namespace UnitTests
             {
                 await testHardskillService.DeleteHardskill(hardskill);
             }
+        }
+
+        public async Task TestetHardskillsOfCategory(string category, List<string> hardskills)
+        {
+            var testHardskillService = new HardskillService();
+            //
         }
     }
 }

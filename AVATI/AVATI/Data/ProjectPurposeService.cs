@@ -58,7 +58,7 @@ namespace AVATI.Data
                     "update ProjectPurpose set ProjectActivity = @purpActiv where ProjectID = @proID and Purpose = @purp",
                     new
                     {
-                        purp = purpose.Purpose, purpActiv = purpose.AssignedProjectActivity.Description,
+                        purp = purpose.Purpose, purpActiv = purpose.AssignedProjectActivity,
                         proID = purpose.ProjectID
                     });
             }
@@ -134,11 +134,7 @@ namespace AVATI.Data
             
             var activ = db.QueryFirst<string>("Select ProjectActivity from ProjectPurpose where Purpose = @inpu",
                 new {inpu = input});
-            ProjectActivity temp = new ProjectActivity
-            {
-                Description = activ, ProjectID = purpose.ProjectID
-            };
-            purpose.AssignedProjectActivity = temp; 
+            purpose.AssignedProjectActivity = activ; 
             return purpose;
         }
 

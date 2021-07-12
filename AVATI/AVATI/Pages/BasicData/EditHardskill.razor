@@ -60,8 +60,12 @@
                        </div>
                      </div>
                      <div class="modal-footer">
-                       <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">Abbrechen</button>
-                       <button type="button" class="btn btn-success" @onclick="Update">Speichern</button>
+                       <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">
+                         <span class="oi oi-circle-x" aria-hidden="true"></span>Abbrechen
+                       </button>
+                       <button type="button" class="btn btn-success" @onclick="Update">
+                         <span class="oi oi-document" aria-hidden="true"></span>Speichern
+                       </button>
                      </div>
                    </EditForm>
                  </div>
@@ -94,7 +98,8 @@
 
   protected override async Task OnInitializedAsync()
   {
-    _allCategorys = await _hardskillService.GetAllDesCategorys();
+    var taskAllCategorys = _hardskillService.GetAllDesCategorys();
+    _allCategorys = await taskAllCategorys;
   }
 
   protected override void OnParametersSet()
@@ -148,9 +153,17 @@
   private void UpperCatList(string description)
   {
     if (UpperCat.Contains(description))
-      UpperCat?.Remove(description);
+    {
+      UpperCat.Remove(description);
+      if(!_allCategorys.Contains(description))
+        _allCategorys.Add(description);
+    }
     else
-      UpperCat?.Add(description);
+    {
+      UpperCat.Add(description);
+      if(_allCategorys.Contains(description))
+        _allCategorys.Remove(description);
+    }
     StateHasChanged();
   }
 
