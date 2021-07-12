@@ -5,6 +5,7 @@
 @inject AuthenticationStateProvider _authenticationStateProvider
 @inject ILoginService _login
 @inject NavigationManager _navManager
+@inject CookieController _cookieController
 
 
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
@@ -26,7 +27,8 @@
                         <p class="@(_boolean ? "" : "collapse") " style=" color: #ff0000">
                             <div class="alert alert-danger">Falscher Benutzername oder falsches Passwort eingegeben.<br/> Bitte versuchen Sie erneut.</div>
                         </p>
-                        <EditForm Model="Log" OnValidSubmit="@LoginCheck">
+                        <!---<EditForm Model="Log" OnValidSubmit="@LoginCheck"> --->
+                            <form action="cookie" method="post">
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -34,7 +36,7 @@
                                             <i class="fa fa-user"></i>
                                         </span>
                                     </div>
-                                    <InputText name="" class="form-control" id="username" placeholder="Max Mustermann" @bind-Value="Log.Username" ></InputText>
+                                    <InputText name="" class="form-control" id="username" placeholder="Max Mustermann" @bind-Value="Log.Username"></InputText>
                                 </div> <!-- input-group.// -->
                             </div> <!-- form-group// -->
                             <div class="form-group">
@@ -44,13 +46,14 @@
                                             <i class="fa fa-lock"></i>
                                         </span>
                                     </div>
-                                    <InputText class="form-control" @bind-Value="Log.Password"  placeholder="123456" type="password"></InputText>
+                                    <InputText class="form-control" @bind-Value="Log.Password" placeholder="123456" type="password"></InputText>
                                 </div> <!-- input-group.// -->
                             </div> <!-- form-group// -->
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary btn-block"> Login </button>
                             </div> <!-- form-group// -->
-                        </EditForm>
+                            </form>
+                        <!--- </EditForm> --->
                     </article>
                 </div> <!-- card.// -->
 
@@ -60,12 +63,20 @@
 </div>
 <!--container end.//-->
 
+@if (_booleanSignedIn)
+{
+    <form action="cookie" method="post">
+        
+    </form>
+}
+
 
 @code {
     private bool _boolean = false;
     LoginClass Log = new LoginClass();
     public int Id { get; set; }
     public string empType { get; set; }
+    private bool _booleanSignedIn { get; set; }
 
     private void LoginCheck()
     {
@@ -77,7 +88,8 @@
         else
         {
             empType=_login.Login_EmpType(Id);
-            //await _localStorageService.SetItemAsync<string>("Username", Log.Username);
+           
+    //await _localStorageService.SetItemAsync<string>("Username", Log.Username);
             //await _localStorageService.SetItemAsync("EmployeeType", empType);
             //((CustomAuthStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(Log.Username, empType);
             //await _authenticationStateProvider.GetAuthenticationStateAsync();

@@ -11,6 +11,8 @@ namespace AVATI.Data
 {
     public class EmployeeService : IEmployeeService
     {
+
+        private string _connection;
         private readonly IConfiguration _configuration;
         public List<Employee> Employees { get; set; }
 
@@ -22,8 +24,17 @@ namespace AVATI.Data
 
         public DbConnection GetConnection()
         {
+            if (_connection != null)
+            {
+                return new SqlConnection(_connection);
+            }
             return new SqlConnection
                 (_configuration.GetConnectionString("AVATI-Database"));
+        }
+        
+        public EmployeeService(string connect)
+        {
+            _connection = connect;
         }
 
 
@@ -34,7 +45,7 @@ namespace AVATI.Data
             var employees = db.Query<Employee>("select * from Employee").ToList();
             foreach (var emp in employees)
             {
-                Employee employee = new Employee();
+                Employee employee;
 
                 var employeeMain =
                     db.Query<Employee>("select * from Employee where EmployeeId = @ID", new {ID = emp.EmployeeID})
