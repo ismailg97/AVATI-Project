@@ -2,6 +2,7 @@
 @page "/ProposalOverview/{Open:int}"
 @using System.IO
 @using System.Linq
+@using System.Xml
 @using AVATI.Data
 @using AVATI.Data.EmployeeDetailFiles
 @using BlazorDownloadFile
@@ -690,7 +691,7 @@
                                     case "project":
                                         foreach (var proj in tempEmp.ProjectActivities)
                                         {
-                                            par.InsertAfterSelf(GenerateProjectActivityListItem(proj, _project.GetProject(proj.ProjectID).Projecttitel));
+                                            par.InsertAfterSelf(GenerateProjectActivityListItem(proj, _project.GetProject(proj.ProjectID).Projecttitel)); //_activity.GetProjectActivitiesEmployee(EmpId)
                                         }
                                         par.Remove();
                                         break;    
@@ -729,10 +730,55 @@
                 costBody.AppendChild(new Paragraph(new Run(new RunProperties(new FontSize() {Val = 64.ToString()}, new RunFonts() {Ascii = "Calibri Light"}, new Color() {Val = "8496B0"}), new Text("Kostenmixkalkulation"))));
                 var costTable = new Table();
                 var costTableProp = new TableProperties(new TableStyle() {Val = "EinfacheTabelle4"}, new TableWidth() {Type = TableWidthUnitValues.Dxa, Width = 10000.ToString()});
-                var tableRow = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
-                var tc1 = new TableCell(new Paragraph(new Run(new Text(tempProp.ProposalTitle))));
-                tableRow.AppendChild(tc1);
-                costTable.Append(costTableProp, tableRow);
+                costTable.AppendChild(costTableProp);
+                
+                var tableRow1 = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+                var tc11 = new TableCell(new Paragraph(new Run(new RunProperties(new FontSize() {Val = "24"}, new Color() {Val = "2f6ec2"}),new Text(tempProp.ProposalTitle))));
+                var tc12 = new TableCell(new Paragraph(new Run(new TabChar())));
+                var tc13 = new TableCell(new Paragraph(new Run(new TabChar())));
+                var tc14 = new TableCell(new Paragraph(new Run(new TabChar())));
+                var tc15 = new TableCell(new Paragraph(new Run(new RunProperties( new Justification() {Val = JustificationValues.Right}, new Color() {Val = "2f6ec2"}), new Text("Laufzeit"))));
+                tableRow1.Append(tc11, tc12, tc13, tc14, tc15);
+                costTable.AppendChild(tableRow1);
+
+                var tableRow2 = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+                var tc21 = new TableCell(new Paragraph(new Run(new TabChar()))); 
+                var tc22 = new TableCell(new Paragraph(new Run(new TabChar()))); 
+                var tc23 = new TableCell(new Paragraph(new Run(new TabChar()))); 
+                var tc24 = new TableCell(new Paragraph(new Run(new TabChar()))); 
+                var tc25 = new TableCell(new Paragraph(new Run(new RunProperties(new Justification() {Val = JustificationValues.Right}),new Text(((int)((tempProp.End - tempProp.Start).TotalDays / 7)).ToString()), new Text(" Wochen") {Space = SpaceProcessingModeValues.Preserve})));
+                tableRow2.Append(tc21, tc22, tc23, tc24, tc25);
+                costTable.AppendChild(tableRow2);
+
+                var tableRow3 = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+                var tc31 = new TableCell(new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}),new Text("Rolle (Tätigkeiten, Schwerpunkte)"))));
+                var tc32 = new TableCell(new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}, new Justification() {Val = JustificationValues.Right}), new Text("Rabatt"))));
+                var tc33 = new TableCell(new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}, new Justification() {Val = JustificationValues.Right}), new Text("Sätze"))));
+                var tc34 = new TableCell(new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}, new Justification() {Val = JustificationValues.Right}), new Text("Kapazität"))));
+                var tc35 = new TableCell(new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}, new Justification() {Val = JustificationValues.Right}), new Text("Zeit und Kosten"))));
+                tableRow3.Append(tc31, tc32, tc33, tc34, tc35);
+                costTable.AppendChild(tableRow3);
+
+                foreach (var emp in tempProp.Employees)
+                {
+                    var yikes = _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result;
+                    var tableRow = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+                    var tc1 = new TableCell(new Run(new Text(yikes.Roles.First())));
+                    Console.WriteLine(yikes.Roles.Count + "yalla");
+                    if (yikes.Roles.Count > 1)
+                    {
+                        
+                        for (int j = yikes.Roles.IndexOf(yikes.Roles.First()) + 1; j <= yikes.Roles.Count; j++)
+                            Console.WriteLine(j);
+                            //tc1.AppendChild(new Text("," + yikes.Roles[j]));
+                    }
+                    var tc2 = new TableCell(new Paragraph(new Run(new Text("yalla"))));
+                    var tc3 = new TableCell(new Paragraph(new Run(new Text("yalla"))));
+                    var tc4 = new TableCell(new Paragraph(new Run(new Text("yalla"))));
+                    var tc5 = new TableCell(new Paragraph(new Run(new Text("yalla"))));
+                    tableRow.Append(tc1, tc2, tc3, tc4, tc5);
+                    costTable.AppendChild(tableRow);
+                }
                 costBody.AppendChild(costTable);
                 FileStream clearTempDoc = new FileStream(empTempDocPath, FileMode.Create, FileAccess.ReadWrite);
                 await clearTempDoc.DisposeAsync();
@@ -745,7 +791,7 @@
                 }
                 var altChunk = new AltChunk {Id = altChunkId};
                 body.AppendChild(altChunk);
-                Console.WriteLine(wordDoc.ToFlatOpcString());
+                //Console.WriteLine(wordDoc.ToFlatOpcString());
             }
             wordDoc.Save();
             wordDoc.Close();
