@@ -1,13 +1,17 @@
 @using AVATI.Data
 @using AVATI.Data.EmployeeDetailFiles
-@using DocumentFormat.OpenXml.Drawing
+@using BlazorDownloadFile
+@using DocumentFormat.OpenXml.Wordprocessing
 @using DocumentFormat.OpenXml.Office2010.Excel
+@using System.IO
+@using DocumentFormat.OpenXml.Packaging
 
 @inject IProposalService _proposal
 @inject IEmployeeService _employeeService
 @inject IEmployeeDetailService _employeeDetailService
 @inject IProjectActivityService _activity
 @inject IProjektService _project
+@inject IBlazorDownloadFileService _blazorDownloadFileService
 
 @if (ShowEdit)
 {
@@ -157,7 +161,7 @@
                         </div>
                         <div class="modal-footer justify-content-between">
                             <div>
-                                <button class="btn btn-secondary" @onclick=@(Close)>Dokument <span class="ml-1 oi oi-document"></span></button>
+                                <button class="btn btn-secondary" @onclick=@(CreateDocument)>Dokument <span class="ml-1 oi oi-document"></span></button>
                                 <label class="col-form-label ml-2 font-weight-bold">Rabatt (in %) </label>
                                 <InputNumber min="0" max="100" class="form-control-lg col-3" @bind-Value="EmployeeDetailView.Discount"/>
                             </div>
@@ -251,11 +255,88 @@
         StateHasChanged();
     }
 
-    //IN EMPLOYEEDETAIL.ProjectActivities findest du alle aktivitäten, um die zugehörigen projekte zu kriegen musst du dir das separat holen
+    //Thx
     
     public async Task CreateDocument()
     {
-        await Task.Delay(100);
+        string empTemplatePath = "wwwroot\\templates\\AvatiWorkerDoc.docx";
+        var emp = _employeeService.GetEmployeeProfile(EmpId);
+        var empDetail = _employeeDetailService.GetEmployeeDetail(emp.EmployeeID, PropId).Result;
+        MemoryStream memStream = new MemoryStream();
+        await using (FileStream fileStream = new FileStream(empTemplatePath, FileMode.Open, FileAccess.Read))
+            await fileStream.CopyToAsync(memStream);
+        using (WordprocessingDocument empDoc = WordprocessingDocument.Open(memStream, true))
+                {
+                    var empBody = empDoc.MainDocumentPart.Document.Body;
+                    var empParagraphs = empBody.Descendants<Paragraph>().ToList();
+                    Console.WriteLine(empParagraphs.ToString());
+                    foreach (var par in empParagraphs)
+                    {
+                        Console.WriteLine("Haider");
+                        foreach (var run in par.Descendants<Run>().ToList())
+                        {
+                            foreach (var text in run.Descendants<Text>().ToList())
+                            {
+                                switch (text.Text)
+                                {
+                                    case "Name":
+                                        text.Text = text.Text.Replace("Name", emp.FirstName + " " + emp.LastName);
+                                        Console.WriteLine("Hurnesohn");
+                                        break;
+                                    case "numb":
+                                        text.Text = text.Text.Replace("numb", empDetail.Rc.ToString());
+                                        break;
+                                    case "branch":
+                                        foreach (var field in empDetail.Fields)
+                                        {
+                                            par.InsertAfterSelf(ProposalOverview.GenerateFieldListItem(field));
+                                        }
+                                        par.Remove();
+                                        break;
+                                    case "hards":
+                                        foreach (var hardskill in empDetail.Hardskills)
+                                        {
+                                            par.InsertAfterSelf(ProposalOverview.GenerateHardskillListItem(hardskill.Description));
+                                        }
+                                        par.Remove();
+                                        break;
+                                    case "softs":
+                                        foreach (var softskill in empDetail.Softskills)
+                                        {
+                                            par.InsertAfterSelf(ProposalOverview.GenerateSoftskillListItem(softskill));
+                                        }
+                                        par.Remove();
+                                        break;
+                                    case "langs":
+                                        foreach (var lang in empDetail.Languages)
+                                        {
+                                            par.InsertAfterSelf(ProposalOverview.GenerateLanguageListItem(lang));
+                                        }
+                                        par.Remove();
+                                        break;
+                                    case "project":
+                                        foreach (var proj in empDetail.ProjectActivities)
+                                        {
+                                            par.InsertAfterSelf(ProposalOverview.GenerateProjectActivityListItem(proj, _project.GetProject(proj.ProjectID).Projecttitel));
+                                        }
+                                        par.Remove();
+                                        break;
+                                    case "roles":
+                                        foreach (var role in empDetail.Roles)
+                                        {
+                                            par.InsertAfterSelf(ProposalOverview.GenerateRoleListItem(role));
+                                        }
+                                        par.Remove();
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                    Console.WriteLine(empDoc.ToFlatOpcString());
+                    empDoc.Save();
+                    empDoc.Close();
+                }
+        var task = await _blazorDownloadFileService.DownloadFile("test.docx", memStream, "application/octet-stream");
     }
 
 }

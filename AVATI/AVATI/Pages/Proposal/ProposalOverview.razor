@@ -540,6 +540,14 @@
         return element;
     }
 
+    public static Paragraph GenerateProjectActivityListItem(ProjectActivity projAct, string projTitle)
+    {
+        var element = new Paragraph(new ParagraphMarkRunProperties(new ParagraphStyleId() {Val = "Listenabsatz"}, new NumberingProperties(new NumberingLevelReference() {Val = 0}, new NumberingId() {Val = 3})),
+            new Run(new RunProperties(new RunFonts() {ComplexScriptTheme = ThemeFontValues.MinorHighAnsi}, new FontSize() {Val = "28"}),new Text(projTitle), new TabChar() ,new Text(projAct.Description)));
+        Console.WriteLine(projAct.Description);
+        return element;
+    }
+
     public Table GenerateRoleTable(Proposal prop)
     {
         var table = new Table();
@@ -565,7 +573,7 @@
     public async Task CreateDocument(int id) //Threadsicher machen, wenn mehrere gleichzeitig ein Dokument erzeugen --> Ressourcenkonflikt 
     {
         int i = 0;
-        //string costCalcTemplateDoc = "E:\\Users\\Tobi\\Desktop\\AvatiKostenmixDoc.docx";
+        string costCalcTemplateDoc = "E:\\Users\\Tobi\\Desktop\\AvatiKostenmixDoc.docx";
         string empTempDocPath = "wwwroot\\templates\\AvatiTempDoc.docx";
         string empTemplatePath = "wwwroot\\templates\\AvatiWorkerDoc.docx";
         string templatePath = "wwwroot\\templates\\AvatiProposalDoc.docx";
@@ -619,7 +627,6 @@
                             case "Rollenverteilung":
                                 body.AppendChild(GenerateRoleTable(tempProp));
                                 body.AppendChild(pageBreaker.CloneNode(true));
-                                Console.WriteLine(wordDoc.ToFlatOpcString());
                                 break;
                         }
                     }
@@ -680,6 +687,13 @@
                                         }
                                         par.Remove();
                                         break;
+                                    case "project":
+                                        foreach (var proj in tempEmp.ProjectActivities)
+                                        {
+                                            par.InsertAfterSelf(GenerateProjectActivityListItem(proj, _project.GetProject(proj.ProjectID).Projecttitel));
+                                        }
+                                        par.Remove();
+                                        break;    
                                     case "roles":
                                         foreach (var role in tempEmp.Roles)
                                         {
@@ -691,7 +705,7 @@
                             }
                         }
                     }
-                    empBody.InsertAfter(pageBreaker.CloneNode(true), empParagraphs.Last());
+                    empBody.AppendChild(pageBreaker.CloneNode(true));
                     empDoc.SaveAs(empTempDocPath).Close();
                 }
                 paragraphs = body.Descendants<Paragraph>().ToList();
@@ -704,11 +718,35 @@
                 var altChunk = new AltChunk {Id = altChunkId};
                 body.InsertAfter(altChunk, paragraphs.Last());
             }
-            /*MemoryStream kostenmixMemStream = new MemoryStream();
+            MemoryStream kostenmixMemStream = new MemoryStream();
             await using (FileStream kostenmixFs = new FileStream(costCalcTemplateDoc, FileMode.Open, FileAccess.Read))
-                await kostenmisFs.CopyToAsync(kostenmixMemStream);*/ //preparing for template fillup
-            //TODO create template for Kostenmixkalkulation
-            //TODO 
+                await kostenmixFs.CopyToAsync(kostenmixMemStream);
+            using (WordprocessingDocument costDoc = WordprocessingDocument.Open(kostenmixMemStream, true))
+            {
+                i++;
+                costDoc.ChangeDocumentType(WordprocessingDocumentType.Document);
+                Body costBody = costDoc.MainDocumentPart.Document.Body;
+                costBody.AppendChild(new Paragraph(new Run(new RunProperties(new FontSize() {Val = 64.ToString()}, new RunFonts() {Ascii = "Calibri Light"}, new Color() {Val = "8496B0"}), new Text("Kostenmixkalkulation"))));
+                var costTable = new Table();
+                var costTableProp = new TableProperties(new TableStyle() {Val = "EinfacheTabelle4"}, new TableWidth() {Type = TableWidthUnitValues.Dxa, Width = 10000.ToString()});
+                var tableRow = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+                var tc1 = new TableCell(new Paragraph(new Run(new Text(tempProp.ProposalTitle))));
+                tableRow.AppendChild(tc1);
+                costTable.Append(costTableProp, tableRow);
+                costBody.AppendChild(costTable);
+                FileStream clearTempDoc = new FileStream(empTempDocPath, FileMode.Create, FileAccess.ReadWrite);
+                await clearTempDoc.DisposeAsync();
+                costDoc.SaveAs("wwwroot\\templates\\AvatiTempDoc.docx").Close();
+                string altChunkId = "AltChunkId" + i;
+                AlternativeFormatImportPart chunk = wordDoc.MainDocumentPart.AddAlternativeFormatImportPart(AlternativeFormatImportPartType.WordprocessingML, altChunkId);
+                using (FileStream docFs = File.Open("wwwroot\\templates\\AvatiTempDoc.docx", FileMode.Open))
+                {
+                    chunk.FeedData(docFs);
+                }
+                var altChunk = new AltChunk {Id = altChunkId};
+                body.AppendChild(altChunk);
+                Console.WriteLine(wordDoc.ToFlatOpcString());
+            }
             wordDoc.Save();
             wordDoc.Close();
             var task = await _blazorDownloadFileService.DownloadFile("test.docx", memStream, "application/octet-stream");
