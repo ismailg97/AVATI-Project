@@ -199,9 +199,10 @@ namespace AVATI.Data
             List<int> employeeIds = 
                 db.Query<int>("SELECT EmployeeId FROM ProjectActivity_Project_Employee WHERE ProjectID = @pro AND EmployeeID IS NOT NULL",
                     new {pro = projectId}).ToList();
-            foreach (var idtolookfor in employeeIds)
+            foreach (var empId in employeeIds)
             {
-                temp.Employees.Add(db.Query<Employee>("SELECT * FROM Employee WHERE EmployeeID = @emp", new {emp = idtolookfor}).FirstOrDefault());
+                if(!temp.Employees.Exists(x => x.EmployeeID == empId))
+                    temp.Employees.Add(db.Query<Employee>("SELECT * FROM Employee WHERE EmployeeID = @emp", new {emp = empId}).Single());
             }
             return temp;
         }
