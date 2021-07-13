@@ -42,6 +42,7 @@ namespace AVATI.Data
                 new{ project = projectId, description = activity}).Single() > 0;
         }
 
+        //sollte richtig sein
         public bool SetProjectActivityToEmployee(ProjectActivity activity)
         {
             using var db = GetConnection();
@@ -71,11 +72,37 @@ namespace AVATI.Data
             return true;
         }
 
+        //sollte richtig sein
+        public bool UpdateSkillsToActivity(int projectActivityId, List<string> hardSkills, List<string> softSkills)
+        {
+            using var db = GetConnection();
+            var empId = db.Query<int>("SELECT EmployeeID FROM ProjectActivity_Project_Employee WHERE ProjectAcitvityID = @projectActId",
+            new {projectActId = projectActivityId}).Single();
+
+            int insertRows;
+            foreach (var hardSkill in hardSkills)
+            {
+                insertRows = db.Execute("INSERT INTO ProjectActivity_Hardskill VALUES(@projectActID, @emp, @skill)",
+                    new { projectActID = projectActivityId, emp = empId, skill = hardSkill});
+                if (insertRows != 1) return false;
+            }
+            
+            foreach (var softSkill in softSkills)
+            {
+                insertRows = db.Execute("INSERT INTO ProjectActivity_Softskill VALUES(@projectActID, @emp, @skill)",
+                    new { projectActID = projectActivityId, emp = empId, skill = softSkill});
+                if (insertRows != 1) return false;
+            }
+
+            return true;
+        }
+
+        //hoffentlich nicht mehr verwenden
         public bool UpdateProjectActivityToEmployee(ProjectActivity activity)
         {
             using var db = GetConnection();
             var oldActivity = db.Query<string>(
-                "SELECT ProjectAcitvity FROM ProjectActivity_Project_Employee WHERE ProjectAcitvityID = @projectActId",
+                "SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectAcitvityID = @projectActId",
                 new {projectActId = activity.ProjectActivityID}).Single();
             int insertRows;
             if (oldActivity != activity.Description)
@@ -182,11 +209,35 @@ namespace AVATI.Data
                         new {pr = activityId}).ToList(),
                     ProjectActivityID = activityId,
                 };
-                if(projectActivity.Description != null)
-                    activities.Add(projectActivity);
+                //gewollt?
+                /*if(projectActivity.Description != null)
+                    activities.Add(projectActivity);*/
             }
             
             return activities;
+        }
+
+        public Dictionary<int, List<string>> GetActivitiesWithProjectsGrouped(int employeeId)
+        {
+            using var db = GetConnection();
+            var activities = GetProjectActivitiesOfEmployee(employeeId);
+            var result = new Dictionary<int, List<string>>();
+
+            foreach (var activity in activities)
+            {
+                if (result.ContainsKey(activity.ProjectID))
+                {
+                    if (activity.Description == null) continue;
+                    result[activity.ProjectID].Add(activity.Description);
+                }
+                else
+                {
+                    result.Add(activity.ProjectID,
+                        activity.Description == null ? new List<string>() : new List<string>() {activity.Description});
+                }
+            }
+
+            return result;
         }
 
         public List<string> GetActivitiesDesOfProject(int projectId)
@@ -253,6 +304,7 @@ namespace AVATI.Data
                         new { pr = activityId }).ToList(),
                     ProjectActivityID = activityId,
                 };
+                //gewollt?
                 if(projectActivity.Description != null)
                     activities.Add(projectActivity);
             }
@@ -297,7 +349,7 @@ namespace AVATI.Data
                 var deleteRows = db.Execute("DELETE FROM ProjectActivity_Project_Employee WHERE ProjectID = @project AND ProjectActivity = @description",
                     new{ project = projectId, description = activity});
 
-                if (deleteRows != 1) return false;
+                if (deleteRows == 0) return false;
 
                 foreach (var employeeId in empList)
                 {

@@ -149,7 +149,7 @@ else
             @if (!_projectActivity.GetActivitiesDesOfProject(ID).Any())
             {
                 <tr>
-                    <td>[Weisen Sie passende Projekttätigkeiten dem Projekt zu!]</td>
+                    <td>[Weisen Sie dem Projekt passende Projekttätigkeiten zu!]</td>
                     <td></td>
                     <td></td>
                 </tr>
@@ -222,7 +222,7 @@ else
                     </td>
                     @if (_projectActivity.GetProjectActivityForPurpose(purpose.Purpose) == null)
                     {
-                        <td>[null]</td>
+                        <td>[Noch durch keine Projekttätigkeit gelöst!]</td>
                         <td></td>
                         <td>
                             <button type="button" class="btn btn-info" @onclick="() => { AddPurposeToActivity(purpose); }">
@@ -230,7 +230,7 @@ else
                             </button>
                         </td>
                     }
-                    else if (@_projectActivity.GetProjectActivityForPurpose(purpose.Purpose) != null)
+                    else 
                     {
                         <td>@_projectActivity.GetProjectActivityForPurpose(purpose.Purpose)</td>
                         <td></td>
