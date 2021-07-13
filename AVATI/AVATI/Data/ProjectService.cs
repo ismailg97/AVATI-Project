@@ -231,9 +231,9 @@ namespace AVATI.Data
             using IDbConnection db = GetConnection();
             var activities = db.Query<string>("SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectID = @project AND EmployeeID = @emp AND ProjectActivity IS NOT NULL",
                 new {project = projectId, emp = employeeId}).ToList();
-            db.Execute("DELETE FROM ProjectActivity_Hardskill WHERE ProjectActivityID in (SELECT ProjectActivityID FROM ProjectActivity_Project_EmployeeProjectID WHERE ProjectID = @project AND EmployeeID = @emp)",
+            db.Execute("DELETE FROM ProjectActivity_Hardskill WHERE ProjectActivityID in (SELECT ProjectActivityID FROM ProjectActivity_Project_Employee WHERE ProjectID = @project AND EmployeeID = @emp)",
                 new{project = projectId, emp = employeeId});
-            db.Execute("DELETE FROM ProjectActivity_Softskill WHERE ProjectActivityID in (SELECT ProjectActivityID FROM ProjectActivity_Project_EmployeeProjectID WHERE ProjectID = @project AND EmployeeID = @emp)",
+            db.Execute("DELETE FROM ProjectActivity_Softskill WHERE ProjectActivityID in (SELECT ProjectActivityID FROM ProjectActivity_Project_Employee WHERE ProjectID = @project AND EmployeeID = @emp)",
                 new{project = projectId, emp = employeeId});
             db.Execute("DELETE FROM ProjectActivity_Project_Employee WHERE ProjectID = @project AND EmployeeID = @emp",
                 new {project = projectId, emp = employeeId});
