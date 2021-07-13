@@ -3,10 +3,18 @@
     caption-side: top;
 }
 
-.smalltd {
-    width: 200px;
+.hardskill{
+    background-color: white;
+    color: #c2364b;
+    border-color: #c2364b;
+    margin-left: 2px;
+    margin-bottom: 2px;
 }
 
-.table {
-    width: 80%;
+.softskill {
+    background-color: white;
+    color: #7a212e;
+    border-color: #7a212e;
+    margin-left: 2px;
+    margin-bottom: 2px;
 }

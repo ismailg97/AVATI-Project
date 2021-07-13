@@ -12,70 +12,90 @@
 
 <h2><b>Projektübersicht</b></h2>
 
-EmployeeID: @Id
-
 @if (_projectWithGroupedActivities.Any())
 {
-    foreach (var projectId in _projectWithGroupedActivities.Keys)
-    {
-        var project = _projektService.GetProject(projectId);
-        <table class="table table-striped">
-            <caption>
-                <h5>@projectId <b>Projekttitel:</b> @project.Projecttitel | <b>Projektbeschreibung:</b> @project.Projectdescription </h5>
-            </caption>
-            <div class="alert alert-danger font-weight-bolder ml-4 @(_noAddPossible[projectId] ? "" : "collapse")" role="alert">
-                Sie können keine Projekttätigkeit mehr hinzufügen
-            </div>
-            @if (!_projectWithGroupedActivities[projectId].Any())
-            {
-                <div><button class="btn btn-success" @onclick="() => ShowPopUpCreate(projectId)">
-                                                 <span class="oi oi-plus"></span> Hinzufügen
-                                             </button></div>
-                <tr>
-                    <td>[Sie haben sich noch keiner Tätigkeit zugewiesen]</td>
-                </tr>
-            }
-            else
-            {
-                <thead>
-                <tr>
-                    <th>Projekttätigkeit
-                        <button class="btn btn-success" @onclick="() => ShowPopUpCreate(projectId)">
-                            <span class="oi oi-plus"></span> Hinzufügen
-                        </button></th>
-                    <th>Hardskills</th>
-                    <th>Softskills</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-                </thead>
-
-                <tbody>
-                    @foreach (var activity in _projectWithGroupedActivities[projectId])
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Projekt</th>
+            <th>Projekttätigkeiten</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var projectId in _projectWithGroupedActivities.Keys)
+        {
+            var project = _projektService.GetProject(projectId);
+            <tr>
+                <td><b>Titel:</b> @project.Projecttitel<p/>
+                    <b>Beschreibung:</b> @project.Projectdescription<p/>
+                    @if (_activitiesToChoose[projectId].Any())
                     {
-                        <tr>
-                            <td>@activity.Description</td>
-                            <td>
-                                @string.Join(" | ", activity.HardSkills)
-                            </td>
-                            <td>
-                                @string.Join(" | ", activity.SoftSkills)
-                            </td>
-                            <td>
-                                <button class="btn btn-secondary" @onclick="() => ShowPopUpEdit(activity)"><span class="oi oi-pencil" aria-hidden="true"></span> Editieren</button>
-                            </td>
-                            <td>
-                                <button class="btn btn-danger" @onclick="() => ShowPopUpDelete(activity)"><span class="oi oi-trash"></span> Löschen</button>
-                            </td>
-                        </tr>
+                        <div class="alert alert-success" style="font-size: small;">
+                            Tätigkeit hinzufügen
+                            <button class="btn btn-success" @onclick="() => ShowPopUpCreate(projectId)"> <span class="oi oi-plus"></span></button>
+                        </div>
                     }
-                </tbody>
-            }
-        </table>
-    }
+                    else
+                    {
+                        <div class="alert alert-danger" style="font-size: small;">
+                            Sie können sich keiner Tätigkeit mehr zuweisen
+                        </div>
+                    }
+                </td>
+                <td>
+                    @if (!_projectWithGroupedActivities[projectId].Any())
+                    {
+                        <a>[Sie haben sich noch keiner Tätigkeit zugewiesen]</a>
+                    }
+                    else
+                    {
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Tätigkeit</th>
+                                <th>Hardskills</th>
+                                <th>Softskills</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            @foreach (var activity in _projectWithGroupedActivities[projectId])
+                            {
+                                <tr>
+                                    <td>@activity.Description</td>
+                                    <td>
+                                        @foreach (var hardskill in activity.HardSkills)
+                                        {
+                                            <button class="btn hardskill btn-sm">@hardskill</button>
+                                        }
+                                    </td>
+                                    <td>
+                                        @foreach (var softskill in activity.SoftSkills)
+                                        {
+                                            <button class="btn softskill btn-sm">@softskill</button>
+                                        }
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-secondary" @onclick="() => ShowPopUpEdit(activity)"><span class="oi oi-pencil" aria-hidden="true"></span></button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-danger" @onclick="() => ShowPopUpDelete(activity)"><span class="oi oi-trash"></span></button>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
 }
 
-@if ((_showCreate && _activitiesToChoose[_projectActivity.ProjectID].Any())|| _showEdit )
+@if (_showCreate || _showEdit )
 {
     var projecttitle = _projektService.GetProject(_projectActivity.ProjectID).Projecttitel;
     
@@ -310,7 +330,6 @@ EmployeeID: @Id
     private ProjectActivity _projectActivity;
 
     private Dictionary<int, List<string>> _activitiesToChoose;
-    private Dictionary<int, bool> _noAddPossible;
     
     private string Filter { get; set; }
     
@@ -325,11 +344,6 @@ EmployeeID: @Id
         _showDelete = false;
         _projectWithGroupedActivities = _projectActivityService.GetActivitiesWithProjectsGrouped(Id);
         _employee = _employeeService.GetEmployeeProfile(Id);
-        _noAddPossible = new();
-        foreach (var projectId in _projectWithGroupedActivities.Keys)
-        {
-            _noAddPossible.Add(projectId, false);
-        }
         GetActivitiesOfProjectEmployee();
     }
 
@@ -341,14 +355,18 @@ EmployeeID: @Id
 
     private void ShowPopUpEdit(ProjectActivity activity)
     {
-        _projectActivity = new();
-        _projectActivity.ProjectActivityID = activity.ProjectActivityID;
-        _projectActivity.ProjectID = activity.ProjectID;
-        _projectActivity.EmployeeID = activity.EmployeeID;
-        _projectActivity.Description = activity.Description;
-        _projectActivity.HardSkills = new List<string>(activity.HardSkills);
-        _projectActivity.SoftSkills = new List<string>(activity.SoftSkills);
+        _projectActivity = activity;
+        _projectActivity = new ProjectActivity
+        {
+            ProjectActivityID = activity.ProjectActivityID,
+            ProjectID = activity.ProjectID,
+            EmployeeID = activity.EmployeeID,
+            Description = activity.Description,
+            HardSkills = new List<string>(activity.HardSkills),
+            SoftSkills = new List<string>(activity.SoftSkills)
+        };
         _showEdit = true;
+        StateHasChanged();
     }
 
     private void DeleteProjectActivity()
@@ -375,23 +393,15 @@ EmployeeID: @Id
         _showCreate = false;
     }
 
-    private async void ShowPopUpCreate(int projectId)
+    private void ShowPopUpCreate(int projectId)
     {
         _projectActivity = new();
         if (_activitiesToChoose[projectId].Any())
             _projectActivity.Description = _activitiesToChoose[projectId][0];
-        else
-        {
-            _noAddPossible[projectId] = true;
-            StateHasChanged();
-            await Task.Delay(1000);
-            _noAddPossible[projectId] = false;
-            StateHasChanged();
-            return;
-        }
         _projectActivity.ProjectID = projectId;
         _projectActivity.EmployeeID = Id;
         _showCreate = true;
+        StateHasChanged();
     }
 
     private void GetActivitiesOfProjectEmployee()
