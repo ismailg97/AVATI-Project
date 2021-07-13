@@ -1,0 +1,414 @@
+﻿@page "/employeeProject2/{Id:int}"
+
+@using AVATI.Data
+
+@inject IProjektService _projektService
+@inject JsonImport _jsonImport
+@inject IHardskillService _hardskillService
+@inject IProjectActivityService _projectActivityService
+@inject NavigationManager _navManager
+@inject IEmployeeService _employeeService
+@inject IBasicDataService _basicDataService
+
+<h2><b>Projektübersicht</b></h2>
+
+EmployeeID: @Id
+
+@if (_projectWithGroupedActivities.Any())
+{
+    foreach (var projectId in _projectWithGroupedActivities.Keys)
+    {
+        var project = _projektService.GetProject(projectId);
+        <table class="table table-striped">
+            <caption>
+                <h5>@projectId <b>Projekttitel:</b> @project.Projecttitel | <b>Projektbeschreibung:</b> @project.Projectdescription </h5>
+            </caption>
+            <div class="alert alert-danger font-weight-bolder ml-4 @(_noAddPossible[projectId] ? "" : "collapse")" role="alert">
+                Sie können keine Projekttätigkeit mehr hinzufügen
+            </div>
+            @if (!_projectWithGroupedActivities[projectId].Any())
+            {
+                <div><button class="btn btn-success" @onclick="() => ShowPopUpCreate(projectId)">
+                                                 <span class="oi oi-plus"></span> Hinzufügen
+                                             </button></div>
+                <tr>
+                    <td>[Sie haben sich noch keiner Tätigkeit zugewiesen]</td>
+                </tr>
+            }
+            else
+            {
+                <thead>
+                <tr>
+                    <th>Projekttätigkeit
+                        <button class="btn btn-success" @onclick="() => ShowPopUpCreate(projectId)">
+                            <span class="oi oi-plus"></span> Hinzufügen
+                        </button></th>
+                    <th>Hardskills</th>
+                    <th>Softskills</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var activity in _projectWithGroupedActivities[projectId])
+                    {
+                        <tr>
+                            <td>@activity.Description</td>
+                            <td>
+                                @string.Join(" | ", activity.HardSkills)
+                            </td>
+                            <td>
+                                @string.Join(" | ", activity.SoftSkills)
+                            </td>
+                            <td>
+                                <button class="btn btn-secondary" @onclick="() => ShowPopUpEdit(activity)"><span class="oi oi-pencil" aria-hidden="true"></span> Editieren</button>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger" @onclick="() => ShowPopUpDelete(activity)"><span class="oi oi-trash"></span> Löschen</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            }
+        </table>
+    }
+}
+
+@if ((_showCreate && _activitiesToChoose[_projectActivity.ProjectID].Any())|| _showEdit )
+{
+    var projecttitle = _projektService.GetProject(_projectActivity.ProjectID).Projecttitel;
+    
+    <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
+        <div class="modal-dialog border-dark">
+            <div class="modal-content">
+                <div class="modal-header flex-column">
+                    @if(_showCreate) {
+                        <h4 class="modal-title col-12 text-center">Hinzufügen einer Projekttätigkeit im Projekt @projecttitle</h4>
+                    }
+                    else
+                    {
+                        <h4 class="modal-title col-12 text-center">Aktivität "@_projectActivity.Description" bearbeiten</h4>
+                    }
+                </div>
+                <div class="modal-body text-center">
+                    <div class="form-group">
+
+                        @if(_showCreate) 
+                        {
+                            <!------ Project Activity ---------->
+                            <div class="form-group">
+                                <label class="mr-3 mt-2">Projektaktivität: </label>
+                                <select>
+                                    @foreach (var activity in _activitiesToChoose[_projectActivity.ProjectID])
+                                    {
+                                        <option @onclick="(() => { _projectActivity.Description = activity; })">@activity</option>
+                                    }
+                                </select>
+                            </div>
+                            
+                        }
+
+                            <!------ Soft Skills ---------->
+                        <div class="form-group">
+                            <label class="mr-3 mt-2">Softskill: </label>
+                            @if (_projectActivity.SoftSkills.Any())
+                            {
+                                foreach (var softskill in _projectActivity.SoftSkills)
+                                {
+                                    <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.SoftSkills.Remove(softskill); })>
+                                        <a>
+                                            <a class="showRemove"> @softskill </a>
+                                            <a class="remove">
+                                                <span style="color: darkred" class="oi oi-x"></span>
+                                            </a>
+                                        </a>
+                                    </button>
+                                }
+                            }
+                        </div>
+                        @foreach (var softskill in _employee.Softskills)
+                        {
+                            if (!_projectActivity.SoftSkills.Contains(softskill))
+                            {
+                                <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { _projectActivity.SoftSkills.Add(softskill); })>
+                                    @softskill
+                                </button>
+                            }
+                        }
+
+
+                        <!------ Hard Skills ---------->
+                        <div class="form-group">
+                            <label class="mr-3 mt-2">Hardskill: </label>
+                            @if (_projectActivity.HardSkills.Any())
+                            {
+                                @foreach (var hardskill in _projectActivity.HardSkills)
+                                {
+                                    <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.HardSkills.Remove(hardskill); })>
+                                        <a>
+                                            <a class="showRemove"> @hardskill </a>
+                                            <a class="remove">
+                                                <span style="color: darkred" class="oi oi-x"></span>
+                                            </a>
+                                        </a>
+                                    </button>
+                                }
+                            }
+                        </div>
+
+
+                        <input class="form-control" type="text" placeholder="Suche Hardskill..."
+                               @bind="Filter"
+                               @bind:event="oninput">
+                        @foreach (var hardskill in _employee.Hardskills)
+                        {
+                            if (!_projectActivity.HardSkills.Contains(hardskill.Description))
+                            {
+                                <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { _projectActivity.HardSkills.Add(hardskill.Description); })>
+                                    @hardskill.Description
+                                </button>
+                            }
+                        }
+                    </div>
+
+                    <div class="float-right">
+                        <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { _showCreate = _showEdit = false; })">
+                            <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
+                        </button>
+                        <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="@(_showCreate ? CreateProjectActivity: EditProjectActivity)">
+                            <span class="oi oi-document" aria-hidden="true"></span> Speichern
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="modal-backdrop fade show"></div>
+}
+
+@if (_showEdit)
+{
+    <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
+        <div class="modal-dialog border-dark">
+            <div class="modal-content">
+                <div class="modal-header flex-column">
+                    <h4 class="modal-title col-12 text-center">Aktivität "@_projectActivity.Description" bearbeiten</h4>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="form-group">
+                        
+                        <!------ Soft Skills ---------->
+                        <div class="form-group">
+                            <label class="mr-3 mt-2">Softskill: </label>
+                            @if (_projectActivity.SoftSkills.Any())
+                            {
+                                @foreach (var softskill in _projectActivity.SoftSkills)
+                                {
+                                    <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.SoftSkills.Remove(softskill); })>
+                                        <a>
+                                            <a class="showRemove"> @softskill </a>
+                                            <a class="remove">
+                                                <span style="color: darkred" class="oi oi-x"></span>
+                                            </a>
+                                        </a>
+                                    </button>
+                                }
+                            }
+                        </div>
+                        @foreach (var softskill in _employee.Softskills)
+                        {
+                            if (!_projectActivity.SoftSkills.Contains(softskill))
+                            {
+                                <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { _projectActivity.SoftSkills.Add(softskill); })>
+                                    @softskill
+                                </button>
+                            }
+                        }
+
+
+                        <!------ Hard Skills ---------->
+                        <div class="form-group">
+                            <label class="mr-3 mt-2">Hardskill: </label>
+                            @if (_projectActivity.HardSkills.Any())
+                            {
+                                @foreach (var hardskill in _projectActivity.HardSkills)
+                                {
+                                    <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.HardSkills.Remove(hardskill); })>
+                                        <a>
+                                            <a class="showRemove"> @hardskill </a>
+                                            <a class="remove">
+                                                <span style="color: darkred" class="oi oi-x"></span>
+                                            </a>
+                                        </a>
+                                    </button>
+                                }
+                            }
+                        </div>
+
+
+                        <input class="form-control" type="text" placeholder="Suche Hardskill..."
+                               @bind="Filter"
+                               @bind:event="oninput">
+                        @foreach (var hardskill in _employee.Hardskills)
+                        {
+                            if (!_projectActivity.HardSkills.Contains(hardskill.Description))
+                            {
+                                <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { _projectActivity.HardSkills.Add(hardskill.Description); })>
+                                    @hardskill.Description
+                                </button>
+                            }
+                        }
+                    </div>
+
+                    <div class="float-right">
+                        <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="() => { _showEdit = false; }">
+                            <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
+                        </button>
+                        <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="EditProjectActivity">
+                            <span class="oi oi-document" aria-hidden="true"></span> Speichern
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@if (_showDelete)
+{
+    <div class="modal fade show" id="myModal" style=" display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Löschvorgang bestätigen</h4>
+                    <button type="button" class="close" data-dismiss="modal" @onclick="() => { _showDelete = false; }">&times;</button>
+                </div>
+            
+                <div class="modal-body">
+                    Sind Sie sicher, dass die Projektaktivität "<b>@_projectActivity.Description</b>" gelöscht werden soll?
+                </div>
+            
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => { _showDelete = false; }">Abbrechen</button>
+                    <button type="button" class="btn btn-success" @onclick="DeleteProjectActivity">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    
+    private Dictionary<int, List<ProjectActivity>> _projectWithGroupedActivities;
+    private Employee _employee;
+    private ProjectActivity _projectActivity;
+
+    private Dictionary<int, List<string>> _activitiesToChoose;
+    private Dictionary<int, bool> _noAddPossible;
+    
+    private string Filter { get; set; }
+    
+    private bool _showCreate;
+    private bool _showEdit;
+    private bool _showDelete;
+    
+    protected override void OnInitialized()
+    {
+        _showCreate = false;
+        _showEdit = false;
+        _showDelete = false;
+        _projectWithGroupedActivities = _projectActivityService.GetActivitiesWithProjectsGrouped(Id);
+        _employee = _employeeService.GetEmployeeProfile(Id);
+        _noAddPossible = new();
+        foreach (var projectId in _projectWithGroupedActivities.Keys)
+        {
+            _noAddPossible.Add(projectId, false);
+        }
+        GetActivitiesOfProjectEmployee();
+    }
+
+    private void EditProjectActivity()
+    {
+        _projectActivityService.UpdateSkillsToActivity(_projectActivity.ProjectActivityID, _projectActivity.HardSkills, _projectActivity.SoftSkills);
+        _showEdit = false;
+    }
+
+    private void ShowPopUpEdit(ProjectActivity activity)
+    {
+        _projectActivity = new();
+        _projectActivity.ProjectActivityID = activity.ProjectActivityID;
+        _projectActivity.ProjectID = activity.ProjectID;
+        _projectActivity.EmployeeID = activity.EmployeeID;
+        _projectActivity.Description = activity.Description;
+        _projectActivity.HardSkills = new List<string>(activity.HardSkills);
+        _projectActivity.SoftSkills = new List<string>(activity.SoftSkills);
+        _showEdit = true;
+    }
+
+    private void DeleteProjectActivity()
+    {
+        _projectActivityService.DeleteProjectActivityToEmployee(_projectActivity.ProjectActivityID);
+        _projectWithGroupedActivities = _projectActivityService.GetActivitiesWithProjectsGrouped(Id);
+        GetActivitiesOfProjectEmployee();
+        StateHasChanged();
+        _showDelete = false;
+    }
+
+    private void ShowPopUpDelete(ProjectActivity activity)
+    {
+        _projectActivity = activity;
+        _showDelete = true;
+    }
+
+    private void CreateProjectActivity()
+    {
+        _projectActivityService.SetProjectActivityToEmployee(_projectActivity);
+        _projectWithGroupedActivities = _projectActivityService.GetActivitiesWithProjectsGrouped(Id);
+        GetActivitiesOfProjectEmployee();
+        StateHasChanged();
+        _showCreate = false;
+    }
+
+    private async void ShowPopUpCreate(int projectId)
+    {
+        _projectActivity = new();
+        if (_activitiesToChoose[projectId].Any())
+            _projectActivity.Description = _activitiesToChoose[projectId][0];
+        else
+        {
+            _noAddPossible[projectId] = true;
+            StateHasChanged();
+            await Task.Delay(1000);
+            _noAddPossible[projectId] = false;
+            StateHasChanged();
+            return;
+        }
+        _projectActivity.ProjectID = projectId;
+        _projectActivity.EmployeeID = Id;
+        _showCreate = true;
+    }
+
+    private void GetActivitiesOfProjectEmployee()
+    {
+        _activitiesToChoose = new();
+        foreach (var projectId in _projectWithGroupedActivities.Keys)
+        {
+            var activitiesOfProject = _projectActivityService.GetActivitiesDesOfProject(projectId);
+            var activitiesAlreadyIn = _projectWithGroupedActivities[projectId];
+            var result = new List<string>();
+
+            foreach (var activity in activitiesOfProject.Where(x => !activitiesAlreadyIn.Exists(k => k.Description == x)))
+            {
+                result.Add(activity);
+            }
+            _activitiesToChoose.Add(projectId, result);
+        }
+    }
+
+}

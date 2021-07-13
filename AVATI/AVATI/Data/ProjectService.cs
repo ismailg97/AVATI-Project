@@ -113,7 +113,7 @@ namespace AVATI.Data
 
             foreach (var activity in activities)
             {
-                if (!ExistActivityInProject(project.ProjectID, activity) && project.ProjectActivities.Contains(activity))
+                if (!ExistActivityInProject(project.ProjectID, activity))
                     db.Execute("INSERT INTO ProjectActivity_Project_Employee VALUES(@ProID, NULL, @description)",
                         new {ProID = project.ProjectID, description = activity});
             }

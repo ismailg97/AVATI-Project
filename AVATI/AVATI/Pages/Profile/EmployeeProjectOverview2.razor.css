@@ -1,0 +1,12 @@
+﻿caption {
+    color: black;
+    caption-side: top;
+}
+
+.smalltd {
+    width: 200px;
+}
+
+.table {
+    width: 80%;
+}
