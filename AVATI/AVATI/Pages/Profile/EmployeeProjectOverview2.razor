@@ -10,90 +10,102 @@
 @inject IEmployeeService _employeeService
 @inject IBasicDataService _basicDataService
 
-<h2><b>Projektübersicht</b></h2>
+<h2>Projektübersicht</h2>
 
-@if (_projectWithGroupedActivities.Any())
-{
-    <table class="table">
-        <thead>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Projekt</th>
+        <th>Projekttätigkeiten</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var projectId in _projectWithGroupedActivities.Keys)
+    {
+        var project = _projektService.GetProject(projectId);
         <tr>
-            <th>Projekt</th>
-            <th>Projekttätigkeiten</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var projectId in _projectWithGroupedActivities.Keys)
-        {
-            var project = _projektService.GetProject(projectId);
-            <tr>
-                <td><b>Titel:</b> @project.Projecttitel<p/>
-                    <b>Beschreibung:</b> @project.Projectdescription<p/>
-                    @if (_activitiesToChoose[projectId].Any())
-                    {
-                        <div class="alert alert-success" style="font-size: small;">
-                            Tätigkeit hinzufügen
-                            <button class="btn btn-success" @onclick="() => ShowPopUpCreate(projectId)"> <span class="oi oi-plus"></span></button>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="alert alert-danger" style="font-size: small;">
-                            Sie können sich keiner Tätigkeit mehr zuweisen
-                        </div>
-                    }
-                </td>
-                <td>
-                    @if (!_projectWithGroupedActivities[projectId].Any())
-                    {
-                        <a>[Sie haben sich noch keiner Tätigkeit zugewiesen]</a>
-                    }
-                    else
-                    {
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th>Tätigkeit</th>
-                                <th>Hardskills</th>
-                                <th>Softskills</th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                            </thead>
+            <td><b>Titel:</b> @project.Projecttitel<p/>
+                <b>Beschreibung:</b> @project.Projectdescription<p/>
+                @if (_activitiesToChoose[projectId].Any())
+                {
+                    <div class="alert alert-success" style="font-size: small;">
+                        Tätigkeit hinzufügen
+                        <button class="btn btn-success" @onclick="() => ShowPopUpCreate(projectId)"> <span class="oi oi-plus"></span></button>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-danger" style="font-size: small;">
+                        Sie können sich keiner Tätigkeit mehr zuweisen
+                    </div>
+                }
+            </td>
+            <td>
+                @if (!_projectWithGroupedActivities[projectId].Any())
+                {
+                    <a>[Sie haben sich noch keiner Tätigkeit zugewiesen]</a>
+                }
+                else
+                {
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Tätigkeit</th>
+                            <th>Hardskills</th>
+                            <th>Softskills</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </thead>
 
-                            <tbody>
-                            @foreach (var activity in _projectWithGroupedActivities[projectId])
-                            {
-                                <tr>
-                                    <td>@activity.Description</td>
-                                    <td>
-                                        @foreach (var hardskill in activity.HardSkills)
+                        <tbody>
+                        @foreach (var activity in _projectWithGroupedActivities[projectId])
+                        {
+                            <tr>
+                                <td>@activity.Description</td>
+                                <td>
+                                    @if (activity.HardSkills.Any())
+                                    {
+                                        foreach (var hardskill in activity.HardSkills)
                                         {
                                             <button class="btn hardskill btn-sm">@hardskill</button>
                                         }
-                                    </td>
-                                    <td>
+                                    }
+                                    else
+                                    {
+                                        <small style="color: #818181;">[Keine Hardskills zugewiesen]</small>
+                                    }
+                                </td>
+                                <td>
+                                    @if (activity.SoftSkills.Any())
+                                    {
                                         @foreach (var softskill in activity.SoftSkills)
                                         {
                                             <button class="btn softskill btn-sm">@softskill</button>
                                         }
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-secondary" @onclick="() => ShowPopUpEdit(activity)"><span class="oi oi-pencil" aria-hidden="true"></span></button>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-danger" @onclick="() => ShowPopUpDelete(activity)"><span class="oi oi-trash"></span></button>
-                                    </td>
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
-                    }
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-}
+                                    }
+                                    else
+                                    {
+                                        <small style="color: #818181;">[Keine Softskills zugewiesen]</small>
+                                    }
+                                </td>
+                                <td>
+                                    <button class="btn btn-secondary" @onclick="() => ShowPopUpEdit(activity)"><span class="oi oi-pencil" aria-hidden="true"></span></button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger" @onclick="() => ShowPopUpDelete(activity)"><span class="oi oi-trash"></span></button>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
 
 @if (_showCreate || _showEdit )
 {
@@ -119,10 +131,10 @@
                             <!------ Project Activity ---------->
                             <div class="form-group">
                                 <label class="mr-3 mt-2">Projektaktivität: </label>
-                                <select>
+                                <select @bind="_projectActivity.Description">
                                     @foreach (var activity in _activitiesToChoose[_projectActivity.ProjectID])
                                     {
-                                        <option @onclick="(() => { _projectActivity.Description = activity; })">@activity</option>
+                                        <option value="@activity">@activity</option>
                                     }
                                 </select>
                             </div>
@@ -205,95 +217,6 @@
         </div>
     </div>
         <div class="modal-backdrop fade show"></div>
-}
-
-@if (_showEdit)
-{
-    <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
-        <div class="modal-dialog border-dark">
-            <div class="modal-content">
-                <div class="modal-header flex-column">
-                    <h4 class="modal-title col-12 text-center">Aktivität "@_projectActivity.Description" bearbeiten</h4>
-                </div>
-                <div class="modal-body text-center">
-                    <div class="form-group">
-                        
-                        <!------ Soft Skills ---------->
-                        <div class="form-group">
-                            <label class="mr-3 mt-2">Softskill: </label>
-                            @if (_projectActivity.SoftSkills.Any())
-                            {
-                                @foreach (var softskill in _projectActivity.SoftSkills)
-                                {
-                                    <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.SoftSkills.Remove(softskill); })>
-                                        <a>
-                                            <a class="showRemove"> @softskill </a>
-                                            <a class="remove">
-                                                <span style="color: darkred" class="oi oi-x"></span>
-                                            </a>
-                                        </a>
-                                    </button>
-                                }
-                            }
-                        </div>
-                        @foreach (var softskill in _employee.Softskills)
-                        {
-                            if (!_projectActivity.SoftSkills.Contains(softskill))
-                            {
-                                <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { _projectActivity.SoftSkills.Add(softskill); })>
-                                    @softskill
-                                </button>
-                            }
-                        }
-
-
-                        <!------ Hard Skills ---------->
-                        <div class="form-group">
-                            <label class="mr-3 mt-2">Hardskill: </label>
-                            @if (_projectActivity.HardSkills.Any())
-                            {
-                                @foreach (var hardskill in _projectActivity.HardSkills)
-                                {
-                                    <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.HardSkills.Remove(hardskill); })>
-                                        <a>
-                                            <a class="showRemove"> @hardskill </a>
-                                            <a class="remove">
-                                                <span style="color: darkred" class="oi oi-x"></span>
-                                            </a>
-                                        </a>
-                                    </button>
-                                }
-                            }
-                        </div>
-
-
-                        <input class="form-control" type="text" placeholder="Suche Hardskill..."
-                               @bind="Filter"
-                               @bind:event="oninput">
-                        @foreach (var hardskill in _employee.Hardskills)
-                        {
-                            if (!_projectActivity.HardSkills.Contains(hardskill.Description))
-                            {
-                                <button type="button" class="btn btn-outline-dark btn-sm mr-2 mb-2" @onclick=@(() => { _projectActivity.HardSkills.Add(hardskill.Description); })>
-                                    @hardskill.Description
-                                </button>
-                            }
-                        }
-                    </div>
-
-                    <div class="float-right">
-                        <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="() => { _showEdit = false; }">
-                            <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
-                        </button>
-                        <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="EditProjectActivity">
-                            <span class="oi oi-document" aria-hidden="true"></span> Speichern
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal-backdrop fade show"></div>
 }
 
 @if (_showDelete)
