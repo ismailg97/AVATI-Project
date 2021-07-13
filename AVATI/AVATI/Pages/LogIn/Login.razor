@@ -81,7 +81,7 @@
     public string empType { get; set; }
     private bool _booleanSignedIn { get; set; }
 
-    private async Task LoginCheck()
+    private void LoginCheck()
     {
         Id = _login.LogIn(Log.Username, Log.Password);
         if (Id == -1)
