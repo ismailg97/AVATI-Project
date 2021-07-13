@@ -210,8 +210,8 @@ namespace AVATI.Data
                     ProjectActivityID = activityId,
                 };
                 //gewollt?
-                /*if(projectActivity.Description != null)
-                    activities.Add(projectActivity);*/
+                /*if(projectActivity.Description != null)*/
+                    activities.Add(projectActivity);
             }
             
             return activities;
