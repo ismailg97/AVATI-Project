@@ -12,7 +12,7 @@ namespace AVATI.Data
     public class CookieController : ControllerBase
     {
         [HttpPost]
-        public async Task<ActionResult> Login([FromForm] string name,[FromForm] string empType)
+        public async Task<ActionResult> Login([FromForm] string name, [FromForm] string empType)
         {
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(new List<Claim>
             {
