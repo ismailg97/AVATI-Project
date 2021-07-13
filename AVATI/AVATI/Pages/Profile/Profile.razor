@@ -1,12 +1,24 @@
 ﻿@page "/profile"
-@page "/profile/{Id:int}"
 @using AVATI.Data
+@using Azure.Core
+@using DocumentFormat.OpenXml.Spreadsheet
+@using Microsoft.AspNetCore.Http
 @inject NavigationManager _navManager
 @inject IEmployeeService _employee
 @inject IProjectActivityService _projctActivityService
 @inject IProjektService _projektService
 @inject AuthenticationStateProvider _authenticationStateProvider
 @inject NavigationManager _navigationManager
+@inject HttpClient _httpClient
+@inject IHttpContextAccessor _httpContextAccessor
+
+<AuthorizeView>
+    <NotAuthorized>
+       
+        
+    </NotAuthorized>
+    <Authorized>
+    
 
 <h3 class="text-left">Profil</h3>
 
@@ -221,7 +233,8 @@
         </div>
     </div>
 </div>
-
+    </Authorized>
+</AuthorizeView>
 
 @code {
 
@@ -252,6 +265,12 @@
 
     protected override void OnInitialized()
     {
+        if (_httpContextAccessor.HttpContext != null)
+        {
+            string context = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault()?.Value;
+            Id = Int16.Parse(context ?? throw new InvalidOperationException());
+        }
+    //var value= HttpRequest.Cookies["key"].Value;
         _projectWithGroupedActivities = _projctActivityService.GetActivitiesWithProjectsGrouped(Id);
         _authenticationStateProvider.GetAuthenticationStateAsync();
         Emp = _employee.GetEmployeeProfile(Id);
