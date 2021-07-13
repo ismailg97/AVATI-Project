@@ -103,7 +103,7 @@ namespace AVATI.Data
                 if (!project.Employees.Exists(e => e.EmployeeID == empId))
                 {
                     activities.AddRange(db.Query<string>(
-                        "SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectID = @pro AND EmployeeID = @empo",
+                        "SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectID = @pro AND EmployeeID = @empo AND ProjectActivity IS NOT NULL",
                         new{ pro = project.ProjectID, empo = empId}).ToList());
                     db.Execute(
                         "DELETE FROM ProjectActivity_Project_Employee WHERE ProjectID = @pro AND EmployeeID = @empo",
@@ -113,7 +113,7 @@ namespace AVATI.Data
 
             foreach (var activity in activities)
             {
-                if (!ExistActivityInProject(project.ProjectID, activity))
+                if (!ExistActivityInProject(project.ProjectID, activity) && project.ProjectActivities.Contains(activity))
                     db.Execute("INSERT INTO ProjectActivity_Project_Employee VALUES(@ProID, NULL, @description)",
                         new {ProID = project.ProjectID, description = activity});
             }
@@ -241,7 +241,7 @@ namespace AVATI.Data
         public bool DeleteEmployeeFromProject(int projectId, int employeeId)
         {
             using IDbConnection db = GetConnection();
-            var activities = db.Query<string>("SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectID = @pro AND EmployeeID = @empo",
+            var activities = db.Query<string>("SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectID = @pro AND EmployeeID = @empo AND ProjectActivity IS NOT NULL",
                 new {pro = projectId, empo = employeeId}).ToList();
             db.Execute("DELETE FROM ProjectActivity_Project_Employee WHERE ProjectID = @pro AND EmployeeID = @emp",
                 new {pro = projectId, emp = employeeId});
