@@ -119,7 +119,7 @@ else
                 <tr>
                     <td>@emp.FirstName @emp.LastName</td>
                     <td>
-                        <button type="button" class="btn btn-danger" @onclick="() => { DeleteFromProjectEmployee(Project.ProjectID, emp); Update(); }">
+                        <button type="button" class="btn btn-danger" @onclick="() => { PopUpDeleteEmployee(emp); }">
                             <span class="oi oi-trash" aria-hidden="true"></span>
                         </button>
                     </td>
@@ -256,7 +256,30 @@ else
     </EditForm>
 }
 
-
+@if (ShowPopDeleteEmployee)
+{
+    <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
+        <div class="modal-dialog border-dark">
+            <div class="modal-content">
+                <div class="modal-header flex-column">
+                    <h4 class="modal-title col-12 text-center">Sind Sie sicher?</h4>
+                </div>
+                <div class="modal-body text-center">
+                    <p>Wollen Sie wirklich blep aus dem Projekt entfernen?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { ShowPopDeleteEmployee = !ShowPopDeleteEmployee; })">
+                        <span class="oi oi-circle-x"></span> Abbrechen
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { DeleteFromProjectEmployee(Project.ProjectID, EmployeeToDelete); Update(); ShowPopDeleteEmployee = !ShowPopDeleteEmployee;})">
+                        <span class="oi oi-trash"></span>Löschen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
 
 
 @code {
@@ -269,6 +292,8 @@ else
     AddActivityToPurpose _popProjectActivityToPurpose;
     AlterPurposeName _popAlterPurposeName;
 
+    public Employee EmployeeToDelete { get; set; }
+    public bool ShowPopDeleteEmployee = false;
     public List<string> Activitieslist { get; set; } = new ();
 
     private Dictionary<string, List<int>> _projectActivitiesWithEmp;
@@ -369,6 +394,12 @@ else
     public void NavigateToProjectoverview()
     {
         _navigationManager.NavigateTo("/Projektübersicht");
+    }
+
+    public void PopUpDeleteEmployee(Employee emp)
+    {
+        EmployeeToDelete = emp;
+        ShowPopDeleteEmployee = !ShowPopDeleteEmployee;
     }
 
 }
