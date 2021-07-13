@@ -350,6 +350,8 @@
     private void EditProjectActivity()
     {
         _projectActivityService.UpdateSkillsToActivity(_projectActivity.ProjectActivityID, _projectActivity.HardSkills, _projectActivity.SoftSkills);
+        _projectWithGroupedActivities = _projectActivityService.GetActivitiesWithProjectsGrouped(Id);
+        StateHasChanged();
         _showEdit = false;
     }
 
@@ -366,7 +368,6 @@
             SoftSkills = new List<string>(activity.SoftSkills)
         };
         _showEdit = true;
-        StateHasChanged();
     }
 
     private void DeleteProjectActivity()
@@ -401,7 +402,6 @@
         _projectActivity.ProjectID = projectId;
         _projectActivity.EmployeeID = Id;
         _showCreate = true;
-        StateHasChanged();
     }
 
     private void GetActivitiesOfProjectEmployee()
