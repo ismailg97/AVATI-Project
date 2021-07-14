@@ -107,26 +107,26 @@
                         </table>
                     </ul>
                 </div>
-            <div style="border-width: medium; color: black;" class="dropdown-divider"></div>
-            <div class="form-group">
-                <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollField(); })">Branchenwissen <span class="oi oi-list" aria-hidden="true"></span></button>
-                <div class="card-text @(_booleanField ? "" : "collapse")">
-                    <ul class="list-group text-left">
-                        @if (Emp.Field.Any())
-                        {
-                            <table class="table align-middle">
-                                @foreach (var elem in Emp.Field)
-                                {
-                                    <tr>
-                                        <td>@elem</td>
-                                    </tr>
-                                }
-                            </table>
-                        }
-                    </ul>
+                <div style="border-width: medium; color: black;" class="dropdown-divider"></div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollField(); })">Branchenwissen <span class="oi oi-list" aria-hidden="true"></span></button>
+                    <div class="card-text @(_booleanField ? "" : "collapse")">
+                        <ul class="list-group text-left">
+                            @if (Emp.Field.Any())
+                            {
+                                <table class="table align-middle">
+                                    @foreach (var elem in Emp.Field)
+                                    {
+                                        <tr>
+                                            <td>@elem</td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
         </div>
 
 
@@ -165,26 +165,41 @@
                     <button type="button" class="btn btn-outline-secondary form-group" @onclick="(() => { CollProj(); })">Projekte <span class="oi oi-list" aria-hidden="true"></span></button>
                     <div class="card-text @(_booleanProj ? "" : "collapse")">
                         <table style="text-align: left" class="table align-middle">
-                            <tr>
-                                <th class="text-left">Projekt</th>
-                                <th class="text-left">Projekttätigkeit</th>
-                            </tr>
-                            @if (_projctActivityService.GetProjectActivitiesEmployee(Id).Any())
+
+                            @if (!_projectWithGroupedActivities.Any())
                             {
-                                foreach (var activity in _projctActivityService.GetEmployeeProjectActivities(Id))
-                                {
-                                    <tr>
-                                        <td class="text-left">@_projektService.GetProject(activity.ProjectID).Projecttitel</td>
-                                        <td class="text-left">@activity.Description</td>
-                                    </tr>
-                                }
+                                <tr>
+                                    <td class="text-left">[Sie sind noch keinem Projekt zugewiesen]</td>
+                                </tr>
                             }
                             else
                             {
                                 <tr>
-                                    <td></td>
-                                    <td></td>
+                                    <th class="text-left">Projekt</th>
+                                    <th class="text-left">Projekttätigkeit</th>
                                 </tr>
+                                foreach (var projectId in _projectWithGroupedActivities.Keys)
+                                {
+                                    var projecttitle = _projektService.GetProject(projectId).Projecttitel;
+                                    <tr>
+                                        <td>@projecttitle</td>
+                                        <td>
+                                            <ul>
+                                                @if (!_projectWithGroupedActivities[projectId].Any())
+                                                {
+                                                    <a>[Sie haben sich noch keiner Tätigkeit zugewiesen]</a>
+                                                }
+                                                else
+                                                {
+                                                    foreach (var activity in _projectWithGroupedActivities[projectId])
+                                                    {
+                                                        <ul>- @activity.Description</ul>
+                                                    }
+                                                }
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                }
                             }
                         </table>
                     </div>
