@@ -17,6 +17,7 @@
 @inject IHardskillService _hardskillService
 @inject IProjectActivityService _projectActivityService;
 @inject IHttpContextAccessor _httpContextAccessor
+@inject NavigationManager _navigationManager
 
 <HardSkillLevelSelection @ref="_hardSkillLevel" Abstract="@this"/>
 <LanguageLevelSelection @ref="_languageLevel" Abstract="@this"/>
@@ -508,6 +509,10 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        if (_httpContextAccessor.HttpContext.Request.Cookies[".AspNetCore.Cookies"] == null)
+        {
+            _navigationManager.NavigateTo("/Login");
+        }
         if (_httpContextAccessor.HttpContext != null)
         {
             string context = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault()?.Value;
