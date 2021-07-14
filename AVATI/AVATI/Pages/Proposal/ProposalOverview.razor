@@ -13,6 +13,7 @@
 @using Text = DocumentFormat.OpenXml.Wordprocessing.Text
 @using ParagraphProperties = DocumentFormat.OpenXml.Wordprocessing.ParagraphProperties
 @using RunProperties = DocumentFormat.OpenXml.Wordprocessing.RunProperties
+
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject IProjektService _project
 @inject IProposalService _proposal
@@ -572,7 +573,7 @@
     
     public async Task CreateDocument(int id) //Threadsicher machen, wenn mehrere gleichzeitig ein Dokument erzeugen --> Ressourcenkonflikt 
     {
-        int i = 0;
+    int i = 0;
         string costCalcTemplateDoc = "wwwroot\\templates\\AvatiKostenmixDoc.docx";
         string empTempDocPath = "wwwroot\\templates\\AvatiTempDoc.docx";
         string empTemplatePath = "wwwroot\\templates\\AvatiWorkerDoc.docx";
@@ -840,6 +841,6 @@
             
             wordDoc.Close();
             var task = await _blazorDownloadFileService.DownloadFile("test.docx", memStream, "application/octet-stream");
-        }
+        }    
     }
 }
