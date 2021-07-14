@@ -1,15 +1,27 @@
 ﻿@page "/profile"
-@page "/profile/{Id:int}"
 @using AVATI.Data
+@using Azure.Core
+@using DocumentFormat.OpenXml.Spreadsheet
+@using Microsoft.AspNetCore.Http
 @inject NavigationManager _navManager
 @inject IEmployeeService _employee
 @inject IProjectActivityService _projctActivityService
 @inject IProjektService _projektService
 @inject AuthenticationStateProvider _authenticationStateProvider
 @inject NavigationManager _navigationManager
+@inject HttpClient _httpClient
+@inject IHttpContextAccessor _httpContextAccessor
 
-<h3 class="text-left">Profil</h3>
+<AuthorizeView>
+    <NotAuthorized>
+       
+        Nothing here
+    </NotAuthorized>
+    <Authorized>
+    
 
+<h3 class="text-center">@Emp.FirstName @Emp.LastName</h3>
+<hr/>
 <div class="container backdrop emp-profile">
     <div class="row">
         <div class="col-md-4">
@@ -28,10 +40,6 @@
             <div class="rounded-3 profile-head">
                 <div style="margin-left: 12px" class="form-group text-left">
 
-                    <!------ Name ---------->
-                    <h6 style="color: black">
-                        @Emp.FirstName @Emp.LastName
-                    </h6>
 
                     <!------ RC-Level ---------->
                     <p class="profile-rating">RateCard : <span>@Emp.Rc</span></p>
@@ -51,102 +59,88 @@
     </div>
 
     <!------ Skills ---------->
-    <div class="row rounded ">
-
-        <div style="border-color: black" class="col-md-4 backdrop form-group rounded">
-
-            <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
-            <div class="form-group  text-left">
-
-                <!------ Hard Skills ---------->
-                <div class="form-group small text-left">
-                    <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollHardSkill(); })"><span class="oi oi-list" aria-hidden="true"></span> Hard Skills</button>
-                    <div class="card-text @(_booleanHardSkill ? "" : "collapse")">
-                        <table class="table table-striped">
+    <div class="container col">
+        
+        <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider col-6"></div>
+        <div class="form-group row m-2">
+            <!------ Hard Skills ---------->
+            <div class="form-group m-2 text-left">
+                <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollHardSkill(); })"><span class="oi oi-list" aria-hidden="true"></span> Hard Skills</button>
+                <div class="card-text @(_booleanHardSkill ? "" : "collapse")">
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Beschreibung</th>
+                            <th>Level</th>
+                        </tr>
+                        @foreach (var hardskill in Emp.HardSkillLevel)
+                        {
                             <tr>
-                                <th>Beschreibung</th>
-                                <th>Level</th>
+                                <td>@hardskill.Item1.Description</td>
+                                <td>@hardskill.Item2</td>
                             </tr>
-                            @foreach (var hardskill in Emp.HardSkillLevel)
-                            {
-                                <tr>
-                                    <td>@hardskill.Item1.Description</td>
-                                    <td>@hardskill.Item2</td>
-                                </tr>
-                            }
-                        </table>
-                    </div>
+                        }
+                    </table>
                 </div>
-
-                <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
-
-                <!------ Soft Skills ---------->
-                <div class="form-group small text-left">
-                    <button type="button" class="form-group btn btn-outline-secondary text-left" @onclick="(() => { CollSoftSkill(); })"><span class="oi oi-list" aria-hidden="true"></span> Soft Skills</button>
-                    <div class="card-text @(_booleanSoftSkill ? "" : "collapse")">
+            </div>
+            <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider"></div>
+            <!------ Soft Skills ---------->
+            <div class="form-group m-2 text-left">
+                <button type="button" class="form-group btn btn-outline-secondary text-left" @onclick="(() => { CollSoftSkill(); })"><span class="oi oi-list" aria-hidden="true"></span> Soft Skills</button>
+                <div class="card-text @(_booleanSoftSkill ? "" : "collapse")">
+                    <table class="table table-striped">
+                        @foreach (var softskill in Emp.Softskills)
+                        {
+                            <tr>
+                                <td>@softskill</td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+            <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider"></div>
+            <!------ Rollen ---------->
+            <div class="form-group m-2 text-left">
+                <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollRole(); })"><span class="oi oi-list" aria-hidden="true"></span> Rollen</button>
+                <div class="card-text @(_booleanRole ? "" : "collapse")">
+                    <ul class="list-group mb-3 text-left">
                         <table class="table table-striped">
-                            @foreach (var softskill in Emp.Softskills)
+                            @foreach (var rolle in Emp.Roles)
                             {
                                 <tr>
-                                    <td>@softskill</td>
+                                    <td>@rolle</td>
                                 </tr>
                             }
                         </table>
-                    </div>
-                </div>
-
-                <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
-
-                <!------ Rollen ---------->
-                <div class="form-group small text-left">
-                    <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollRole(); })"><span class="oi oi-list" aria-hidden="true"></span> Rollen</button>
-                    <div class="card-text @(_booleanRole ? "" : "collapse")">
-                        <ul class="list-group mb-3 text-left">
-                            <table class="table table-striped">
-                                @foreach (var rolle in Emp.Roles)
-                                {
-                                    <tr>
-                                        <td>@rolle</td>
-                                    </tr>
-                                }
-                            </table>
-                        </ul>
-                    </div>
+                    </ul>
                 </div>
             </div>
         </div>
-
-
-        <div style="border-color: black" class="form-group backdrop rounded col-md-8">
-            <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider"></div>
-
+        
+        <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider col-6"></div>
+        <div class="form-group m-2 row">
             <!------ Fields ---------->
-            <div class="form-row">
-                <div class="form-group backdrop small text-left">
-                    <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollField(); })"><span class="oi oi-list" aria-hidden="true"></span> Branchenwissen</button>
-                    <div class="card-text @(_booleanField ? "" : "collapse")">
-                        <ul class="list-group mb-3 text-left">
-                            @if (Emp.Field.Any())
-                            {
-                                <table style="text-align: left" class="table align-middle">
-                                    @foreach (var elem in Emp.Field)
-                                    {
-                                        <tr>
-                                            <td>@elem</td>
-                                        </tr>
-                                    }
-                                </table>
-                            }
-                        </ul>
-                    </div>
+            <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
+            <div class="form-group m-2">
+                <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollField(); })"><span class="oi oi-list" aria-hidden="true"></span> Branchenwissen</button>
+                <div class="card-text @(_booleanField ? "" : "collapse")">
+                    <ul class="list-group mb-3 text-left">
+                        @if (Emp.Field.Any())
+                        {
+                            <table style="text-align: left" class="table align-middle">
+                                @foreach (var elem in Emp.Field)
+                                {
+                                    <tr>
+                                        <td>@elem</td>
+                                    </tr>
+                                }
+                            </table>
+                        }
+                    </ul>
                 </div>
             </div>
-
-
             <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
-
             <!------ Languages ---------->
-            <div class="form-group small rounded text-left">
+            <div class="form-group m-2">
                 <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollLang(); })"><span class="oi oi-list" aria-hidden="true"></span> Sprachen</button>
                 <div class="card-text @(_booleanLang ? "" : "collapse")">
                     @if (Emp.Language.Any())
@@ -172,14 +166,12 @@
                 </div>
             </div>
 
-            <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
-
-            <!------ Projects ---------->
-            <div class="form-group backdrop small text-left">
+                <!------ Projects ---------->
+            <div class="form-group m-2">
                 <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollProj(); })"><span class="oi oi-list" aria-hidden="true"></span> Projekte</button>
                 <div class="card-text @(_booleanProj ? "" : "collapse")">
                     <table style="text-align: left" class="table align-middle">
-                        
+
                         @if (!_projectWithGroupedActivities.Any())
                         {
                             <tr>
@@ -221,7 +213,8 @@
         </div>
     </div>
 </div>
-
+    </Authorized>
+</AuthorizeView>
 
 @code {
 
@@ -247,11 +240,17 @@
     {
         Emp.EmployeeID = Id;
         _employee.EditEmployeeProfile(Emp);
-        _navigationManager.NavigateTo("profile/update/" + @Emp.EmployeeID);
+        _navigationManager.NavigateTo("profile/update/");
     }
 
     protected override void OnInitialized()
     {
+        if (_httpContextAccessor.HttpContext != null)
+        {
+            string context = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault()?.Value;
+            Id = Int16.Parse(context ?? throw new InvalidOperationException());
+        }
+    //var value= HttpRequest.Cookies["key"].Value;
         _projectWithGroupedActivities = _projctActivityService.GetActivitiesWithProjectsGrouped(Id);
         _authenticationStateProvider.GetAuthenticationStateAsync();
         Emp = _employee.GetEmployeeProfile(Id);
@@ -294,7 +293,7 @@
 
     public void NavToUpdate()
     {
-        _navigationManager.NavigateTo("profile/update/" + @Emp.EmployeeID);
+        _navigationManager.NavigateTo("profile/update/" );
         StateHasChanged();
     }
 

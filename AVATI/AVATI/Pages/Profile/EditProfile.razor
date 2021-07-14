@@ -1,5 +1,4 @@
 ﻿@page "/profile/update"
-@page "/profile/update/{id:int}"
 @using AVATI.Data
 @using Blazorise
 
@@ -9,6 +8,7 @@
 @using System
 @using System.Net.Mime
 @using Azure.Storage.Blobs
+@using Microsoft.AspNetCore.Http
 @using Microsoft.EntityFrameworkCore.Migrations.Operations
 @inject IProjektService _projektService
 @inject IEmployeeService _employee
@@ -16,6 +16,7 @@
 @inject IBasicDataService _basicDataService
 @inject IHardskillService _hardskillService
 @inject IProjectActivityService _projectActivityService;
+@inject IHttpContextAccessor _httpContextAccessor
 
 <HardSkillLevelSelection @ref="_hardSkillLevel" Abstract="@this"/>
 <LanguageLevelSelection @ref="_languageLevel" Abstract="@this"/>
@@ -376,7 +377,7 @@
         @if (_projectWithGroupedActivities.Any())
         {
             <table class="table">
-                <thead>
+                <thead class="thead-dark">
                 <tr>
                     <th>Projekt</th>
                     <th>Projekttätigkeiten</th>
@@ -506,6 +507,11 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        if (_httpContextAccessor.HttpContext != null)
+        {
+            string context = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault()?.Value;
+            Id = Int16.Parse(context ?? throw new InvalidOperationException());
+        }
         Task<List<Hardskill>> tempHard = _hardskillService.GetAllHardskills();
         _projectWithGroupedActivities = _projectActivityService.GetActivitiesWithProjectsGrouped(Id);
         HardskillList = await tempHard;
@@ -516,14 +522,14 @@ else
 
     public void NavigatoToEditProject()
     {
-        _navManager.NavigateTo("/employeeProject/@Emp.EmployeeId");
+        _navManager.NavigateTo("/employeeProject/");
     }
 
 
     public void EditProfiles()
     {
         _employee.EditEmployeeProfile(Emp);
-        _navManager.NavigateTo("profile/" + Emp.EmployeeID);
+        _navManager.NavigateTo("profile/");
     }
 
 
@@ -570,12 +576,12 @@ else
 
     public void NavigateToProjectEdit(int EmployeeID)
     {
-        _navManager.NavigateTo("/profile/" + Emp.EmployeeID);
+        _navManager.NavigateTo("/profile/" );
     }
 
     public void NavigateToEmployeeProject(int EmployeeID)
     {
-        _navManager.NavigateTo("/employeeProject2/" + EmployeeID);
+        _navManager.NavigateTo("/employeeProject2/" );
     }
 
 }

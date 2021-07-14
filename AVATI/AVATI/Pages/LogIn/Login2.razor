@@ -35,7 +35,7 @@
                                             <i class="fa fa-user"></i>
                                         </span>
                                     </div>
-                                    <input name="name" class="form-control" id="username"/>
+                                    <input name="username" class="form-control" id="username"/>
                                 </div> <!-- input-group.// -->
                             </div> <!-- form-group// -->
                             <div class="form-group">
@@ -45,7 +45,7 @@
                                             <i class="fa fa-lock"></i>
                                         </span>
                                     </div>
-                                    <input class="form-control" name="empType" type="password"/>
+                                    <input class="form-control" name="password" type="password"/>
                                 </div> <!-- input-group.// -->
                             </div> <!-- form-group// -->
                             <div class="form-group">
@@ -89,11 +89,6 @@
         {
             empType=_login.Login_EmpType(Id);
            
-    //await _localStorageService.SetItemAsync<string>("Username", Log.Username);
-            //await _localStorageService.SetItemAsync("EmployeeType", empType);
-            //((CustomAuthStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(Log.Username, empType);
-            //await _authenticationStateProvider.GetAuthenticationStateAsync();
-            //_navManager.NavigateTo("");
             _navManager.NavigateTo("/profile/" + Id );
         }
     }

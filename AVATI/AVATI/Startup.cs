@@ -66,7 +66,7 @@ namespace AVATI
             services.AddSingleton<DatabaseUtils>();
             services.AddSingleton<IProjektService, ProjectService>();
             services.AddSingleton<ProjectPurposeService>();
-
+            services.AddHttpContextAccessor();
             services.AddHttpClient();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
