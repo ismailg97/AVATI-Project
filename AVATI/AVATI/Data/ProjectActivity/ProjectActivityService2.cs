@@ -403,7 +403,12 @@ namespace AVATI.Data
                 var empList = db.Query<int>(
                         "SELECT EmployeeID FROM ProjectActivity_Project_Employee WHERE ProjectID = @project AND ProjectActivity = @description AND EmployeeID IS NOT NULL",
                         new {project = projectId, description = activity}).ToList();
+
+                db.Execute("DELETE FROM ProjectActivity_Softskill WHERE ProjectActivityID IN (SELECT ProjectActivityID FROM ProjectActivity_Project_Employee WHERE ProjectID = @project AND ProjectActivity = @description)",
+                    new{ project = projectId, description = activity});
                 
+                db.Execute("DELETE FROM ProjectActivity_Hardskill WHERE ProjectActivityID IN (SELECT ProjectActivityID FROM ProjectActivity_Project_Employee WHERE ProjectID = @project AND ProjectActivity = @description)",
+                    new{ project = projectId, description = activity});
 
                 var deleteRows = db.Execute("DELETE FROM ProjectActivity_Project_Employee WHERE ProjectID = @project AND ProjectActivity = @description",
                     new{ project = projectId, description = activity});
