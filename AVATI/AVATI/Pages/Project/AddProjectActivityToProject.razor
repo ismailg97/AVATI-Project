@@ -42,9 +42,10 @@
                         {
                             if (!_projectActivity.IsGlobal(activity))
                             {
-                                <button type="button" class="btn btn-outline-danger" @onclick=@(() => { _activitiesInProject.Remove(activity); })>@activity</button>    
+                                <button type="button" class="btn btn-outline-danger" @onclick=@(() => { PopModalDelete(activity); })>@activity</button>    
                             }
-                            else {
+                            else 
+                            {
                                 <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _activitiesInProject.Remove(activity); })>@activity</button>
                             }
                         }
@@ -65,6 +66,30 @@
 {
     <div class="modal-backdrop fade show"></div>
 }
+@if (ShowPopDelete)
+{
+    <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
+        <div class="modal-dialog border-dark">
+            <div class="modal-content">
+                <div class="modal-header flex-column">
+                    <h4 class="modal-title col-12 text-center">Sind Sie sicher?</h4>
+                </div>
+                <div class="modal-body text-center">
+                    <p>Wollen Sie <b>@ActivityToDelete</b> wirklich aus dem Projekt entfernen?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { _show = !_show; ShowPopDelete = !ShowPopDelete; })">
+                        <span class="oi oi-circle-x"></span> Abbrechen
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => {  DeleteNotGlobalActivity(ActivityToDelete); _show = !_show; ShowPopDelete = !ShowPopDelete;})">
+                        <span class="oi oi-trash"></span>Löschen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
 
 @code{
 
@@ -77,6 +102,9 @@
     private List<string> _activitiesInProject;
     private bool _show = false;
     private string Activity { get; set; }
+
+    public bool ShowPopDelete = false;
+    public string ActivityToDelete { get; set; }
     
     [Parameter]
     public Projectedit Abstract { get; set; }
@@ -94,6 +122,7 @@
         }
         _activities = _projectActivity.GetAllGlobalProjectActivities();
         StateHasChanged();
+        Abstract.Update();
     }
 
     public void Close()
@@ -104,12 +133,20 @@
 
     public void Submit(int id)
     {
-        _show = !_show;
         _projectActivity.SetProjectActivitiesToProject(id, _activitiesInProject);
         Abstract.Update();
-        StateHasChanged();
+        _show = !_show;
     }
-    
 
+    public void PopModalDelete(string activ)
+    {
+        ActivityToDelete = activ;
+        ShowPopDelete = !ShowPopDelete;
+        _show = !_show;
+    }
 
+    public void DeleteNotGlobalActivity(string activ)
+    {
+        //TODO
+    }
 }
