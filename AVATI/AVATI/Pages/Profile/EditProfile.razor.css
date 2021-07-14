@@ -223,3 +223,28 @@ li:hover ul {
     margin-left: 2px;
     margin-bottom: 2px;
 }
+
+.tTitle {
+    width: 350px;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.tActivity {
+    width: 250px;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.tHardskills {
+    width: 400px;
+}
+
+.tSoftskills {
+    width: 400px;
+}
+
+.tWrite {
+    color: #545454;
+    font-size: 14px;
+}
