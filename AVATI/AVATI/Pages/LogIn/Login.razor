@@ -1,4 +1,4 @@
-﻿@page "/Login"
+﻿@page "/LoginFail"
 @using AVATI.Data
 @using System.Net.Http.Json
 @using System.Text
@@ -29,11 +29,10 @@
                         <h4 class="card-title text-center mb-4 mt-1">Anmelden</h4>
                         <hr>
                         <p class=" text-center">Bitte geben Sie hier ihre Nutzerdaten ein</p>
-                        <p class="@(_boolean ? "" : "collapse") " style=" color: #ff0000">
-                            <div class="alert alert-danger">Falscher Benutzername oder falsches Passwort eingegeben.<br/> Bitte versuchen Sie erneut.</div>
+                        <p  style=" color: #ff0000">
+                        <div class="alert alert-danger">Falscher Benutzername oder falsches Passwort eingegeben.<br/> Bitte versuchen Sie erneut.</div>
                         </p>
-                        <EditForm Model="Log" OnValidSubmit="@LoginCheck"> 
-                            <form action="cookie" method="post">
+                        <form action="cookie" method="post">
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -41,7 +40,7 @@
                                             <i class="fa fa-user"></i>
                                         </span>
                                     </div>
-                                    <InputText name="" class="form-control" id="username" placeholder="Max Mustermann" @bind-Value="Log.Username"></InputText>
+                                    <input name="username" class="form-control" id="username"/>
                                 </div> <!-- input-group.// -->
                             </div> <!-- form-group// -->
                             <div class="form-group">
@@ -51,14 +50,14 @@
                                             <i class="fa fa-lock"></i>
                                         </span>
                                     </div>
-                                    <InputText class="form-control" @bind-Value="Log.Password" placeholder="123456" type="password"></InputText>
+                                    <input name="password" class="form-control" type="password"/>
                                 </div> <!-- input-group.// -->
                             </div> <!-- form-group// -->
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary btn-block"> Login </button>
                             </div> <!-- form-group// -->
                             </form>
-                        </EditForm> 
+                         
                     </article>
                 </div> <!-- card.// -->
 

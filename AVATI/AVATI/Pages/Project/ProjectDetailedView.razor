@@ -7,6 +7,15 @@
 @inject IProjektService _projectService
 @inject IProjectActivityService _projectActivity
 @inject IEmployeeService _employeeService
+@inject NavigationManager _navigationManager
+
+<AuthorizeView Roles="SalesStaff,Administrator">
+    <NotAuthorized>
+        @if(true){_navigationManager.NavigateTo("/profile");}
+    </NotAuthorized>
+    <Authorized >
+        
+ 
 
 <div class="container">
     <div class="row">
@@ -187,8 +196,12 @@
     </div>
 </div>
 
-
-@code {
+    
+            
+        </Authorized>
+    </AuthorizeView>
+    
+    @code {
 
     [Parameter]
     public int ID { get; set; }

@@ -16,6 +16,14 @@
 @inject IHardskillService _hard
 @inject IJSRuntime _jsRuntime
 
+<AuthorizeView Roles="SalesStaff,Administrator">
+    <NotAuthorized>
+        @if(true){_navigationManager.NavigateTo("/profile");}
+    </NotAuthorized>
+    <Authorized Context="authContext">
+        
+
+
 <div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
 <div class="modal-dialog modal-xl col" style="height: 800px; width: 1500px">
 <div class="modal-content col">
@@ -266,8 +274,13 @@ else
 {
     <div class="modal-backdrop fade show"></div>
 }
+    
+    
+            
+        </Authorized>
+    </AuthorizeView>
 
-@code{
+    @code{
 
     [Parameter]
     public Project Project { get; set; }

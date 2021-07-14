@@ -5,6 +5,14 @@
 
 @inject IProjectActivityService _projectActivityService
 @inject IProjektService _projectService
+@inject NavigationManager _navigationManager
+
+<AuthorizeView Roles="SalesStaff,Administrator">
+    <NotAuthorized>
+        @if(true){_navigationManager.NavigateTo("/profile");}
+    </NotAuthorized>
+    <Authorized>
+ 
 
 @if (_show)
 {
@@ -99,7 +107,12 @@
     <div class="modal-backdrop fade show"></div>
 }
 
-@code{
+    
+            
+        </Authorized>
+    </AuthorizeView>
+    
+    @code{
 
     [Parameter]
     public Project Project { get; set; }
