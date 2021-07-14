@@ -1,33 +1,45 @@
 ﻿@page "/profile"
-@page "/profile/{Id:int}"
 @using AVATI.Data
+@using Azure.Core
+@using DocumentFormat.OpenXml.Spreadsheet
+@using Microsoft.AspNetCore.Http
 @inject NavigationManager _navManager
 @inject IEmployeeService _employee
 @inject IProjectActivityService _projctActivityService
 @inject IProjektService _projektService
 @inject AuthenticationStateProvider _authenticationStateProvider
 @inject NavigationManager _navigationManager
+@inject HttpClient _httpClient
+@inject IHttpContextAccessor _httpContextAccessor
 
-<h2 style="text-align: center">@Emp.FirstName @Emp.LastName</h2>
-<hr style="padding: 0.5%"/>
+<AuthorizeView>
+    <NotAuthorized>
+       
+        Nothing here
+    </NotAuthorized>
+    <Authorized>
+    
 
-<div class="container">
-    <div class="form-group row">
+<h3 class="text-center">@Emp.FirstName @Emp.LastName</h3>
+<hr/>
+<div class="container backdrop emp-profile">
+    <div class="row">
         <div class="col-md-4">
             <div style="margin-top: -5%; border-radius: 80%" class="profile-img">
                 @if (Emp.Image == null)
                 {
-                    <img class="rounded" src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" width="300" height="200" alt=""/>
+                    <img class="rounded" src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" style="margin-left: -45px" width="300" height="200" alt=""/>
                 }
                 else
                 {
-                    <img class="rounded" src="@Emp.Image" width="300" height="200" alt=""/>
+                    <img class="rounded" src="@Emp.Image" style="margin-left: -45px" width="300" height="200" alt=""/>
                 }
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="rounded-3 profile-head">
                 <div style="margin-left: 12px" class="form-group text-left">
+
 
                     <!------ RC-Level ---------->
                     <p class="profile-rating">RateCard : <span>@Emp.Rc</span></p>
@@ -41,22 +53,19 @@
             </div>
         </div>
         <!------ Edit Profile Button ---------->
-        <div class="col-md-4">
-            <button type="button" class="btn btn-info" style="height: 40px;" @onclick="() => { NavToUpdate(); }">
-                Profil bearbeiten
-            </button>
-        </div>
+        <button type="button" class="btn btn-info" style="height: 40px;" @onclick="() => { NavToUpdate(); }">
+            Profil bearbeiten
+        </button>
     </div>
 
-    <!------------------------------------------------------------------------------------------------------------------------------------------------>
-
-    <!------ ATTRIBUTE ---------->
-    <div class="container row">
-        <div style="border-color: black" class="col-md-4 form-group">
-            <div style="border-width: medium; color: black" class="dropdown-divider"></div>
-            <div class="form-group">
-                <!------ Hard Skills ---------->
-                <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollHardSkill(); })">Hard Skills <span class="oi oi-list" aria-hidden="true"></span></button>
+    <!------ Skills ---------->
+    <div class="container col">
+        
+        <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider col-6"></div>
+        <div class="form-group row m-2">
+            <!------ Hard Skills ---------->
+            <div class="form-group m-2 text-left">
+                <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollHardSkill(); })"><span class="oi oi-list" aria-hidden="true"></span> Hard Skills</button>
                 <div class="card-text @(_booleanHardSkill ? "" : "collapse")">
                     <table class="table table-striped">
                         <tr>
@@ -72,29 +81,26 @@
                         }
                     </table>
                 </div>
-
-                <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
-                <!------ Soft Skills ---------->
-                <div class="form-group">
-                    <button type="button" class="form-group btn btn-outline-secondary text-left" @onclick="(() => { CollSoftSkill(); })">Soft Skills <span class="oi oi-list" aria-hidden="true"></span></button>
-                    <div class="card-text @(_booleanSoftSkill ? "" : "collapse")">
-                        <table class="table table-striped">
-                            @foreach (var softskill in Emp.Softskills)
-                            {
-                                <tr>
-                                    <td>@softskill</td>
-                                </tr>
-                            }
-                        </table>
-                    </div>
+            </div>
+            <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider"></div>
+            <!------ Soft Skills ---------->
+            <div class="form-group m-2 text-left">
+                <button type="button" class="form-group btn btn-outline-secondary text-left" @onclick="(() => { CollSoftSkill(); })"><span class="oi oi-list" aria-hidden="true"></span> Soft Skills</button>
+                <div class="card-text @(_booleanSoftSkill ? "" : "collapse")">
+                    <table class="table table-striped">
+                        @foreach (var softskill in Emp.Softskills)
+                        {
+                            <tr>
+                                <td>@softskill</td>
+                            </tr>
+                        }
+                    </table>
                 </div>
             </div>
-        </div>
-
-        <div style="border-color: black" class="col-md-4 form-group">
-            <div style="border-width: medium; color: black" class="dropdown-divider"></div>
-            <div class="form-group">
-                <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollRole(); })">Rollen <span class="oi oi-list" aria-hidden="true"></span></button>
+            <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider"></div>
+            <!------ Rollen ---------->
+            <div class="form-group m-2 text-left">
+                <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollRole(); })"><span class="oi oi-list" aria-hidden="true"></span> Rollen</button>
                 <div class="card-text @(_booleanRole ? "" : "collapse")">
                     <ul class="list-group mb-3 text-left">
                         <table class="table table-striped">
@@ -107,34 +113,35 @@
                         </table>
                     </ul>
                 </div>
-                <div style="border-width: medium; color: black;" class="dropdown-divider"></div>
-                <div class="form-group">
-                    <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollField(); })">Branchenwissen <span class="oi oi-list" aria-hidden="true"></span></button>
-                    <div class="card-text @(_booleanField ? "" : "collapse")">
-                        <ul class="list-group text-left">
-                            @if (Emp.Field.Any())
-                            {
-                                <table class="table align-middle">
-                                    @foreach (var elem in Emp.Field)
-                                    {
-                                        <tr>
-                                            <td>@elem</td>
-                                        </tr>
-                                    }
-                                </table>
-                            }
-                        </ul>
-                    </div>
-                </div>
             </div>
         </div>
-
-
-        <div style="border-color: black" class="form-group col-md-4">
+        
+        <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider col-6"></div>
+        <div class="form-group m-2 row">
+            <!------ Fields ---------->
+            <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
+            <div class="form-group m-2">
+                <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollField(); })"><span class="oi oi-list" aria-hidden="true"></span> Branchenwissen</button>
+                <div class="card-text @(_booleanField ? "" : "collapse")">
+                    <ul class="list-group mb-3 text-left">
+                        @if (Emp.Field.Any())
+                        {
+                            <table style="text-align: left" class="table align-middle">
+                                @foreach (var elem in Emp.Field)
+                                {
+                                    <tr>
+                                        <td>@elem</td>
+                                    </tr>
+                                }
+                            </table>
+                        }
+                    </ul>
+                </div>
+            </div>
             <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
             <!------ Languages ---------->
-            <div class="form-group">
-                <button type="button" class="btn btn-outline-secondary form-group" @onclick="(() => { CollLang(); })">Sprachen <span class="oi oi-list" aria-hidden="true"></span></button>
+            <div class="form-group m-2">
+                <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollLang(); })"><span class="oi oi-list" aria-hidden="true"></span> Sprachen</button>
                 <div class="card-text @(_booleanLang ? "" : "collapse")">
                     @if (Emp.Language.Any())
                     {
@@ -157,57 +164,57 @@
                         <p>Scheint nichts hier zu sein.</p>
                     }
                 </div>
-
-                <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
+            </div>
 
                 <!------ Projects ---------->
-                <div class="form-group">
-                    <button type="button" class="btn btn-outline-secondary form-group" @onclick="(() => { CollProj(); })">Projekte <span class="oi oi-list" aria-hidden="true"></span></button>
-                    <div class="card-text @(_booleanProj ? "" : "collapse")">
-                        <table style="text-align: left" class="table align-middle">
+            <div class="form-group m-2">
+                <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollProj(); })"><span class="oi oi-list" aria-hidden="true"></span> Projekte</button>
+                <div class="card-text @(_booleanProj ? "" : "collapse")">
+                    <table style="text-align: left" class="table align-middle">
 
-                            @if (!_projectWithGroupedActivities.Any())
+                        @if (!_projectWithGroupedActivities.Any())
+                        {
+                            <tr>
+                                <td class="text-left">[Sie sind noch keinem Projekt zugewiesen]</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <th class="text-left">Projekt</th>
+                                <th class="text-left">Projekttätigkeit</th>
+                            </tr>
+                            foreach (var projectId in _projectWithGroupedActivities.Keys)
                             {
+                                var projecttitle = _projektService.GetProject(projectId).Projecttitel;
                                 <tr>
-                                    <td class="text-left">[Sie sind noch keinem Projekt zugewiesen]</td>
+                                    <td>@projecttitle</td>
+                                    <td>
+                                        <ul>
+                                            @if (!_projectWithGroupedActivities[projectId].Any())
+                                            {
+                                                <a>[Sie haben sich noch keiner Tätigkeit zugewiesen]</a>
+                                            }
+                                            else
+                                            {
+                                                foreach (var activity in _projectWithGroupedActivities[projectId])
+                                                {
+                                                    <li>@activity.Description</li>
+                                                }
+                                            }
+                                        </ul>
+                                    </td>
                                 </tr>
                             }
-                            else
-                            {
-                                <tr>
-                                    <th class="text-left">Projekt</th>
-                                    <th class="text-left">Projekttätigkeit</th>
-                                </tr>
-                                foreach (var projectId in _projectWithGroupedActivities.Keys)
-                                {
-                                    var projecttitle = _projektService.GetProject(projectId).Projecttitel;
-                                    <tr>
-                                        <td>@projecttitle</td>
-                                        <td>
-                                            <ul>
-                                                @if (!_projectWithGroupedActivities[projectId].Any())
-                                                {
-                                                    <a>[Sie haben sich noch keiner Tätigkeit zugewiesen]</a>
-                                                }
-                                                else
-                                                {
-                                                    foreach (var activity in _projectWithGroupedActivities[projectId])
-                                                    {
-                                                        <ul>- @activity.Description</ul>
-                                                    }
-                                                }
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                        </table>
-                    </div>
+                        }
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
+    </Authorized>
+</AuthorizeView>
 
 @code {
 
@@ -233,11 +240,17 @@
     {
         Emp.EmployeeID = Id;
         _employee.EditEmployeeProfile(Emp);
-        _navigationManager.NavigateTo("profile/update/" + @Emp.EmployeeID);
+        _navigationManager.NavigateTo("profile/update/");
     }
 
     protected override void OnInitialized()
     {
+        if (_httpContextAccessor.HttpContext != null)
+        {
+            string context = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault()?.Value;
+            Id = Int16.Parse(context ?? throw new InvalidOperationException());
+        }
+    //var value= HttpRequest.Cookies["key"].Value;
         _projectWithGroupedActivities = _projctActivityService.GetActivitiesWithProjectsGrouped(Id);
         _authenticationStateProvider.GetAuthenticationStateAsync();
         Emp = _employee.GetEmployeeProfile(Id);
@@ -280,7 +293,7 @@
 
     public void NavToUpdate()
     {
-        _navigationManager.NavigateTo("profile/update/" + @Emp.EmployeeID);
+        _navigationManager.NavigateTo("profile/update/" );
         StateHasChanged();
     }
 

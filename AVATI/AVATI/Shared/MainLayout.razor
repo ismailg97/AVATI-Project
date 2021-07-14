@@ -1,5 +1,7 @@
 ﻿@using DocumentFormat.OpenXml.Drawing
+@using Microsoft.AspNetCore.Http
 @inherits LayoutComponentBase
+@inject IHttpContextAccessor _httpContextAccessor
 
 
 <div class="page">
@@ -11,7 +13,7 @@
             
             <AuthorizeView Roles="SalesStaff, Employee ,Administrator">
                 <Authorized>
-                    <li class="nav-item px-3">
+                    <li @onclick="(() => { LogOut(); })" class="nav-item px-3">
                         <NavLink class="nav-link">
                             <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
                         </NavLink>
@@ -95,6 +97,12 @@
 
     private void LogOut()
     {
-
+        if (_httpContextAccessor.HttpContext != null)
+        {
+            _httpContextAccessor.HttpContext.Response.Cookies.Delete("CookieName", new CookieOptions()
+            {
+                Secure = true,
+            });
+        }
     }
 }

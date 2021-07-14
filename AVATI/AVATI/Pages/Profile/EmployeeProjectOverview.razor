@@ -6,6 +6,7 @@
 @using DocumentFormat.OpenXml.Drawing
 @using DocumentFormat.OpenXml.InkML
 @using System.Diagnostics
+@using Microsoft.AspNetCore.Http
 
 @inject IProjektService _projektService
 @inject JsonImport _jsonImport
@@ -14,6 +15,7 @@
 @inject NavigationManager _navManager
 @inject IEmployeeService _employeeService
 @inject IBasicDataService _basicDataService
+@inject IHttpContextAccessor _httpContextAccessor
 
 <DeleteConfirmationProjectEmployee @ref="_deleteConfirmation" ProjectActivity="@_projectActivity" Abstract="@this"></DeleteConfirmationProjectEmployee>
 
@@ -437,6 +439,11 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        if (_httpContextAccessor.HttpContext != null)
+        {
+            string context = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault()?.Value;
+            Id = Int16.Parse(context ?? throw new InvalidOperationException());
+        }
         Task<List<Hardskill>> tempHard = _hardskillService.GetAllHardskills();
         HardskillList = await tempHard;
         ProjActivity = new ProjectActivity();

@@ -1,6 +1,7 @@
-﻿@page "/employeeProject2/{Id:int}"
+﻿@page "/employeeProject2"
 
 @using AVATI.Data
+@using Microsoft.AspNetCore.Http
 
 @inject IProjektService _projektService
 @inject JsonImport _jsonImport
@@ -9,6 +10,7 @@
 @inject NavigationManager _navManager
 @inject IEmployeeService _employeeService
 @inject IBasicDataService _basicDataService
+@inject IHttpContextAccessor _httpContextAccessor
 
 <h2>Projektübersicht</h2>
 
@@ -262,6 +264,11 @@
     
     protected override void OnInitialized()
     {
+        if (_httpContextAccessor.HttpContext != null)
+        {
+            string context = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault()?.Value;
+            Id = Int16.Parse(context ?? throw new InvalidOperationException());
+        }
         _showCreate = false;
         _showEdit = false;
         _showDelete = false;
