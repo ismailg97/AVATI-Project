@@ -378,7 +378,7 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>Projekt</th>
+                    <th class="tTitle">Projekt</th>
                     <th>Projekttätigkeiten</th>
                 </tr>
                 </thead>
@@ -387,9 +387,10 @@
                 {
                     var project = _projektService.GetProject(projectId);
                     <tr>
-                        <td><b>Titel:</b> @project.Projecttitel
+                        <td class="tTitle"><div class="alert alert-secondary"><b style="color: #545454;">Titel:</b> @project.Projecttitel
                             <p/>
-                            <b>Beschreibung:</b> @project.Projectdescription
+                            <b style="color: #545454;">Beschreibung:</b> @project.Projectdescription
+                            </div>
                         </td>
                         <td>
                             @if (!_projectWithGroupedActivities[projectId].Any())
@@ -399,11 +400,11 @@
                             else
                             {
                                 <table class="table table-striped">
-                                    <thead>
+                                    <thead class="tWrite">
                                     <tr>
-                                        <th>Tätigkeit</th>
-                                        <th>Hardskills</th>
-                                        <th>Softskills</th>
+                                        <th class="tActivity">Tätigkeit</th>
+                                        <th class="tHardskills">Hardskills</th>
+                                        <th class="tSoftskills">Softskills</th>
                                     </tr>
                                     </thead>
 
@@ -411,13 +412,13 @@
                                     @foreach (var activity in _projectWithGroupedActivities[projectId])
                                     {
                                         <tr>
-                                            <td>@activity.Description</td>
-                                            <td>
+                                            <td class="tActivity">@activity.Description</td>
+                                            <td class="tHardskills">
                                                 @if (activity.HardSkills.Any())
                                                 {
                                                     foreach (var hardskill in activity.HardSkills)
                                                     {
-                                                        <button class="btn hardskill btn-sm">@hardskill</button>
+                                                        <button type="button" class="btn hardskill btn-sm">@hardskill</button>
                                                     }
                                                 }
                                                 else
@@ -425,12 +426,12 @@
                                                     <small style="color: #818181;">[Keine Hardskills zugewiesen]</small>
                                                 }
                                             </td>
-                                            <td>
+                                            <td class="tSoftskills">
                                                 @if (activity.SoftSkills.Any())
                                                 {
                                                     @foreach (var softskill in activity.SoftSkills)
                                                     {
-                                                        <button class="btn softskill btn-sm">@softskill</button>
+                                                        <button type="button" class="btn softskill btn-sm">@softskill</button>
                                                     }
                                                 }
                                                 else

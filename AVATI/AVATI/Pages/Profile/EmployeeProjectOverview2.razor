@@ -15,7 +15,7 @@
 <table class="table">
     <thead>
     <tr>
-        <th>Projekt</th>
+        <th class="tTitle">Projekt</th>
         <th>Projekttätigkeiten</th>
     </tr>
     </thead>
@@ -23,9 +23,11 @@
     @foreach (var projectId in _projectWithGroupedActivities.Keys)
     {
         var project = _projektService.GetProject(projectId);
+        var projectTitle = project.Projecttitel;
+        var projectDescription = project.Projectdescription;
         <tr>
-            <td><b>Titel:</b> @project.Projecttitel<p/>
-                <b>Beschreibung:</b> @project.Projectdescription<p/>
+            <td class="tTitle"><div class="alert alert-secondary"><b style="color: #545454;">Titel:</b> <a>@projectTitle</a><p/>
+                <b style="color: #545454;">Beschreibung:</b> <a>@projectDescription</a><p/>
                 @if (_activitiesToChoose[projectId].Any())
                 {
                     <div class="alert alert-success" style="font-size: small;">
@@ -39,6 +41,7 @@
                         Sie können sich keiner Tätigkeit mehr zuweisen
                     </div>
                 }
+                </div>
             </td>
             <td>
                 @if (!_projectWithGroupedActivities[projectId].Any())
@@ -48,13 +51,13 @@
                 else
                 {
                     <table class="table table-striped">
-                        <thead>
+                        <thead class="tWrite">
                         <tr>
-                            <th>Tätigkeit</th>
-                            <th>Hardskills</th>
-                            <th>Softskills</th>
-                            <th></th>
-                            <th></th>
+                            <th class="tActivity">Tätigkeit</th>
+                            <th class="tHardskills">Hardskills</th>
+                            <th class="tSoftskills">Softskills</th>
+                            <th class="tEdit"></th>
+                            <th class="tDelte"></th>
                         </tr>
                         </thead>
 
@@ -62,8 +65,8 @@
                         @foreach (var activity in _projectWithGroupedActivities[projectId])
                         {
                             <tr>
-                                <td>@activity.Description</td>
-                                <td>
+                                <td class="tActivity">@activity.Description</td>
+                                <td class="tHardskills">
                                     @if (activity.HardSkills.Any())
                                     {
                                         foreach (var hardskill in activity.HardSkills)
@@ -76,7 +79,7 @@
                                         <small style="color: #818181;">[Keine Hardskills zugewiesen]</small>
                                     }
                                 </td>
-                                <td>
+                                <td class="tSoftskills">
                                     @if (activity.SoftSkills.Any())
                                     {
                                         @foreach (var softskill in activity.SoftSkills)
@@ -89,10 +92,10 @@
                                         <small style="color: #818181;">[Keine Softskills zugewiesen]</small>
                                     }
                                 </td>
-                                <td>
+                                <td class="tEdit">
                                     <button class="btn btn-secondary" @onclick="() => ShowPopUpEdit(activity)"><span class="oi oi-pencil" aria-hidden="true"></span></button>
                                 </td>
-                                <td>
+                                <td class="tDelte">
                                     <button class="btn btn-danger" @onclick="() => ShowPopUpDelete(activity)"><span class="oi oi-trash"></span></button>
                                 </td>
                             </tr>
@@ -111,52 +114,55 @@
 {
     var projecttitle = _projektService.GetProject(_projectActivity.ProjectID).Projecttitel;
     
-    <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
-        <div class="modal-dialog border-dark">
+    <div class="modal fade show" id="myModal" style=" display: inline-block;">
+        <div class="modal-dialog border-dark modal-dialog- modal-lg">
             <div class="modal-content">
                 <div class="modal-header flex-column">
                     @if(_showCreate) {
-                        <h4 class="modal-title col-12 text-center">Hinzufügen einer Projekttätigkeit im Projekt @projecttitle</h4>
+                        <h4 style="word-break: break-word;" class="modal-title col-12 text-center">Hinzufügen einer Projekttätigkeit im Projekts "<b>@projecttitle</b>"</h4>
                     }
                     else
                     {
-                        <h4 class="modal-title col-12 text-center">Aktivität "@_projectActivity.Description" bearbeiten</h4>
+                        <h4 style="word-break: break-word;" class="modal-title col-12 text-center">Aktivität "<b>@_projectActivity.Description</b>" des Projekts "@projecttitle" bearbeiten</h4>
                     }
                 </div>
-                <div class="modal-body text-center">
+                <div class="modal-body">
                     <div class="form-group">
 
                         @if(_showCreate) 
                         {
                             <!------ Project Activity ---------->
                             <div class="form-group">
-                                <label class="mr-3 mt-2">Projektaktivität: </label>
-                                <select @bind="_projectActivity.Description">
+                                <label class="form-label">Projektaktivität: </label>
+                                <select class="select form-control" @bind="_projectActivity.Description">
                                     @foreach (var activity in _activitiesToChoose[_projectActivity.ProjectID])
                                     {
-                                        <option value="@activity">@activity</option>
+                                        <option value="@activity" style="word-break: break-word; width: 500px;">@activity</option>
                                     }
                                 </select>
                             </div>
                             
                         }
+                        
+                        <div class="text-center">
 
-                            <!------ Soft Skills ---------->
-                        <div class="form-group">
-                            <label class="mr-3 mt-2">Softskill: </label>
+                        <!------ Soft Skills ---------->
+                        <div class="form-group alert alert-info">
+                            <label class="form-label">Softskills, welche Sie bei der Tätigkeit angewendet haben:</label>
+                            <p/>
                             @if (_projectActivity.SoftSkills.Any())
                             {
                                 foreach (var softskill in _projectActivity.SoftSkills)
                                 {
                                     <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.SoftSkills.Remove(softskill); })>
-                                        <a>
-                                            <a class="showRemove"> @softskill </a>
-                                            <a class="remove">
-                                                <span style="color: darkred" class="oi oi-x"></span>
-                                            </a>
-                                        </a>
+                                        <a class="showRemove">@softskill</a> <a class="remove"><span class="oi oi-x"></span></a>
                                     </button>
                                 }
+                                
+                            }
+                            else
+                            {
+                                <small style="color: #818181;">[Keine Softskills zugewiesen]</small>
                             }
                         </div>
                         @foreach (var softskill in _employee.Softskills)
@@ -168,31 +174,29 @@
                                 </button>
                             }
                         }
+                        <hr/>
 
 
                         <!------ Hard Skills ---------->
-                        <div class="form-group">
-                            <label class="mr-3 mt-2">Hardskill: </label>
+                        <div class="form-group alert alert-info">
+                            <label class="form-label">Hardskills, welche Sie bei der Tätigkeit angewendet haben:</label>
+                            <p/>
                             @if (_projectActivity.HardSkills.Any())
                             {
-                                @foreach (var hardskill in _projectActivity.HardSkills)
+                                foreach (var hardskill in _projectActivity.HardSkills)
                                 {
                                     <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.HardSkills.Remove(hardskill); })>
-                                        <a>
-                                            <a class="showRemove"> @hardskill </a>
-                                            <a class="remove">
-                                                <span style="color: darkred" class="oi oi-x"></span>
-                                            </a>
-                                        </a>
+                                        <a class="showRemove">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a>
                                     </button>
                                 }
                             }
+                            else
+                            {
+                                <small style="color: #818181;">[Keine Hardskills zugewiesen]</small>
+                            }
                         </div>
 
-
-                        <input class="form-control" type="text" placeholder="Suche Hardskill..."
-                               @bind="Filter"
-                               @bind:event="oninput">
+                        
                         @foreach (var hardskill in _employee.Hardskills)
                         {
                             if (!_projectActivity.HardSkills.Contains(hardskill.Description))
@@ -202,10 +206,12 @@
                                 </button>
                             }
                         }
+                        <hr/>
+                        </div>
                     </div>
 
                     <div class="float-right">
-                        <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { _showCreate = _showEdit = false; })">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { _showCreate = _showEdit = false; })">
                             <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
                         </button>
                         <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="@(_showCreate ? CreateProjectActivity: EditProjectActivity)">
@@ -230,7 +236,7 @@
                 </div>
             
                 <div class="modal-body">
-                    Sind Sie sicher, dass die Projektaktivität "<b>@_projectActivity.Description</b>" gelöscht werden soll?
+                    Sind Sie sicher, dass die Projektaktivität "<b style="word-break: break-word;">@_projectActivity.Description</b>" gelöscht werden soll?
                 </div>
             
                 <div class="modal-footer">
@@ -254,7 +260,7 @@
 
     private Dictionary<int, List<string>> _activitiesToChoose;
     
-    private string Filter { get; set; }
+    //private string Filter { get; set; }
     
     private bool _showCreate;
     private bool _showEdit;
