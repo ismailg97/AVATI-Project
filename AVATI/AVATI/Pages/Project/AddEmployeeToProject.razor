@@ -139,7 +139,7 @@
                 <button class="btn btn-sm btn-outline-info  mb-1 mr-1" @onclick=@(() => { _searchService.AddRoleSearch(role); })>@role</button>
             }
         </div>
-        <button type="submit" @onclick=@(() => {CallSearch(); _searchService.TableIsVisible = true;}) class="btn btn-success col-2 text-center mb-5">Suchen</button>
+         <button type="submit" id="submitQuery" @onclick=@(async () => {await CallSearch(); _searchService.TableIsVisible = true;}) class="btn btn-success col-2 mb-5">Suchen</button>
     </EditForm>
     @if (_searchService.TableIsVisible)
     {
@@ -215,7 +215,7 @@
 
                             @if (ProjectToAlter.Employees.Find(e => e.EmployeeID == employee.EmployeeID) == null)
                             {
-                                <button class="btn btn-sm btn-outline-success" @onclick=@(() => { ProjectToAlter.Employees.Add(employee); })>Hinzufügen</button>
+                                <button class="btn btn-sm btn-success" @onclick=@(() => { ProjectToAlter.Employees.Add(employee); })>Hinzufügen</button>
                             }
                             else
                             {
@@ -305,8 +305,6 @@ else
     {
         SelectEmployees = _searchService.SearchEmployee(_searchService.EmployeeName, _searchService.SoftskillsToSearch, _searchService.HardskillsToSearch, _searchService.RolesToSearch, _searchService.CategoriesToSearch, new List<Tuple<string, int>>());
         _searchService.EmptyQuery();
-        await Task.Delay(300);
-        await _jsRuntime.InvokeAsync<string>("OnScrollEvent");
     }
 
     public async Task Showing(int Id)
