@@ -577,6 +577,9 @@
         string empTempDocPath = "wwwroot\\templates\\AvatiTempDoc.docx";
         string empTemplatePath = "wwwroot\\templates\\AvatiWorkerDoc.docx";
         string templatePath = "wwwroot\\templates\\AvatiProposalDoc.docx";
+
+       
+        
         MemoryStream memStream = new MemoryStream();
         var pageBreaker = new Paragraph(new Run(new Break {Type = BreakValues.Page}));
         await using (FileStream fileStream = new FileStream(templatePath, FileMode.Open, FileAccess.Read))
@@ -728,11 +731,13 @@
                 Body costBody = costDoc.MainDocumentPart.Document.Body;
                 costBody.AppendChild(new Paragraph(new Run(new RunProperties(new FontSize() {Val = 64.ToString()}, new RunFonts() {Ascii = "Calibri Light"}, new Color() {Val = "8496B0"}), new Text("Kostenmixkalkulation"))));
                 var costTable = new Table();
-                var costTableProp = new TableProperties(new TableStyle() {Val = "EinfacheTabelle4"}, new TableWidth() {Type = TableWidthUnitValues.Dxa, Width = 10000.ToString()});
-                costTable.AppendChild(costTableProp);
+                var costTableProp = new TableProperties( new TableWidth() {Type = TableWidthUnitValues.Dxa, Width = 10000.ToString()});
+                var tableStyle = new TableStyle() {Val = "EinfacheTabelle4"};
+                costTableProp.TableStyle = tableStyle;
+                costTable.AppendChild<TableProperties>(costTableProp);
                 
-                var tableRow1 = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
-                var tc11 = new TableCell(new Paragraph(new Run(new RunProperties(new FontSize() {Val = "24"}, new Color() {Val = "2f6ec2"}),new Text(tempProp.ProposalTitle))));
+                var tableRow1 = new TableRow(new TableRowProperties(new BottomBorder() {Val = BorderValues.Thick}, new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+                var tc11 = new TableCell(new Paragraph(new Run(new RunProperties(new FontSize() {Val = "24"}, new Color() {Val = "2f6ec2"}),new Text(tempProp.ProposalTitle) {Space = SpaceProcessingModeValues.Preserve})));
                 var tc12 = new TableCell(new Paragraph(new Run(new TabChar())));
                 var tc13 = new TableCell(new Paragraph(new Run(new TabChar())));
                 var tc14 = new TableCell(new Paragraph(new Run(new TabChar())));
@@ -749,7 +754,7 @@
                 tableRow2.Append(tc21, tc22, tc23, tc24, tc25);
                 costTable.AppendChild(tableRow2);
 
-                var tableRow3 = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+                var tableRow3 = new TableRow(new TableRowProperties(new BottomBorder() , new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
                 var tc31 = new TableCell(new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}),new Text("Rolle (Tätigkeiten, Schwerpunkte)"))));
                 var tc32 = new TableCell(new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}, new Justification() {Val = JustificationValues.Right}), new Text("Rabatt"))));
                 var tc33 = new TableCell(new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}, new Justification() {Val = JustificationValues.Right}), new Text("Sätze"))));
@@ -758,27 +763,66 @@
                 tableRow3.Append(tc31, tc32, tc33, tc34, tc35);
                 costTable.AppendChild(tableRow3);
 
-                /*foreach (var emp in tempProp.Employees)
+                foreach (var emp in tempProp.Employees)
                 {
-                    var yikes = _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result;
-                    var tableRow = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
-                    var tc1 = new TableCell(new Run(new Text(yikes.Roles.First())));
-                    Console.WriteLine(yikes.Roles.Count + "yalla");
-                    if (yikes.Roles.Count > 1)
-                    {
-                        
-                        for (int j = yikes.Roles.IndexOf(yikes.Roles.First()) + 1; j <= yikes.Roles.Count; j++)
-                            Console.WriteLine(j);
-                            //tc1.AppendChild(new Text("," + yikes.Roles[j]));
-                    }
-                    var tc2 = new TableCell(new Paragraph(new Run(new Text("yalla"))));
-                    var tc3 = new TableCell(new Paragraph(new Run(new Text("yalla"))));
-                    var tc4 = new TableCell(new Paragraph(new Run(new Text("yalla"))));
-                    var tc5 = new TableCell(new Paragraph(new Run(new Text("yalla"))));
-                    tableRow.Append(tc1, tc2, tc3, tc4, tc5);
-                    costTable.AppendChild(tableRow);
-                }*/
+                    var employeeDetail = _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result;
+                    var tableRowA = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+                    var tcA1 = new TableCell();
+                    var tcA1Par = new Paragraph();
+                    var tcA1Run = new Run(new RunProperties(new Justification() {Val = JustificationValues.Right}));
+                    foreach (var role in employeeDetail.Roles)
+                        tcA1Run.AppendChild(new Text(role + ", ") {Space = SpaceProcessingModeValues.Preserve});
+                    tcA1Par.AppendChild(tcA1Run);
+                    tcA1.AppendChild(tcA1Par);
+                    var tcA2 = new TableCell(new Paragraph(new Run(new Text("yalla"))));
+                    var tcA3 = new TableCell(new Paragraph(new Run(new Text("yalla"))));
+                    var tcA4 = new TableCell(new Paragraph(new Run(new Text("yalla"))));
+                    var tcA5 = new TableCell(new Paragraph(new Run(new Text("yalla"))));
+                    tableRowA.Append( tcA1, tcA2, tcA3, tcA4, tcA5);
+                    
+                    var tableRowB = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+                    var tcB1 = new TableCell(new Paragraph(new Run(new Text("Level: " + employeeDetail.Rc) {Space = SpaceProcessingModeValues.Preserve})));
+                    var tcB2 = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                    var tcB3 = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                    var tcB4 = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                    var tcB5 = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                    tableRowB.AppendChild(tcB1);
+                    costTable.Append(tableRowA, tableRowB);
+                }
+
+                var tableRow4A = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+                var tc41A = new TableCell(new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}), new Text("Gesamt über Laufzeit"))));
+                var tc42A = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                var tc43A = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                var tc44A = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                var tc45A = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                tableRow4A.Append(tc41A, tc42A, tc43A, tc44A, tc45A);
+                var tableRow4B = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+                var tc41B = new TableCell(new Paragraph(new Run(new TabChar())));
+                var tc42B = new TableCell(new Paragraph(new Run(new TabChar())));
+                var tc43B = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                var tc44B = new TableCell(new Paragraph(new Run(new TabChar())));
+                var tc45B = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                tableRow4B.Append(tc41B, tc42B, tc43B, tc44B, tc45B);
+                costTable.Append(tableRow4A, tableRow4B);
+
+                var tableRow5A = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+                var tc51A = new TableCell(new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}), new Text("Listenpreis"))));
+                var tc52A = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                var tc53A = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                var tc54A = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                var tc55A = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                tableRow5A.Append(tc51A, tc52A, tc53A, tc54A, tc55A);
+                var tableRow5B = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+                var tc51B = new TableCell(new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}), new Text("Summe der Rabatte"))));
+                var tc52B = new TableCell(new Paragraph(new Run(new TabChar())));
+                var tc53B = new TableCell(new Paragraph(new Run(new TabChar())));
+                var tc54B = new TableCell(new Paragraph(new Run(new TabChar())));
+                var tc55B = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                tableRow5B.Append(tc51B, tc52B, tc53B, tc54B, tc55B);
+                costTable.Append(tableRow5A, tableRow5B);
                 costBody.AppendChild(costTable);
+                Console.WriteLine(costDoc.ToFlatOpcString());
                 FileStream clearTempDoc = new FileStream(empTempDocPath, FileMode.Create, FileAccess.ReadWrite);
                 await clearTempDoc.DisposeAsync();
                 costDoc.SaveAs("wwwroot\\templates\\AvatiTempDoc.docx").Close();
@@ -790,9 +834,10 @@
                 }
                 var altChunk = new AltChunk {Id = altChunkId};
                 body.AppendChild(altChunk);
-                //Console.WriteLine(wordDoc.ToFlatOpcString());
             }
+            
             wordDoc.Save();
+            
             wordDoc.Close();
             var task = await _blazorDownloadFileService.DownloadFile("test.docx", memStream, "application/octet-stream");
         }
