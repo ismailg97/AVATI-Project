@@ -3,7 +3,6 @@
 
 @using AVATI.Data
 
-@inject ProjectPurposeService _projectPurpose
 @inject IProjectActivityService _activity
 @inject IProjektService _projectService
 @inject IProjectActivityService _projectActivity
@@ -149,7 +148,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @if (!_projectPurpose.GettAllPurposesFromProject(ID).Any())
+                        @if (!_project.Projectpurpose.Any())
                         {
                             <tr>
                                 <td>[Keine Projektzwecke vorhanden]</td>
@@ -158,17 +157,17 @@
                         }
                         else
                         {
-                            @foreach (var purpose in _projectPurpose.GettAllPurposesFromProject(ID))
+                            @foreach (var purpose in _project.Projectpurpose)
                             {
                                 <tr>
-                                    <td>@purpose.Purpose</td>
-                                    @if (_projectActivity.GetProjectActivityForPurpose(purpose.Purpose) == null)
+                                    <td>@purpose.Key</td>
+                                    @if (purpose.Value == null)
                                     {
                                         <td>[Noch durch keine Projekttätigkeit gelöst!]</td>
                                     }
                                     else
                                     {
-                                        <td>@_projectActivity.GetProjectActivityForPurpose(purpose.Purpose)</td>
+                                        <td>@purpose.Value</td>
                                     }
                                 </tr>
                             }

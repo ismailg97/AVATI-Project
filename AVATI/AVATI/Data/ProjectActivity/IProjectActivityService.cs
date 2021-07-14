@@ -21,6 +21,8 @@ namespace AVATI.Data
         public bool UpdateGlobalProjectActivity(string oldDescription, string newDescription);
         public bool DeleteGlobalProjectActivity(string description);
         public List<string> GetAllGlobalProjectActivities();
-        public bool IsGlobal(string description);
+        public bool AlreadyExistsGlobalActivity(string activity);
+
+        public bool AlreadyExistsActivityInProject(int projectId, string activity);
     }
 }
