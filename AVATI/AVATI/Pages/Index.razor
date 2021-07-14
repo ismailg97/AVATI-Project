@@ -1,13 +1,17 @@
 ﻿@inject DatabaseUtils _database
 @page "/"
 @using AVATI.Data.DatabaseConnection
-@inject AuthenticationStateProvider _authenticationStateProvider
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization.Infrastructure
 
-        <div class="row justify-content-center mb-2">
+
+<div class="row justify-content-center mb-2">
             <h1>Hello, world!</h1>
+            <p></p>
         </div>
 
-
+<AuthorizeView Roles="SalesStaff, Administrator">
+    <Authorized>
         <div class="row justify-content-center mb-2">
 
             <a href="/Login">
@@ -24,13 +28,32 @@
                 <button type="button" class="btn btn-secondary">Profil</button>
             </a>
         </div>
+    </Authorized>
+    <NotAuthorized>
+        Tschau
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView>
+     <Authorized>
+         <h1>Hello @context.User.Claims.First().Value</h1>
+     </Authorized>
+</AuthorizeView>
+  
+ <form action="cookie" method="post">
+    <input type="text" name="name" />
+    <input type="text" name="empType" />
+     <input type="submit" />
+</form>
 
 @code
 {
+    
+    
     protected override void OnInitialized()
     {
         _database.CreateTables();
-        _authenticationStateProvider.GetAuthenticationStateAsync();
+    //await _authenticationStateProvider.GetAuthenticationStateAsync();
 
     }
 }

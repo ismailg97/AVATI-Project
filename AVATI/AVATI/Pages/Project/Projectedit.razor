@@ -119,7 +119,7 @@ else
                 <tr>
                     <td>@emp.FirstName @emp.LastName</td>
                     <td>
-                        <button type="button" class="btn btn-danger" @onclick="() => { DeleteFromProjectEmployee(Project.ProjectID, emp); Update(); }">
+                        <button type="button" class="btn btn-danger" @onclick="() => { PopUpDeleteEmployee(emp); }">
                             <span class="oi oi-trash" aria-hidden="true"></span>
                         </button>
                     </td>
@@ -136,7 +136,7 @@ else
         <table class="table border-primary col">
             <thead>
             <th scope="col">Tätigkeit</th>
-            <th scope="col" class="text-center">Zugewiesene Mitarbeiter</th>
+            <th scope="col">Zugewiesene Mitarbeiter</th>
             <th scope="col">
                 <div class="form-group text-right">
                     <button type="button" class="btn btn-info text-right" @onclick="(() => { PopAddActivity(ID); })">
@@ -149,7 +149,7 @@ else
             @if (!_projectActivity.GetActivitiesDesOfProject(ID).Any())
             {
                 <tr>
-                    <td>[Weisen Sie passende Projekttätigkeiten dem Projekt zu!]</td>
+                    <td>[Weisen Sie dem Projekt passende Projekttätigkeiten zu!]</td>
                     <td></td>
                     <td></td>
                 </tr>
@@ -161,7 +161,7 @@ else
                     <td>
                         @if (_projectActivitiesWithEmp[activity].Any())
                         {
-                            <ul>
+                            <ul class="text-left">
                                 @foreach (var employeeId in _projectActivitiesWithEmp[activity])
                                 {
                                     var employee = _employeeService.GetEmployeeProfile(employeeId);
@@ -175,6 +175,7 @@ else
                             <a>[Kein Mitarbeiter hat sich zugewiesen!]</a>
                         }
                     </td>
+                    <td></td>
                 </tr>
             }
             </tbody>
@@ -215,14 +216,14 @@ else
                             <!-- modal fenster hinzufügen -->
                             <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span> Edit
                         </button>
-                        <button type="button" class="btn btn-danger" @onclick="() => { DeleteFromProjectPurpose(purpose); }">
+                        <button type="button" class="btn btn-danger" @onclick="() => { ShowModalPopDeletePurpsoe(purpose); }">
                             <span class="oi oi-trash" aria-hidden="true"></span>
                         </button>
 
                     </td>
                     @if (_projectActivity.GetProjectActivityForPurpose(purpose.Purpose) == null)
                     {
-                        <td>[null]</td>
+                        <td>[Noch durch keine Projekttätigkeit gelöst!]</td>
                         <td></td>
                         <td>
                             <button type="button" class="btn btn-info" @onclick="() => { AddPurposeToActivity(purpose); }">
@@ -230,7 +231,7 @@ else
                             </button>
                         </td>
                     }
-                    else if (@_projectActivity.GetProjectActivityForPurpose(purpose.Purpose) != null)
+                    else 
                     {
                         <td>@_projectActivity.GetProjectActivityForPurpose(purpose.Purpose)</td>
                         <td></td>
@@ -256,6 +257,54 @@ else
     </EditForm>
 }
 
+@if (ShowPopDeleteEmployee)
+{
+    <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
+        <div class="modal-dialog border-dark">
+            <div class="modal-content">
+                <div class="modal-header flex-column">
+                    <h4 class="modal-title col-12 text-center">Sind Sie sicher?</h4>
+                </div>
+                <div class="modal-body text-center">
+                    <p>Wollen Sie <b>@EmployeeToDelete.FirstName @EmployeeToDelete.LastName</b> wirklich aus dem Projekt entfernen?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { ShowPopDeleteEmployee = !ShowPopDeleteEmployee; })">
+                        <span class="oi oi-circle-x"></span> Abbrechen
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { DeleteFromProjectEmployee(Project.ProjectID, EmployeeToDelete); Update(); ShowPopDeleteEmployee = !ShowPopDeleteEmployee;})">
+                        <span class="oi oi-trash"></span>Löschen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+@if (ShowPopDeletePurpsoe)
+{
+    <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
+        <div class="modal-dialog border-dark">
+            <div class="modal-content">
+                <div class="modal-header flex-column">
+                    <h4 class="modal-title col-12 text-center">Sind Sie sicher?</h4>
+                </div>
+                <div class="modal-body text-center">
+                    <p>Wollen Sie <b>@PurposeToDelete.Purpose</b> wirklich aus dem Projekt entfernen?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { ShowPopDeletePurpsoe = !ShowPopDeletePurpsoe; })">
+                        <span class="oi oi-circle-x"></span> Abbrechen
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { DeleteFromProjectPurpose(PurposeToDelete); Update(); ShowPopDeletePurpsoe = !ShowPopDeletePurpsoe;})">
+                        <span class="oi oi-trash"></span>Löschen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
 
 
 
@@ -268,6 +317,12 @@ else
     PopAddProjectPurposeToProject _popAddProjectPurpose;
     AddActivityToPurpose _popProjectActivityToPurpose;
     AlterPurposeName _popAlterPurposeName;
+
+    public Employee EmployeeToDelete { get; set; }
+    public bool ShowPopDeleteEmployee = false;
+
+    public ProjectPurpose PurposeToDelete { get; set; }
+    public bool ShowPopDeletePurpsoe = false;
 
     public List<string> Activitieslist { get; set; } = new ();
 
@@ -369,6 +424,18 @@ else
     public void NavigateToProjectoverview()
     {
         _navigationManager.NavigateTo("/Projektübersicht");
+    }
+
+    public void PopUpDeleteEmployee(Employee emp)
+    {
+        EmployeeToDelete = emp;
+        ShowPopDeleteEmployee = !ShowPopDeleteEmployee;
+    }
+
+    public void ShowModalPopDeletePurpsoe(ProjectPurpose purp)
+    {
+        PurposeToDelete = purp;
+        ShowPopDeletePurpsoe = !ShowPopDeletePurpsoe;
     }
 
 }

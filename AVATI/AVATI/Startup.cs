@@ -20,6 +20,7 @@ using AVATI.Pages.Project;
 using BlazorDownloadFile;
 using Blazored.LocalStorage;
 using Dapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -65,10 +66,12 @@ namespace AVATI
             services.AddSingleton<DatabaseUtils>();
             services.AddSingleton<IProjektService, ProjectService>();
             services.AddSingleton<ProjectPurposeService>();
-            services.AddOptions();
-            services.AddBlazoredLocalStorage();
-            services.AddAuthorizationCore();
-            services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+            services.AddHttpContextAccessor();
+            services.AddHttpClient();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie();
+            
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -95,6 +98,7 @@ namespace AVATI
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });

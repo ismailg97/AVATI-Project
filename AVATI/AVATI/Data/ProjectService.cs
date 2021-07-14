@@ -96,26 +96,13 @@ namespace AVATI.Data
             var tempIds =
                 db.Query<int>("SELECT EmployeeID from ProjectActivity_Project_Employee WHERE ProjectID = @prop AND EmployeeID IS NOT NULL ",
                     new {prop = project.ProjectID}).ToList();
-
-            var activities = new List<string>();
+            
             foreach (var empId in tempIds)
             {
                 if (!project.Employees.Exists(e => e.EmployeeID == empId))
                 {
-                    activities.AddRange(db.Query<string>(
-                        "SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectID = @pro AND EmployeeID = @empo",
-                        new{ pro = project.ProjectID, empo = empId}).ToList());
-                    db.Execute(
-                        "DELETE FROM ProjectActivity_Project_Employee WHERE ProjectID = @pro AND EmployeeID = @empo",
-                        new {pro = project.ProjectID, empo = empId});
+                    DeleteEmployeeFromProject(project.ProjectID, empId);
                 }
-            }
-
-            foreach (var activity in activities)
-            {
-                if (!ExistActivityInProject(project.ProjectID, activity))
-                    db.Execute("INSERT INTO ProjectActivity_Project_Employee VALUES(@ProID, NULL, @description)",
-                        new {ProID = project.ProjectID, description = activity});
             }
 
             foreach (var pro in project.Employees)
@@ -199,9 +186,10 @@ namespace AVATI.Data
             List<int> employeeIds = 
                 db.Query<int>("SELECT EmployeeId FROM ProjectActivity_Project_Employee WHERE ProjectID = @pro AND EmployeeID IS NOT NULL",
                     new {pro = projectId}).ToList();
-            foreach (var idtolookfor in employeeIds)
+            foreach (var empId in employeeIds)
             {
-                temp.Employees.Add(db.Query<Employee>("SELECT * FROM Employee WHERE EmployeeID = @emp", new {emp = idtolookfor}).FirstOrDefault());
+                if(!temp.Employees.Exists(x => x.EmployeeID == empId))
+                    temp.Employees.Add(db.Query<Employee>("SELECT * FROM Employee WHERE EmployeeID = @emp", new {emp = empId}).Single());
             }
             return temp;
         }
@@ -241,10 +229,14 @@ namespace AVATI.Data
         public bool DeleteEmployeeFromProject(int projectId, int employeeId)
         {
             using IDbConnection db = GetConnection();
-            var activities = db.Query<string>("SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectID = @pro AND EmployeeID = @empo",
-                new {pro = projectId, empo = employeeId}).ToList();
-            db.Execute("DELETE FROM ProjectActivity_Project_Employee WHERE ProjectID = @pro AND EmployeeID = @emp",
-                new {pro = projectId, emp = employeeId});
+            var activities = db.Query<string>("SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectID = @project AND EmployeeID = @emp AND ProjectActivity IS NOT NULL",
+                new {project = projectId, emp = employeeId}).ToList();
+            db.Execute("DELETE FROM ProjectActivity_Hardskill WHERE ProjectActivityID in (SELECT ProjectActivityID FROM ProjectActivity_Project_Employee WHERE ProjectID = @project AND EmployeeID = @emp)",
+                new{project = projectId, emp = employeeId});
+            db.Execute("DELETE FROM ProjectActivity_Softskill WHERE ProjectActivityID in (SELECT ProjectActivityID FROM ProjectActivity_Project_Employee WHERE ProjectID = @project AND EmployeeID = @emp)",
+                new{project = projectId, emp = employeeId});
+            db.Execute("DELETE FROM ProjectActivity_Project_Employee WHERE ProjectID = @project AND EmployeeID = @emp",
+                new {project = projectId, emp = employeeId});
             foreach (var activity in activities)
             {
                 if (!ExistActivityInProject(projectId, activity))

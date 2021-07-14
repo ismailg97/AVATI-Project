@@ -1,16 +1,11 @@
-﻿@page "/Login"
+﻿@page "/Login2"
 @using AVATI.Data
-@using System.Net.Http.Json
-@using System.Text
-@using System.Threading
-@using Microsoft.AspNetCore.Http.Extensions
-@using Newtonsoft.Json
-@using System.Net.Http.Headers
-@inject HttpClient _httpClient
+
+
+
 @inject ILoginService _login
 @inject NavigationManager _navManager
-@inject IEmployeeService _employeeService
-@inject IHttpClientFactory _httpClientFactory
+
 
 
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
@@ -32,8 +27,7 @@
                         <p class="@(_boolean ? "" : "collapse") " style=" color: #ff0000">
                             <div class="alert alert-danger">Falscher Benutzername oder falsches Passwort eingegeben.<br/> Bitte versuchen Sie erneut.</div>
                         </p>
-                        <EditForm Model="Log" OnValidSubmit="@LoginCheck"> 
-                            <form action="cookie" method="post">
+                        <form action="cookie" method="post">
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -41,7 +35,7 @@
                                             <i class="fa fa-user"></i>
                                         </span>
                                     </div>
-                                    <InputText name="" class="form-control" id="username" placeholder="Max Mustermann" @bind-Value="Log.Username"></InputText>
+                                    <input name="username" class="form-control" id="username"/>
                                 </div> <!-- input-group.// -->
                             </div> <!-- form-group// -->
                             <div class="form-group">
@@ -51,14 +45,13 @@
                                             <i class="fa fa-lock"></i>
                                         </span>
                                     </div>
-                                    <InputText class="form-control" @bind-Value="Log.Password" placeholder="123456" type="password"></InputText>
+                                    <input class="form-control" name="password" type="password"/>
                                 </div> <!-- input-group.// -->
                             </div> <!-- form-group// -->
                             <div class="form-group">
-                                <button type="submit" class="btn btn-primary btn-block"> Login </button>
+                                <input type="submit" class="btn btn-primary btn-block">
                             </div> <!-- form-group// -->
                             </form>
-                        </EditForm> 
                     </article>
                 </div> <!-- card.// -->
 
@@ -85,7 +78,7 @@
     public string empType { get; set; }
     private bool _booleanSignedIn { get; set; }
 
-    private async Task LoginCheck()
+    private void LoginCheck()
     {
         Id = _login.LogIn(Log.Username, Log.Password);
         if (Id == -1)
@@ -94,35 +87,9 @@
         }
         else
         {
-            Employee emp = _employeeService.GetEmployeeProfile(Id);
-            Console.WriteLine(emp.FirstName + emp.LastName);
+            empType=_login.Login_EmpType(Id);
            
-            using (var client = new HttpClient())
-            using (var content = new StringContent(JsonConvert.SerializeObject(emp),Encoding.UTF8, "application/json"))
-            {
-                //content.Headers.ContentType.CharSet = "";
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-                var message = await client.PostAsync("cookie", content);
-
-
-
-
-    //var inputMessage = new HttpRequestMessage
-    //{
-    //    Content = new StringContent(JsonConvert.SerializeObject(emp), Encoding.UTF8,"application/json")
-    //};
-    //inputMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-    //var message = await _httpClient.PostAsync("cookie", inputMessage.Content);
-                if (!message.IsSuccessStatusCode)
-                    throw new ArgumentException(message.ToString());
-
-
-    //empType=_login.Login_EmpType(Id);
-    //_cookieController.Login(emp);
-
-                _navManager.NavigateTo("/profile/");
-            }
+            _navManager.NavigateTo("/profile/" + Id );
         }
     }
 

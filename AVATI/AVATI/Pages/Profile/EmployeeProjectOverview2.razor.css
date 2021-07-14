@@ -1,0 +1,80 @@
+﻿.hardskill{
+    background-color: white;
+    color: #c2364b;
+    border-color: #c2364b;
+    margin-left: 2px;
+    margin-bottom: 2px;
+}
+
+.softskill {
+    background-color: white;
+    color: #7a212e;
+    border-color: #7a212e;
+    margin-left: 2px;
+    margin-bottom: 2px;
+}
+
+.tTitle {
+    width: 350px;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.tActivity {
+    width: 250px;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.tHardskills {
+    width: 375px;
+}
+
+.tSoftskills {
+    width: 375px;
+}
+
+.tEdit {
+    width: 20px;
+}
+
+.tDelte {
+    width: 20px;
+}
+
+.tWrite {
+    color: #545454;
+    font-size: 14px;
+}
+
+.remove{
+    visibility: hidden;
+    font-size: 0px;
+    height: 0;
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: visibility 0s, opacity 0.3s linear;
+}
+
+.showRemove:hover + .remove,
+.remove:hover{
+    visibility: visible;
+    font-size: smaller;
+    height: auto;
+    width: auto;
+    opacity: 1;
+}
+
+.select {
+    word-break: break-word;
+    max-width: 500px;
+}
+
+.btn-outline-success {
+    background: white;
+}
+
+.btn-outline-success:hover {
+    background: #5cb85c;
+}

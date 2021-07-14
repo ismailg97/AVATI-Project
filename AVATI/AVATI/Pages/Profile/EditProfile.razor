@@ -1,5 +1,4 @@
 ﻿@page "/profile/update"
-@page "/profile/update/{id:int}"
 @using AVATI.Data
 @using Blazorise
 
@@ -9,13 +8,15 @@
 @using System
 @using System.Net.Mime
 @using Azure.Storage.Blobs
+@using Microsoft.AspNetCore.Http
 @using Microsoft.EntityFrameworkCore.Migrations.Operations
 @inject IProjektService _projektService
 @inject IEmployeeService _employee
 @inject NavigationManager _navManager
 @inject IBasicDataService _basicDataService
 @inject IHardskillService _hardskillService
-@inject IProjectActivityService _projctActivityService;
+@inject IProjectActivityService _projectActivityService;
+@inject IHttpContextAccessor _httpContextAccessor
 
 <HardSkillLevelSelection @ref="_hardSkillLevel" Abstract="@this"/>
 <LanguageLevelSelection @ref="_languageLevel" Abstract="@this"/>
@@ -35,7 +36,7 @@
             <div class="profile-img">
                 @if (Emp.Image == null)
                 {
-                    <img class="rounded" src="@_employee.GetDefaultPicture()" style="margin-left: -45px" width="300" height="200" alt=""/>
+                    <img class="rounded" src="https://www.geniale-tipps.de/images/t/w575_whatsapp-profilbild-grau.jpg" style="margin-left: -45px" width="300" height="200" alt=""/>
                 }
                 else
                 {
@@ -365,38 +366,95 @@
 
     <!---Projects --->
     <div class="form-group ">
-        <label class="mr-3 mt-2"><b>Projekte: </b></label>
-        <table align="left" style="text-align: left" class="table table-striped align-middle">
-            <tr style="background-color: #7a7a7a">
-                <th class="text-left">Projekt</th>
-                
-                <th class="text-left">Projekttätigkeit</th>
-                <th class="text-left">Hardskills</th>
-                <th class="text-left">Softskills</th>
-                <th>
-                    <button type="button" class="btn btn-info" @onclick="() => { NavigateToEmployeeProject(Emp.EmployeeID); }">Bearbeiten</button>
-                </th>
-            </tr>
-            @if (_projctActivityService.GetProjectActivitiesOfEmployee(Id).Any())
+        <label class="mr-3 mt-2">
+            
+            <b>Projekte:  </b>
+            @if (_projectWithGroupedActivities.Any())
             {
-                foreach (var activity in _projctActivityService.GetProjectActivitiesOfEmployee(Id))
+                <button type="button" class="btn btn-info" @onclick="() => { NavigateToEmployeeProject(Emp.EmployeeID); }">Bearbeiten</button>
+            }
+        </label>
+        @if (_projectWithGroupedActivities.Any())
+        {
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th class="tTitle">Projekt</th>
+                    <th>Projekttätigkeiten</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var projectId in _projectWithGroupedActivities.Keys)
                 {
+                    var project = _projektService.GetProject(projectId);
                     <tr>
-                        <td class="text-left">@_projektService.GetProject(activity.ProjectID).Projecttitel</td>
-                        <td class="text-left">@activity.Description</td>
-                        <td class="text-left">@string.Join(" | ", activity.HardSkills)</td>
-                        <td class="text-left">@string.Join(" | ", activity.SoftSkills)</td>
+                        <td class="tTitle"><div class="alert alert-secondary"><b style="color: #545454;">Titel:</b> @project.Projecttitel
+                            <p/>
+                            <b style="color: #545454;">Beschreibung:</b> @project.Projectdescription
+                            </div>
+                        </td>
+                        <td>
+                            @if (!_projectWithGroupedActivities[projectId].Any())
+                            {
+                                <a>[Sie haben sich noch keiner Tätigkeit zugewiesen]</a>
+                            }
+                            else
+                            {
+                                <table class="table table-striped">
+                                    <thead class="tWrite">
+                                    <tr>
+                                        <th class="tActivity">Tätigkeit</th>
+                                        <th class="tHardskills">Hardskills</th>
+                                        <th class="tSoftskills">Softskills</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    @foreach (var activity in _projectWithGroupedActivities[projectId])
+                                    {
+                                        <tr>
+                                            <td class="tActivity">@activity.Description</td>
+                                            <td class="tHardskills">
+                                                @if (activity.HardSkills.Any())
+                                                {
+                                                    foreach (var hardskill in activity.HardSkills)
+                                                    {
+                                                        <button type="button" class="btn hardskill btn-sm">@hardskill</button>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <small style="color: #818181;">[Keine Hardskills zugewiesen]</small>
+                                                }
+                                            </td>
+                                            <td class="tSoftskills">
+                                                @if (activity.SoftSkills.Any())
+                                                {
+                                                    @foreach (var softskill in activity.SoftSkills)
+                                                    {
+                                                        <button type="button" class="btn softskill btn-sm">@softskill</button>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <small style="color: #818181;">[Keine Softskills zugewiesen]</small>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            }
+                        </td>
                     </tr>
                 }
-            }
-            else
-            {
-                <tr>
-                    <td></td>
-                    <td></td>
-                </tr>
-            }
-        </table>
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <a>Sie sind noch keinem Projekt zugewiesen</a>
+        }
     </div>
 
     </EditForm>
@@ -434,6 +492,8 @@ else
     private bool _booleanHardSkill = false;
     private bool _pageIsLoaded = false;
     private bool _booleanProj = false;
+    
+    private Dictionary<int, List<ProjectActivity>> _projectWithGroupedActivities;
     //private bool _booleanName;
 
 
@@ -448,7 +508,13 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        if (_httpContextAccessor.HttpContext != null)
+        {
+            string context = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault()?.Value;
+            Id = Int16.Parse(context ?? throw new InvalidOperationException());
+        }
         Task<List<Hardskill>> tempHard = _hardskillService.GetAllHardskills();
+        _projectWithGroupedActivities = _projectActivityService.GetActivitiesWithProjectsGrouped(Id);
         HardskillList = await tempHard;
         Emp = _employee.GetEmployeeProfile(Id);
         _pageIsLoaded = true;
@@ -457,14 +523,14 @@ else
 
     public void NavigatoToEditProject()
     {
-        _navManager.NavigateTo("/employeeProject/@Emp.EmployeeId");
+        _navManager.NavigateTo("/employeeProject/");
     }
 
 
     public void EditProfiles()
     {
         _employee.EditEmployeeProfile(Emp);
-        _navManager.NavigateTo("profile/" + Emp.EmployeeID);
+        _navManager.NavigateTo("profile/");
     }
 
 
@@ -511,12 +577,12 @@ else
 
     public void NavigateToProjectEdit(int EmployeeID)
     {
-        _navManager.NavigateTo("/profile/" + Emp.EmployeeID);
+        _navManager.NavigateTo("/profile/" );
     }
 
     public void NavigateToEmployeeProject(int EmployeeID)
     {
-        _navManager.NavigateTo("/employeeProject/"+EmployeeID);
+        _navManager.NavigateTo("/employeeProject2/" );
     }
 
 }
