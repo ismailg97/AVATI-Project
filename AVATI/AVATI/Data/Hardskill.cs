@@ -6,7 +6,6 @@ using AVATI.Data.ValidationAttributes;
 
 namespace AVATI.Data
 {
-    [HardskillValidationAttribute]
     public class Hardskill
     {
         [Required]

@@ -1,6 +1,4 @@
-﻿@page "/employeeProject2"
-
-@using AVATI.Data
+﻿@using AVATI.Data
 @using Microsoft.AspNetCore.Http
 
 @inject IProjektService _projektService
@@ -10,12 +8,11 @@
 @inject NavigationManager _navManager
 @inject IEmployeeService _employeeService
 @inject IBasicDataService _basicDataService
-@inject IHttpContextAccessor _httpContextAccessor
 
 <h2>Projektübersicht</h2>
 
 <table class="table">
-    <thead>
+    <thead class="thead-dark">
     <tr>
         <th class="tTitle">Projekt</th>
         <th>Projekttätigkeiten</th>
@@ -30,11 +27,12 @@
         <tr>
             <td class="tTitle"><div class="alert alert-secondary"><b style="color: #545454;">Titel:</b> <a>@projectTitle</a><p/>
                 <b style="color: #545454;">Beschreibung:</b> <a>@projectDescription</a><p/>
+                </div>
                 @if (_activitiesToChoose[projectId].Any())
                 {
                     <div class="alert alert-success" style="font-size: small;">
                         Tätigkeit hinzufügen
-                        <button class="btn btn-success" @onclick="() => ShowPopUpCreate(projectId)"> <span class="oi oi-plus"></span></button>
+                        <button type="button" class="btn btn-success" @onclick="() => ShowPopUpCreate(projectId)"> <span class="oi oi-plus"></span></button>
                     </div>
                 }
                 else
@@ -43,7 +41,6 @@
                         Sie können sich keiner Tätigkeit mehr zuweisen
                     </div>
                 }
-                </div>
             </td>
             <td>
                 @if (!_projectWithGroupedActivities[projectId].Any())
@@ -73,7 +70,7 @@
                                     {
                                         foreach (var hardskill in activity.HardSkills)
                                         {
-                                            <button class="btn hardskill btn-sm">@hardskill</button>
+                                            <button type="button" class="btn hardskill btn-sm">@hardskill</button>
                                         }
                                     }
                                     else
@@ -86,7 +83,7 @@
                                     {
                                         @foreach (var softskill in activity.SoftSkills)
                                         {
-                                            <button class="btn softskill btn-sm">@softskill</button>
+                                            <button type="button" class="btn softskill btn-sm">@softskill</button>
                                         }
                                     }
                                     else
@@ -95,10 +92,10 @@
                                     }
                                 </td>
                                 <td class="tEdit">
-                                    <button class="btn btn-secondary" @onclick="() => ShowPopUpEdit(activity)"><span class="oi oi-pencil" aria-hidden="true"></span></button>
+                                    <button type="button" class="btn btn-secondary" @onclick="() => ShowPopUpEdit(activity)"><span class="oi oi-pencil" aria-hidden="true"></span></button>
                                 </td>
                                 <td class="tDelte">
-                                    <button class="btn btn-danger" @onclick="() => ShowPopUpDelete(activity)"><span class="oi oi-trash"></span></button>
+                                    <button type="button" class="btn btn-danger" @onclick="() => ShowPopUpDelete(activity)"><span class="oi oi-trash"></span></button>
                                 </td>
                             </tr>
                         }
@@ -156,9 +153,18 @@
                             {
                                 foreach (var softskill in _projectActivity.SoftSkills)
                                 {
-                                    <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.SoftSkills.Remove(softskill); })>
-                                        <a class="showRemove">@softskill</a> <a class="remove"><span class="oi oi-x"></span></a>
-                                    </button>
+                                    if (Employee.Softskills.Contains(softskill))
+                                    {
+                                        <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.SoftSkills.Remove(softskill); })>
+                                            <a class="showRemove">@softskill</a> <a class="remove"><span class="oi oi-x"></span></a>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-outline-danger btn-sm mr-2" @onclick=@(() => { _projectActivity.SoftSkills.Remove(softskill); })>
+                                            <a class="showRemove">@softskill</a> <a class="remove"><span class="oi oi-x"></span></a>
+                                        </button>
+                                    }
                                 }
                                 
                             }
@@ -167,7 +173,7 @@
                                 <small style="color: #818181;">[Keine Softskills zugewiesen]</small>
                             }
                         </div>
-                        @foreach (var softskill in _employee.Softskills)
+                        @foreach (var softskill in Employee.Softskills)
                         {
                             if (!_projectActivity.SoftSkills.Contains(softskill))
                             {
@@ -187,9 +193,18 @@
                             {
                                 foreach (var hardskill in _projectActivity.HardSkills)
                                 {
-                                    <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.HardSkills.Remove(hardskill); })>
-                                        <a class="showRemove">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a>
-                                    </button>
+                                    if (Employee.Hardskills.Exists(x => x.Description == hardskill))
+                                    {
+                                        <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.HardSkills.Remove(hardskill); })>
+                                            <a class="showRemove">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-outline-danger btn-sm mr-2" @onclick=@(() => { _projectActivity.HardSkills.Remove(hardskill); })>
+                                            <a class="showRemove">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a>
+                                        </button>
+                                    }
                                 }
                             }
                             else
@@ -199,7 +214,7 @@
                         </div>
 
                         
-                        @foreach (var hardskill in _employee.Hardskills)
+                        @foreach (var hardskill in Employee.Hardskills)
                         {
                             if (!_projectActivity.HardSkills.Contains(hardskill.Description))
                             {
@@ -254,10 +269,9 @@
 
 @code {
     [Parameter]
-    public int Id { get; set; }
-    
+    public Employee Employee { get; set; }
+
     private Dictionary<int, List<ProjectActivity>> _projectWithGroupedActivities;
-    private Employee _employee;
     private ProjectActivity _projectActivity;
 
     private Dictionary<int, List<string>> _activitiesToChoose;
@@ -270,30 +284,50 @@
     
     protected override void OnInitialized()
     {
-        if (_httpContextAccessor.HttpContext != null)
-        {
-            string context = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault()?.Value;
-            Id = Int16.Parse(context ?? throw new InvalidOperationException());
-        }
         _showCreate = false;
         _showEdit = false;
         _showDelete = false;
-        _projectWithGroupedActivities = _projectActivityService.GetActivitiesWithProjectsGrouped(Id);
-        _employee = _employeeService.GetEmployeeProfile(Id);
+        SetProjectActivities();
         GetActivitiesOfProjectEmployee();
+    }
+
+    private void SetProjectActivities()
+    {
+        _projectWithGroupedActivities = new Dictionary<int, List<ProjectActivity>>();
+        foreach (var activity in Employee.ProjectActivities)
+        {
+            if (activity.Description == null)
+            {
+                if (_projectWithGroupedActivities.ContainsKey(activity.ProjectID)) continue;
+                _projectWithGroupedActivities.Add(activity.ProjectID, new List<ProjectActivity>());
+            }
+            else
+            {
+                if (_projectWithGroupedActivities.ContainsKey(activity.ProjectID))
+                    _projectWithGroupedActivities[activity.ProjectID].Add(activity);
+                else
+                    _projectWithGroupedActivities.Add(activity.ProjectID, new List<ProjectActivity>() { activity });
+            }
+        }
+        StateHasChanged();
     }
 
     private void EditProjectActivity()
     {
-        _projectActivityService.UpdateSkillsToActivity(_projectActivity.ProjectActivityID, _projectActivity.HardSkills, _projectActivity.SoftSkills);
-        _projectWithGroupedActivities = _projectActivityService.GetActivitiesWithProjectsGrouped(Id);
+        //_projectActivityService.UpdateSkillsToActivity(_projectActivity.ProjectActivityID, _projectActivity.HardSkills, _projectActivity.SoftSkills);
+        var editActivity = Employee.ProjectActivities.Find(x => x.ProjectActivityID == _projectActivity.ProjectActivityID);
+        
+        if(editActivity != null) {
+            editActivity.HardSkills = new List<string>(_projectActivity.HardSkills);
+            editActivity.SoftSkills = new List<string>(_projectActivity.SoftSkills);
+        }
+        SetProjectActivities();
         StateHasChanged();
         _showEdit = false;
     }
 
     private void ShowPopUpEdit(ProjectActivity activity)
     {
-        _projectActivity = activity;
         _projectActivity = new ProjectActivity
         {
             ProjectActivityID = activity.ProjectActivityID,
@@ -308,8 +342,11 @@
 
     private void DeleteProjectActivity()
     {
-        _projectActivityService.DeleteProjectActivityToEmployee(_projectActivity.ProjectActivityID);
-        _projectWithGroupedActivities = _projectActivityService.GetActivitiesWithProjectsGrouped(Id);
+        //_projectActivityService.DeleteProjectActivityToEmployee(_projectActivity.ProjectActivityID);
+        var projectActivity = Employee.ProjectActivities.Find(x => x.ProjectActivityID == _projectActivity.ProjectActivityID);
+        if(projectActivity != null)
+            projectActivity.Description = null;
+        SetProjectActivities();
         GetActivitiesOfProjectEmployee();
         StateHasChanged();
         _showDelete = false;
@@ -323,8 +360,17 @@
 
     private void CreateProjectActivity()
     {
-        _projectActivityService.SetProjectActivityToEmployee(_projectActivity);
-        _projectWithGroupedActivities = _projectActivityService.GetActivitiesWithProjectsGrouped(Id);
+        //_projectActivityService.SetProjectActivityToEmployee(_projectActivity); 
+        var newProjectActivity = new ProjectActivity()
+        {
+            ProjectID = _projectActivity.ProjectID,
+            EmployeeID = _projectActivity.EmployeeID,
+            Description = _projectActivity.Description,
+            HardSkills = new List<string>(_projectActivity.HardSkills),
+            SoftSkills = new List<string>(_projectActivity.SoftSkills)
+        };
+        Employee.ProjectActivities.Add(newProjectActivity);
+        SetProjectActivities();
         GetActivitiesOfProjectEmployee();
         StateHasChanged();
         _showCreate = false;
@@ -336,7 +382,7 @@
         if (_activitiesToChoose[projectId].Any())
             _projectActivity.Description = _activitiesToChoose[projectId][0];
         _projectActivity.ProjectID = projectId;
-        _projectActivity.EmployeeID = Id;
+        _projectActivity.EmployeeID = Employee.EmployeeID;
         _showCreate = true;
     }
 

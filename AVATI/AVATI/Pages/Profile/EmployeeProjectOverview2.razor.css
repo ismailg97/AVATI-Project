@@ -71,10 +71,14 @@
     max-width: 500px;
 }
 
-.btn-outline-success {
+.btn-outline-success, .btn-outline-danger {
     background: white;
 }
 
 .btn-outline-success:hover {
     background: #5cb85c;
+}
+
+.btn-outline-danger:hover {
+    background: #d9534f;
 }

@@ -299,9 +299,7 @@ namespace AVATI.Data
                         new {pr = activityId}).ToList(),
                     ProjectActivityID = activityId,
                 };
-                //gewollt?
-                /*if(projectActivity.Description != null)*/
-                    activities.Add(projectActivity);
+                activities.Add(projectActivity);
             }
             
             return activities;
@@ -400,17 +398,6 @@ namespace AVATI.Data
             }
             
             return activities;
-        }
-
-        public string GetProjectActivityForPurpose(string purpose)
-        {
-            using IDbConnection db = GetConnection();
-            
-            string temp1 = db.QuerySingle<string>(
-                "SELECT Projectactivity FROM ProjectPurpose WHERE Purpose = @desc", 
-                new { desc = purpose });
-
-            return temp1;
         }
 
         public bool SetProjectActivitiesToProject(int projectId, List<string> activities)

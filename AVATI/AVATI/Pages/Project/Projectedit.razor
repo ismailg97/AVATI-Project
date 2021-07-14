@@ -211,7 +211,8 @@ else
                     <td><input class="form-control col-5" @bind="_newPurposeKey"/></td>
                     <td>
                         <select class="form-control col-5" @bind="_newPurposeValue">
-                            <option value="">[Keine Projekttätigkeit]</option>
+                            @{string empty = "";}
+                            <option value="@empty">[Keine Projekttätigkeit]</option>
                             @foreach (var activity in Project.ProjectActivities)
                             {
                                 <option value="@activity">@activity</option>
@@ -264,7 +265,8 @@ else
                         <td><input class="form-control col-5" @bind="_purposeKeyEdit[purpose.Key]"/></td>
                         <td>
                             <select class="form-control col-5" @bind="_purposeValueEdit[purpose.Key]">
-                                <option value="">[Keine Projekttätigkeit]</option>
+                                @{ string empty = ""; }
+                                <option value="@empty">[Keine Projekttätigkeit]</option>
                                 @foreach (var activity in Project.ProjectActivities)
                                 {
                                     <option value="@activity">@activity</option>

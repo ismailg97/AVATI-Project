@@ -135,7 +135,7 @@ namespace AVATI.Data
 
             foreach (var field in copyFields)
             {
-                var insertRows = db.Execute("INSERT INTO Project_Field WHERE ProjectID = @projectId AND Field = @description",
+                var insertRows = db.Execute("INSERT INTO Project_Field VALUES(@projectId, @description)",
                     new{ projectId = project.ProjectID, description = field});
                 if (insertRows != 1) return false;
             }
@@ -287,6 +287,13 @@ namespace AVATI.Data
             }
 
             return true;
+        }
+
+        public bool AlreadyContainsPurpose(int projectId, string purpose)
+        {
+            using var db = GetConnection();
+            return db.Query<string>("SELECT FROM Projectpurpose WHERE ProjectID = @project AND Purpose = @description",
+                new{project = projectId, description = purpose}).SingleOrDefault() != null;
         }
     }
 }
