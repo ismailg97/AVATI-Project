@@ -570,16 +570,42 @@
         }
         return table;
     }
+
+    public int GetCash(int rc)
+    {
+        return rc switch
+        {
+            1 => (int) Cash.Rc1,
+            2 => (int) Cash.Rc2,
+            3 => (int) Cash.Rc3,
+            4 => (int) Cash.Rc4,
+            5 => (int) Cash.Rc5,
+            6 => (int) Cash.Rc6,
+            7 => (int) Cash.Rc7,
+            _ => 0
+            };
+    }
+    
+    
+
+    enum Cash //Stundensatz in €, Tagessatz entspricht dem 8-fachen Stundensatz
+    {
+        Rc1 = 80,
+        Rc2 = 95,
+        Rc3 = 105,
+        Rc4 = 120,
+        Rc5 = 135,
+        Rc6 = 155,
+        Rc7 = 195,
+    }
     
     public async Task CreateDocument(int id) //Threadsicher machen, wenn mehrere gleichzeitig ein Dokument erzeugen --> Ressourcenkonflikt 
     {
-    int i = 0;
-        string costCalcTemplateDoc = "wwwroot\\templates\\AvatiKostenmixDoc.docx";
-        string empTempDocPath = "wwwroot\\templates\\AvatiTempDoc.docx";
-        string empTemplatePath = "wwwroot\\templates\\AvatiWorkerDoc.docx";
-        string templatePath = "wwwroot\\templates\\AvatiProposalDoc.docx";
-
-       
+    var i = 0;
+        const string costCalcTemplateDoc = "wwwroot\\templates\\AvatiKostenmixDoc.docx";
+        const string empTempDocPath = "wwwroot\\templates\\AvatiTempDoc.docx";
+        const string empTemplatePath = "wwwroot\\templates\\AvatiWorkerDoc.docx";
+        const string templatePath = "wwwroot\\templates\\AvatiProposalDoc.docx";
         
         MemoryStream memStream = new MemoryStream();
         var pageBreaker = new Paragraph(new Run(new Break {Type = BreakValues.Page}));
@@ -731,6 +757,12 @@
                 costDoc.ChangeDocumentType(WordprocessingDocumentType.Document);
                 Body costBody = costDoc.MainDocumentPart.Document.Body;
                 costBody.AppendChild(new Paragraph(new Run(new RunProperties(new FontSize() {Val = 64.ToString()}, new RunFonts() {Ascii = "Calibri Light"}, new Color() {Val = "8496B0"}), new Text("Kostenmixkalkulation"))));
+               
+                int runtime = (int)(tempProp.End - tempProp.Start).TotalDays / 7;
+                List<double> pricePerEmpList = new List<double>();
+                double overallHours = 0, overallPt = 0, overallListPrice = 0, overallRealPrice = 0;
+
+
                 var costTable = new Table();
                 var costTableProp = new TableProperties( new TableWidth() {Type = TableWidthUnitValues.Dxa, Width = 10000.ToString()});
                 var tableStyle = new TableStyle() {Val = "EinfacheTabelle4"};
@@ -751,7 +783,7 @@
                 var tc22 = new TableCell(new Paragraph(new Run(new TabChar()))); 
                 var tc23 = new TableCell(new Paragraph(new Run(new TabChar()))); 
                 var tc24 = new TableCell(new Paragraph(new Run(new TabChar()))); 
-                var tc25 = new TableCell(new Paragraph(new Run(new RunProperties(new Justification() {Val = JustificationValues.Right}),new Text(((int)((tempProp.End - tempProp.Start).TotalDays / 7)).ToString()), new Text(" Wochen") {Space = SpaceProcessingModeValues.Preserve})));
+                var tc25 = new TableCell(new Paragraph(new Run(new RunProperties(new Justification() {Val = JustificationValues.Right}),new Text(runtime.ToString()), new Text(" Wochen") {Space = SpaceProcessingModeValues.Preserve})));
                 tableRow2.Append(tc21, tc22, tc23, tc24, tc25);
                 costTable.AppendChild(tableRow2);
 
@@ -763,10 +795,17 @@
                 var tc35 = new TableCell(new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}, new Justification() {Val = JustificationValues.Right}), new Text("Zeit und Kosten"))));
                 tableRow3.Append(tc31, tc32, tc33, tc34, tc35);
                 costTable.AppendChild(tableRow3);
-
+                
                 foreach (var emp in tempProp.Employees)
                 {
                     var employeeDetail = _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result;
+                    var employeeProvHours = 20; //TODO dummy Wert need employeeDetail.ProvHours (oder ähnliches)
+                    double hourlyRate = GetCash(employeeDetail.Rc); //daily rate = 8 * hourly rate
+                    double dailyRate = hourlyRate * 8;              //== PT rate
+                    overallHours += employeeProvHours;
+                    overallPt += Math.Round((double) employeeProvHours * runtime / 8, 2);
+                    overallListPrice += hourlyRate * employeeProvHours * runtime;
+
                     var tableRowA = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
                     var tcA1 = new TableCell();
                     var tcA1Par = new Paragraph();
@@ -775,55 +814,100 @@
                         tcA1Run.AppendChild(new Text(role + ", ") {Space = SpaceProcessingModeValues.Preserve});
                     tcA1Par.AppendChild(tcA1Run);
                     tcA1.AppendChild(tcA1Par);
-                    var tcA2 = new TableCell(new Paragraph(new Run(new Text("yalla"))));
-                    var tcA3 = new TableCell(new Paragraph(new Run(new Text("yalla"))));
-                    var tcA4 = new TableCell(new Paragraph(new Run(new Text("yalla"))));
-                    var tcA5 = new TableCell(new Paragraph(new Run(new Text("yalla"))));
+                    var tcA2 = new TableCell();
+                    var tcA2Par = new Paragraph();
+                    var tcA2Run = new Run();
+                    if (employeeDetail.Discount > 0)
+                    {
+                        tcA2Run.AppendChild(new RunProperties( new Strike() {Val = true}));
+                        tcA2Run.AppendChild(new Text(Math.Round(dailyRate, 2) + "€/PT"));
+                    }
+                    else
+                        tcA2Run.AppendChild(new TabChar());
+                    tcA2Par.AppendChild(tcA2Run);
+                    tcA2.AppendChild(tcA2Par);
+                    var tcA3 = new TableCell();
+                    var tcA3Par = new Paragraph();
+                    var tcA3Run = new Run();
+                    if (employeeDetail.Discount > 0)
+                        tcA3Run.AppendChild(new Text(Math.Round(dailyRate / 100 * (100 - employeeDetail.Discount), 2) + "€/PT"));
+                    else
+                        tcA3Run.AppendChild(new Text(Math.Round(dailyRate, 2) + "€/PT"));
+                    tcA3Par.AppendChild(tcA3Run);
+                    tcA3.AppendChild(tcA3Par);
+                    var tcA4 = new TableCell(new Paragraph(new Run(new Text(Math.Round((double)employeeProvHours / 40, 2) + " FTE") {Space = SpaceProcessingModeValues.Preserve})));//FTE = Vollzeitäquivalent --> Vollzeitkraft: 8h/d; 5d/w; ==> 40h/week
+                    var tcA5 = new TableCell(new Paragraph(new Run(new Text(Math.Round((double)employeeProvHours * runtime / 8, 2) + " PT") {Space = SpaceProcessingModeValues.Preserve})));
                     tableRowA.Append( tcA1, tcA2, tcA3, tcA4, tcA5);
                     
                     var tableRowB = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
                     var tcB1 = new TableCell(new Paragraph(new Run(new Text("Level: " + employeeDetail.Rc) {Space = SpaceProcessingModeValues.Preserve})));
-                    var tcB2 = new TableCell(new Paragraph(new Run(new Text("dummy"))));
-                    var tcB3 = new TableCell(new Paragraph(new Run(new Text("dummy"))));
-                    var tcB4 = new TableCell(new Paragraph(new Run(new Text("dummy"))));
-                    var tcB5 = new TableCell(new Paragraph(new Run(new Text("dummy"))));
-                    tableRowB.AppendChild(tcB1);
+                    var tcB2 = new TableCell();
+                    var tcB2Par = new Paragraph();
+                    var tcB2Run = new Run();
+                    if (employeeDetail.Discount > 0)
+                        tcB2Run.AppendChild(new Text(employeeDetail.Discount + "%"));
+                    else
+                        tcB2Run.AppendChild(new TabChar());
+                    tcB2Par.AppendChild(tcB2Run);
+                    tcB2.AppendChild(tcB2Par);
+                    var tcB3 = new TableCell();
+                    var tcB3Par = new Paragraph();
+                    var tcB3Run = new Run();
+                    if (employeeDetail.Discount > 0)
+                        tcB3Run.AppendChild(new Text(Math.Round(dailyRate / 100 * (100 - employeeDetail.Discount) / 8, 2) + "€/h")); //Das passt so
+                    else
+                        tcB3Run.AppendChild(new Text(hourlyRate + "€/h"));
+                    tcB3Par.AppendChild(tcB3Run);
+                    tcB3.AppendChild(tcB3Par);
+                    var tcB4 = new TableCell(new Paragraph(new Run(new Text(employeeProvHours + " h/Woche"))));
+                    var tcB5 = new TableCell();
+                    
+                    if (employeeDetail.Discount > 0)
+                    {
+                        tcB5.AppendChild(new Paragraph(new Run(new Text(Math.Round(dailyRate / 100 * (100 - employeeDetail.Discount) / 8 * employeeProvHours * runtime, 2) + " €") {Space = SpaceProcessingModeValues.Preserve})));
+                        overallRealPrice += Math.Round(dailyRate / 100 * (100 - employeeDetail.Discount) / 8 * employeeProvHours * runtime, 2);
+                    }
+                    else
+                    {
+                        tcB5.AppendChild(new Paragraph(new Run(new Text(hourlyRate * employeeProvHours * runtime + " €") {Space = SpaceProcessingModeValues.Preserve})));
+                        overallRealPrice += hourlyRate * employeeProvHours * runtime;
+                    }
+                    tableRowB.Append(tcB1, tcB2, tcB3, tcB4, tcB5);
                     costTable.Append(tableRowA, tableRowB);
                 }
 
                 var tableRow4A = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
                 var tc41A = new TableCell(new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}), new Text("Gesamt über Laufzeit"))));
-                var tc42A = new TableCell(new Paragraph(new Run(new Text("dummy"))));
-                var tc43A = new TableCell(new Paragraph(new Run(new Text("dummy"))));
-                var tc44A = new TableCell(new Paragraph(new Run(new Text("dummy"))));
-                var tc45A = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                var tc42A = new TableCell(new Paragraph(new Run(new Text(Math.Round((1 - overallRealPrice / overallListPrice) * 100, 2) + "%"))));
+                var tc43A = new TableCell(new Paragraph(new Run(new Text(Math.Round(overallRealPrice / overallPt, 2) + " €/PT") {Space = SpaceProcessingModeValues.Preserve})));
+                var tc44A = new TableCell(new Paragraph(new Run(new Text(Math.Round(overallHours / 40, 2) + " FTE") {Space = SpaceProcessingModeValues.Preserve})));
+                var tc45A = new TableCell(new Paragraph(new Run(new Text(overallPt + " PT") {Space = SpaceProcessingModeValues.Preserve})));
                 tableRow4A.Append(tc41A, tc42A, tc43A, tc44A, tc45A);
                 var tableRow4B = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
                 var tc41B = new TableCell(new Paragraph(new Run(new TabChar())));
                 var tc42B = new TableCell(new Paragraph(new Run(new TabChar())));
-                var tc43B = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                var tc43B = new TableCell(new Paragraph(new Run(new Text(Math.Round(overallRealPrice / (overallPt * 8), 2) + " €/h") {Space = SpaceProcessingModeValues.Preserve})));
                 var tc44B = new TableCell(new Paragraph(new Run(new TabChar())));
-                var tc45B = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                var tc45B = new TableCell(new Paragraph(new Run(new Text(overallRealPrice + " €") {Space = SpaceProcessingModeValues.Preserve})));
                 tableRow4B.Append(tc41B, tc42B, tc43B, tc44B, tc45B);
                 costTable.Append(tableRow4A, tableRow4B);
 
                 var tableRow5A = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
                 var tc51A = new TableCell(new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}), new Text("Listenpreis"))));
-                var tc52A = new TableCell(new Paragraph(new Run(new Text("dummy"))));
-                var tc53A = new TableCell(new Paragraph(new Run(new Text("dummy"))));
-                var tc54A = new TableCell(new Paragraph(new Run(new Text("dummy"))));
-                var tc55A = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                var tc52A = new TableCell(new Paragraph(new Run(new TabChar())));
+                var tc53A = new TableCell(new Paragraph(new Run(new TabChar())));
+                var tc54A = new TableCell(new Paragraph(new Run(new TabChar())));
+                var tc55A = new TableCell(new Paragraph(new Run(new Text(overallListPrice + " €") {Space = SpaceProcessingModeValues.Preserve})));
                 tableRow5A.Append(tc51A, tc52A, tc53A, tc54A, tc55A);
                 var tableRow5B = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
                 var tc51B = new TableCell(new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}), new Text("Summe der Rabatte"))));
                 var tc52B = new TableCell(new Paragraph(new Run(new TabChar())));
                 var tc53B = new TableCell(new Paragraph(new Run(new TabChar())));
                 var tc54B = new TableCell(new Paragraph(new Run(new TabChar())));
-                var tc55B = new TableCell(new Paragraph(new Run(new Text("dummy"))));
+                var tc55B = new TableCell(new Paragraph(new Run(new Text(overallRealPrice - overallListPrice + " €") {Space = SpaceProcessingModeValues.Preserve})));
                 tableRow5B.Append(tc51B, tc52B, tc53B, tc54B, tc55B);
                 costTable.Append(tableRow5A, tableRow5B);
                 costBody.AppendChild(costTable);
-                Console.WriteLine(costDoc.ToFlatOpcString());
                 FileStream clearTempDoc = new FileStream(empTempDocPath, FileMode.Create, FileAccess.ReadWrite);
                 await clearTempDoc.DisposeAsync();
                 costDoc.SaveAs("wwwroot\\templates\\AvatiTempDoc.docx").Close();
@@ -836,9 +920,7 @@
                 var altChunk = new AltChunk {Id = altChunkId};
                 body.AppendChild(altChunk);
             }
-            
             wordDoc.Save();
-            
             wordDoc.Close();
             var task = await _blazorDownloadFileService.DownloadFile("test.docx", memStream, "application/octet-stream");
         }    
