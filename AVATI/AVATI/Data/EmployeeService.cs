@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Drawing;
 using Dapper;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.Extensions.Configuration;
 
 namespace AVATI.Data
@@ -101,7 +102,7 @@ namespace AVATI.Data
                 var rc = db.Query<int>("SELECT RCLevel from Employee WHERE EmployeeId = @ID",
                     new {ID = emp.EmployeeID}).FirstOrDefault();
                 employee.Rc = rc;
-                
+                employee.EmployeeID = emp.EmployeeID;
                 empList.Add(employee);
             }
 
