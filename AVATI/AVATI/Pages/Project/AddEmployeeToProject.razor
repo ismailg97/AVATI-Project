@@ -153,86 +153,89 @@
     </EditForm>
     @if (_searchService.TableIsVisible)
     {
-        if (!_searchService.PerfectMatch && SelectEmployees.Any())
+        if (!SelectEmployees.Any() || SelectEmployees.Count(e => _chosenEmployees.Any(x => x.EmployeeID == e.EmployeeID)) == SelectEmployees.Count)
+        {
+            <div class="alert alert-danger">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die mindestens eines der Kriterien erfüllt!</div>
+        }
+        if (!_searchService.PerfectMatch && SelectEmployees.Any() && SelectEmployees.Count(e => _chosenEmployees.Any(x => x.EmployeeID == e.EmployeeID)) != SelectEmployees.Count )
         {
             <div class="alert alert-danger">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die alle Kriterien erfüllt!</div>
         }
 
-        @if (!SelectEmployees.Any() || SelectEmployees.Count(e => _chosenEmployees.Any(x => x.EmployeeID == e.EmployeeID)) == SelectEmployees.Count)
-        {
-            <div class="alert alert-danger">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die mindestens eines der Kriterien erfüllt!</div>
-        }
         else
         {
-            <h4 class="mb-3 font-weight-bold">Gefundene Mitarbeiter:</h4>
+            if (SelectEmployees.Count(e => _chosenEmployees.Any(x => x.EmployeeID == e.EmployeeID)) != SelectEmployees.Count)
+            {
+                <h4 class="mb-3 font-weight-bold">Gefundene Mitarbeiter:</h4>
 
-            <table class="table table-bordered table-striped text-center">
-                <thead class="thead-dark">
-                <tr>
-                    <th>Name</th>
-                    <th>RC</th>
-                    <th>Hardskills</th>
-                    <th>Softskills</th>
-                    <th>Rolle(n)</th>
-                    <th>Hinzufügen</th>
+                <table class="table table-bordered table-striped text-center">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>RC</th>
+                        <th>Hardskills</th>
+                        <th>Softskills</th>
+                        <th>Rolle(n)</th>
+                        <th>Hinzufügen</th>
 
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (var employee in SelectEmployees)
-                {
-                    @if (_chosenEmployees.Find(e => e.EmployeeID == employee.EmployeeID) == null)
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var employee in SelectEmployees)
                     {
-                        <tr>
-                            <td class="font-weight-bold" style="width: 15%">@employee.FirstName @employee.LastName</td>
-                            <td style="width: 5%">
+                        @if (_chosenEmployees.Find(e => e.EmployeeID == employee.EmployeeID) == null)
+                        {
+                            <tr>
+                                <td class="font-weight-bold" style="width: 15%">@employee.FirstName @employee.LastName</td>
+                                <td style="width: 5%">
 
-                                <button type="button" class="btn btn-primary align-middle col">@employee.Rc</button>
-                            </td>
-                            <td style="width:20%">
-                                <div class="form-group row col">
-                                    @foreach (var hardskill in employee.Hardskills)
-                                    {
-                                        if (_searchService.HardskillsToSearchTemp.Exists(e => e.Description.Equals(hardskill.Description)))
+                                    <button type="button" class="btn btn-primary align-middle col">@employee.Rc</button>
+                                </td>
+                                <td style="width:20%">
+                                    <div class="form-group row col">
+                                        @foreach (var hardskill in employee.Hardskills)
                                         {
-                                            <button class="btn btn-primary btn-sm mr-1 mb-1">@hardskill.Description</button>
+                                            if (_searchService.HardskillsToSearchTemp.Exists(e => e.Description.Equals(hardskill.Description)))
+                                            {
+                                                <button class="btn btn-primary btn-sm mr-1 mb-1">@hardskill.Description</button>
+                                            }
                                         }
-                                    }
-                                </div>
-                            </td>
-                            <td style="width:20%">
-                                <div class="form-group row col">
-                                    @foreach (var softskill in employee.Softskills)
-                                    {
-                                        if (_searchService.SoftskillsToSearchTemp.Contains(softskill))
+                                    </div>
+                                </td>
+                                <td style="width:20%">
+                                    <div class="form-group row col">
+                                        @foreach (var softskill in employee.Softskills)
                                         {
-                                            <button class="btn btn-secondary btn-sm mr-1 mb-1">@softskill</button>
+                                            if (_searchService.SoftskillsToSearchTemp.Contains(softskill))
+                                            {
+                                                <button class="btn btn-secondary btn-sm mr-1 mb-1">@softskill</button>
+                                            }
                                         }
-                                    }
-                                </div>
-                            </td>
-                            <td style="width: 20%">
-                                <div class="form-group row col">
-                                    @foreach (var role in employee.Roles)
-                                    {
-                                        if (_searchService.RolesToSearchTemp.Contains(role))
+                                    </div>
+                                </td>
+                                <td style="width: 20%">
+                                    <div class="form-group row col">
+                                        @foreach (var role in employee.Roles)
                                         {
-                                            <button class="btn btn-secondary btn-sm mr-1 mb-1">@role</button>
+                                            if (_searchService.RolesToSearchTemp.Contains(role))
+                                            {
+                                                <button class="btn btn-secondary btn-sm mr-1 mb-1">@role</button>
+                                            }
                                         }
-                                    }
-                                </div>
-                            </td>
-                            <td style="width: 10%" class="text-center">
+                                    </div>
+                                </td>
+                                <td style="width: 10%" class="text-center">
 
-                                <button class="btn btn-sm btn-outline-success" @onclick=@(() => { _chosenEmployees.Add(employee); StateHasChanged(); })>Hinzufügen</button>
+                                    <button class="btn btn-sm btn-outline-success" @onclick=@(() => { _chosenEmployees.Add(employee); StateHasChanged(); })>Hinzufügen</button>
 
 
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
+                        }
                     }
-                }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            }
 
         }
         
@@ -241,7 +244,7 @@
             
             <h4 class="mb-3 font-weight-bold">Bereits im Projekt befindliche Mitarbeiter:</h4>
 
-            <table class="table table-bordered table-striped text-center">
+            <table class="table table-bordered table-hover table-striped text-center">
                 <thead class="thead-light">
                 <tr>
                     <th>Name</th>

@@ -88,7 +88,7 @@ namespace AVATI.Data
                 return false;
             }
 
-            db.Execute("INSERT INTO EmployeeDetail VALUES(@prop, @emp, @oldRc, 0)",
+            db.Execute("INSERT INTO EmployeeDetail VALUES(@prop, @emp, @oldRc, 0, 1)",
                 new {prop = propId, emp = empl, oldRc = rc});
 
 

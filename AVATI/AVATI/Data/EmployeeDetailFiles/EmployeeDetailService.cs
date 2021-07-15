@@ -47,7 +47,12 @@ namespace AVATI.Data.EmployeeDetailFiles
                 {
                     pro = proposalId, emp = employeeId, disc = employeeDetail.Discount
                 });
-
+            
+            var rows2 = await db.ExecuteAsync("Update EmployeeDetail SET Hours = @hour WHERE ProposalId = @pro and EmployeeId = @emp",
+                new
+                {
+                    pro = proposalId, emp = employeeId, hour = employeeDetail.Hours
+                });
             Console.WriteLine("Rows affected: " + rows + " Discount: " + employeeDetail.Discount);
             foreach (var soft in employeeDetail.Softskills)
             {
@@ -225,8 +230,10 @@ namespace AVATI.Data.EmployeeDetailFiles
                 new {empID = emp, propId = proposalId});
             int discount = db.QuerySingle<int>("SELECT Discount from EmployeeDetail Where EmployeeId = @empID and ProposalID = @propId",
                 new {empID = emp, propId = proposalId});
-            db.Execute("INSERT INTO EmployeeDetail VALUES(@propId, @empId, @rc, @dc)",
-                new {propId = newId, empId = emp, rc = tempRc, dc = discount});
+            int hours = db.QuerySingle<int>("SELECT Hours from EmployeeDetail Where EmployeeId = @empID and ProposalID = @propId",
+                new {empID = emp, propId = proposalId});
+            db.Execute("INSERT INTO EmployeeDetail VALUES(@propId, @empId, @rc, @dc, @hou)",
+                new {propId = newId, empId = emp, rc = tempRc, dc = discount, hou = hours});
             
             foreach (var softskill in db.Query<string>(
                 "SELECT Softskill from EmployeeDetail_Softskill Where ProposalID = @propId and EmployeeID = @empId",
@@ -287,6 +294,9 @@ namespace AVATI.Data.EmployeeDetailFiles
                     db.QuerySingle<int>(
                         "SELECT Discount from EmployeeDetail WHERE EmployeeId = @empId and ProposalID = @propId",
                         new {empId = employeeId, propId = proposalId});
+            temp.Hours = db.QuerySingle<int>(
+                "SELECT Hours from EmployeeDetail WHERE EmployeeId = @empId and ProposalID = @propId",
+                new {empId = employeeId, propId = proposalId});
             temp.Roles = new List<string>(db.Query<string>(
                 "SELECT Role from EmployeeDetail_Role WHERE EmployeeId = @empId and ProposalId = @propId",
                 new {empId = employeeId, propId = proposalId}));
@@ -365,6 +375,9 @@ namespace AVATI.Data.EmployeeDetailFiles
                     db.QuerySingle<int>(
                         "SELECT Discount from EmployeeDetail WHERE EmployeeId = @empId and ProposalID = @propId",
                         new {empId = temp.EmployeeId, propId = temp.ProposalId}); 
+               temp.Hours = db.QuerySingle<int>(
+                   "SELECT Hours from EmployeeDetail WHERE EmployeeId = @empId and ProposalID = @propId",
+                   new {empId = temp.EmployeeId, propId = temp.ProposalId}); 
                 temp.Fields =
                     new List<string>(db.Query<string>(
                         "SELECT Field from EmployeeDetail_Field WHERE EmployeeId = @empId and ProposalId = @propId",

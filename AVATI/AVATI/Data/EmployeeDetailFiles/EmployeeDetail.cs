@@ -35,7 +35,7 @@ namespace AVATI.Data.EmployeeDetailFiles
         
         [Required]
         [NotNull]
-        [Range(0, 100)]
-        public double Hours;
+        [Range(1, 100)]
+        public int Hours;
     }
 }
