@@ -14,7 +14,7 @@ namespace AVATI.Data
         /// </summary>
         /// <returns>I can do englischhh</returns>
         public List<Employee> GetAllEmployees();
-        public bool CreateEmployeeProfile(Employee emp);
+        public int CreateEmployeeProfile(Employee emp);
         public bool EditEmployeeProfile(Employee emp);
         public Employee GetEmployeeProfile(int employeeId);
        

@@ -118,36 +118,7 @@
 
     
 
-    private async Task LogOut()
-    {
-
-        await _http.DeleteAsync("cookie/delete");
-        
-
-        //var message = await _http.DeleteAsync("cookie");
-        
-
-        /*_httpContextAccessor.HttpContext.Response.Cookies.Delete("CookieName", new CookieOptions()
-        {
-            Secure = true,
-        }); */
-        
-       /* CookieOptions option = new CookieOptions();
-        option.Expires = DateTime.Now.AddDays(-1);
-        option.Secure = true;
-        option.IsEssential = true;
-        if (_httpContextAccessor.HttpContext != null)
-        {
-            _httpContextAccessor.HttpContext.Response.Cookies.Append(CookieAuthenticationDefaults.AuthenticationScheme, string.Empty, option);
-    //Then delete the cookie
-            _httpContextAccessor.HttpContext.Response.Cookies.Delete(CookieAuthenticationDefaults.AuthenticationScheme);
-        } */
-
-
-        //_navigationManager.NavigateTo("/profile");
-        
-    
-    }
+   
         
         
     }

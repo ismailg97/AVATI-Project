@@ -31,9 +31,14 @@ namespace AVATI.Data
             Id = _loginService.LogIn(username, password);
             if (Id == -1)
             {
-                return Redirect("/LoginFail");
+                //return Redirect("/LoginFail");
+                return Redirect("/profile/create");
             }
-            Employee emp = _employeeService.GetEmployeeProfile(Id);
+            else if (Id == 0)
+            {
+                return Redirect("/profile/create");
+            }
+                Employee emp = _employeeService.GetEmployeeProfile(Id);
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, emp.EmployeeID.ToString()),
