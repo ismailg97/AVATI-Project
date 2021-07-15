@@ -76,6 +76,20 @@
                             <div class="card-title small font-weight-light lead text-left">Relevante Berufserfahrung</div>
                             <input type="number" class="form-control" @bind-value="@Emp.RelevantWorkExperience" min="0" step="0.1" placeholder="@Emp.RelevantWorkExperience">
                         </div>
+                        <div class="col-6">
+                             @if (Emp.IsActive)
+                                                                {
+                                                                <button type="button" class="btn btn-success" id="employeeStatus" @onclick=@(() => { HandleStatusChangeClick(); })>
+                                                                    Aktiv
+                                                                </button>
+                                                                }
+                                                                else
+                                                                {
+                                                                <button type="button" class="btn btn-danger" id="employeeStatus" @onclick=@(() => { HandleStatusChangeClick(); })>
+                                                                    Inaktiv
+                                                                </button>
+                                                                }
+                        </div>
 
                     </div>
 
@@ -117,54 +131,34 @@
                         {
                             if (hardskillTuple.Item2 == 1)
                             {
-                                <button type="button" class="btn btn-outline-success btn-sm mr-2" 
+                                <button type="button" class="btn btn-outline-success btn-sm" 
                                         @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" 
                                         @oncontextmenu="() => HandleHardSkillClick(hardskill)">
-                                    <a>
-                                        <a class="showRemove"> @hardskill.Description | 1 </a>
-                                        <a class="remove">
-                                            <span style="color: darkred" class="oi oi-x"></span>
-                                        </a>
-                                    </a>
+                                    <a class="showRemove">@hardskill.Description | 1 </a> <a class="remove"><span class="oi oi-x"></span></a>
                                 </button>
                             }
                             if (hardskillTuple.Item2 == 2)
                             {
-                                <button type="button" class="btn btn-outline-primary btn-sm mr-2"  
+                                <button type="button" class="btn btn-outline-primary btn-sm"  
                                         @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" 
                                         @oncontextmenu="() => HandleHardSkillClick(hardskill)">
-                                    <a>
-                                        <a class="showRemove"> @hardskill.Description | 2 </a>
-                                        <a class="remove">
-                                            <span style="color: darkred" class="oi oi-x"></span>
-                                        </a>
-                                    </a>
+                                    <a class="showRemove">@hardskill.Description | 2 </a> <a class="remove"><span class="oi oi-x"></span></a>
                                 </button>
                             }
                             if (hardskillTuple.Item2 == 3)
                             {
-                                <button type="button" class="btn btn-outline-secondary btn-sm mr-2"  
+                                <button type="button" class="btn btn-outline-secondary btn-sm"  
                                         @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" 
                                         @oncontextmenu="() => HandleHardSkillClick(hardskill)">
-                                    <a>
-                                        <a class="showRemove"> @hardskill.Description | 3 </a>
-                                        <a class="remove">
-                                            <span style="color: darkred" class="oi oi-x"></span>
-                                        </a>
-                                    </a>
+                                    <a class="showRemove">@hardskill.Description | 3 </a> <a class="remove"><span class="oi oi-x"></span></a>
                                 </button>
                             }
                             if (hardskillTuple.Item2 == 4)
                             {
-                                <button type="button" class="btn btn-outline-dark btn-sm mr-2"  
+                                <button type="button" class="btn btn-outline-dark btn-sm"  
                                         @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" 
                                         @oncontextmenu="() => HandleHardSkillClick(hardskill)">
-                                    <a>
-                                        <a class="showRemove"> @hardskill.Description | 4 </a>
-                                        <a class="remove">
-                                            <span style="color: darkred" class="oi oi-x"></span>
-                                        </a>
-                                    </a>
+                                    <a class="showRemove">@hardskill.Description | 4 </a> <a class="remove"><span class="oi oi-x"></span></a>
                                 </button>
                             }
                         }
@@ -216,7 +210,7 @@
                 <a>
                     <a class="showRemove"> @softskilll </a>
                     <a class="remove">
-                        <span style="color: darkred" class="oi oi-x"></span>
+                        <span class="oi oi-x"></span>
                     </a>
                 </a>
             </button>
@@ -243,7 +237,7 @@
                 <a>
                     <a class="showRemove"> @empRoles </a>
                     <a class="remove">
-                        <span style="color: darkred" class="oi oi-x"></span>
+                        <span class="oi oi-x"></span>
                     </a>
                 </a>
             </button>
@@ -271,7 +265,7 @@
                 <a>
                     <a class="showRemove"> @empField</a>
                     <a class="remove">
-                        <span style="color: darkred" class="oi oi-x"></span>
+                        <span class="oi oi-x"></span>
                     </a>
                 </a>
             </button>
@@ -305,7 +299,7 @@
                         <a>
                             <a class="showRemove"> @language.Item1 | @language.Item2 </a>
                             <a class="remove">
-                                <span style="color: darkred" class="oi oi-x"></span>
+                                <span class="oi oi-x"></span>
                             </a>
                         </a>
                     </button>
@@ -318,7 +312,7 @@
                         <a>
                             <a class="showRemove"> @language.Item1 | @language.Item2 </a>
                             <a class="remove">
-                                <span style="color: darkred" class="oi oi-x"></span>
+                                <span class="oi oi-x"></span>
                             </a>
                         </a>
                     </button>
@@ -331,7 +325,7 @@
                         <a>
                             <a class="showRemove"> @language.Item1 | @language.Item2 </a>
                             <a class="remove">
-                                <span style="color: darkred" class="oi oi-x"></span>
+                                <span class="oi oi-x"></span>
                             </a>
                         </a>
                     </button>
@@ -344,7 +338,7 @@
                         <a>
                             <a class="showRemove"> @language.Item1 | @language.Item2 </a>
                             <a class="remove">
-                                <span style="color: darkred" class="oi oi-x"></span>
+                                <span class="oi oi-x"></span>
                             </a>
                         </a>
                     </button>
@@ -357,7 +351,7 @@
                         <a>
                             <a class="showRemove"> @language.Item1 | @language.Item2 </a>
                             <a class="remove">
-                                <span style="color: darkred" class="oi oi-x"></span>
+                                <span class="oi oi-x"></span>
                             </a>
                         </a>
                     </button>
@@ -370,7 +364,7 @@
                         <a>
                             <a class="showRemove"> @language.Item1 | @language.Item2 </a>
                             <a class="remove">
-                                <span style="color: darkred" class="oi oi-x"></span>
+                                <span class="oi oi-x"></span>
                             </a>
                         </a>
                     </button>
@@ -423,6 +417,38 @@ else
     </div>
 }
 
+@if (_booleanStatus)
+{
+    <div class="modal fade show" id="myModal" style=" display:block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Status verändern</h4>
+                    <button type="button" class="close" data-dismiss="modal" @onclick="() => {_booleanStatus = !_booleanStatus; StateHasChanged();}">&times;</button>
+                </div>
+                <div class="modal-body">
+                    @if (Emp.IsActive)
+                    {
+                        <text>Sind Sie sicher, dass ihren Status von Aktiv auf Inaktiv setzen wollen?</text>
+                    }
+                    else
+                    {
+                        <text>Sind Sie sicher, dass ihren Status von Inaktiv auf Aktiv setzen wollen?</text>
+                    }
+                       
+                    <!-- HTML to write -->
+                </div>
+                <div class="modal-footer" >
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => {_booleanStatus = !_booleanStatus; StateHasChanged(); }">Abbrechen</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="() => {Emp.IsActive = !Emp.IsActive;  StateHasChanged();_booleanStatus = !_booleanStatus;}">Bestätigen</button>
+                </div>
+                   
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
 @code {
     HardSkillLevelSelection _hardSkillLevel;
     LanguageLevelSelection _languageLevel;
@@ -442,6 +468,7 @@ else
     private bool _booleanHardSkill = false;
     private bool _pageIsLoaded = false;
     private bool _booleanProj = false;
+    private bool _booleanStatus = false;
     
     private Dictionary<int, List<ProjectActivity>> _projectWithGroupedActivities;
     //private bool _booleanName;
@@ -532,4 +559,9 @@ else
         _navManager.NavigateTo("/employeeProject2/" );
     }
 
+    public void HandleStatusChangeClick()
+    {
+        _booleanStatus = !_booleanStatus;
+    }
+    
 }
