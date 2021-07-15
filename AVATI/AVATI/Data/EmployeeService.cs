@@ -112,48 +112,56 @@ namespace AVATI.Data
             return empList;
         }
 
-        public bool CreateEmployeeProfile(Employee emp)
+        public int CreateEmployeeProfile(Employee emp)
         {
             using DbConnection db = GetConnection();
+            Console.WriteLine(emp.FirstName + emp.LastName);
             db.Query(
-                "INSERT INTO Employee VALUES (Employee ID = @ID, @Firstname ,@Lastname , NULL , @RWE, @EmpTime, @Rc, @EmpType, @IA)",
+                "INSERT INTO Employee VALUES ( @Firstname ,@Lastname ,@RWE, @EmpTime,@Rc,@EmpType, @IA, @img)",
                 new
                 {
-                    ID = emp.EmployeeID, Firstname = emp.FirstName, Lastname = emp.LastName,
-                    RWE = emp.RelevantWorkExperience, EmpTime = emp.EmploymentTime, EmpType = emp.EmpType, Rc = emp.Rc,
+                     Firstname = emp.FirstName, Lastname= emp.LastName, img = emp.Image ,
+                    RWE = emp.RelevantWorkExperience, EmpTime = emp.EmploymentTime, EmpType = "SalesStaff", Rc = emp.Rc,
                     IA = emp.IsActive
                 });
+
+            var id = db.QuerySingle<int>(
+                "Select EmployeeID From Employee WHERE Firstname = @Firstname AND Lastname = @Lastname", new
+                {
+                    Firstname = emp.FirstName, LastName = emp.LastName
+                });
+            
             foreach (var field in emp.Field)
             {
-                db.Query("INSERT INTO Employee_Field VALUES (@ID, @fields)", new {ID = emp.EmployeeID, fields = field});
+                db.Query("INSERT INTO Employee_Field VALUES (@ID, @fields)", new {ID = id, fields = field});
             }
 
             foreach (var hardskill in emp.HardSkillLevel)
             {
                 db.Query(
                     "INSERT INTO Employee_HardSkill VALUES (@ID, @Desc,@Level )",
-                    new {ID = emp.EmployeeID, Desc = hardskill.Item1.Description, Level = hardskill.Item2});
+                    new {ID = id, Desc = hardskill.Item1.Description, Level = hardskill.Item2});
             }
 
             foreach (var language in emp.Language)
             {
-                db.Query(
-                    "INSERT INTO Employee_Language VALUES (@emp.EmployeeID, @languages,@level )",
-                    new {ID = emp.EmployeeID, languages = language.Item1, level = language.Item2});
+                db.Query("INSERT INTO Employee_Language VALUES (@ID, @DESC, @LEVEL)",
+                    new {ID = id, DESC = language.Item1, LEVEL = language.Item2.ToString()});
             }
+            
 
             foreach (var roles in emp.Roles)
             {
-                db.Query("INSERT INTO Employee_Role VALUES (@ID, @role)", new {ID = emp.EmployeeID, role = roles});
+                db.Query("INSERT INTO Employee_Role VALUES (@ID, @role)", new {ID = id, role = roles});
             }
 
             foreach (var softskills in emp.Softskills)
             {
                 db.Query("INSERT INTO Employee_Softskill VALUES (@ID, @softskill)",
-                    new {ID = emp.EmployeeID, softskill = softskills});
+                    new {ID = id, softskill = softskills});
             }
 
-            return true;
+            return id;
         }
 
         public bool EditEmployeeProfile(Employee emp)

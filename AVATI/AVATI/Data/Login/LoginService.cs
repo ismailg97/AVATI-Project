@@ -48,5 +48,15 @@ namespace AVATI.Data
             var empType = db.Query<string>("SELECT EmpType FROM Employee WHERE EmployeeID=@id ", new {id = Id}).ToList();
             return empType[0];
         }
+
+        public bool CreateLogIn(int employeeID, string username, string password)
+        {
+            using DbConnection db = GetConnection();
+            db.Query("INSERT INTO Login VALUES (@id, @user, @pass)", new
+            {
+                id = employeeID, user = username, pass = password
+            });
+            return true;
+        }
     }
 }
