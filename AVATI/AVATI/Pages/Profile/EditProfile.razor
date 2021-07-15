@@ -117,54 +117,34 @@
                         {
                             if (hardskillTuple.Item2 == 1)
                             {
-                                <button type="button" class="btn btn-outline-success btn-sm mr-2" 
+                                <button type="button" class="btn btn-outline-success btn-sm" 
                                         @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" 
                                         @oncontextmenu="() => HandleHardSkillClick(hardskill)">
-                                    <a>
-                                        <a class="showRemove"> @hardskill.Description | 1 </a>
-                                        <a class="remove">
-                                            <span style="color: darkred" class="oi oi-x"></span>
-                                        </a>
-                                    </a>
+                                    <a class="showRemove">@hardskill.Description | 1 </a> <a class="remove"><span class="oi oi-x"></span></a>
                                 </button>
                             }
                             if (hardskillTuple.Item2 == 2)
                             {
-                                <button type="button" class="btn btn-outline-primary btn-sm mr-2"  
+                                <button type="button" class="btn btn-outline-primary btn-sm"  
                                         @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" 
                                         @oncontextmenu="() => HandleHardSkillClick(hardskill)">
-                                    <a>
-                                        <a class="showRemove"> @hardskill.Description | 2 </a>
-                                        <a class="remove">
-                                            <span style="color: darkred" class="oi oi-x"></span>
-                                        </a>
-                                    </a>
+                                    <a class="showRemove">@hardskill.Description | 2 </a> <a class="remove"><span class="oi oi-x"></span></a>
                                 </button>
                             }
                             if (hardskillTuple.Item2 == 3)
                             {
-                                <button type="button" class="btn btn-outline-secondary btn-sm mr-2"  
+                                <button type="button" class="btn btn-outline-secondary btn-sm"  
                                         @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" 
                                         @oncontextmenu="() => HandleHardSkillClick(hardskill)">
-                                    <a>
-                                        <a class="showRemove"> @hardskill.Description | 3 </a>
-                                        <a class="remove">
-                                            <span style="color: darkred" class="oi oi-x"></span>
-                                        </a>
-                                    </a>
+                                    <a class="showRemove">@hardskill.Description | 3 </a> <a class="remove"><span class="oi oi-x"></span></a>
                                 </button>
                             }
                             if (hardskillTuple.Item2 == 4)
                             {
-                                <button type="button" class="btn btn-outline-dark btn-sm mr-2"  
+                                <button type="button" class="btn btn-outline-dark btn-sm"  
                                         @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" 
                                         @oncontextmenu="() => HandleHardSkillClick(hardskill)">
-                                    <a>
-                                        <a class="showRemove"> @hardskill.Description | 4 </a>
-                                        <a class="remove">
-                                            <span style="color: darkred" class="oi oi-x"></span>
-                                        </a>
-                                    </a>
+                                    <a class="showRemove">@hardskill.Description | 4 </a> <a class="remove"><span class="oi oi-x"></span></a>
                                 </button>
                             }
                         }
@@ -216,7 +196,7 @@
                 <a>
                     <a class="showRemove"> @softskilll </a>
                     <a class="remove">
-                        <span style="color: darkred" class="oi oi-x"></span>
+                        <span class="oi oi-x"></span>
                     </a>
                 </a>
             </button>
@@ -243,7 +223,7 @@
                 <a>
                     <a class="showRemove"> @empRoles </a>
                     <a class="remove">
-                        <span style="color: darkred" class="oi oi-x"></span>
+                        <span class="oi oi-x"></span>
                     </a>
                 </a>
             </button>
@@ -271,7 +251,7 @@
                 <a>
                     <a class="showRemove"> @empField</a>
                     <a class="remove">
-                        <span style="color: darkred" class="oi oi-x"></span>
+                        <span class="oi oi-x"></span>
                     </a>
                 </a>
             </button>
@@ -305,7 +285,7 @@
                         <a>
                             <a class="showRemove"> @language.Item1 | @language.Item2 </a>
                             <a class="remove">
-                                <span style="color: darkred" class="oi oi-x"></span>
+                                <span class="oi oi-x"></span>
                             </a>
                         </a>
                     </button>
@@ -318,7 +298,7 @@
                         <a>
                             <a class="showRemove"> @language.Item1 | @language.Item2 </a>
                             <a class="remove">
-                                <span style="color: darkred" class="oi oi-x"></span>
+                                <span class="oi oi-x"></span>
                             </a>
                         </a>
                     </button>
@@ -331,7 +311,7 @@
                         <a>
                             <a class="showRemove"> @language.Item1 | @language.Item2 </a>
                             <a class="remove">
-                                <span style="color: darkred" class="oi oi-x"></span>
+                                <span class="oi oi-x"></span>
                             </a>
                         </a>
                     </button>
@@ -344,7 +324,7 @@
                         <a>
                             <a class="showRemove"> @language.Item1 | @language.Item2 </a>
                             <a class="remove">
-                                <span style="color: darkred" class="oi oi-x"></span>
+                                <span class="oi oi-x"></span>
                             </a>
                         </a>
                     </button>
@@ -357,7 +337,7 @@
                         <a>
                             <a class="showRemove"> @language.Item1 | @language.Item2 </a>
                             <a class="remove">
-                                <span style="color: darkred" class="oi oi-x"></span>
+                                <span class="oi oi-x"></span>
                             </a>
                         </a>
                     </button>
@@ -370,7 +350,7 @@
                         <a>
                             <a class="showRemove"> @language.Item1 | @language.Item2 </a>
                             <a class="remove">
-                                <span style="color: darkred" class="oi oi-x"></span>
+                                <span class="oi oi-x"></span>
                             </a>
                         </a>
                     </button>
