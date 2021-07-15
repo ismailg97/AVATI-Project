@@ -335,6 +335,7 @@ namespace AVATI.Data.EmployeeDetailFiles
                 "SELECT * FROM ProjectActivity_Project_Employee p LEFT JOIN EmployeeDetail_ProjectActivity e ON p.ProjectActivityID = e.ProjectActivityID WHERE EmployeeID = @empId and ProposalID = @propId and InDetail = 1",
             new {empId = employeeId, propId = proposalId}).ToList();
 
+            temp.EmployeeId = employeeId;
             foreach (var projectact in temp.ProjectActivities)
             {
                 Console.WriteLine("ProjectActivityID: " + projectact.ProjectActivityID + " Description: " 

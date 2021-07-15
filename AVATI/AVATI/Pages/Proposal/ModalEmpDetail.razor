@@ -28,7 +28,7 @@
         <EditForm Model="@EmployeeDetailView" OnValidSubmit="@UpdateEmployeeDetail">
             <DataAnnotationsValidator/>
             <ValidationSummary/>
-            <div class="modal fade show d-block overflow-auto" style="min-width:100%; max-height: 90%" data-bs-backdrop="static" id="exampleModal" role="dialog">
+            <div class="modal fade show d-block overflow-auto" style="min-width:100%; max-height: 100%" data-bs-backdrop="static" id="exampleModal" role="dialog">
                 <div class="modal-dialog" role="document" style="min-width:100%">
                     <div class="modal-content bg-light text-black">
                         <div class="modal-header">
@@ -78,20 +78,23 @@
                                     <div class="card-body text-left">
                                         @foreach (var proj in _projectsWithActivities.Keys)
                                         {
-                                            <h5 class="font-weight-bolder" style=@(EmployeeDetailView.ProjectActivities.Count(e => e.ProjectID == proj.ProjectID) == 0 ? "color: red" : "color: green")>Projekt <b> @proj.Projecttitel</b>:</h5>
-                                            <div class="row mb-2 mt-2">
-                                                @foreach (var projectActivity in _projectsWithActivities[proj])
-                                                {
-                                                    if (EmployeeDetailView.ProjectActivities.Exists(e => e.ProjectActivityID == projectActivity.ProjectActivityID))
+                                            if (_projectsWithActivities[proj].Any())
+                                            {
+                                                <h5 class="font-weight-bolder" style=@(EmployeeDetailView.ProjectActivities.Count(e => e.ProjectID == proj) == 0 ? "color: red" : "color: green")>Projekt: @_project.GetProject(proj).Projecttitel</h5>
+                                                <div class="row mb-2 mt-2">
+                                                    @foreach (var projectActivity in _projectsWithActivities[proj])
                                                     {
-                                                        <button type="button" class="btn btn-success btn-sm" @onclick=@(() => { EmployeeDetailView.ProjectActivities.RemoveAll(e => e.ProjectActivityID == projectActivity.ProjectActivityID); })>@projectActivity.Description</button>
+                                                        if (EmployeeDetailView.ProjectActivities.Exists(e => e.ProjectActivityID == projectActivity.ProjectActivityID))
+                                                        {
+                                                            <button type="button" class="btn btn-success btn-sm" @onclick=@(() => { EmployeeDetailView.ProjectActivities.RemoveAll(e => e.ProjectActivityID == projectActivity.ProjectActivityID); })>@projectActivity.Description</button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button type="button" class="btn btn-outline-dark btn-sm" @onclick=@(() => { EmployeeDetailView.ProjectActivities.Add(projectActivity); })>@projectActivity.Description</button>
+                                                        }
                                                     }
-                                                    else
-                                                    {
-                                                        <button type="button" class="btn btn-outline-dark btn-sm" @onclick=@(() => { EmployeeDetailView.ProjectActivities.Add(projectActivity); })>@projectActivity.Description</button>
-                                                    }
-                                                }
-                                            </div>                                                  
+                                                </div>                      
+                                            }                            
                                         }
                                     </div>
                                 </div>
@@ -216,7 +219,7 @@
     public Data.Employee EmployeeAttributes;
     public bool ShowEdit { get; set; }
     public bool ShowBackdrop { get; private set; }
-    private Dictionary<Project, List<ProjectActivity>> _projectsWithActivities = new();
+    private Dictionary<int, List<ProjectActivity>> _projectsWithActivities;
 
     public async Task Show(int employeeId, int proposalId)
     {
@@ -226,25 +229,9 @@
         PropId = proposalId;
         Task<Data.EmployeeDetailFiles.EmployeeDetail> detail = _employeeDetailService.GetEmployeeDetail(employeeId, proposalId);
         EmployeeDetailView = await detail;
+        _projectsWithActivities = _activity.GetActivitiesWithProjectsGrouped(EmpId);
         EmployeeAttributes = _employeeService.GetEmployeeProfile(EmpId);
         Console.WriteLine(EmpId.ToString() + PropId.ToString());
-        _projectsWithActivities.Clear();
-        foreach (var proAct in _activity.GetProjectActivitiesOfEmployee(EmpId))
-        {
-            if (proAct.Description == null)
-            {
-                continue;
-            }
-            var project = _project.GetProject(proAct.ProjectID);
-            if (_projectsWithActivities.ContainsKey(project))
-            {
-                _projectsWithActivities[project].Add(proAct);
-            }
-            else
-            {
-                _projectsWithActivities.Add(project, new List<ProjectActivity>() {proAct});
-            }
-        }
         await _employeeDetailService.GetEmployeeDetail(EmpId, PropId);
         StateHasChanged();
     }
