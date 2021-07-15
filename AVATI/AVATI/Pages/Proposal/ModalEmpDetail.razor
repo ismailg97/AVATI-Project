@@ -176,12 +176,12 @@
                                 <div>
                                     <button class="btn btn-secondary" type="button" @onclick=@(CreateDocument)>Dokument <span class="ml-1 oi oi-document"></span></button>
                                     <label class="col-form-label ml-2 font-weight-bold">Rabatt (in %): </label>
-                                    <InputNumber min="0" max="100" class="form-control-lg col-lg-1 col-sm-2 col-md-2" @bind-Value="EmployeeDetailView.Discount"/>
+                                    <InputNumber min="0" max="100" class="form-control-lg col-lg-2 col-sm-2 col-md-2" @bind-Value="EmployeeDetailView.Discount"/>
                                     <label class="col-form-label ml-2 font-weight-bold"> Std.: </label>
-                                    <InputNumber min="0" max="70" class="form-control-lg col-lg-1 col-sm-2 col-md-2" @bind-Value="EmployeeDetailView.Hours"/>
+                                    <InputNumber min="0" max="70" class="form-control-lg col-lg-2 col-sm-2 col-md-2" @bind-Value="EmployeeDetailView.Hours"/>
                                 </div>
                                 <div class="alert alert-success font-weight-bolder text-center @(!_visibleSafe ? "collapse" : "")">
-                                    <span class="oi oi-thumb-up"></span> Änderungen erfolgreich gespeichert!
+                                    <span class="oi oi-check"></span> Änderungen erfolgreich gespeichert!
                                 </div>
                                 <div class="alert alert-danger font-weight-bolder text-center @(!_visiblePrompt ? "collapse" : "")">
                                     <span class="oi oi-warning"></span> Keine Attribute ausgewählt!
