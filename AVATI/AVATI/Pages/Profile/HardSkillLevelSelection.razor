@@ -1,4 +1,5 @@
 ﻿@using AVATI.Data
+@using DocumentFormat.OpenXml.Drawing
 
 @inject IHardskillService _hardskillService
 @inject NavigationManager _navigationManager
@@ -9,18 +10,47 @@
                <div class="modal-dialog">
                  <div class="modal-content">
                    <div class="modal-header">
-                     <h4 class="modal-title">Bitte wählen Sie ein Hardskill-Level aus</h4>
-                     <button type="button" class="close" data-dismiss="modal" @onclick="Show">&times;</button>
+                     <h4 class="modal-title">Bitte wählen Sie ein Hardskill-Level für "<b></b>" aus</h4>
+                     <button type="button" class="close" data-dismiss="modal" @onclick="Close">&times;</button>
                    </div>
-                   
-                     <div class="modal-body">
-                       <button type="button" @onclick="(() => { Save(1); })" class="btn btn-outline-success btn-sm mr-2">1</button>
-                       <button type="button" @onclick="(() => { Save(2); })" class="btn btn-outline-primary btn-sm mr-2">2</button>
-                       <button type="button" @onclick="(() => { Save(3); })" class="btn btn-outline-secondary btn-sm mr-2">3</button>
-                       <button type="button" @onclick="(() => { Save(4); })" class="btn btn-outline-dark btn-sm mr-2">4</button>
-                     </div>
-                   <div class="modal-footer">
-                     <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Show">Abbrechen</button>
+                   <div class="modal-body">
+                     
+                     <button type="button" @onclick="(() => { Save(1); })" @onmouseover="() => { _showExplanation = 1; }"
+                             class="btn btn-outline-success btn-sm mr-2">1</button>
+                     <button type="button" @onclick="(() => { Save(2); })" @onmouseover="() => { _showExplanation = 2; }"
+                             class="btn btn-outline-primary btn-sm mr-2">2</button>
+                     <button type="button" @onclick="(() => { Save(3); })" @onmouseover="() => { _showExplanation = 3; }"
+                             class="btn btn-outline-secondary btn-sm mr-2">3</button>
+                     <button type="button" @onclick="(() => { Save(4); })" @onmouseover="() => { _showExplanation = 4; }"
+                             class="btn btn-outline-dark btn-sm mr-2">4</button>
+                     @if (_showExplanation == 1)
+                    {
+                      <div class="alert alert-success" style="margin-top: 5px; margin-bottom: 5px;">
+                        Level 1 - Hobby Projekt (Mit dieser Fertigkeit habe ich mich beschäftigt)
+                      </div>
+                    } 
+                    else if (_showExplanation == 2)
+                    {
+                      <div class="alert alert-primary" style="margin-top: 5px; margin-bottom: 5px;">
+                        Level 2 - Produktiv eingesetzt (Diese Fertigkeit habe ich produktiv eingesetzt)
+                      </div>
+                    } 
+                    else if (_showExplanation == 3)
+                    {
+                      <div class="alert alert-secondary" style="margin-top: 5px; margin-bottom: 5px;">
+                        Level 3 - Regelmäßige Nutzung (Diese Fertigkeit wende ich regelmäßig an)
+                      </div>
+                    } 
+                    else if (_showExplanation == 4)
+                    {
+                      <div class="alert alert-dark" style="margin-top: 5px; margin-bottom: 5px;">
+                        Level 4 - Experte (Ich bin absoluter Experte in Bezug auf diese Fähigkeit)
+                      </div>
+                    }
+                     <!-- HTML to write -->
+                   </div>
+                   <div class="modal-footer" >
+                     <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Close">Abbrechen</button>
                    </div>
                    
                  </div>
@@ -32,85 +62,42 @@
 }
 
 @code {
-  private bool _show = false;
-  public Employee Employee { get; set; }
-  public Hardskill Hardskill { get; set; }
-
   [Parameter]
   public EditProfile Abstract { get; set; }
-  
 
-
-    [Parameter] 
+  [Parameter] 
   public Hardskill OldHardskill{ get; set; }
+  
+  private int _showExplanation = 1;
+  private bool _show = false;
+  private Employee _employee;
+  private Hardskill _hardskill;
 
-  string Description { get; set; }
-
-  private Hardskill _newHardskill = new();
-
-  private void Update()
+  public void Showing(Employee emp, Hardskill hardskill)
   {
-    
-  }
-
-  public void Showing(Employee Emp, Hardskill hardskill )
-  {
-    Employee = Emp;
-    Hardskill = hardskill;
+    _employee = emp;
+    _hardskill = hardskill;
+    var level = _employee.HardSkillLevel.Find(x => x.Item1 == _hardskill);
+   _showExplanation = level?.Item2 ?? 1;
     _show = !_show;
     StateHasChanged();
   }
   
-  public void Show( )
+  private void Close()
   {
-    Employee.Hardskills.Remove(Hardskill);
     _show = !_show;
     StateHasChanged();
-    _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
   }
-  //<EditForm Model="@_newHardskill" OnValidSubmit="Update"></EditForm>
 
-  public void Save(int buttonId)
+  private void Save(int buttonId)
   {
-    if (buttonId == 1)
-    {
-      foreach (var hardskilltuple in Employee.HardSkillLevel)
-      {
-        if (Hardskill == hardskilltuple.Item1)
-        {
-          Employee.HardSkillLevel.Remove(hardskilltuple);
-        }
-      }
-      Employee.HardSkillLevel.Add(new Tuple<Hardskill, int>(Hardskill, 1));
-      _show = !_show;
-      //InvokeAsync(StateHasChanged);
-      //_navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
-    }
-    if (buttonId == 2)
-    {
-      
-      Employee.HardSkillLevel.Add(new Tuple<Hardskill, int>(Hardskill, 2));
-      _show = !_show;
-      //InvokeAsync(StateHasChanged);
-      //_navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
-    }
-    if (buttonId == 3)
-    {
-      
-      Employee.HardSkillLevel.Add(new Tuple<Hardskill, int>(Hardskill, 3));
-      _show = !_show;
-      //InvokeAsync(StateHasChanged);
-      //_navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
-    }
-    if (buttonId == 4)
-    {
-      
-      Employee.HardSkillLevel.Add(new Tuple<Hardskill, int>(Hardskill, 4));
-      _show = !_show;
-      //StateHasChanged();
-      //_navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
-    }
+    if (_employee.Hardskills.Contains(_hardskill))
+      _employee.HardSkillLevel.RemoveAll(x => x.Item1 ==_hardskill);
+    else
+      _employee.Hardskills.Add(_hardskill);
+    _employee.HardSkillLevel.Add(new Tuple<Hardskill, int>(_hardskill, buttonId));
+    _show = !_show;
     Abstract.Update();
   }
-    
+
 }

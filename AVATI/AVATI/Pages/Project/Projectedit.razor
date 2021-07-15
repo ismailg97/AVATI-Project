@@ -220,13 +220,13 @@ else
                         </select>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-danger" @onclick="StopAddingPurpose">
-                            <span class="oi oi-circle-x" aria-hidden="true"></span>
+                        <button type="button" class="btn btn-success" @onclick="AddPurpose">
+                            <span class="oi oi-document" aria-hidden="true"></span>
                         </button>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-success" @onclick="AddPurpose">
-                            <span class="oi oi-document" aria-hidden="true"></span>
+                        <button type="button" class="btn btn-danger" @onclick="StopAddingPurpose">
+                            <span class="oi oi-circle-x" aria-hidden="true"></span>
                         </button>
                     </td>
 
@@ -274,16 +274,15 @@ else
                             </select>
                         </td>
                         <td>
-                            <button type="button" class="btn btn-danger" @onclick="() => { _showEditPurpose[purpose.Key] = false; _purposeKeyEdit[purpose.Key] = purpose.Key; _purposeValueEdit[purpose.Key] = purpose.Value; }">
-                                <span class="oi oi-circle-x" aria-hidden="true"></span>
-                            </button>
-                        </td>
-                        <td>
                             <button type="button" class="btn btn-success" @onclick="() => { EditPurpose(purpose.Key); }">
                                 <span class="oi oi-document" aria-hidden="true"></span>
                             </button>
                         </td>
-
+                        <td>
+                            <button type="button" class="btn btn-danger" @onclick="() => { _showEditPurpose[purpose.Key] = false; _purposeKeyEdit[purpose.Key] = purpose.Key; _purposeValueEdit[purpose.Key] = purpose.Value; }">
+                                <span class="oi oi-circle-x" aria-hidden="true"></span>
+                            </button>
+                        </td>
                     </tr>
                 }
             }
