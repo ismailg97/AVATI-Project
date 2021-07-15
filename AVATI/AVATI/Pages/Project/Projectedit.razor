@@ -8,6 +8,15 @@
 @inject IProjectActivityService _projectActivity
 @inject IEmployeeService _employeeService
 
+
+<AuthorizeView Roles="SalesStaff,Administrator">
+    <NotAuthorized>
+        @if(true){_navigationManager.NavigateTo("/profile");}
+    </NotAuthorized>
+    <Authorized Context="authContext">
+        
+  
+
 <AddFieldToProject @ref="_addFieldToProject" Project="@Project" Abstract="@this"/>
 <AddEmployeeToProject @ref="_addEmployeeToProject" Project="@Project" Abstract="@this"/>
 <AddProjectActivityToProject @ref="_addProjectActivityToProject" Project="@Project" Abstract="@this"/>
@@ -303,9 +312,13 @@ else
     </EditForm>
 }
 
+    
+            
+        </Authorized>
+    </AuthorizeView>
 
 
-@code {
+    @code {
     private Project Project { get; set; } = new Project();
 
     AddFieldToProject _addFieldToProject;

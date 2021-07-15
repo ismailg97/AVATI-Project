@@ -14,8 +14,7 @@
 
 <AuthorizeView>
     <NotAuthorized>
-       
-        Nothing here
+        
     </NotAuthorized>
     <Authorized>
     
@@ -61,10 +60,10 @@
     <!------ Skills ---------->
     <div class="container col">
         
-        <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider col-6"></div>
-        <div class="form-group row m-2">
+        <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider col-12"></div>
+        <div class="form-group row m-2 ">
             <!------ Hard Skills ---------->
-            <div class="form-group m-2 text-left">
+            <div class="form-group col m-2 ">
                 <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollHardSkill(); })"><span class="oi oi-list" aria-hidden="true"></span> Hard Skills</button>
                 <div class="card-text @(_booleanHardSkill ? "" : "collapse")">
                     <table class="table table-striped">
@@ -84,7 +83,7 @@
             </div>
             <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider"></div>
             <!------ Soft Skills ---------->
-            <div class="form-group m-2 text-left">
+            <div class="form-group col m-2 ">
                 <button type="button" class="form-group btn btn-outline-secondary text-left" @onclick="(() => { CollSoftSkill(); })"><span class="oi oi-list" aria-hidden="true"></span> Soft Skills</button>
                 <div class="card-text @(_booleanSoftSkill ? "" : "collapse")">
                     <table class="table table-striped">
@@ -99,7 +98,7 @@
             </div>
             <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider"></div>
             <!------ Rollen ---------->
-            <div class="form-group m-2 text-left">
+            <div class="form-group col m-2 ">
                 <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollRole(); })"><span class="oi oi-list" aria-hidden="true"></span> Rollen</button>
                 <div class="card-text @(_booleanRole ? "" : "collapse")">
                     <ul class="list-group mb-3 text-left">
@@ -116,11 +115,11 @@
             </div>
         </div>
         
-        <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider col-6"></div>
-        <div class="form-group m-2 row">
+        <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider col-12"></div>
+        <div class="form-row">
             <!------ Fields ---------->
             <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
-            <div class="form-group m-2">
+            <div class="form-group col m-2">
                 <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollField(); })"><span class="oi oi-list" aria-hidden="true"></span> Branchenwissen</button>
                 <div class="card-text @(_booleanField ? "" : "collapse")">
                     <ul class="list-group mb-3 text-left">
@@ -140,7 +139,7 @@
             </div>
             <div style=" border-width: medium; color: black" class="dropdown-divider"></div>
             <!------ Languages ---------->
-            <div class="form-group m-2">
+            <div class="form-group col m-2">
                 <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollLang(); })"><span class="oi oi-list" aria-hidden="true"></span> Sprachen</button>
                 <div class="card-text @(_booleanLang ? "" : "collapse")">
                     @if (Emp.Language.Any())
@@ -167,7 +166,7 @@
             </div>
 
                 <!------ Projects ---------->
-            <div class="form-group m-2">
+            <div class="form-group col m-2">
                 <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollProj(); })"><span class="oi oi-list" aria-hidden="true"></span> Projekte</button>
                 <div class="card-text @(_booleanProj ? "" : "collapse")">
                     <table style="text-align: left" class="table align-middle">
@@ -245,6 +244,11 @@
 
     protected override void OnInitialized()
     {
+
+        if (_httpContextAccessor.HttpContext.Request.Cookies[".AspNetCore.Cookies"] == null)
+        {
+            _navigationManager.NavigateTo("/Login");
+        }
         if (_httpContextAccessor.HttpContext != null)
         {
             string context = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault()?.Value;

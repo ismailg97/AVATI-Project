@@ -23,6 +23,15 @@
 @inject IEmployeeDetailService _detailService
 @inject IEmployeeService _employeeService
 
+
+<AuthorizeView Roles="SalesStaff">
+    <NotAuthorized>
+        @if(true){_navManager.NavigateTo("/profile");}
+    </NotAuthorized>
+    <Authorized Context="authContext">
+        
+ 
+
 <ModalEmpDetail @ref="_employeeDetail" Abstract="@this"/>
 <EditProposal @ref="_editProposal" Abstract="@this"/>
 
@@ -316,7 +325,11 @@
     <div class="modal-backdrop fade show"></div>
 }
 
-@code {
+    
+        </Authorized>
+    </AuthorizeView>
+    
+    @code {
 
     [Parameter]
     public int Open { get; set; }

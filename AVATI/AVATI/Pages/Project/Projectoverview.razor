@@ -3,6 +3,15 @@
 @using AVATI.Data
 @inject IProjektService _projectService
 @inject JsonImport _jsonImport
+@inject NavigationManager _navigationManager
+
+<AuthorizeView Roles="SalesStaff,Administrator">
+    <NotAuthorized>
+        @if(true){_navigationManager.NavigateTo("/profile");}
+    </NotAuthorized>
+    <Authorized>
+        
+ 
 
     <h3>Projektübersicht</h3>
 
@@ -71,7 +80,13 @@
     </div>
     <div class="modal-backdrop fade show"></div>
 }
-@code{
+    
+    
+            
+        </Authorized>
+    </AuthorizeView>
+    
+    @code{
     public string Input { get; set; }
     public bool Clicked { get; set; } = false;
     
