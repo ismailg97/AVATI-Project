@@ -4,47 +4,22 @@
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Authorization.Infrastructure
 
+<AuthorizeView Roles="SalesStaff, Employee, Administrator">
+    <Authorized>
 
 <div class="row justify-content-center mb-2">
-            <h1>Hello, world!</h1>
-            <p></p>
-        </div>
-
-<AuthorizeView Roles="SalesStaff, Administrator">
-    <Authorized>
-        <div class="row justify-content-center mb-2">
-
-            <a href="/Login">
-                <button type="button" class="btn btn-secondary">Login</button>
-            </a>
-        </div>
-
-        <div class="row justify-content-center">
-            <a href="/Projektübersicht">
-                <button type="button" class="btn btn-secondary">Projectübersicht</button>
-            </a>
-
-            <a href="/profile/16">
-                <button type="button" class="btn btn-secondary">Profil</button>
-            </a>
-        </div>
+    
+    <h1>Hallo Nutzer mit ID @context.User.Claims.First().Value</h1>
+</div>
+        
     </Authorized>
     <NotAuthorized>
-        Tschau
+       Bitte zuerst anmelden! 
     </NotAuthorized>
 </AuthorizeView>
 
-<AuthorizeView>
-     <Authorized>
-         <h1>Hello @context.User.Claims.First().Value</h1>
-     </Authorized>
-</AuthorizeView>
-  
- <form action="cookie" method="post">
-    <input type="text" name="name" />
-    <input type="text" name="empType" />
-     <input type="submit" />
-</form>
+
+ 
 
 @code
 {

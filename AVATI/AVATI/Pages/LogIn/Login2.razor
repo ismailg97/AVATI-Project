@@ -6,6 +6,11 @@
 @inject ILoginService _login
 @inject NavigationManager _navManager
 
+<AuthorizeView>
+    <Authorized>
+        @if(true){ _navManager.NavigateTo("/profile");}
+    </Authorized>
+    <NotAuthorized>
 
 
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
@@ -61,7 +66,14 @@
 </div>
 <!--container end.//-->
 
-@if (_booleanSignedIn)
+
+
+    
+    </NotAuthorized>
+</AuthorizeView>
+    
+    
+    @if (_booleanSignedIn)
 {
     <form action="cookie" method="post">
         <input type="text" name="name" />
