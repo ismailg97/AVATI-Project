@@ -5,6 +5,15 @@
 @inject NavigationManager _navigationManager
 @inject IBasicDataService _basic
 @inject IHardskillService _hardskill
+
+
+<AuthorizeView Roles="SalesStaff">
+    <NotAuthorized>
+        @if(true){_navigationManager.NavigateTo("/profile");}
+    </NotAuthorized>
+    <Authorized Context="authContext">
+        
+  
 @if (ShowEdit)
 {
     <div class="modal fade show d-block overflow-auto" data-bs-backdrop="static" id="exampleModal" tabindex="-1" role="dialog" style="max-height: 94%;">
@@ -146,8 +155,12 @@
     <div class="modal-backdrop fade show"></div>
 }
 
+    
+            
+        </Authorized>
+    </AuthorizeView>
 
-@code {
+    @code {
 
     [Parameter]
     public int Id { get; set; }

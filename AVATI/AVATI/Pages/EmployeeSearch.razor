@@ -18,6 +18,15 @@
 @inject IEmployeeDetailService _detail
 @inject IJSRuntime _jsRuntime
 
+
+<AuthorizeView Roles="SalesStaff">
+    <NotAuthorized>
+        @if(true){_navigation.NavigateTo("/profile");}
+    </NotAuthorized>
+    <Authorized Context="authContext">
+        
+
+
 @if (_pageIsLoaded)
 {
     <div class="col-12 text-left" id="scrollContainer">
@@ -348,8 +357,12 @@ else
         </div>
     </div>
 }
+    
+    
+        </Authorized>
+    </AuthorizeView>
 
-@code {
+    @code {
 
     [Parameter]
     public int Id { get; set; }

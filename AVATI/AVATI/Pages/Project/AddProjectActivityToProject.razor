@@ -3,13 +3,21 @@
 
 @using AVATI.Data
 
-@inject IProjectActivityService _projectActivity
+@inject IProjectActivityService _projectActivityService
 @inject IProjektService _projectService
+@inject NavigationManager _navigationManager
+
+<AuthorizeView Roles="SalesStaff,Administrator">
+    <NotAuthorized>
+        @if(true){_navigationManager.NavigateTo("/profile");}
+    </NotAuthorized>
+    <Authorized>
+ 
 
 @if (_show)
 {
     <div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
-        <div class="modal modal-dialog-scrollable modal-dialog col">
+        <div class="modal modal-dialog-scrollable modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Auswahl Projekttätigkeiten</h5>
@@ -18,41 +26,73 @@
                     </button>
                 </div>
                 <div class="modal-body" style="min-width: 100%">
-                    <label class="font-weight-bold">Tätigkeiten zur Auswahl stehend:</label>
-                    <div class="list-group col overflow-auto border-dark" style="height: 325px">
-                        @if (!_activities.Any())
+                    <div>
+                        @if (!_create)
                         {
-                            <label type="button" class="btn btn-outline-info">[keine Tätigkeiten vorhanden]</label>
+                            <label class="form-label">Projekttätigkeit hinzufügen:</label>
+                            <button class="btn btn-success" @onclick=@(() => { _create = true; })> <span class="oi oi-plus"></span></button>
                         }
                         else
                         {
-                            @foreach (var activity in _activities)
+                            <input class="form-control" @bind="_createActivity"/>
+                            <div>
+                                <label class="form-label">Global hinzufügen: <button type="button" class="global inline" @onclick="() => AddActivity(true)">+</button></label>
+                                <label class="form-label">Lokal hinzufügen: <button type="button" class="local inline" @onclick="() => AddActivity(false)">+</button></label>
+                                <label class="form-label">Abbrechen: <button type="button" class="stop inline" @onclick=@(() => { _createActivity = ""; _create = false; })>&#10005;</button></label> 
+                            </div>
+                        }
+                    </div>
+                    <hr class="mx-2"/> 
+                    @if (_globalActivities.Any())
+                    {
+                        <label class="font-weight-bold">Tätigkeiten zur Auswahl stehend:</label>
+                        <div class="list-group col overflow-auto border-dark" style="height: 325px">
+                            
+                            @foreach (var activity in _globalActivities)
                             {
-                                if (_activitiesInProject.Find(e => e.Equals(activity)) == null)
+                                if (!_activitiesInProject.Contains(activity) && !_deleteActivities.Contains(activity))
                                 {
-                                    <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _activitiesInProject.Add(activity); })>@activity</button>
+                                    <button type="button" class="btn btn-outline-dark wordBreak" @onclick=@(() => { _activitiesInProject.Add(activity); })>@activity</button>
                                 }
+                            }
+                            
+                        </div>
+                        <hr class="mx-2"/>
+                        <!--line divider -->
+                    }
+                    <label class="font-weight-bold ">Zu entfernende Tätigkeiten: </label>
+                    <div class="list-group col overflow-auto text-center border-dark" style="height: 325px">
+                        @foreach (var activity in _deleteActivities)
+                        {
+                            if (!_projectActivityService.AlreadyExistsGlobalActivity(activity))
+                            {
+                                <button type="button" class="btn btn-outline-danger wordBreak" @onclick=@(() => { _deleteActivities.Remove(activity); _activitiesInProject.Add(activity); })>@activity</button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-outline-dark wordBreak" @onclick=@(() => { _deleteActivities.Remove(activity); _activitiesInProject.Add(activity); })>@activity</button>
                             }
                         }
                     </div>
+
                     <hr class="mx-2"/> <!--line divider -->
                     <label class="font-weight-bold ">Tätigkeiten im Projekt:</label>
                     <div class="list-group col overflow-auto text-center border-dark" style="height: 325px">
                         @foreach (var activity in _activitiesInProject)
                         {
-                            if (!_projectActivity.IsGlobal(activity))
+                            if (!_projectActivityService.AlreadyExistsGlobalActivity(activity))
                             {
-                                <button type="button" class="btn btn-outline-danger" @onclick=@(() => { PopModalDelete(activity); })>@activity</button>    
+                                <button type="button" class="btn btn-outline-danger wordBreak" @onclick="() => RemoveOfList(activity)">@activity</button>
                             }
-                            else 
+                            else
                             {
-                                <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _activitiesInProject.Remove(activity); })>@activity</button>
+                                <button type="button" class="btn btn-outline-dark wordBreak" @onclick="() => RemoveOfList(activity)">@activity</button>
                             }
                         }
                     </div>
                     <div class="div float-right">
-                        <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { Showing(ID); })">Abbrechen</button>
-                        <button type="button" class="btn btn-success" @onclick="(() => { Submit(ID);})">Speichern</button>
+                        <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="Close">Abbrechen</button>
+                        <button type="button" class="btn btn-success" @onclick="Submit">Speichern</button>
                     </div>
                 </div>
                
@@ -66,61 +106,37 @@
 {
     <div class="modal-backdrop fade show"></div>
 }
-@if (ShowPopDelete)
-{
-    <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
-        <div class="modal-dialog border-dark">
-            <div class="modal-content">
-                <div class="modal-header flex-column">
-                    <h4 class="modal-title col-12 text-center">Sind Sie sicher?</h4>
-                </div>
-                <div class="modal-body text-center">
-                    <p>Wollen Sie <b>@ActivityToDelete</b> wirklich aus dem Projekt entfernen?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { _show = !_show; ShowPopDelete = !ShowPopDelete; })">
-                        <span class="oi oi-circle-x"></span> Abbrechen
-                    </button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => {  DeleteNotGlobalActivity(ActivityToDelete); _show = !_show; ShowPopDelete = !ShowPopDelete;})">
-                        <span class="oi oi-trash"></span>Löschen
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal-backdrop fade show"></div>
-}
 
-@code{
+    
+            
+        </Authorized>
+    </AuthorizeView>
+    
+    @code{
 
     [Parameter]
-    public int ID { get; set; }
+    public Project Project { get; set; }
 
-    public int EmployeeID { get; set; }
-
-    private List<string> _activities;
+    private List<string> _globalActivities;
     private List<string> _activitiesInProject;
+    private List<string> _deleteActivities;
+    private List<string> _addedActivities;
     private bool _show = false;
-    private string Activity { get; set; }
 
-    public bool ShowPopDelete = false;
-    public string ActivityToDelete { get; set; }
+    private string _createActivity;
+    private bool _create;
     
     [Parameter]
     public Projectedit Abstract { get; set; }
     
-    public void Showing(int id)
+    public void Showing()
     {
-        _activitiesInProject = new List<string>();
-        ID = id;
+        _create = false;
+        _deleteActivities = new List<string>();
+        _addedActivities = new List<string>();
+        _activitiesInProject = new List<string>(Project.ProjectActivities);
         _show = !_show;
-        var activities = _projectActivity.GetActivitiesDesOfProject(id);
-        
-        foreach (var activity in activities)
-        {
-            _activitiesInProject.Add(activity);
-        }
-        _activities = _projectActivity.GetAllGlobalProjectActivities();
+        _globalActivities = _projectActivityService.GetAllGlobalProjectActivities();
         StateHasChanged();
         Abstract.Update();
     }
@@ -131,22 +147,49 @@
         StateHasChanged();
     }
 
-    public void Submit(int id)
+    public void Submit()
     {
-        _projectActivity.SetProjectActivitiesToProject(id, _activitiesInProject);
+        Project.ProjectActivities = _activitiesInProject;
+        foreach (var purpose in Project.Projectpurpose)
+        {
+            if (!_activitiesInProject.Contains(purpose.Value))
+            {
+                Project.Projectpurpose[purpose.Key] = null;
+            }
+        }
         Abstract.Update();
         _show = !_show;
     }
 
-    public void PopModalDelete(string activ)
+    private void RemoveOfList(string activ)
     {
-        ActivityToDelete = activ;
-        ShowPopDelete = !ShowPopDelete;
-        _show = !_show;
+        if (Project.ProjectActivities.Contains(activ) || _addedActivities.Contains(activ))
+        {
+            if (!_deleteActivities.Contains(activ))
+                _deleteActivities.Add(activ);
+        } 
+        _activitiesInProject.Remove(activ);
     }
 
-    public void DeleteNotGlobalActivity(string activ)
+    private void AddActivity(bool isGlobal)
     {
-        //TODO
+        if (string.IsNullOrEmpty(_createActivity) || string.IsNullOrWhiteSpace(_createActivity) || _createActivity.Length > 150 
+            || _projectActivityService.AlreadyExistsGlobalActivity(_createActivity) || _projectActivityService.AlreadyExistsActivityInProject(Project.ProjectID, _createActivity))
+        {
+            _create = false;
+            return;
+        }
+        if (isGlobal)
+        {
+            _projectActivityService.AddGlobalProjectActivity(_createActivity);
+            _globalActivities = _projectActivityService.GetAllGlobalProjectActivities();
+        }
+        
+        _addedActivities.Add(_createActivity);
+        _activitiesInProject.Add(_createActivity);
+        _createActivity = "";
+        _create = false;
+        StateHasChanged();
     }
+
 }

@@ -10,19 +10,61 @@
                  <div class="modal-content">
                    <div class="modal-header">
                      <h4 class="modal-title">Bitte wählen Sie ein Sprachniveau aus</h4>
-                     <button type="button" class="close" data-dismiss="modal" @onclick="Show">&times;</button>
+                     <button type="button" class="close" data-dismiss="modal" @onclick="Close">&times;</button>
                    </div>
                    
                      <div class="modal-body">
-                       <button type="button" @onclick="(() => { Save(1); })" class="btn btn-outline-success btn-sm mr-2">A1</button>
-                       <button type="button" @onclick="(() => { Save(2); })" class="btn btn-outline-primary btn-sm mr-2">A2</button>
-                       <button type="button" @onclick="(() => { Save(3); })" class="btn btn-outline-secondary btn-sm mr-2">B1</button>
-                       <button type="button" @onclick="(() => { Save(4); })" class="btn btn-outline-dark btn-sm mr-2">B2</button>
-                       <button type="button" @onclick="(() => { Save(5); })" class="btn btn-outline-info btn-sm mr-2">C1</button>
-                       <button type="button" @onclick="(() => { Save(6); })" class="btn btn-outline-warning btn-sm mr-2">C2</button>
+                       <button type="button" @onclick="(() => { Save(LanguageLevel.A1); })" @onmouseover="() => { _showExplanation = LanguageLevel.A1;}"
+                               class="btn btn-outline-success btn-sm mr-2">A1</button>
+                       <button type="button" @onclick="(() => { Save(LanguageLevel.A2); })" @onmouseover="() => { _showExplanation = LanguageLevel.A2;}"
+                               class="btn btn-outline-primary btn-sm mr-2">A2</button>
+                       <button type="button" @onclick="(() => { Save(LanguageLevel.B1); })" @onmouseover="() => { _showExplanation = LanguageLevel.B1;}"
+                               class="btn btn-outline-secondary btn-sm mr-2">B1</button>
+                       <button type="button" @onclick="(() => { Save(LanguageLevel.B2); })" @onmouseover="() => { _showExplanation = LanguageLevel.B2;}"
+                               class="btn btn-outline-dark btn-sm mr-2">B2</button>
+                       <button type="button" @onclick="(() => { Save(LanguageLevel.C1); })" @onmouseover="() => { _showExplanation = LanguageLevel.C1;}"
+                               class="btn btn-outline-info btn-sm mr-2">C1</button>
+                       <button type="button" @onclick="(() => { Save(LanguageLevel.C2); })" @onmouseover="() => { _showExplanation = LanguageLevel.C2;}"
+                               class="btn btn-outline-warning btn-sm mr-2">C2</button>
+                        @if (_showExplanation == LanguageLevel.A1)
+                        {
+                          <div class="alert alert-success" style="margin-top: 5px; margin-bottom: 5px;">
+                            A1 – Anfänger
+                          </div>
+                        } 
+                        else if (_showExplanation == LanguageLevel.A2)
+                        {
+                          <div class="alert alert-primary" style="margin-top: 5px; margin-bottom: 5px;">
+                            A2 – Grundlegende Kenntnisse
+                          </div>
+                        }
+                        else if (_showExplanation == LanguageLevel.B1)
+                        {
+                          <div class="alert alert-secondary" style="margin-top: 5px; margin-bottom: 5px;">
+                            B1 – Fortgeschrittene Sprachverwendung
+                          </div>
+                        }
+                        else if (_showExplanation == LanguageLevel.B2)
+                        {
+                          <div class="alert alert-dark" style="margin-top: 5px; margin-bottom: 5px;">
+                            B2 – Selbständige Sprachverwendung
+                          </div>
+                        }
+                        else if (_showExplanation == LanguageLevel.C1)
+                        {
+                          <div class="alert alert-info" style="margin-top: 5px; margin-bottom: 5px;">
+                            C1 – Fachkundige Sprachkenntnisse
+                          </div>
+                        }
+                        else if (_showExplanation == LanguageLevel.C2)
+                        {
+                          <div class="alert alert-warning" style="margin-top: 5px; margin-bottom: 5px;">
+                            C2 – (Annähernd) muttersprachliche Kenntnisse
+                          </div>
+                        }
                      </div>
                    <div class="modal-footer">
-                     <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Show">Abbrechen</button>
+                     <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Close">Abbrechen</button>
                    </div>
                    
                  </div>
@@ -36,126 +78,41 @@
 @code {
   private bool _show = false;
   public Employee Employee { get; set; }
-  public string languageName { get; set; }
+  private string _languageName;
+
+  private LanguageLevel _showExplanation;
 
   [Parameter]
   public EditProfile Abstract { get; set; }
-  
-  [Parameter] 
-  public Hardskill OldHardskill{ get; set; }
 
   string Description { get; set; }
+  
 
-  private Hardskill _newHardskill = new();
+  public void Showing(Employee emp, string lang)
+  {
+    Employee = emp;
+    _languageName = lang;
+    var level = Employee.Language.Find(x => x.Item1 == _languageName);
+    _showExplanation = level?.Item2 ?? LanguageLevel.A1;
+    _show = !_show;
+    StateHasChanged();
+  }
 
-  private void Update()
+  private void Close( )
+  {
+    _show = !_show;
+    StateHasChanged();
+  }
+
+  public void Save(LanguageLevel level)
   {
     
-  }
-
-  public void Showing(Employee Emp, string lang )
-  {
-    Employee = Emp;
-    languageName = lang;
+    if (Employee.LanguageName.Contains(_languageName))
+      Employee.Language.RemoveAll(x => x.Item1 == _languageName);
+    else
+      Employee.LanguageName.Add(_languageName);
+    Employee.Language.Add(new Tuple<string, LanguageLevel>(_languageName, level));
     _show = !_show;
-    StateHasChanged();
-  }
-  
-  public void Show( )
-  {
-    Employee.LanguageName.Remove(languageName);
-    _show = !_show;
-    StateHasChanged();
-    _navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
-  }
-  //<EditForm Model="@_newHardskill" OnValidSubmit="Update"></EditForm>
-
-  public void Save(int buttonId)
-  {
-    if (buttonId == 1)
-    {
-      foreach (var langtuple in Employee.Language)
-      {
-        if (languageName == langtuple.Item1)
-        {
-          Employee.Language.Remove(langtuple);
-        }
-      }
-      Employee.Language.Add(new Tuple<string, LanguageLevel>(languageName, LanguageLevel.A1));
-      _show = !_show;
-      //InvokeAsync(StateHasChanged);
-      //_navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
-    }
-    if (buttonId == 2)
-    {
-      foreach (var langtuple in Employee.Language)
-      {
-        if (languageName == langtuple.Item1)
-        {
-          Employee.Language.Remove(langtuple);
-        }
-      }
-      Employee.Language.Add(new Tuple<string, LanguageLevel>(languageName, LanguageLevel.A2));
-      _show = !_show;
-      //InvokeAsync(StateHasChanged);
-      //_navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
-    }
-    if (buttonId == 3)
-    {
-      foreach (var langtuple in Employee.Language)
-      {
-        if (languageName == langtuple.Item1)
-        {
-          Employee.Language.Remove(langtuple);
-        }
-      }
-      Employee.Language.Add(new Tuple<string, LanguageLevel>(languageName, LanguageLevel.B1));
-      _show = !_show;
-      //InvokeAsync(StateHasChanged);
-      //_navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
-    }
-    if (buttonId == 4)
-    {
-      foreach (var langtuple in Employee.Language)
-      {
-        if (languageName == langtuple.Item1)
-        {
-          Employee.Language.Remove(langtuple);
-        }
-      }
-      Employee.Language.Add(new Tuple<string, LanguageLevel>(languageName, LanguageLevel.B2));
-      _show = !_show;
-      //InvokeAsync(StateHasChanged);
-      //_navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
-    }
-    if (buttonId == 5)
-    {
-      foreach (var langtuple in Employee.Language)
-      {
-        if (languageName == langtuple.Item1)
-        {
-          Employee.Language.Remove(langtuple);
-        }
-      }
-      Employee.Language.Add(new Tuple<string, LanguageLevel>(languageName, LanguageLevel.C1));
-      _show = !_show;
-      //InvokeAsync(StateHasChanged);
-      //_navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
-    }
-    if (buttonId == 6)
-    {
-      foreach (var langtuple in Employee.Language)
-      {
-        if (languageName == langtuple.Item1)
-        {
-          Employee.Language.Remove(langtuple);
-        }
-      }
-      Employee.Language.Add(new Tuple<string, LanguageLevel>(languageName, LanguageLevel.C2));
-      _show = !_show;
-      
-      //_navigationManager.NavigateTo("/profile/update/"+ Employee.EmployeeID, forceLoad:true);
-    }
     Abstract.Update();
     
   }

@@ -16,6 +16,14 @@
 @inject IHardskillService _hard
 @inject IJSRuntime _jsRuntime
 
+<AuthorizeView Roles="SalesStaff,Administrator">
+    <NotAuthorized>
+        @if(true){_navigationManager.NavigateTo("/profile");}
+    </NotAuthorized>
+    <Authorized Context="authContext">
+        
+
+
 <div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
 <div class="modal-dialog modal-xl col" style="height: 800px; width: 1500px">
 <div class="modal-content col">
@@ -35,9 +43,9 @@
     <div class="row h-100">
     <div class="col text-left">
     <EditForm Model="_searchService">
-        @if (ID != 0)
+        @if (Project != null)
         {
-            <h1 class="mb-4">Mitarbeitersuche für <br><strong>@ProjectToAlter.Projecttitel</strong>:</h1>
+            <h1 class="mb-4">Mitarbeitersuche für <br><strong>@Project.Projecttitel</strong>:</h1>
         }
         else
         {
@@ -139,7 +147,7 @@
                 <button class="btn btn-sm btn-outline-info  mb-1 mr-1" @onclick=@(() => { _searchService.AddRoleSearch(role); })>@role</button>
             }
         </div>
-         <button type="submit" id="submitQuery" @onclick=@(async () => {await CallSearch(); _searchService.TableIsVisible = true;}) class="btn btn-success col-2 mb-5">Suchen</button>
+         <button type="submit" id="submitQuery" @onclick=@(() => { CallSearch(); _searchService.TableIsVisible = true;}) class="btn btn-success col-2 mb-5">Suchen</button>
     </EditForm>
     @if (_searchService.TableIsVisible)
     {
@@ -213,13 +221,13 @@
                         <td style="width: 10%" class="text-center">
 
 
-                            @if (ProjectToAlter.Employees.Find(e => e.EmployeeID == employee.EmployeeID) == null)
+                            @if (_chosenEmployees.Find(e => e.EmployeeID == employee.EmployeeID) == null)
                             {
-                                <button class="btn btn-sm btn-success" @onclick=@(() => { ProjectToAlter.Employees.Add(employee); })>Hinzufügen</button>
+                                <button class="btn btn-sm btn-success" @onclick=@(() => { _chosenEmployees.Add(employee); })>Hinzufügen</button>
                             }
                             else
                             {
-                                <button class="btn btn-sm btn-outline-secondary" @onclick=@(() => { ProjectToAlter.Employees.Remove(employee); })>Hinzugefügt</button>
+                                <button class="btn btn-sm btn-outline-secondary" @onclick=@(() => { _chosenEmployees.Remove(employee); })>Hinzugefügt</button>
                             }
 
 
@@ -234,8 +242,8 @@
     @if (_searchService.TableIsVisible)
     {
         <div class="float-right mb-4">
-            <button class="btn btn-info mt-2" @onclick=@(() => { Close();})>Abbrechen</button>
-            <button class="btn btn-success mt-2" @onclick=@(() => { _projectService.UpdateProject(ProjectToAlter); Abstract.Update(); Close(); })>Speichern</button>
+            <button class="btn btn-info mt-2" @onclick="Close">Abbrechen</button>
+            <button class="btn btn-success mt-2" @onclick="UpdateEmployees">Speichern</button>
         </div>
     }
     </div>
@@ -266,25 +274,23 @@ else
 {
     <div class="modal-backdrop fade show"></div>
 }
+    
+    
+            
+        </Authorized>
+    </AuthorizeView>
 
-@code{
+    @code{
 
     [Parameter]
-    public int ID { get; set; }
+    public Project Project { get; set; }
 
     public static bool _show = false;
 
     [Parameter]
     public Projectedit Abstract { get; set; }
-    
-    
-    [Parameter]
-    public int ProjectId { get; set; }
 
     private bool PageIsLoaded = false;
-
-
-    private Project ProjectToAlter;
 
     public string TempHardskill { get; set; }
 
@@ -294,6 +300,8 @@ else
 
     public List<Employee> SelectEmployees { get; set; }
 
+    private List<Employee> _chosenEmployees;
+
 
     private List<Hardskill> _hardskills = new List<Hardskill>();
     private List<string> _roles = new List<string>();
@@ -301,26 +309,25 @@ else
     private List<Hardskill> _hardskillCategory = new List<Hardskill>();
 
 
-    public async Task CallSearch()
+    public void CallSearch()
     {
         SelectEmployees = _searchService.SearchEmployee(_searchService.EmployeeName, _searchService.SoftskillsToSearch, _searchService.HardskillsToSearch, _searchService.RolesToSearch, _searchService.CategoriesToSearch, new List<Tuple<string, int>>());
         _searchService.EmptyQuery();
     }
 
-    public async Task Showing(int Id)
+    public async Task Showing()
     {
-        ID = Id;
         _show = !_show;
         _searchService.EmptyQuery();
-        Task<List<Hardskill>> TempHard = _hard.GetAllHardskills();
-        Task<List<Hardskill>> TempKat = _hard.GetAllHardskillCategorys();
-        _hardskillCategory = await TempKat;
-        _hardskills = await TempHard;
+        Task<List<Hardskill>> tempHard = _hard.GetAllHardskills();
+        Task<List<Hardskill>> tempKat = _hard.GetAllHardskillCategorys();
+        _hardskillCategory = await tempKat;
+        _hardskills = await tempHard;
         AllEmployees = _employee.GetAllEmployees();
         _roles = _basic.GetAllRoles();
         _softskills = _basic.GetAllSoftSkills();
+        _chosenEmployees = new List<Employee>(Project.Employees);
         _searchService.InitAttributes(_softskills, _roles, _hardskills, _hardskillCategory);
-        ProjectToAlter = _projectService.GetProject(ID);
         PageIsLoaded = true;
         StateHasChanged();
     }
@@ -329,6 +336,13 @@ else
     {
         _show = !_show;
         StateHasChanged();
+    }
+
+    private void UpdateEmployees()
+    {
+        Project.Employees = _chosenEmployees;
+        Abstract.Update();
+        Close();
     }
 
 }

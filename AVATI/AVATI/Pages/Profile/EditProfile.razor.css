@@ -248,3 +248,10 @@ li:hover ul {
     color: #545454;
     font-size: 14px;
 }
+
+.btn-info:hover {
+    background: none;
+    color: #17a2b8 !important;
+    border-color: #17a2b8 !important;
+    outline-color: #17a2b8 !important;
+}

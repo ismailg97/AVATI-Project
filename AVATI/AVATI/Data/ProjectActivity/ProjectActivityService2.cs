@@ -1,24 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 
 namespace AVATI.Data
 {
     public class ProjectActivityService2: IProjectActivityService
     {
         private IConfiguration _config;
+        private bool _toTest;
+        private bool _inService;
 
         public ProjectActivityService2(IConfiguration config)
         {
             _config = config;
+            _toTest = false;
+            _inService = false;
         }
+
+        public ProjectActivityService2()
+        {
+            _toTest = true;
+            _inService = false;
+        }
+
+        public ProjectActivityService2(bool inService)
+        {
+            _toTest = false;
+            _inService = inService;
+        }
+
         private IDbConnection GetConnection()
         {
-            return new SqlConnection(_config.GetConnectionString("AVATI-Database"));
+            if (!_inService && !_toTest) return new SqlConnection(_config.GetConnectionString("AVATI-Database"));
+            var json = File.ReadAllText("appsettings.json");
+            var jObject = JObject.Parse(json);
+            string name;
+            if(_toTest)
+                name = (string) jObject["ConnectionStrings"]?["TEST-Database"];
+            else
+                name = (string) jObject["ConnectionStrings"]?["AVATI-Database"];
+            return new SqlConnection(name);
         }
 
         private int GetProjectActivityId(int projectId, int empId, string activity)
@@ -273,9 +299,7 @@ namespace AVATI.Data
                         new {pr = activityId}).ToList(),
                     ProjectActivityID = activityId,
                 };
-                //gewollt?
-                /*if(projectActivity.Description != null)*/
-                    activities.Add(projectActivity);
+                activities.Add(projectActivity);
             }
             
             return activities;
@@ -376,17 +400,6 @@ namespace AVATI.Data
             return activities;
         }
 
-        public string GetProjectActivityForPurpose(string purpose)
-        {
-            using IDbConnection db = GetConnection();
-            
-            string temp1 = db.QuerySingle<string>(
-                "SELECT Projectactivity FROM ProjectPurpose WHERE Purpose = @desc", 
-                new { desc = purpose });
-
-            return temp1;
-        }
-
         public bool SetProjectActivitiesToProject(int projectId, List<string> activities)
         {
             using var db = GetConnection();
@@ -462,11 +475,18 @@ namespace AVATI.Data
             return db.Query<string>("SELECT Description FROM ProjectActivity").ToList();
         }
 
-        public bool IsGlobal(string description)
+        public bool AlreadyExistsGlobalActivity(string activity)
         {
             using var db = GetConnection();
-            return db.Query<string>("SELECT Description FROM ProjectActivity WHERE Description = @activity",
-                new{ activity = description }).SingleOrDefault() != null;
+            return db.Query<string>("SELECT Description FROM ProjectActivity WHERE Description = @description",
+                new{ description = activity }).SingleOrDefault() != null;
+        }
+
+        public bool AlreadyExistsActivityInProject(int projectId, string activity)
+        {
+            using var db = GetConnection();
+            return db.Query<string>("SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectID = @project AND ProjectActivity = @description",
+                new{ project = projectId, description = activity }).SingleOrDefault() != null;
         }
     }
 }

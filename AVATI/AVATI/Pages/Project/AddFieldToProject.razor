@@ -12,6 +12,15 @@
 @inject JsonImport _jsonImport
 @inject IProjektService _projectService
 @inject IBasicDataService _basic
+@inject NavigationManager _navigationManager
+
+<AuthorizeView Roles="SalesStaff,Administrator">
+    <NotAuthorized>
+        @if(true){_navigationManager.NavigateTo("/profile");}
+    </NotAuthorized>
+    <Authorized >
+        
+
 
 @if (_show)
 {
@@ -20,34 +29,34 @@
             <div class="modal-content bg-light">
                 <div class="modal-header">
                     <h3 class="modal-title">Auswahl Branchen</h3>
-                    <button type="button" class="close" data-dismiss="modal" @onclick=@Close>
+                    <button type="button" class="close" data-dismiss="modal" @onclick="Showing">
                         <span aria-hidden="true">x</span>
                     </button>
                 </div>
                 <div class="modal-body" style="min-width: 100%">
                     <label class="font-weight-bold">Branchen zur Auswahl stehend:</label>
                     <div class="list-group col overflow-auto border-dark" style="height: 250px">
-                        @foreach (var field in fields)
+                        @foreach (var field in _allFields)
                         {
-                            if (!_projectToEdit.Fields.Exists(e => e.Equals(field)))
+                            if (!_fieldsChosen.Contains(field))
                             {
-                                <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _projectToEdit.Fields.Add(field); })>@field</button>
+                                <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _fieldsChosen.Add(field); })>@field</button>
                             }
                         }
                     </div>
                     <hr class="mx-2"/>                                  <!--line divider -->
                     <label class="font-weight-bold ">Branchen im Projekt:</label>
                     <div class="list-group col overflow-auto text-center border-dark" style="height: 250px">
-                        @foreach (var field in _projectToEdit.Fields)
+                        @foreach (var field in _fieldsChosen)
                         {
-                            <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _projectToEdit.Fields.Remove(field); })>@field</button>
+                            <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _fieldsChosen.Remove(field); })>@field</button>
                         }
                     </div>
                 </div>
                 <div class="modal-footer">
                     <div class="form-group ml-5">
-                        <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="Close"><span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen</button>
-                        <button type="button" class="btn btn-success" @onclick="(() => { Submit(ID); })"><span class="oi oi-document" aria-hidden="true"></span> Speichern</button>
+                        <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="Showing"><span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen</button>
+                        <button type="button" class="btn btn-success" @onclick="Submit"><span class="oi oi-document" aria-hidden="true"></span> Speichern</button>
                     </div>
                 </div>
             </div>
@@ -62,44 +71,45 @@
     <div class="modal-backdrop fade show"></div>
 }
 
-@code {
+    
+            
+        </Authorized>
+    </AuthorizeView>
+    
+    @code {
 
     [Parameter]
     public Projectedit Abstract { get; set; }
     
     [Parameter]
-    public int ID { get; set; }
-
-    Project _projectToEdit;
+    public Project Project { get; set; }
+    
     private bool _show;
 
-    private List<string> fields;
+    private List<string> _allFields;
+    private List<string> _fieldsChosen;
     
-    public string temp { get; set; }
-    
+    public string Temp { get; set; }
 
-    public void Showing(int id)
+    protected override void OnParametersSet()
     {
-        ID = id;
-        _show = !_show;
-        _projectToEdit = _projectService.GetProject(id);
-        fields = _basic.GetAllFields();
+        _allFields = _basic.GetAllFields();
+        _fieldsChosen = new List<string>(Project.Fields);
     }
-    
 
-    public void Close()
+
+    public void Showing()
     {
         _show = !_show;
         StateHasChanged();
     }
 
-    
-    public void Submit(int ID)
+
+    public void Submit()
     {
         _show = !_show;
-        _projectService.UpdateFieldsFromProject(_projectToEdit.ProjectID, _projectToEdit.Fields);
+        Project.Fields = _fieldsChosen;
         Abstract.Update();
-        StateHasChanged();
     }
 
 

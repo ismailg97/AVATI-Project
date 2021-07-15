@@ -12,6 +12,7 @@ namespace AVATI.Data
 {
     public class ProjectService : IProjektService
     {
+        private ProjectActivityService2 _projectActivityService = new ProjectActivityService2(true);
         public List<Project> Projects { get; set; }
         private string ConnectionString; //global connectionstring
         
@@ -134,9 +135,20 @@ namespace AVATI.Data
 
             foreach (var field in copyFields)
             {
-                var insertRows = db.Execute("INSERT INTO Project_Field WHERE ProjectID = @projectId AND Field = @description",
+                var insertRows = db.Execute("INSERT INTO Project_Field VALUES(@projectId, @description)",
                     new{ projectId = project.ProjectID, description = field});
                 if (insertRows != 1) return false;
+            }
+            
+            _projectActivityService.SetProjectActivitiesToProject(project.ProjectID, project.ProjectActivities);
+
+            db.Execute("DELETE FROM Projectpurpose WHERE ProjectID = @projectId", 
+                new {projectId = project.ProjectID});
+
+            foreach (var purpose in project.Projectpurpose)
+            {
+                db.Execute("INSERT INTO Projectpurpose VALUES (@projectId, @pur, @act)",
+                    new{ projectId = project.ProjectID, pur = purpose.Key, act = purpose.Value});
             }
 
             return true;
@@ -191,6 +203,12 @@ namespace AVATI.Data
                 if(!temp.Employees.Exists(x => x.EmployeeID == empId))
                     temp.Employees.Add(db.Query<Employee>("SELECT * FROM Employee WHERE EmployeeID = @emp", new {emp = empId}).Single());
             }
+            
+            temp.Projectpurpose = db.Query<KeyValuePair<string,string>>("SELECT Purpose AS [Key], ProjectActivity AS [Value] FROM ProjectPurpose WHERE ProjectID = @project AND Purpose IS NOT NULl",
+                new{ project = projectId}).ToDictionary(pair => pair.Key, pair => pair.Value);
+
+            temp.ProjectActivities = _projectActivityService.GetActivitiesDesOfProject(projectId);
+            
             return temp;
         }
 
@@ -269,6 +287,13 @@ namespace AVATI.Data
             }
 
             return true;
+        }
+
+        public bool AlreadyContainsPurpose(int projectId, string purpose)
+        {
+            using var db = GetConnection();
+            return db.Query<string>("SELECT FROM Projectpurpose WHERE ProjectID = @project AND Purpose = @description",
+                new{project = projectId, description = purpose}).SingleOrDefault() != null;
         }
     }
 }
