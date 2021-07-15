@@ -11,9 +11,7 @@ namespace AVATI.Data
         public List<Project> GetAllProjects();
         
         public List<string> GetAllFieldsFromOneProject(int projectId);
-
-        public bool DeleteEmployeeFromProject(int projectId, int employeeId);
-
+        
         public bool UpdateFieldsFromProject(int projectId, List<string> fields);
     }
 }

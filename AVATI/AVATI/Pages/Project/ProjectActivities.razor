@@ -11,9 +11,6 @@
     </NotAuthorized>
     <Authorized Context="authContext">
         
-
-
-
 @if (Loading)
 {
     <div class="d-flex flex-column align-items-center justify-content-center">
@@ -35,17 +32,17 @@ else
             <h2 class="mb-3">Globale Projekttätigkeiten</h2>
             <p>Hier können Sie Tätigkeiten im Projekt hinzufügen, verwalten, editieren und löschen. Diese stehen als Auswahlmöglichkeit für alle Projekte zur Verfügung. </p>
             <hr/>
-            <div class="row">
-                <div class="col-8">
-                    <div class="form-group col-10">
+            <div class="row m-2">
+                <div class="col-9">
+                    <div class="form-group col-11">
                         <input class="form-control" type="text" placeholder="Suche Aktivität..."
                                    @bind="filterSearch"
                                    @bind:event="oninput">
                         <table class="table table-hover">
-                            <thead>
+                            <thead class="thead-dark">
                             <tr>
                                 <th scope="col">Beschreibung</th>
-                                <th scope="col"></th>
+                                <th scope="col"class="text-right"></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -145,8 +142,6 @@ else
     <div class="modal-backdrop fade show"></div>
 }
 
-    
-            
         </Authorized>
     </AuthorizeView>
     

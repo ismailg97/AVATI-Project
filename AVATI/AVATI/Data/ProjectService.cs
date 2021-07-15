@@ -244,7 +244,7 @@ namespace AVATI.Data
             return fields;
         }
 
-        public bool DeleteEmployeeFromProject(int projectId, int employeeId)
+        private bool DeleteEmployeeFromProject(int projectId, int employeeId)
         {
             using IDbConnection db = GetConnection();
             var activities = db.Query<string>("SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectID = @project AND EmployeeID = @emp AND ProjectActivity IS NOT NULL",

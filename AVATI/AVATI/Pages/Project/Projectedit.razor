@@ -8,14 +8,11 @@
 @inject IProjectActivityService _projectActivity
 @inject IEmployeeService _employeeService
 
-
 <AuthorizeView Roles="SalesStaff,Administrator">
     <NotAuthorized>
         @if(true){_navigationManager.NavigateTo("/profile");}
     </NotAuthorized>
-    <Authorized Context="authContext">
-        
-  
+<Authorized Context="authContext">
 
 <AddFieldToProject @ref="_addFieldToProject" Project="@Project" Abstract="@this"/>
 <AddEmployeeToProject @ref="_addEmployeeToProject" Project="@Project" Abstract="@this"/>
@@ -42,6 +39,7 @@ else
     <div class="text-left col">
     <div class="column">
         <h3 class="text-lg-left font-weight-bold">Projekt: <em> @oldTitle</em></h3>
+        <hr/>
         <div class="form-group row">
             <label class="col-sm-3 col-form-label font-weight-bold">Titel</label>
             <div class="col-sm-9">
