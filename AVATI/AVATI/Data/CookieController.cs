@@ -24,7 +24,7 @@ namespace AVATI.Data
             _employeeService = employeeService;
         }
         
-        [HttpPost]
+        [HttpPost("Login")]
         public async Task<ActionResult> Login([FromForm] string username, [FromForm] string password)
         {
             
@@ -34,7 +34,6 @@ namespace AVATI.Data
                 return Redirect("/LoginFail");
             }
             Employee emp = _employeeService.GetEmployeeProfile(Id);
-            Console.WriteLine(emp.FirstName + emp.LastName);
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, emp.EmployeeID.ToString()),
@@ -46,25 +45,18 @@ namespace AVATI.Data
         }
         
         
-        [HttpDelete]
-        public void LogOut()
+        [HttpPost("Logout")]
+        public async Task<ActionResult> LogOut()
         {
-            Console.WriteLine("TEST");
             if (HttpContext != null)
             {
-                //_httpContextAccessor.HttpContext.Response.Cookies.Delete(".AspNetCore.Cookies", new CookieOptions()
-                //{
-                //    Secure = true,
-                //});
-                CookieOptions option = new CookieOptions();
-                option.Expires = DateTime.Now.AddDays(-1);
-                option.Secure = true;
-                option.IsEssential = true;
-                HttpContext.Response.Cookies.Append(".AspNetCore.Cookies", string.Empty, option);
-                //Then delete the cookie
-                HttpContext.Response.Cookies.Delete(".AspNetCore.Cookies");
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                return Redirect("/");
+
+                
             }
-            //return Redirect("login"); 
+           
+            return Redirect("/");
         }
     }
 }
