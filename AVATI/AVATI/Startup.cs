@@ -9,6 +9,7 @@ using AVATI.Data.EmployeeDetailFiles;
 using AVATI.Pages.Project;
 using BlazorDownloadFile;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using MudBlazor.Services;
 
 
 namespace AVATI
@@ -30,7 +31,7 @@ namespace AVATI
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            
+            services.AddMudServices();
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddBlazorContextMenu();
@@ -41,11 +42,10 @@ namespace AVATI
             services.AddSingleton<Projectedit>();
             services.AddSingleton<ILoginService,LoginService>();
             services.AddSingleton<IProposalService, ProposalService>();
-            services.AddSingleton<SearchService>();
+            services.AddSingleton<IProjectActivityService, ProjectActivityService2>();
             services.AddSingleton<IEmployeeService, EmployeeService>();
             services.AddBlazorDownloadFile();
             services.AddSingleton<IEmployeeDetailService, EmployeeDetailService>();
-            services.AddSingleton<IProjectActivityService, ProjectActivityService2>();
             services.AddSingleton<DatabaseUtils>();
             services.AddSingleton<IProjektService, ProjectService>();
             services.AddHttpContextAccessor();

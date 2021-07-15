@@ -405,14 +405,14 @@ else
     {
         var newKey = _purposeKeyEdit[purpose];
         var newValue = _purposeValueEdit[purpose] == "" ? null : _purposeValueEdit[purpose];
+        Project.Projectpurpose.TryAdd(newKey, newValue);
+        _showEditPurpose.TryAdd(newKey, false);
+        _purposeKeyEdit.TryAdd(newKey, newKey);
+        _purposeValueEdit.TryAdd(newKey, newValue);
         Project.Projectpurpose.Remove(purpose);
         _showEditPurpose.Remove(purpose);
         _purposeKeyEdit.Remove(purpose);
         _purposeValueEdit.Remove(purpose);
-        _showEditPurpose.TryAdd(newKey, false);
-        _purposeKeyEdit.TryAdd(newKey, newKey);
-        _purposeValueEdit.TryAdd(newKey, newValue);
-        Project.Projectpurpose.TryAdd(newKey, newValue);
         StateHasChanged();
     }
 

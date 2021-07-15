@@ -11,7 +11,7 @@ namespace AVATI.Data
 {
     public class EmployeeService : IEmployeeService
     {
-        private ProjectActivityService2 _projectActivityService = new ProjectActivityService2(true); 
+        private ProjectActivityService2 _projectActivityService;
         private string _connection;
         private readonly IConfiguration _configuration;
         public List<Employee> Employees { get; set; }
@@ -19,6 +19,7 @@ namespace AVATI.Data
 
         public EmployeeService(IConfiguration configuration)
         {
+            _projectActivityService = new ProjectActivityService2();
             _configuration = configuration;
         }
 
@@ -34,10 +35,11 @@ namespace AVATI.Data
         
         public EmployeeService(string connect)
         {
+            _projectActivityService = new ProjectActivityService2();
             _connection = connect;
         }
 
-
+        
         public List<Employee> GetAllEmployees()
         {
             using DbConnection db = GetConnection();
@@ -224,7 +226,12 @@ namespace AVATI.Data
                 {
                     db.Query("INSERT INTO Employee_Hardskill VALUES (@id, @hardsk,@level)",
                         new {hardsk = hard.Item1.Description, id = emp.EmployeeID, level=hard.Item2});
-                } 
+                }
+                else
+                {
+                    db.Query("UPDATE Employee_Hardskill SET Level = @level WHERE Hardskill = @hardsk AND EmployeeID = @id",
+                        new {hardsk = hard.Item1.Description, id = emp.EmployeeID, level=hard.Item2});
+                }
             }
             
             

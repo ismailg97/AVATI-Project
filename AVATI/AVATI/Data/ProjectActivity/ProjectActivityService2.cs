@@ -458,7 +458,7 @@ namespace AVATI.Data
         public bool UpdateGlobalProjectActivity(string oldDescription, string newDescription)
         {
             using var db = GetConnection();
-            return db.Execute("UPDATE ProjectActivity SET Description = @oldD WHERE Description = @newD", 
+            return db.Execute("UPDATE ProjectActivity SET Description = @newD WHERE Description = @oldD", 
                 new { oldD = oldDescription, newD = newDescription}) == 1;
         }
 
