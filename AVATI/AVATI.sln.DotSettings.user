@@ -5,16 +5,13 @@
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\5.0.0\ref\net5.0\Microsoft.Extensions.Configuration.Abstractions.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=96ce6e43_002Df420_002D4999_002Da5f0_002D6c27e3d89b2f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="EmployeeDetailTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=1f580204_002D7e22_002D49c8_002Daa83_002D2d49982508b2/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from EmployeeTest.cs" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Or&gt;&#xD;
-    &lt;TestAncestor&gt;&#xD;
-      &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.EmployeeDetailTest&lt;/TestId&gt;&#xD;
-      &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.ProposalTest&lt;/TestId&gt;&#xD;
-      &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.ProjectTest&lt;/TestId&gt;&#xD;
-    &lt;/TestAncestor&gt;&#xD;
-    &lt;ProjectFile&gt;CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D/f:HardskillServiceTest.cs&lt;/ProjectFile&gt;&#xD;
+    &lt;ProjectFile&gt;CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D/f:EmployeeTest.cs&lt;/ProjectFile&gt;&#xD;
+    &lt;ProjectFile&gt;CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D/f:BasicDataServiceTest.cs&lt;/ProjectFile&gt;&#xD;
   &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	
 	
 	
 	
