@@ -8,7 +8,11 @@ namespace AVATI.Data
     {
 
         public List<Employee> Employees { get; set; }
-
+        
+        /// <summary>
+        /// Bisch du dumm? Denk doch mal nach!
+        /// </summary>
+        /// <returns>I can do englischhh</returns>
         public List<Employee> GetAllEmployees();
         public bool CreateEmployeeProfile(Employee emp);
         public bool EditEmployeeProfile(Employee emp);
