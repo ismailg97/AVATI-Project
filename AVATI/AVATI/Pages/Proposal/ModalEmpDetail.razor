@@ -35,15 +35,15 @@
                         <div class="modal-dialog" role="document" style="min-width:100%">
                             <div class="modal-content bg-light text-black">
                                 <div class="modal-header">
-                                    <h5 class="modal-title font-weight-bolder text-center" id="titleLabel">Detailansicht</h5>
+                                    <h5 class="modal-title font-weight-bolder text-center" id="titleLabel">Detailansicht <small>(Attribute per Knopfdruck auswählen)</small></h5>
                                     <button type="button" class="close" aria-label="Close" @onclick=@Close>
                                         <span aria-hidden="true">×</span>
                                     </button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="row justify-content-md-center">
-                                        <div class="card text-black border-dark ml-5" style="width: 25%; max-width: 25%">
-                                            <img class="card-img-top" src="@_employeeService.GetEmployeeProfile(EmpId).Image" style="border:2px solid black; min-height: 50%; max-height: 50%" alt=""/>
+                                        <div class="card text-black border-dark ml-5" style="width: 25%; max-width: 20%">
+                                            <img class="card-img-top" src="@_employeeService.GetEmployeeProfile(EmpId).Image" style="border:2px solid black; min-height: 30%; max-height: 30%; max-width: 100%" alt=""/>
                                             <div class="card-body pb-3 pt-3">
                                                 <h5 class="card-title">@_employeeService.GetEmployeeProfile(EmpId).FirstName @_employeeService.GetEmployeeProfile(EmpId).LastName</h5>
                                                 <div class="card-title text-left">
@@ -73,9 +73,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="card col border-secondary ml-2" style="max-width: 20%">
+                                        <div class="card col border-secondary ml-2" style="max-width: 25%;">
                                             <div class="card-header text-left bg-transparent border-secondary">Projekt(e) + Tätigkeit(en)</div>
-                                            <div class="card-body text-left">
+                                            <div class="card-body text-left overflow-auto">
                                                 @foreach (var proj in _projectsWithActivities.Keys)
                                                 {
                                                     if (_projectsWithActivities[proj].Any())
