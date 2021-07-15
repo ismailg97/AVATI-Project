@@ -153,13 +153,13 @@
     </EditForm>
     @if (_searchService.TableIsVisible)
     {
+        if (SelectEmployees.Any() && !_searchService.PerfectMatch && SelectEmployees.Count(e => _chosenEmployees.Any(x => x.EmployeeID == e.EmployeeID)) != SelectEmployees.Count )
+        {
+            <div class="alert alert-danger">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die alle Kriterien erfüllt!</div>
+        }
         if (!SelectEmployees.Any() || SelectEmployees.Count(e => _chosenEmployees.Any(x => x.EmployeeID == e.EmployeeID)) == SelectEmployees.Count)
         {
             <div class="alert alert-danger">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die mindestens eines der Kriterien erfüllt!</div>
-        }
-        if (!_searchService.PerfectMatch && SelectEmployees.Any() && SelectEmployees.Count(e => _chosenEmployees.Any(x => x.EmployeeID == e.EmployeeID)) != SelectEmployees.Count )
-        {
-            <div class="alert alert-danger">Es konnte kein(e) MitarbeiterIn gefunden werden, der/die alle Kriterien erfüllt!</div>
         }
 
         else
