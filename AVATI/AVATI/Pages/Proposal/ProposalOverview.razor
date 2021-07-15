@@ -567,14 +567,14 @@
         var table = new Table();
         var tableProp = new TableProperties(
             new TableStyle() {Val = "EinfacheTabelle4"}, new TableWidth() {Type = TableWidthUnitValues.Dxa, Width = 7000.ToString()});
-        table.AppendChild<TableProperties>(tableProp);
+        table.AppendChild(tableProp);
         foreach (var emp in _detailService.GetAllEmployeeDetail(prop.ProposalID))
         {
             foreach (var role in emp.Roles)
             {
                 var tableRow = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
                 var cell1 = new TableCell(new TableCellProperties(new TableCellWidth() {Type = TableWidthUnitValues.Dxa, Width = 3500.ToString()}));
-                cell1.AppendChild(new Paragraph(new Run(new RunProperties(new FontSize() {Val = 28.ToString()}, new Bold() {Val = OnOffValue.FromBoolean(false)}), new Text(prop.Employees.Find(e => e.EmployeeID == emp.EmployeeId).FirstName + prop.Employees.Find(e => e.EmployeeID == emp.EmployeeId).LastName))));
+                cell1.AppendChild(new Paragraph(new Run(new RunProperties(new FontSize() {Val = 28.ToString()}, new Bold() {Val = OnOffValue.FromBoolean(false)}), new Text(prop.Employees.Find(e => e.EmployeeID == emp.EmployeeId)?.FirstName + prop.Employees.Find(e => e.EmployeeID == emp.EmployeeId)?.LastName))));//added ? to prevent possible Sys Null Ref
                 var cell2 = new TableCell(new TableCellProperties(new TableCellWidth() {Type = TableWidthUnitValues.Dxa, Width = 3500.ToString()}));
                 cell2.AppendChild(new Paragraph(new Run(new RunProperties(new FontSize() {Val = 28.ToString()}, new Bold() {Val = OnOffValue.FromBoolean(false)}), new Text(role))));
                 tableRow.Append(cell1, cell2);
@@ -601,7 +601,7 @@
     
     
 
-    enum Cash //Stundensatz in €, Tagessatz entspricht dem 8-fachen Stundensatz
+    enum Cash //Hourly Rate in €
     {
         Rc1 = 80,
         Rc2 = 95,
@@ -612,23 +612,23 @@
         Rc7 = 195,
     }
     
-    public async Task CreateDocument(int id) //Threadsicher machen, wenn mehrere gleichzeitig ein Dokument erzeugen --> Ressourcenkonflikt 
+    public async Task CreateDocument(int id)
     {
     var i = 0;
-        const string costCalcTemplateDoc = "wwwroot\\templates\\AvatiKostenmixDoc.docx";
+        const string costCalcTemplateDoc = "wwwroot\\templates\\AvatiCostCalcDoc.docx";
         const string empTempDocPath = "wwwroot\\templates\\AvatiTempDoc.docx";
         const string empTemplatePath = "wwwroot\\templates\\AvatiWorkerDoc.docx";
         const string templatePath = "wwwroot\\templates\\AvatiProposalDoc.docx";
         
-        MemoryStream memStream = new MemoryStream();
+        var memStream = new MemoryStream();
         var pageBreaker = new Paragraph(new Run(new Break {Type = BreakValues.Page}));
-        await using (FileStream fileStream = new FileStream(templatePath, FileMode.Open, FileAccess.Read))
+        await using (var fileStream = new FileStream(templatePath, FileMode.Open, FileAccess.Read))
             await fileStream.CopyToAsync(memStream);
-        using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(memStream, true))
+        using (var wordDoc = WordprocessingDocument.Open(memStream, true))
         {
             var tempProp = _proposal.GetProposal(id); 
             wordDoc.ChangeDocumentType(WordprocessingDocumentType.Document);
-            Body body = wordDoc.MainDocumentPart.Document.Body;
+            var body = wordDoc.MainDocumentPart?.Document.Body; //? added to prevent possible System Null Reference
             var paragraphs = body.Descendants<Paragraph>().ToList();
             foreach (var par in paragraphs)
             {
@@ -677,14 +677,14 @@
             }
             foreach (var emp in tempProp.Employees)
             {
-                MemoryStream empMemStream = new MemoryStream();
-                await using (FileStream yalla = new FileStream(empTemplatePath, FileMode.Open, FileAccess.Read))
-                    await yalla.CopyToAsync(empMemStream);
+                var empMemStream = new MemoryStream();
+                await using (var employeeFs = new FileStream(empTemplatePath, FileMode.Open, FileAccess.Read))
+                    await employeeFs.CopyToAsync(empMemStream);
                 i++;
-                FileStream clearTempDoc = new FileStream(empTempDocPath, FileMode.Create, FileAccess.ReadWrite);
+                var clearTempDoc = new FileStream(empTempDocPath, FileMode.Create, FileAccess.ReadWrite);
                 await clearTempDoc.DisposeAsync();
                 var tempEmp = _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result;
-                using (WordprocessingDocument empDoc = WordprocessingDocument.Open(empMemStream, true))
+                using (var empDoc = WordprocessingDocument.Open(empMemStream, true))
                 {
                     var empBody = empDoc.MainDocumentPart.Document.Body;
                     var empParagraphs = empBody.Descendants<Paragraph>().ToList();
@@ -752,30 +752,26 @@
                     empDoc.SaveAs(empTempDocPath).Close();
                 }
                 paragraphs = body.Descendants<Paragraph>().ToList();
-                string altChunkId = "AltChunkId" + i;
-                AlternativeFormatImportPart chunk = wordDoc.MainDocumentPart.AddAlternativeFormatImportPart(AlternativeFormatImportPartType.WordprocessingML, altChunkId);
-                using (FileStream empFs = File.Open("wwwroot\\templates\\AvatiTempDoc.docx", FileMode.Open))
+                var altChunkId = "AltChunkId" + i;
+                var chunk = wordDoc.MainDocumentPart.AddAlternativeFormatImportPart(AlternativeFormatImportPartType.WordprocessingML, altChunkId);
+                await using (var empFs = File.Open(empTempDocPath, FileMode.Open))
                 {
                     chunk.FeedData(empFs);
                 }
                 var altChunk = new AltChunk {Id = altChunkId};
                 body.InsertAfter(altChunk, paragraphs.Last());
             }
-            MemoryStream kostenmixMemStream = new MemoryStream();
-            await using (FileStream kostenmixFs = new FileStream(costCalcTemplateDoc, FileMode.Open, FileAccess.Read))
-                await kostenmixFs.CopyToAsync(kostenmixMemStream);
-            using (WordprocessingDocument costDoc = WordprocessingDocument.Open(kostenmixMemStream, true))
+            var costCalcMemStream = new MemoryStream();
+            await using (var costCalcFs = new FileStream(costCalcTemplateDoc, FileMode.Open, FileAccess.Read))
+                await costCalcFs.CopyToAsync(costCalcMemStream);
+            using (var costDoc = WordprocessingDocument.Open(costCalcMemStream, true))
             {
                 i++;
                 costDoc.ChangeDocumentType(WordprocessingDocumentType.Document);
-                Body costBody = costDoc.MainDocumentPart.Document.Body;
+                var costBody = costDoc.MainDocumentPart.Document.Body;
                 costBody.AppendChild(new Paragraph(new Run(new RunProperties(new FontSize() {Val = 64.ToString()}, new RunFonts() {Ascii = "Calibri Light"}, new Color() {Val = "8496B0"}), new Text("Kostenmixkalkulation"))));
-               
-                int runtime = (int)(tempProp.End - tempProp.Start).TotalDays / 7;
-                List<double> pricePerEmpList = new List<double>();
+                var runtime = (int)(tempProp.End - tempProp.Start).TotalDays / 7;
                 double overallHours = 0, overallPt = 0, overallListPrice = 0, overallRealPrice = 0;
-
-
                 var costTable = new Table();
                 var costTableProp = new TableProperties( new TableWidth() {Type = TableWidthUnitValues.Dxa, Width = 10000.ToString()});
                 var tableStyle = new TableStyle() {Val = "EinfacheTabelle4"};
@@ -812,7 +808,7 @@
                 foreach (var emp in tempProp.Employees)
                 {
                     var employeeDetail = _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result;
-                    var employeeProvHours = 20; //TODO dummy Wert need employeeDetail.ProvHours (oder ähnliches)
+                    var employeeProvHours = 20; //TODO dummy Value, need employeeDetail.ProvHours (oder smth alike)
                     double hourlyRate = GetCash(employeeDetail.Rc); //daily rate = 8 * hourly rate
                     double dailyRate = hourlyRate * 8;              //== PT rate
                     overallHours += employeeProvHours;
@@ -842,10 +838,7 @@
                     var tcA3 = new TableCell();
                     var tcA3Par = new Paragraph();
                     var tcA3Run = new Run();
-                    if (employeeDetail.Discount > 0)
-                        tcA3Run.AppendChild(new Text(Math.Round(dailyRate / 100 * (100 - employeeDetail.Discount), 2) + "€/PT"));
-                    else
-                        tcA3Run.AppendChild(new Text(Math.Round(dailyRate, 2) + "€/PT"));
+                    tcA3Run.AppendChild(employeeDetail.Discount > 0 ? new Text(Math.Round(dailyRate / 100 * (100 - employeeDetail.Discount), 2) + "€/PT") : new Text(Math.Round(dailyRate, 2) + "€/PT"));
                     tcA3Par.AppendChild(tcA3Run);
                     tcA3.AppendChild(tcA3Par);
                     var tcA4 = new TableCell(new Paragraph(new Run(new Text(Math.Round((double)employeeProvHours / 40, 2) + " FTE") {Space = SpaceProcessingModeValues.Preserve})));//FTE = Vollzeitäquivalent --> Vollzeitkraft: 8h/d; 5d/w; ==> 40h/week
@@ -866,10 +859,7 @@
                     var tcB3 = new TableCell();
                     var tcB3Par = new Paragraph();
                     var tcB3Run = new Run();
-                    if (employeeDetail.Discount > 0)
-                        tcB3Run.AppendChild(new Text(Math.Round(dailyRate / 100 * (100 - employeeDetail.Discount) / 8, 2) + "€/h")); //Das passt so
-                    else
-                        tcB3Run.AppendChild(new Text(hourlyRate + "€/h"));
+                    tcB3Run.AppendChild(employeeDetail.Discount > 0 ? new Text(Math.Round(dailyRate / 100 * (100 - employeeDetail.Discount) / 8, 2) + "€/h") : new Text(hourlyRate + "€/h"));
                     tcB3Par.AppendChild(tcB3Run);
                     tcB3.AppendChild(tcB3Par);
                     var tcB4 = new TableCell(new Paragraph(new Run(new Text(employeeProvHours + " h/Woche"))));
@@ -921,12 +911,12 @@
                 tableRow5B.Append(tc51B, tc52B, tc53B, tc54B, tc55B);
                 costTable.Append(tableRow5A, tableRow5B);
                 costBody.AppendChild(costTable);
-                FileStream clearTempDoc = new FileStream(empTempDocPath, FileMode.Create, FileAccess.ReadWrite);
+                var clearTempDoc = new FileStream(empTempDocPath, FileMode.Create, FileAccess.ReadWrite);
                 await clearTempDoc.DisposeAsync();
                 costDoc.SaveAs("wwwroot\\templates\\AvatiTempDoc.docx").Close();
-                string altChunkId = "AltChunkId" + i;
-                AlternativeFormatImportPart chunk = wordDoc.MainDocumentPart.AddAlternativeFormatImportPart(AlternativeFormatImportPartType.WordprocessingML, altChunkId);
-                using (FileStream docFs = File.Open("wwwroot\\templates\\AvatiTempDoc.docx", FileMode.Open))
+                var altChunkId = "AltChunkId" + i;
+                var chunk = wordDoc.MainDocumentPart.AddAlternativeFormatImportPart(AlternativeFormatImportPartType.WordprocessingML, altChunkId);
+                await using (var docFs = File.Open("wwwroot\\templates\\AvatiTempDoc.docx", FileMode.Open))
                 {
                     chunk.FeedData(docFs);
                 }
@@ -935,7 +925,7 @@
             }
             wordDoc.Save();
             wordDoc.Close();
-            var task = await _blazorDownloadFileService.DownloadFile("test.docx", memStream, "application/octet-stream");
+            await _blazorDownloadFileService.DownloadFile("test.docx", memStream, "application/octet-stream");
         }    
     }
 }

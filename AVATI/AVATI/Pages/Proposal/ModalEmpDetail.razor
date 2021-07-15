@@ -1,7 +1,6 @@
 @using AVATI.Data
 @using AVATI.Data.EmployeeDetailFiles
-@using DocumentFormat.OpenXml.Drawing
-@using DocumentFormat.OpenXml.Office2010.Excel
+@using DocumentFormat.OpenXml.Wordprocessing
 @using DocumentFormat.OpenXml.Packaging
 @using System.IO
 @using BlazorDownloadFile
@@ -269,24 +268,20 @@
         StateHasChanged();
     }
 
-    //IN EMPLOYEEDETAIL.ProjectActivities findest du alle aktivitäten, um die zugehörigen projekte zu kriegen musst du dir das separat holen
-    
-    public async Task CreateDocument()
+        public async Task CreateDocument()
     {
-        string empTemplatePath = "wwwroot\\templates\\AvatiWorkerDoc.docx";
+        const string empTemplatePath = "wwwroot\\templates\\AvatiWorkerDoc.docx";
         var emp = _employeeService.GetEmployeeProfile(EmpId);
         var empDetail = _employeeDetailService.GetEmployeeDetail(emp.EmployeeID, PropId).Result;
         MemoryStream memStream = new MemoryStream();
         await using (FileStream fileStream = new FileStream(empTemplatePath, FileMode.Open, FileAccess.Read))
             await fileStream.CopyToAsync(memStream);
-        using (WordprocessingDocument empDoc = WordprocessingDocument.Open(memStream, true))
+        using (WordprocessingDocument employeeDoc = WordprocessingDocument.Open(memStream, true))
                 {
-                    var empBody = empDoc.MainDocumentPart.Document.Body;
+                    var empBody = employeeDoc.MainDocumentPart.Document.Body;
                     var empParagraphs = empBody.Descendants<Paragraph>().ToList();
-                    Console.WriteLine(empParagraphs.ToString());
                     foreach (var par in empParagraphs)
                     {
-                        Console.WriteLine("Haider");
                         foreach (var run in par.Descendants<Run>().ToList())
                         {
                             foreach (var text in run.Descendants<Text>().ToList())
@@ -295,7 +290,6 @@
                                 {
                                     case "Name":
                                         text.Text = text.Text.Replace("Name", emp.FirstName + " " + emp.LastName);
-                                        Console.WriteLine("Hurnesohn");
                                         break;
                                     case "numb":
                                         text.Text = text.Text.Replace("numb", empDetail.Rc.ToString());
@@ -346,11 +340,10 @@
                             }
                         }
                     }
-                    Console.WriteLine(empDoc.ToFlatOpcString());
-                    empDoc.Save();
-                    empDoc.Close();
+                    employeeDoc.Save();
+                    employeeDoc.Close();
                 }
-        var task = await _blazorDownloadFileService.DownloadFile("test.docx", memStream, "application/octet-stream");
+        var task = await _blazorDownloadFileService.DownloadFile("Mitarbeiter.docx", memStream, "application/octet-stream");
     }
 }
 
