@@ -17,15 +17,17 @@
 @inject IJSRuntime _jsRuntime
 
 <AuthorizeView Roles="SalesStaff,Administrator">
-    <NotAuthorized>
-        @if(true){_navigationManager.NavigateTo("/profile");}
-    </NotAuthorized>
-    <Authorized Context="authContext">
-        
+<NotAuthorized>
+    @if (true)
+    {
+        _navigationManager.NavigateTo("/profile");
+    }
+</NotAuthorized>
+<Authorized Context="authContext">
 
 
-<div class="modal @(_show ? "fade show" : "")" id="myModal" style="display: @(_show ? "block" : "none");">
-<div class="modal-dialog modal-xl col" style="height: 800px; width: 1500px">
+<div class="modal @(_show ? "fade show" : "") overflow-auto" id="myModal" style="display: @(_show ? "block" : "none"); max-height: 90%; width: 100%">
+<div class="modal-dialog modal-xl col">
 <div class="modal-content col">
 
 <div class="modal-header">
@@ -36,7 +38,7 @@
 </div>
 
 
-<div class="modal-body col" style="height: 800px; overflow-y: auto">
+<div class="modal-body col" style="max-height: 90%;">
 @if (PageIsLoaded)
 {
     <div class="container h-100 col">
@@ -147,7 +149,7 @@
                 <button class="btn btn-sm btn-outline-info  mb-1 mr-1" @onclick=@(() => { _searchService.AddRoleSearch(role); })>@role</button>
             }
         </div>
-         <button type="submit" id="submitQuery" @onclick=@(() => { CallSearch(); _searchService.TableIsVisible = true;}) class="btn btn-success col-2 mb-5">Suchen</button>
+        <button type="submit" id="submitQuery" @onclick=@(() => { CallSearch(); _searchService.TableIsVisible = true;}) class="btn btn-success col-2 mb-5">Suchen</button>
     </EditForm>
     @if (_searchService.TableIsVisible)
     {
@@ -165,7 +167,7 @@
             <h4 class="mb-3 font-weight-bold">Gefundene Mitarbeiter:</h4>
 
             <table class="table table-bordered table-striped text-center">
-                <thead>
+                <thead class="thead-dark">
                 <tr>
                     <th>Name</th>
                     <th>RC</th>
@@ -179,6 +181,78 @@
                 <tbody>
                 @foreach (var employee in SelectEmployees)
                 {
+                    @if (_chosenEmployees.Find(e => e.EmployeeID == employee.EmployeeID) == null)
+                    {
+                        <tr>
+                            <td class="font-weight-bold" style="width: 15%">@employee.FirstName @employee.LastName</td>
+                            <td style="width: 5%">
+
+                                <button type="button" class="btn btn-primary align-middle col">@employee.Rc</button>
+                            </td>
+                            <td style="width:20%">
+                                <div class="form-group row col">
+                                    @foreach (var hardskill in employee.Hardskills)
+                                    {
+                                        if (_searchService.HardskillsToSearchTemp.Exists(e => e.Description.Equals(hardskill.Description)))
+                                        {
+                                            <button class="btn btn-primary btn-sm mr-1 mb-1">@hardskill.Description</button>
+                                        }
+                                    }
+                                </div>
+                            </td>
+                            <td style="width:20%">
+                                <div class="form-group row col">
+                                    @foreach (var softskill in employee.Softskills)
+                                    {
+                                        if (_searchService.SoftskillsToSearchTemp.Contains(softskill))
+                                        {
+                                            <button class="btn btn-secondary btn-sm mr-1 mb-1">@softskill</button>
+                                        }
+                                    }
+                                </div>
+                            </td>
+                            <td style="width: 20%">
+                                <div class="form-group row col">
+                                    @foreach (var role in employee.Roles)
+                                    {
+                                        if (_searchService.RolesToSearchTemp.Contains(role))
+                                        {
+                                            <button class="btn btn-secondary btn-sm mr-1 mb-1">@role</button>
+                                        }
+                                    }
+                                </div>
+                            </td>
+                            <td style="width: 10%" class="text-center">
+
+                                <button class="btn btn-sm btn-outline-success" @onclick=@(() => { _chosenEmployees.Add(employee); StateHasChanged(); })>Hinzufügen</button>
+
+
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+
+            <h4 class="mb-3 font-weight-bold">Bereits im Projekt befindliche Mitarbeiter:</h4>
+
+            <table class="table table-bordered table-striped text-center">
+                <thead class="thead-light">
+                <tr>
+                    <th>Name</th>
+                    <th>RC</th>
+                    <th>Hardskills</th>
+                    <th>Softskills</th>
+                    <th>Rolle(n)</th>
+                    <th>Hinzufügen</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var employee in SelectEmployees)
+                {
+                    @if (_chosenEmployees.Find(e => e.EmployeeID == employee.EmployeeID) != null)
+                    {
                     <tr>
                         <td class="font-weight-bold" style="width: 15%">@employee.FirstName @employee.LastName</td>
                         <td style="width: 5%">
@@ -219,21 +293,15 @@
                             </div>
                         </td>
                         <td style="width: 10%" class="text-center">
-
-
-                            @if (_chosenEmployees.Find(e => e.EmployeeID == employee.EmployeeID) == null)
-                            {
-                                <button class="btn btn-sm btn-success" @onclick=@(() => { _chosenEmployees.Add(employee); })>Hinzufügen</button>
-                            }
-                            else
-                            {
-                                <button class="btn btn-sm btn-outline-secondary" @onclick=@(() => { _chosenEmployees.Remove(employee); })>Hinzugefügt</button>
-                            }
+                            
+                                <button class="btn btn-sm btn-outline-danger" @onclick=@(() => { _chosenEmployees.RemoveAll(e => e.EmployeeID == employee.EmployeeID); StateHasChanged(); })>Löschen</button>
+                            
 
 
                         </td>
                     </tr>
                 }
+                    }
                 </tbody>
             </table>
         }
@@ -274,13 +342,13 @@ else
 {
     <div class="modal-backdrop fade show"></div>
 }
-    
-    
-            
-        </Authorized>
-    </AuthorizeView>
 
-    @code{
+
+
+</Authorized>
+</AuthorizeView>
+
+@code{
 
     [Parameter]
     public Project Project { get; set; }
@@ -311,7 +379,7 @@ else
 
     public void CallSearch()
     {
-        SelectEmployees = _searchService.SearchEmployee(_searchService.EmployeeName, _searchService.SoftskillsToSearch, _searchService.HardskillsToSearch, _searchService.RolesToSearch, _searchService.CategoriesToSearch, new List<Tuple<string, int>>());
+        SelectEmployees = _searchService.SearchEmployee(_searchService.EmployeeName, _searchService.SoftskillsToSearch, _searchService.HardskillsToSearch, _searchService.RolesToSearch, _searchService.CategoriesToSearch, new List<Tuple<string, int>>(), false);
         _searchService.EmptyQuery();
     }
 

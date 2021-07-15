@@ -6,7 +6,6 @@ using AVATI.Data;
 using AVATI.Data.EmployeeDetailFiles;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-
 namespace UnitTests
 {
     public class EmployeeDetailTest

@@ -22,7 +22,7 @@ namespace AVATI.Data
         {
             _configuration = configuration;
         }
-        
+
         public List<Employee> EmployeeList { get; set; }
         public IEmployeeService EmployeeService { get; set; }
 
@@ -53,7 +53,7 @@ namespace AVATI.Data
         public List<string> Softskills { get; set; } = new List<string>();
         public List<string> Roles { get; set; } = new List<string>();
         public List<Hardskill> Hardskills { get; set; } = new List<Hardskill>();
-        
+
         public List<Hardskill> Categories { get; set; } = new List<Hardskill>();
 
         //In order to only display the relevant Attributes
@@ -62,7 +62,7 @@ namespace AVATI.Data
         public List<string> SoftskillsToSearchTemp { get; set; } = new List<string>();
         public List<string> RolesToSearchTemp { get; set; } = new List<string>();
         public List<Hardskill> HardskillsToSearchTemp { get; set; } = new List<Hardskill>();
-        
+
         public List<Hardskill> CategoriesToSearchTemp { get; set; } = new List<Hardskill>();
 
         // List to Compare with current Proposal
@@ -70,7 +70,7 @@ namespace AVATI.Data
         public List<Employee> AlreadyAddedEmployees { get; set; } = new List<Employee>();
 
         //All Functions
-        
+
 
         public void AddSoftSearch(string softskill)
         {
@@ -89,7 +89,7 @@ namespace AVATI.Data
                 HardskillsToDisplay.Remove(hardskill);
             }
         }
-        
+
         public void AddRoleSearch(string role)
         {
             if (!RolesToSearch.Contains(role))
@@ -107,6 +107,7 @@ namespace AVATI.Data
                 CategoriesToDisplay.Remove(hardskill);
             }
         }
+
         public void EmptyQuery()
         {
             SoftskillsToSearch?.Clear();
@@ -154,7 +155,8 @@ namespace AVATI.Data
             RolesToDisplay = new List<string>(Roles);
         }
 
-        public void InitAttributes(List<string> softskills, List<string> roles, List<Hardskill> hardskills, List<Hardskill> hardskillCat)
+        public void InitAttributes(List<string> softskills, List<string> roles, List<Hardskill> hardskills,
+            List<Hardskill> hardskillCat)
         {
             EmployeeService = new EmployeeService(_configuration);
             EmployeeList = EmployeeService.GetAllEmployees();
@@ -171,7 +173,7 @@ namespace AVATI.Data
 
 
         public List<Employee> SearchEmployee(string name, List<string> Softskill, List<Hardskill> Hardskill,
-            List<string> Rolle, List<Hardskill> Categories, List<Tuple<string, int>> foundCats
+            List<string> Rolle, List<Hardskill> Categories, List<Tuple<string, int>> foundCats, bool forProposal
         )
         {
             PerfectMatch = false;
@@ -184,48 +186,55 @@ namespace AVATI.Data
             List<Employee> EmployeeListToReturn = new List<Employee>();
             foreach (var employee in EmployeeList)
             {
-                int numberOfMatches = 0;
-                if (name != null && String.Concat(employee.FirstName, " " + employee.LastName).Contains(name, StringComparison.OrdinalIgnoreCase))
+                if (employee.IsActive || !forProposal)
                 {
-                    ++numberOfMatches;
-                }
-
-                foreach (var soft in Softskill)
-                {
-                    if (employee.Softskills.Contains(soft))
+                    int numberOfMatches = 0;
+                    if (name != null && String.Concat(employee.FirstName, " " + employee.LastName)
+                        .Contains(name, StringComparison.OrdinalIgnoreCase))
                     {
                         ++numberOfMatches;
                     }
-                }
 
-                foreach (var hard in Hardskill)
-                {
-                    if (employee.Hardskills.Exists(e => e.Description.Equals(hard.Description)))
+                    foreach (var soft in Softskill)
+                    {
+                        if (employee.Softskills.Contains(soft))
+                        {
+                            ++numberOfMatches;
+                        }
+                    }
+
+                    foreach (var hard in Hardskill)
+                    {
+                        if (employee.Hardskills.Exists(e => e.Description.Equals(hard.Description)))
+                        {
+                            ++numberOfMatches;
+                        }
+                    }
+
+                    foreach (var category in foundCats.FindAll(e => e.Item2 == employee.EmployeeID))
                     {
                         ++numberOfMatches;
                     }
-                }
 
-                foreach (var category in foundCats.FindAll(e => e.Item2 == employee.EmployeeID))
-                {
-                    ++numberOfMatches;
-                }
-                foreach (var role in Rolle)
-                {
-                    if (employee.Roles.Contains(role))
+                    foreach (var role in Rolle)
                     {
-                        ++numberOfMatches;
+                        if (employee.Roles.Contains(role))
+                        {
+                            ++numberOfMatches;
+                        }
                     }
-                }
 
-                if (numberOfMatches != 0)
-                {
-                    TempEmployee.Add(new SearchService(_configuration) {Employee = employee, EmployeeId = employee.EmployeeID, Priority = numberOfMatches});
-                }
+                    if (numberOfMatches != 0)
+                    {
+                        TempEmployee.Add(new SearchService(_configuration)
+                            {Employee = employee, EmployeeId = employee.EmployeeID, Priority = numberOfMatches});
+                    }
 
-                if (numberOfMatches == Hardskill.Count + Softskill.Count + Rolle.Count + Categories.Count + ((name == null) ? 0 : 1))
-                {
-                    PerfectMatch = true;
+                    if (numberOfMatches == Hardskill.Count + Softskill.Count + Rolle.Count + Categories.Count +
+                        ((name == null) ? 0 : 1))
+                    {
+                        PerfectMatch = true;
+                    }
                 }
             }
 
@@ -241,6 +250,7 @@ namespace AVATI.Data
             {
                 Console.WriteLine(emp.Roles.First());
             }
+
             return EmployeeListToReturn;
         }
     }

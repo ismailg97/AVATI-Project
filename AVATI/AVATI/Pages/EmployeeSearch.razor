@@ -20,11 +20,14 @@
 
 
 <AuthorizeView Roles="SalesStaff">
-    <NotAuthorized>
-        @if(true){_navigation.NavigateTo("/profile");}
-    </NotAuthorized>
-    <Authorized Context="authContext">
-        
+<NotAuthorized>
+    @if (true)
+    {
+        _navigation.NavigateTo("/profile");
+    }
+</NotAuthorized>
+<Authorized Context="authContext">
+
 
 
 @if (_pageIsLoaded)
@@ -185,6 +188,10 @@
                     {
                         <th>Hinzufügen</th>
                     }
+                    else
+                    {
+                        <th>Status</th>
+                    }
 
                 </tr>
                 </thead>
@@ -205,7 +212,7 @@
                                     {
                                         if (_searchService.HardskillsToSearchTemp.Exists(e => e.Description.Equals(hardskill.Description)))
                                         {
-                                            <button class="btn btn-success btn-sm mr-1 mb-1">@hardskill.Description</button>
+                                            <button class="btn btn-success btn-sm mr-1 mb-1">@hardskill.Description | @employee.HardSkillLevel.Find(e => e.Item1.Description.Equals(hardskill.Description)).Item2</button>
                                         }
                                     }
                                     @foreach (var tuple in _employeesWithCategories.FindAll(e => e.Item2 == employee.EmployeeID))
@@ -246,6 +253,25 @@
                                         <button class="btn btn-outline-success" id="employeeAdd" @onclick=@(() => { _proposal.AddEmployee(Id, employee.EmployeeID, employee.Rc); employeeList.Add(employee); StateHasChanged(); })>
                                             <span class="oi oi-plus"></span>
                                         </button>
+                                    }
+
+
+                                </td>
+                            }
+                            else
+                            {
+                                <td style="width: 10%" class="text-center">
+                                    @if (employee.IsActive)
+                                    {
+                                    <button class="btn btn-success" id="employeeStatus" @onclick=@(() => { _employee.EditStatus(employee.EmployeeID, false); employee.IsActive = false; })>
+                                        Aktiv
+                                    </button>
+                                    }
+                                    else
+                                    {
+                                    <button class="btn btn-danger" id="employeeStatus" @onclick=@(() => { _employee.EditStatus(employee.EmployeeID, true); employee.IsActive = true; })>
+                                        Inaktiv
+                                    </button>
                                     }
                                 </td>
                             }
@@ -293,7 +319,7 @@
                             {
                                 if (_searchService.HardskillsToSearchTemp.Exists(e => e.Description.Equals(hardskill.Description)))
                                 {
-                                    <button class="btn btn-success btn-sm mr-1 mb-1">@hardskill.Description</button>
+                                    <button class="btn btn-success btn-sm mr-1 mb-1">@hardskill.Description | @employee.HardSkillLevel.Find(e => e.Item1.Description.Equals(hardskill.Description)).Item2</button>
                                 }
                             }
                             @foreach (var tuple in _employeesWithCategories.FindAll(e => e.Item2 == employee.EmployeeID))
@@ -357,12 +383,12 @@ else
         </div>
     </div>
 }
-    
-    
-        </Authorized>
-    </AuthorizeView>
 
-    @code {
+
+</Authorized>
+</AuthorizeView>
+
+@code {
 
     [Parameter]
     public int Id { get; set; }
@@ -371,6 +397,7 @@ else
     public int ProjectId { get; set; }
 
     private bool _pageIsLoaded;
+    
 
     private Data.Proposal _proposalToCompare;
 
@@ -429,7 +456,7 @@ else
                 }
             }
         }
-        SelectEmployees = _searchService.SearchEmployee(_searchService.EmployeeName, _searchService.SoftskillsToSearch, _searchService.HardskillsToSearch, _searchService.RolesToSearch, _searchService.CategoriesToSearch, _employeesWithCategories);
+        SelectEmployees = _searchService.SearchEmployee(_searchService.EmployeeName, _searchService.SoftskillsToSearch, _searchService.HardskillsToSearch, _searchService.RolesToSearch, _searchService.CategoriesToSearch, _employeesWithCategories, (Id != 0) ? true : false);
         _searchService.EmptyQuery();
         _pageIsLoaded = true;
         _searchService.TableIsVisible = true;
