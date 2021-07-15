@@ -34,6 +34,9 @@
                     <div class="modal fade show d-block overflow-auto" style="min-width:100%; max-height: 100%" data-bs-backdrop="static" id="exampleModal" role="dialog">
                         <div class="modal-dialog" role="document" style="min-width:100%">
                             <div class="modal-content bg-light text-black">
+                                @if (_isLoaded)
+                                {
+                                    
                                 <div class="modal-header">
                                     <h5 class="modal-title font-weight-bolder text-center" id="titleLabel">Detailansicht <small>Attribute per Knopfdruck auswählen (<span style="color: green">Grün</span> = Ausgewählt)</small></h5>
                                     <button type="button" class="close" aria-label="Close" @onclick=@Close>
@@ -173,7 +176,7 @@
                                 <div class="modal-footer justify-content-between">
                                     <div>
                                         <button class="btn btn-secondary" @onclick=@(CreateDocument)>Dokument <span class="ml-1 oi oi-document"></span></button>
-                                        <label class="col-form-label ml-2 font-weight-bold">Rabatt (in %): </label>
+                                        <label class="col-form-label ml-2 font-weight-bold col-1">Rabatt (in %): </label>
                                         <InputNumber min="0" max="100" class="form-control-lg col-3" @bind-Value="EmployeeDetailView.Discount"/>
                                         <label class="col-form-label ml-2 font-weight-bold"> Wochenstunden: </label>
                                         <InputNumber min="0" max="70" class="form-control-lg col-2" @bind-Value="EmployeeDetailView.Hours"/>
@@ -186,6 +189,20 @@
                                         <button type="submit" class="btn btn-success">Speichern</button>
                                     </div>
                                 </div>
+                                }
+                                else
+                                {
+                                    <div class="d-flex flex-column align-items-center justify-content-center">
+                                        <div class="row">
+                                            <div class="spinner-border" role="status">
+                                                <span class="sr-only">Loading...</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <strong>Lade...</strong>
+                                        </div>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -215,6 +232,8 @@
     [Parameter]
     public ProposalOverview Abstract { get; set; }
 
+    private bool _isLoaded = false;
+    
     private bool _visibleSafe;
 
     public int PropId { get; set; }
@@ -230,20 +249,17 @@
         ShowBackdrop = !ShowBackdrop;
         EmpId = employeeId;
         PropId = proposalId;
-        Task<Data.EmployeeDetailFiles.EmployeeDetail> detail = _employeeDetailService.GetEmployeeDetail(employeeId, proposalId);
+        var detail = _employeeDetailService.GetEmployeeDetail(employeeId, proposalId);
         EmployeeDetailView = await detail;
         _projectsWithActivities = _activity.GetActivitiesWithProjectsGrouped(EmpId);
         EmployeeAttributes = _employeeService.GetEmployeeProfile(EmpId);
-        Console.WriteLine(EmpId.ToString() + PropId.ToString());
-        await _employeeDetailService.GetEmployeeDetail(EmpId, PropId);
-        StateHasChanged();
+        _isLoaded = true;
     }
 
     private void Close()
     {
         ShowEdit = !ShowEdit;
         ShowBackdrop = !ShowBackdrop;
-        StateHasChanged();
     }
 
     private async void UpdateEmployeeDetail()
@@ -251,10 +267,8 @@
         await _employeeDetailService.UpdateEmployeeDetail(EmpId, PropId, EmployeeDetailView);
         _visibleSafe = true;
         StateHasChanged();
-        await Task.Delay(1000);
+        await Task.Delay(500);
         _visibleSafe = false;
-        Console.WriteLine(EmployeeDetailView.Discount);
-
         StateHasChanged();
     }
 

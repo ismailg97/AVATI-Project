@@ -442,7 +442,11 @@
 
     private async Task ShowDetail(int employeeId, int proposalId)
     {
+        _isLoaded = false;
+        StateHasChanged();
         await _employeeDetail.Show(employeeId, proposalId);
+        _isLoaded = true;
+        StateHasChanged();
     }
 
     private void ShowRcEdit(Proposal prop, int employeeId, int response)
