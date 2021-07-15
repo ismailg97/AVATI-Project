@@ -1,4 +1,5 @@
 ﻿@using AVATI.Data
+@using DocumentFormat.OpenXml.Drawing
 @using Microsoft.AspNetCore.Http
 
 @inject IProjektService _projektService
@@ -9,103 +10,135 @@
 @inject IEmployeeService _employeeService
 @inject IBasicDataService _basicDataService
 
-<h2>Projektübersicht</h2>
+<div>
+    Anzeigen der Projekte, bei denen Sie sich noch keine Projekttätigkeit zugewiesen haben: 
+    @if (_justShowNone)
+    {
+        <button type="button" @onclick="() => { _justShowNone = false; }" class="btn btn-info">Anzeigen abbrechen</button>
+    }
+    else
+    {
+        <button type="button" @onclick="HandleClickZeigen" class="btn btn-info">Zeigen</button>
+    }
+    <a style="color: darkred; margin-left: 10px; font-weight: 650;" class="alert alert-danger @(!_showAlert ? "collapse" : "")" role="alert">
+                Es existiert kein Projekt, bei welchem Sie sich zu keiner Projekttätigkeit zugewiesen haben
+            </a>
+</div>
+
+<div class="form-group col-6">
+        <span class="oi oi-magnifying-glass"></span>
+        <input id="FilterField" class="form-control" type="text" placeholder="Filter nach Projekttiteln..."
+               @bind="Filter"
+               @bind:event="oninput">
+</div>
 
 <table class="table">
-    <thead class="thead-dark">
-    <tr>
-        <th class="tTitle">Projekt</th>
-        <th>Projekttätigkeiten</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var projectId in _projectWithGroupedActivities.Keys)
-    {
-        var project = _projektService.GetProject(projectId);
-        var projectTitle = project.Projecttitel;
-        var projectDescription = project.Projectdescription;
-        <tr>
-            <td class="tTitle"><div class="alert alert-secondary"><b style="color: #545454;">Titel:</b> <a>@projectTitle</a><p/>
-                <b style="color: #545454;">Beschreibung:</b> <a>@projectDescription</a><p/>
-                </div>
-                @if (_activitiesToChoose[projectId].Any())
-                {
-                    <div class="alert alert-success" style="font-size: small;">
-                        Tätigkeit hinzufügen
-                        <button type="button" class="btn btn-success" @onclick="() => ShowPopUpCreate(projectId)"> <span class="oi oi-plus"></span></button>
+    @if (_projects.Exists(x => EqualsFilter(x.Projecttitel)))
+        {
+            <thead class="thead-dark">
+            <tr>
+                <th class="tTitle">Projekt</th>
+                <th>Projekttätigkeiten</th>
+            </tr>
+            </thead>
+            <tbody>
+        @foreach (var projectId in _projectWithGroupedActivities.Keys)
+        {
+            var project = _projects.Find(x => x.ProjectID == projectId);
+            var projectTitle = project.Projecttitel;
+            var projectDescription = project.Projectdescription;
+            if (!EqualsFilter(projectTitle)) continue;
+            if (_justShowNone && _projectWithGroupedActivities[projectId].Any()) continue;
+            <tr>
+                <td class="tTitle">
+                    <div class="alert alert-secondary"><b style="color: #545454;">Titel:</b> <a>@projectTitle</a>
+                        <p/>
+                        <b style="color: #545454;">Beschreibung:</b> <a>@projectDescription</a>
+                        <p/>
                     </div>
-                }
-                else
-                {
-                    <div class="alert alert-danger" style="font-size: small;">
-                        Sie können sich keiner Tätigkeit mehr zuweisen
-                    </div>
-                }
-            </td>
-            <td>
-                @if (!_projectWithGroupedActivities[projectId].Any())
-                {
-                    <a>[Sie haben sich noch keiner Tätigkeit zugewiesen]</a>
-                }
-                else
-                {
-                    <table class="table table-striped">
-                        <thead class="tWrite">
-                        <tr>
-                            <th class="tActivity">Tätigkeit</th>
-                            <th class="tHardskills">Hardskills</th>
-                            <th class="tSoftskills">Softskills</th>
-                            <th class="tEdit"></th>
-                            <th class="tDelte"></th>
-                        </tr>
-                        </thead>
-
-                        <tbody>
-                        @foreach (var activity in _projectWithGroupedActivities[projectId])
-                        {
+                    @if (_activitiesToChoose[projectId].Any())
+                    {
+                        <div class="alert alert-success" style="font-size: small; font-weight: 600 !important; color: darkgreen;">
+                            Tätigkeit hinzufügen
+                            <button type="button" class="btn btn-success" @onclick="() => ShowPopUpCreate(projectId)"> <span class="oi oi-plus"></span></button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger" style="font-size: small; font-weight: 600 !important; color: darkred;">
+                            Sie können sich keiner Tätigkeit mehr zuweisen
+                        </div>
+                    }
+                </td>
+                <td>
+                    @if (!_projectWithGroupedActivities[projectId].Any())
+                    {
+                        <a>[Sie haben sich noch keiner Tätigkeit zugewiesen]</a>
+                    }
+                    else
+                    {
+                        <table class="table table-striped">
+                            <thead class="tWrite">
                             <tr>
-                                <td class="tActivity">@activity.Description</td>
-                                <td class="tHardskills">
-                                    @if (activity.HardSkills.Any())
-                                    {
-                                        foreach (var hardskill in activity.HardSkills)
-                                        {
-                                            <button type="button" class="btn hardskill btn-sm">@hardskill</button>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <small style="color: #818181;">[Keine Hardskills zugewiesen]</small>
-                                    }
-                                </td>
-                                <td class="tSoftskills">
-                                    @if (activity.SoftSkills.Any())
-                                    {
-                                        @foreach (var softskill in activity.SoftSkills)
-                                        {
-                                            <button type="button" class="btn softskill btn-sm">@softskill</button>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <small style="color: #818181;">[Keine Softskills zugewiesen]</small>
-                                    }
-                                </td>
-                                <td class="tEdit">
-                                    <button type="button" class="btn btn-secondary" @onclick="() => ShowPopUpEdit(activity)"><span class="oi oi-pencil" aria-hidden="true"></span></button>
-                                </td>
-                                <td class="tDelte">
-                                    <button type="button" class="btn btn-danger" @onclick="() => ShowPopUpDelete(activity)"><span class="oi oi-trash"></span></button>
-                                </td>
+                                <th class="tActivity">Tätigkeit</th>
+                                <th class="tHardskills">Hardskills</th>
+                                <th class="tSoftskills">Softskills</th>
+                                <th class="tEdit"></th>
+                                <th class="tDelte"></th>
                             </tr>
-                        }
-                        </tbody>
-                    </table>
-                }
-            </td>
-        </tr>
-    }
-    </tbody>
+                            </thead>
+
+                            <tbody>
+                            @foreach (var activity in _projectWithGroupedActivities[projectId])
+                            {
+                                <tr>
+                                    <td class="tActivity">@activity.Description</td>
+                                    <td class="tHardskills">
+                                        @if (activity.HardSkills.Any())
+                                        {
+                                            foreach (var hardskill in activity.HardSkills)
+                                            {
+                                                <button type="button" class="btn hardskill btn-sm">@hardskill</button>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <small style="color: #818181;">[Keine Hardskills zugewiesen]</small>
+                                        }
+                                    </td>
+                                    <td class="tSoftskills">
+                                        @if (activity.SoftSkills.Any())
+                                        {
+                                            @foreach (var softskill in activity.SoftSkills)
+                                            {
+                                                <button type="button" class="btn softskill btn-sm">@softskill</button>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <small style="color: #818181;">[Keine Softskills zugewiesen]</small>
+                                        }
+                                    </td>
+                                    <td class="tEdit">
+                                        <button type="button" class="btn btn-secondary" @onclick="() => ShowPopUpEdit(activity)"><span class="oi oi-pencil" aria-hidden="true"></span></button>
+                                    </td>
+                                    <td class="tDelte">
+                                        <button type="button" class="btn btn-danger" @onclick="() => ShowPopUpDelete(activity)"><span class="oi oi-trash"></span></button>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+        }
+        else
+        {
+            <div style="color: darkred; font-weight: 700;" class="alert alert-danger">Kein Ergebnis</div>
+        }
 </table>
 
 
@@ -275,15 +308,20 @@
     private ProjectActivity _projectActivity;
 
     private Dictionary<int, List<string>> _activitiesToChoose;
+    private List<Project> _projects;
     
-    //private string Filter { get; set; }
-    
+    private string Filter { get; set; }
+
+    private bool _showAlert;
+    private bool _justShowNone;
     private bool _showCreate;
     private bool _showEdit;
     private bool _showDelete;
     
     protected override void OnInitialized()
     {
+        _showAlert = false;
+        _justShowNone = false;
         _showCreate = false;
         _showEdit = false;
         _showDelete = false;
@@ -388,9 +426,11 @@
 
     private void GetActivitiesOfProjectEmployee()
     {
-        _activitiesToChoose = new();
+        _activitiesToChoose = new Dictionary<int, List<string>>();
+        _projects = new List<Project>();
         foreach (var projectId in _projectWithGroupedActivities.Keys)
         {
+            _projects.Add(_projektService.GetProject(projectId));
             var activitiesOfProject = _projectActivityService.GetActivitiesDesOfProject(projectId);
             var activitiesAlreadyIn = _projectWithGroupedActivities[projectId];
             var result = new List<string>();
@@ -401,6 +441,38 @@
             }
             _activitiesToChoose.Add(projectId, result);
         }
+    }
+
+    private bool EqualsFilter(string title)
+    {
+        return string.IsNullOrEmpty(Filter) || title.Contains(Filter, StringComparison.OrdinalIgnoreCase);
+    }
+    
+    private async void ShowingAlert()
+    {
+        _showAlert = true;
+        StateHasChanged();
+        await Task.Delay(3000);
+        _showAlert = false;
+        StateHasChanged();
+    }
+
+    private bool AnyContainsNoActivity()
+    {
+        foreach (var activities in _projectWithGroupedActivities.Values)
+        {
+            if (!activities.Any()) 
+                return true;
+        }
+        return false;
+    }
+
+    private void HandleClickZeigen()
+    {
+        if (!AnyContainsNoActivity())
+            ShowingAlert();
+        else
+            _justShowNone = true;
     }
 
 }

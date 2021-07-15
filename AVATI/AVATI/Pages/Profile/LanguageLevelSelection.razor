@@ -106,8 +106,7 @@
 
   public void Save(LanguageLevel level)
   {
-    
-    if (Employee.LanguageName.Contains(_languageName))
+    if (Employee.LanguageName.Contains(_languageName) || Employee.Language.Exists(x => x.Item1 == _languageName))
       Employee.Language.RemoveAll(x => x.Item1 == _languageName);
     else
       Employee.LanguageName.Add(_languageName);
