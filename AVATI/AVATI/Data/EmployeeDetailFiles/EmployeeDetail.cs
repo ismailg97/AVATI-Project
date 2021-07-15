@@ -32,5 +32,10 @@ namespace AVATI.Data.EmployeeDetailFiles
         
         [Range(0, 100, ErrorMessage = "Rabat muss zwischen 0 und 100% liegen")]
         public int Discount;
+        
+        [Required]
+        [NotNull]
+        [Range(0, 100)]
+        public double Hours;
     }
 }

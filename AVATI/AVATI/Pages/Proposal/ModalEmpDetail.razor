@@ -170,9 +170,11 @@
                         </div>
                         <div class="modal-footer justify-content-between">
                             <div>
-                                <button class="btn btn-secondary" @onclick=@(Close)>Dokument <span class="ml-1 oi oi-document"></span></button>
-                                <label class="col-form-label ml-2 font-weight-bold">Rabatt (in %) </label>
+                                <button class="btn btn-secondary" @onclick=@(CreateDocument)>Dokument <span class="ml-1 oi oi-document"></span></button>
+                                <label class="col-form-label ml-2 font-weight-bold">Rabatt (in %): </label>
                                 <InputNumber min="0" max="100" class="form-control-lg col-3" @bind-Value="EmployeeDetailView.Discount"/>
+                                <label class="col-form-label ml-2 font-weight-bold"> Wochenstunden: </label>
+                                <InputNumber min="0" max="70" class="form-control-lg col-2" @bind-Value="EmployeeDetailView.Hours"/>
                             </div>
                             <div>
                                 <button type="button" class="btn btn-danger" @onclick=@(Close) data-dismiss="modal">Abbrechen</button>
