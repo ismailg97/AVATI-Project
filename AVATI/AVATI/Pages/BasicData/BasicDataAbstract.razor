@@ -82,12 +82,12 @@
                     <td id="S @softskill">@softskill</td>
                     <td class="smalltd">
                         <button class="btn btn-secondary" id="EditS @softskill" @onclick="() => PopEditBasicData(softskill, BasicDataType.SoftSkill)">
-                            <span class="oi oi-pencil" aria-hidden="true"></span>Editieren
+                            <a><span class="oi oi-pencil" aria-hidden="true" style="display: inline;"></span> <a style="display: inline;"> Editieren</a></a>
                         </button>
                     </td>
                     <td class="smalltd">
                         <button class="btn btn-danger" id="DeleteS @softskill" @onclick="() => PopDelete(softskill, BasicDataType.SoftSkill)">
-                            <span class="oi oi-trash"></span>Löschen
+                            <a><span class="oi oi-trash" style="display: inline;"></span> <a style="display: inline;"> Löschen</a></a>
                         </button>
                     </td>
                 </tr>
@@ -177,12 +177,12 @@
                     <td id="H @hardskill">@hardskill</td>
                     <td class="smalltd">
                         <button class="btn btn-secondary" id="EditH @hardskill" @onclick="() => PopEditHardskill(hardskill)">
-                            <span class="oi oi-pencil" aria-hidden="true"></span>Editieren
+                            <span class="oi oi-pencil" aria-hidden="true"></span> Editieren
                         </button>
                     </td>
                     <td class="smalltd">
                         <button class="btn btn-danger" id="DeleteH @hardskill" @onclick="() => PopDelete(hardskill, BasicDataType.HardSkill)">
-                            <span class="oi oi-trash"></span>Löschen
+                            <span class="oi oi-trash"></span> Löschen
                         </button>
                     </td>
                 </tr>
@@ -281,13 +281,13 @@
                             if (!_showSubCat[hardskillcat])
                             {
                                 <button class="btn btn-success" id="GetView @hardskillcat" @onclick="() => ShowingSubCat(hardskillcat)" type="button">
-                                    <span class="oi oi-expand-down"></span>Ansicht
+                                    <span class="oi oi-expand-down"></span> Ansicht
                                 </button>
                             }
                             else
                             {
                                 <button class="btn btn-outline-success" id="StopView @hardskillcat" @onclick="() => ShowingSubCat(hardskillcat)" type="button">
-                                    <span class="oi oi-expand-up"></span>Ansicht stoppen
+                                    <span class="oi oi-expand-up"></span> Ansicht stoppen
                                 </button>
                             }
                         }
@@ -302,7 +302,7 @@
                         else
                         {
                             <button class="btn btn-secondary" id="EditC @hardskillcat" @onclick="() => ShowingEditCat(hardskillcat)">
-                                <span class="oi oi-pencil" aria-hidden="true"></span>Editieren
+                                <span class="oi oi-pencil" aria-hidden="true"></span> Editieren
                             </button>
                         }
                     </td>
@@ -378,12 +378,12 @@
                     <td id="F @field">@field</td>
                     <td class="smalltd">
                         <button id="EditF @field" class="btn btn-secondary" @onclick="() => PopEditBasicData(field, BasicDataType.Field)">
-                            <span class="oi oi-pencil" aria-hidden="true"></span>Editieren
+                            <span class="oi oi-pencil" aria-hidden="true"></span> Editieren
                         </button>
                     </td>
                     <td class="smalltd">
                         <button id="DeleteF @field" class="btn btn-danger" @onclick="() => PopDelete(field, BasicDataType.Field)">
-                            <span class="oi oi-trash"></span>Löschen
+                            <span class="oi oi-trash"></span> Löschen
                         </button>
                     </td>
                 </tr>
@@ -443,12 +443,12 @@
                     <td id="R @role">@role</td>
                     <td class="smalltd">
                         <button class="btn btn-secondary" id="EditR @role" @onclick="() => PopEditBasicData(role, BasicDataType.Role)">
-                            <span class="oi oi-pencil" aria-hidden="true"></span>Editieren
+                            <span class="oi oi-pencil" aria-hidden="true"></span> Editieren
                         </button>
                     </td>
                     <td class="smalltd">
                         <button class="btn btn-danger" id="DeleteR @role" @onclick="() => PopDelete(role, BasicDataType.Role)">
-                            <span class="oi oi-trash"></span>Löschen
+                            <span class="oi oi-trash"></span> Löschen
                         </button>
                     </td>
                 </tr>
