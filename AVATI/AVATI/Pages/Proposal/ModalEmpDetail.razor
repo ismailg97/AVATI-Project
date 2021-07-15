@@ -35,15 +35,15 @@
                         <div class="modal-dialog" role="document" style="min-width:100%">
                             <div class="modal-content bg-light text-black">
                                 <div class="modal-header">
-                                    <h5 class="modal-title font-weight-bolder text-center" id="titleLabel">Detailansicht <small>(Attribute per Knopfdruck auswählen)</small></h5>
+                                    <h5 class="modal-title font-weight-bolder text-center" id="titleLabel">Detailansicht <small>Attribute per Knopfdruck auswählen (<span style="color: green">Grün</span> = Ausgewählt)</small></h5>
                                     <button type="button" class="close" aria-label="Close" @onclick=@Close>
                                         <span aria-hidden="true">×</span>
                                     </button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="row justify-content-md-center">
-                                        <div class="card text-black border-dark ml-5" style="width: 25%; max-width: 20%">
-                                            <img class="card-img-top" src="@_employeeService.GetEmployeeProfile(EmpId).Image" style="border:2px solid black; min-height: 30%; max-height: 30%; max-width: 100%" alt=""/>
+                                        <div class="card text-black border-dark ml-5" style="width: 20%; max-width: 20%">
+                                            <img class="card-img-top" src="@_employeeService.GetEmployeeProfile(EmpId).Image" style="border:2px solid black; min-height: 60%; max-height: 60%; max-width: 100%" alt=""/>
                                             <div class="card-body pb-3 pt-3">
                                                 <h5 class="card-title">@_employeeService.GetEmployeeProfile(EmpId).FirstName @_employeeService.GetEmployeeProfile(EmpId).LastName</h5>
                                                 <div class="card-title text-left">
@@ -73,24 +73,24 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="card col border-secondary ml-2" style="max-width: 25%;">
+                                        <div class="card col border-secondary ml-2" style="max-width: 30%;">
                                             <div class="card-header text-left bg-transparent border-secondary">Projekt(e) + Tätigkeit(en)</div>
                                             <div class="card-body text-left overflow-auto">
                                                 @foreach (var proj in _projectsWithActivities.Keys)
                                                 {
                                                     if (_projectsWithActivities[proj].Any())
                                                     {
-                                                        <h5 class="font-weight-bolder" style=@(EmployeeDetailView.ProjectActivities.Count(e => e.ProjectID == proj) == 0 ? "color: red" : "color: green")>Projekt: @_project.GetProject(proj).Projecttitel</h5>
+                                                        <h5 class="">Projekt: <span style=@(EmployeeDetailView.ProjectActivities.Count(e => e.ProjectID == proj) == 0 ? "color: black" : "color: green; font-weight: bold")>@_project.GetProject(proj).Projecttitel</span></h5>
                                                         <div class="row mb-2 mt-2">
                                                             @foreach (var projectActivity in _projectsWithActivities[proj])
                                                             {
                                                                 if (EmployeeDetailView.ProjectActivities.Exists(e => e.ProjectActivityID == projectActivity.ProjectActivityID))
                                                                 {
-                                                                    <button type="button" class="btn btn-success btn-sm" @onclick=@(() => { EmployeeDetailView.ProjectActivities.RemoveAll(e => e.ProjectActivityID == projectActivity.ProjectActivityID); })>@projectActivity.Description</button>
+                                                                    <button type="button" class="btn btn-success btn-sm mr-1" @onclick=@(() => { EmployeeDetailView.ProjectActivities.RemoveAll(e => e.ProjectActivityID == projectActivity.ProjectActivityID); })>@projectActivity.Description</button>
                                                                 }
                                                                 else
                                                                 {
-                                                                    <button type="button" class="btn btn-outline-dark btn-sm" @onclick=@(() => { EmployeeDetailView.ProjectActivities.Add(projectActivity); })>@projectActivity.Description</button>
+                                                                    <button type="button" class="btn btn-outline-dark btn-sm mr-1" @onclick=@(() => { EmployeeDetailView.ProjectActivities.Add(projectActivity); })>@projectActivity.Description</button>
                                                                 }
                                                             }
                                                         </div>

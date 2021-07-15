@@ -15,6 +15,7 @@ namespace AVATI.Data
         [StringLength(70, ErrorMessage = "Projekttitel ist zu lang (70 Zeichen)")]
         public string Projecttitel { get; set; } //yes
         
+        
         [StringLength(150, ErrorMessage = "Projektbeschreibung ist zu lang (150 Zeichen)")]
         public string Projectdescription { get; set; } //yes
         public Dictionary<string, string> Projectpurpose { get; set; } = new Dictionary<string, string>();
