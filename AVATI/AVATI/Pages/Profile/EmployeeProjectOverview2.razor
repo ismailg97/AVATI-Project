@@ -60,7 +60,7 @@
                     {
                         <div class="alert alert-success" style="font-size: small; font-weight: 600 !important; color: darkgreen;">
                             Tätigkeit hinzufügen
-                            <button type="button" class="btn btn-success" @onclick="() => ShowPopUpCreate(projectId)"> <span class="oi oi-plus"></span></button>
+                            <button type="button" class="btn btn-success" @onclick="() => ShowPopUpCreate(projectId)"><MudIcon Icon="@Icons.Filled.Add"/></button>
                         </div>
                     }
                     else
@@ -120,10 +120,10 @@
                                         }
                                     </td>
                                     <td class="tEdit">
-                                        <button type="button" class="btn btn-secondary" @onclick="() => ShowPopUpEdit(activity)"><span class="oi oi-pencil" aria-hidden="true"></span></button>
+                                        <button type="button" class="btn btn-secondary" @onclick="() => ShowPopUpEdit(activity)"><MudIcon Icon="@Icons.Filled.Brush"/></button>
                                     </td>
                                     <td class="tDelte">
-                                        <button type="button" class="btn btn-danger" @onclick="() => ShowPopUpDelete(activity)"><span class="oi oi-trash"></span></button>
+                                        <button type="button" class="btn btn-danger" @onclick="() => ShowPopUpDelete(activity)"><MudIcon Icon="@Icons.Filled.Delete"/></button>
                                     </td>
                                 </tr>
                             }
@@ -151,11 +151,11 @@
             <div class="modal-content">
                 <div class="modal-header flex-column">
                     @if(_showCreate) {
-                        <h4 style="word-break: break-word;" class="modal-title col-12 text-center">Hinzufügen einer Projekttätigkeit im Projekts "<b>@projecttitle</b>"</h4>
+                        <h4 style="word-break: break-word;" class="modal-title col-12 text-center">Hinzufügen einer Projekttätigkeit im Projekts <br>"<b>@projecttitle</b>"</h4>
                     }
                     else
                     {
-                        <h4 style="word-break: break-word;" class="modal-title col-12 text-center">Aktivität "<b>@_projectActivity.Description</b>" des Projekts "@projecttitle" bearbeiten</h4>
+                        <h4 style="word-break: break-word;" class="modal-title col-12 text-center">Aktivität <br>"<b>@_projectActivity.Description</b>" <br/>des Projekts <br><b>"@projecttitle"</b> <br>bearbeiten</h4>
                     }
                 </div>
                 <div class="modal-body">
@@ -262,10 +262,10 @@
 
                     <div class="float-right">
                         <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { _showCreate = _showEdit = false; })">
-                            <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
+                            <MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen
                         </button>
                         <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="@(_showCreate ? CreateProjectActivity: EditProjectActivity)">
-                            <span class="oi oi-document" aria-hidden="true"></span> Speichern
+                            <MudIcon Icon="@Icons.Filled.Save"/> Speichern
                         </button>
                     </div>
                 </div>
@@ -290,8 +290,8 @@
                 </div>
             
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => { _showDelete = false; }">Abbrechen</button>
-                    <button type="button" class="btn btn-success" @onclick="DeleteProjectActivity">Ok</button>
+                    <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="() => { _showDelete = false; }"><MudIcon Icon="@Icons.Filled.Cancel"/>Abbrechen</button>
+                    <button type="button" class="btn btn-danger" @onclick="DeleteProjectActivity"><MudIcon Icon="@Icons.Filled.Delete"/>Löschen</button>
                 </div>
             </div>
         </div>

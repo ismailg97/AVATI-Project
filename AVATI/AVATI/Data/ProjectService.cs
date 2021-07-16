@@ -184,10 +184,10 @@ namespace AVATI.Data
             Project temp;
             using IDbConnection db = GetConnection();
             temp = new Project();
-            temp.Projecttitel = db.QuerySingle<string>("SELECT Projecttitle from Project WHERE ProjectId = @proId",
-                new {proId = projectId});
             temp.Projectdescription = db.QuerySingle<string>(
                 "SELECT Projectdescription from Project WHERE ProjectId = @proId",
+                new {proId = projectId});
+            temp.Projecttitel = db.QuerySingle<string>("SELECT Projecttitle from Project WHERE ProjectID = @proId",
                 new {proId = projectId});
             temp.Projectbeginning = db.QuerySingle<DateTime>(
                 "SELECT Projectbegin from Project WHERE ProjectId = @proId",

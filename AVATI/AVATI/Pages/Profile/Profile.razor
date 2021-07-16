@@ -17,8 +17,7 @@
 
     </NotAuthorized>
     <Authorized>
-
-
+        
         <h3 class="text-center">@Emp.FirstName @Emp.LastName</h3>
         <hr/>
         <div class="container backdrop emp-profile">
@@ -53,6 +52,7 @@
                 </div>
                 <!------ Edit Profile Button ---------->
                 <button type="button" class="btn btn-info" style="height: 40px;" @onclick="() => { NavToUpdate(); }">
+                    <MudIcon Icon="@Icons.Filled.Brush"/> 
                     Profil bearbeiten
                 </button>
             </div>
@@ -64,12 +64,12 @@
                     <!------ Hard Skills ---------->
                     <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider col-12"></div>
                     <div class="form-group col m-2 ">
-                        <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollHardSkill(); })"><span class="oi oi-list" aria-hidden="true"></span> Hard Skills</button>
+                        <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollHardSkill(); })"><MudIcon Icon="@Icons.Filled.ViewList"/> Hard Skills</button>
                         <div class="card-text @(_booleanHardSkill ? "" : "collapse")">
                             <table class="table table-striped">
                                 <tr>
-                                    <th>Beschreibung</th>
-                                    <th>Level</th>
+                                    <th class="thead-dark">Beschreibung</th>
+                                    <th class="thead-dark">Level</th>
                                 </tr>
                                 @foreach (var hardskill in Emp.HardSkillLevel)
                                 {
@@ -83,7 +83,7 @@
                     </div>
                     <!------ Soft Skills ---------->
                     <div class="form-group col m-2 ">
-                        <button type="button" class="form-group btn btn-outline-secondary text-left" @onclick="(() => { CollSoftSkill(); })"><span class="oi oi-list" aria-hidden="true"></span> Soft Skills</button>
+                        <button type="button" class="form-group btn btn-outline-secondary text-left" @onclick="(() => { CollSoftSkill(); })"><MudIcon Icon="@Icons.Filled.ViewList"/> Soft Skills</button>
                         <div class="card-text @(_booleanSoftSkill ? "" : "collapse")">
                             <table class="table table-striped">
                                 @foreach (var softskill in Emp.Softskills)
@@ -101,7 +101,7 @@
                     <!------ Rollen ---------->
                     <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider col-12"></div>
                     <div class="form-group col m-2 ">
-                        <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollRole(); })"><span class="oi oi-list" aria-hidden="true"></span> Rollen</button>
+                        <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollRole(); })"><MudIcon Icon="@Icons.Filled.ViewList"/> Rollen</button>
                         <div class="card-text @(_booleanRole ? "" : "collapse")">
                             <ul class="list-group mb-3 text-left">
                                 <table class="table table-striped">
@@ -116,7 +116,7 @@
                         </div>
                     </div>
                     <div class="form-group col m-2">
-                        <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollField(); })"><span class="oi oi-list" aria-hidden="true"></span> Branchenwissen</button>
+                        <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollField(); })"><MudIcon Icon="@Icons.Filled.ViewList"/> Branchenwissen</button>
                         <div class="card-text @(_booleanField ? "" : "collapse")">
                             <ul class="list-group text-left">
                                 @if (Emp.Field.Any())
@@ -138,7 +138,7 @@
                 <div class="form-group row">
                     <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider col-12"></div>
                     <div class="form-group col m-2">
-                        <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollLang(); })"><span class="oi oi-list" aria-hidden="true"></span> Sprachen</button>
+                        <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollLang(); })"><MudIcon Icon="@Icons.Filled.ViewList"/> Sprachen</button>
                         <div class="card-text @(_booleanLang ? "" : "collapse")">
                             @if (Emp.Language.Any())
                             {
@@ -165,7 +165,7 @@
 
                     <!------ Projects ---------->
                     <div class="form-group col m-2">
-                        <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollProj(); })"><span class="oi oi-list" aria-hidden="true"></span> Projekte</button>
+                        <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollProj(); })"><MudIcon Icon="@Icons.Filled.ViewList"/> Projekte</button>
                         <div class="card-text @(_booleanProj ? "" : "collapse")">
                             <table class="table align-middle">
 

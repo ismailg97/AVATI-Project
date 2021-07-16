@@ -73,7 +73,7 @@ else
                     }
                 </div>
                 <button class="btn btn-info col" type="button" @onclick="() => { PopAddFieldToProject(); }">
-                    <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span> Edit Branchen
+                    <MudIcon Icon="@Icons.Outlined.Brush"/> Branchen
                 </button>
             </div>
         </div>
@@ -104,15 +104,15 @@ else
         <label class="col-sm-3 col-form-label font-weight-bold">Mitarbeiter</label>
         <table class="table border-primary col">
             <colgroup>
-                            <col span="1" style="width: 50%"/><col span="1" style="width: 30%"/><col span="1" style="width: 20%"/>
-                        </colgroup>
+                <col span="1" style="width: 50%"/><col span="1" style="width: 30%"/><col span="1" style="width: 20%"/>
+            </colgroup>
             <thead class="thead-dark">
             <tr>
                 <th scope="col" style="width: 50%">Mitarbeiter</th>
                 <th></th>
                 <th>
                     <div class="form-group m-0 p-0 text-right">
-                        <button type="button" class="btn btn-info text-right" @onclick="async () => { await _addEmployeeToProject.Showing(); }">+ Mitarbeiter</button>
+                        <button type="button" class="btn btn-info text-right" @onclick="async () => { await _addEmployeeToProject.Showing(); }"><MudIcon Icon="@Icons.Filled.Add"/> Mitarbeiter</button>
                     </div>
                 </th>
                 
@@ -134,7 +134,7 @@ else
                     <td></td>
                     <td>
                         <button type="button" class="btn btn-danger" @onclick="() => { PopUpDeleteConfirmationEmployee(emp); }">
-                            <span class="oi oi-trash" aria-hidden="true"></span>
+                            <MudIcon Icon="@Icons.Filled.Delete"/>
                         </button>
                     </td>
                     
@@ -150,15 +150,15 @@ else
         <label class="col-sm-3 col-form-label font-weight-bold">Projekttätigkeiten</label>
         <table class="table border-primary col">
             <colgroup>
-                            <col span="1" style="width: 30%"/><col span="1" style="width: 50%"/><col span="1" style="width: 20%"/>
-                        </colgroup>
+                <col span="1" style="width: 30%"/><col span="1" style="width: 50%"/><col span="1" style="width: 20%"/>
+            </colgroup>
             <thead class="thead-dark">
             <th scope="col">Tätigkeit</th>
             <th scope="col">Zugewiesene Mitarbeiter</th>
             <th scope="col">
                 <div class="form-group m-0 p-0 text-right">
                     <button type="button" class="btn btn-info text-right" @onclick="() => { _addProjectActivityToProject.Showing(); }">
-                        <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span> Projekttätigkeit
+                        <MudIcon Icon="@Icons.Outlined.Brush"/> Tätigkeit
                     </button>
                 </div>
             </th>
@@ -206,20 +206,9 @@ else
         <label class="col-sm-3 col-form-label font-weight-bold">Projektzwecke</label>
         <a style="position: relative;">
             <MudPopover Open="@_showErrorPurpose" Class="alert alert-danger" Style="width: 600px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
-                    @if (_whatToShow == 0)
-                    {
-                        <a>Hinzufügen bzw. Editiern misslungen, der Zweck exsistiert bereits im Projekt</a>
-                    } 
-                    else if (_whatToShow == 1)
-                    {
-                        <a>Hinzufügen bzw. Editieren misslungen, die Bezeichnung fehlt!</a>
-                    } 
-                    else if (_whatToShow == 2)
-                    {
-                        <a>Hinzufügen bzw. Editieren misslungen, die Bezeichnung ist zu lang (max. 150 Zeichen)!</a>
-                    }
+                Hinzufügen bzw. Ändern des Zwecks misslungen, Bezeichnung existiert bereits!
             </MudPopover>
-                </a>
+        </a>
         <table class="table border-primary col">
             <thead class="thead-dark">
             <th scope="col">Zweck</th>
@@ -229,7 +218,7 @@ else
                 @if (!_showAddPurpose)
                 {
                     <div class="form-group p-0 m-0 text-right">
-                        <button type="button" class="btn btn-info text-right" @onclick="() => { _showAddPurpose = true; }">+ Projektzweck</button>
+                        <button type="button" class="btn btn-info text-right" @onclick="() => { _showAddPurpose = true; }"><MudIcon Icon="@Icons.Filled.Add"/> Zweck</button>
                     </div>
                 }
             </th>
@@ -261,13 +250,13 @@ else
                         </select>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-danger" @onclick="StopAddingPurpose">
-                            <span class="oi oi-circle-x" aria-hidden="true"></span>
+                        <button type="button" class="btn btn-success" @onclick="AddPurpose">
+                           <MudIcon Icon="@Icons.Filled.Save"/>
                         </button>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-success" @onclick="AddPurpose">
-                            <span class="oi oi-document" aria-hidden="true"></span>
+                        <button type="button" class="btn btn-danger" @onclick="StopAddingPurpose">
+                            <MudIcon Icon="@Icons.Filled.Cancel"/>
                         </button>
                     </td>
 
@@ -289,13 +278,13 @@ else
                         }
 
                         <td>
-                            <button type="button" class="btn btn-secondary" @onclick="() => { _showEditPurpose[purpose.Key] = true; }">
-                                <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span>
+                            <button type="button" class="btn btn-info" @onclick="() => { _showEditPurpose[purpose.Key] = true; }">
+                                <MudIcon Icon="@Icons.Filled.Brush"/>
                             </button>
                         </td>
                         <td>
                             <button type="button" class="btn btn-danger" @onclick="() => Project.Projectpurpose.Remove(purpose.Key)">
-                                <span class="oi oi-trash" aria-hidden="true"></span>
+                                <MudIcon Icon="@Icons.Filled.Delete"/>
                             </button>
                         </td>
                     </tr>
@@ -318,12 +307,12 @@ else
                         </td>
                         <td>
                             <button type="button" class="btn btn-success" @onclick="() => { EditPurpose(purpose.Key); }">
-                                <span class="oi oi-document" aria-hidden="true"></span>
+                                <MudIcon Icon="@Icons.Filled.Save"/>
                             </button>
                         </td>
                         <td>
                             <button type="button" class="btn btn-danger" @onclick="() => { _showEditPurpose[purpose.Key] = false; _purposeKeyEdit[purpose.Key] = purpose.Key; _purposeValueEdit[purpose.Key] = purpose.Value;}">
-                                <span class="oi oi-circle-x" aria-hidden="true"></span>
+                                <MudIcon Icon="@Icons.Filled.Cancel"/>
                             </button>
                         </td>
                     </tr>
@@ -335,66 +324,67 @@ else
     <ValidationSummary/>
     <div class="form-group text-right">
         <button type="button" class="btn btn-danger" @onclick="NavigateToProjectoverview">
-            <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
+            <MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen
         </button>
-        <button type="submit" class="btn btn-success" @onclick="() => _show = !_show">
-            <span class="oi oi-document" aria-hidden="true"></span> Speichern
+        <button type="button" class="btn btn-success" @onclick="() => _show = !_show">
+            <MudIcon Icon="@Icons.Filled.Save"/> Speichern
         </button>
     </div>
     </div>
     </div>
+    
+    @if (_show)
+    {
+        <div class="modal fade show d-block" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content bg-light">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Sind Sie sicher?</h3>
+                        <button type="button" class="close" data-dismiss="modal" @onclick="Showing">
+                            <span aria-hidden="true">x</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                            <label>Wollen Sie Ihre Änderungen für "@Project.Projecttitel" übernehmen?</label>
+                        </div>
+                    <div class="modal-footer">
+                        <div class="form-group ml-5">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing"><MudIcon Icon="@Icons.Filled.Cancel"/> Nein</button>
+                            <button type="submit" class="btn btn-success"><MudIcon Icon="@Icons.Filled.Check"/> Ja</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
     </EditForm>
 }
 
-@if (_show)
-{
-    <div class="modal fade show d-block" id="myModal">
-        <div class="modal-dialog">
-            <div class="modal-content bg-light">
-                <div class="modal-header">
-                    <h3 class="modal-title">Sind Sie sicher?</h3>
-                    <button type="button" class="close" data-dismiss="modal" @onclick="Showing">
-                        <span aria-hidden="true">x</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                        <label>Wollen Sie Ihre Änderungen für "@Project.Projecttitel" übernehmen?</label>
-                    </div>
-                <div class="modal-footer">
-                    <div class="form-group ml-5">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing"><span class="oi oi-circle-x" aria-hidden="true"></span> Nein</button>
-                        <button type="submit" class="btn btn-success" @onclick="() => { NavigateToProjectoverview(); _projectService.UpdateProject(Project); }"><span class="oi oi-document" aria-hidden="true"></span> Ja</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-}
 @if (_showDeleteConfirmation)
-{
-    <div class="modal fade show d-block" id="myModal">
-        <div class="modal-dialog">
-            <div class="modal-content bg-light">
-                <div class="modal-header">
-                    <h3 class="modal-title">Sind Sie sicher?</h3>
-                    <button type="button" class="close" data-dismiss="modal" @onclick="Showing2">
-                        <span aria-hidden="true">x</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                        <label>Wollen Sie "@EmployeeToDelete.FirstName @EmployeeToDelete.LastName" wirklich aus dem Projekt löschen?</label>
+    {
+        <div class="modal fade show d-block" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content bg-light">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Sind Sie sicher?</h3>
+                        <button type="button" class="close" data-dismiss="modal" @onclick="Showing2">
+                            <span aria-hidden="true">x</span>
+                        </button>
                     </div>
-                <div class="modal-footer">
-                    <div class="form-group ml-5">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing2"><span class="oi oi-circle-x" aria-hidden="true"></span> Nein</button>
-                        <button type="submit" class="btn btn-success" @onclick="() => { DeleteEmployee(EmployeeToDelete); _showDeleteConfirmation = !_showDeleteConfirmation; }"><span class="oi oi-document" aria-hidden="true"></span> Ja</button>
+                    <div class="modal-body">
+                            <label>Wollen Sie "@EmployeeToDelete.FirstName @EmployeeToDelete.LastName" wirklich aus dem Projekt löschen?</label>
+                        </div>
+                    <div class="modal-footer">
+                        <div class="form-group ml-5">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing2"><MudIcon Icon="@Icons.Filled.Cancel"/> Nein</button>
+                            <button type="button" class="btn btn-success" @onclick="() => { DeleteEmployee(EmployeeToDelete); _showDeleteConfirmation = !_showDeleteConfirmation; }"><MudIcon Icon="@Icons.Filled.Check"/> Ja</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-}
-
+    }
 @if (_show)
 {
     <div class="modal-backdrop fade show"></div>
@@ -423,8 +413,6 @@ else
     private string _newPurposeKey;
     private string _newPurposeValue;
 
-    private int _whatToShow;
-
     private Dictionary<string, bool> _showEditPurpose;
     private Dictionary<string, string> _purposeKeyEdit;
     private Dictionary<string, string> _purposeValueEdit;
@@ -447,19 +435,11 @@ else
     public Employee EmployeeToDelete { get; set; }
     private bool _showDeleteConfirmation = false;
     
-    private async void ShowErrorMessage(int whatToShow)
-    {
-        _whatToShow = whatToShow;
-        _showErrorPurpose = true;
-        StateHasChanged();
-        await Task.Delay(3000);
-        _showErrorPurpose = false;
-        StateHasChanged();
-    }
 
     private void Save()
     {
         _projectService.UpdateProject(Project);
+        _navigationManager.NavigateTo("/Projektübersicht");
         StateHasChanged();
     }
 
@@ -471,7 +451,6 @@ else
 
     protected override void OnInitialized()
     {
-        _whatToShow = -1;
         _showErrorPurpose = false;
         _showAddPurpose = false;
         _showEditPurpose = new Dictionary<string, bool>();
@@ -515,7 +494,7 @@ else
         return list.Exists(x => trimDesc.Equals(x.Replace(" ", ""), StringComparison.OrdinalIgnoreCase));
     }
 
-    private void EditPurpose(string purpose)
+    private async void EditPurpose(string purpose)
     {
         var newKey = _purposeKeyEdit[purpose];
         var newValue = _purposeValueEdit[purpose] == "" ? null : _purposeValueEdit[purpose];
@@ -527,24 +506,15 @@ else
             return;
         }
         
-        if (string.IsNullOrEmpty(newKey) || string.IsNullOrWhiteSpace(newKey))
-        {
-            ShowErrorMessage(1);
-            return;
-        }
-
-        if (newKey.Length > 150)
-        {
-            ShowErrorMessage(2);
-            return;
-        }
-        
         if (AlreadyExists(newKey))
         {
-            ShowErrorMessage(0);
+            _showErrorPurpose = true;
+            StateHasChanged();
+            await Task.Delay(3000);
+            _showErrorPurpose = false;
+            StateHasChanged();
             return;
         }
-
         Project.Projectpurpose.TryAdd(newKey, newValue);
         _showEditPurpose.TryAdd(newKey, false);
         _purposeKeyEdit.TryAdd(newKey, newKey);
@@ -557,28 +527,20 @@ else
         StateHasChanged();
     }
 
-    private void AddPurpose()
+    private async void AddPurpose()
     {
-        if (string.IsNullOrEmpty(_newPurposeKey) || string.IsNullOrWhiteSpace(_newPurposeKey))
-        {
-            ShowErrorMessage(1);
-            return;
-        }
-
-        if (_newPurposeKey.Length > 150)
-        {
-            ShowErrorMessage(2);
-            return;
-        }
-        
         if (AlreadyExists(_newPurposeKey))
         {
-            ShowErrorMessage(0);
+            _showErrorPurpose = true;
+            StateHasChanged();
+            await Task.Delay(3000);
+            _showErrorPurpose = false;
+            StateHasChanged();
+            _showAddPurpose = false;
+            _newPurposeKey = "";
+            _newPurposeValue = "";
             return;
         }
-
-        
-        
         Project.Projectpurpose.TryAdd(_newPurposeKey, _newPurposeValue);
         _showEditPurpose.TryAdd(_newPurposeKey, false);
         _purposeKeyEdit.TryAdd(_newPurposeKey, _newPurposeKey);
