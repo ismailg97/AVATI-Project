@@ -8,7 +8,11 @@ namespace AVATI.Data
 {
     [DateTimeValidationAttribute]
     public class Project
-    {
+    
+    { /// <summary>
+      /// Diese Klasse benutzt einer <see cref="List{T}"/>
+      /// </summary>
+      
         public int ProjectID { get; set; }
         
         [StringLength(70, ErrorMessage = "Projekttitel ist zu lang (70 Zeichen)")] [Required(ErrorMessage = "Titel ist erforderlich")]
