@@ -58,11 +58,15 @@
 
     @if (_show[0])
     {
-        <div class="form-group col-8">
-            <span class="oi oi-magnifying-glass"></span>
-            <input id="FilterSoftskill" class="form-control" type="text" placeholder="Filter..."
-                   @bind="Filter[0]"
-                   @bind:event="oninput">
+        <div class="form-group row col-8">
+            <label for="FilterSoftskill" class="col-sm-1 col-form-label mt-sm-3 ml-n4">
+                <MudIcon Icon="@Icons.Filled.Search" style="color: black;"/>
+            </label>
+            <div class="col-sm-11 col-form-label ml-xl-n5 mt-sm-1">
+                <input id="FilterSoftskill" class="form-control" type="text" placeholder="Filter..."
+                       @bind="Filter[0]"
+                       @bind:event="oninput">
+            </div>
         </div>
         if (_softskills.Any(x => IsVisible(x, 0)))
         {
@@ -82,12 +86,16 @@
                     <td id="S @softskill">@softskill</td>
                     <td class="smalltd">
                         <button class="btn btn-secondary" id="EditS @softskill" @onclick="() => PopEditBasicData(softskill, BasicDataType.SoftSkill)">
-                            <a><span class="oi oi-pencil" aria-hidden="true" style="display: inline;"></span> <a style="display: inline;"> Editieren</a></a>
+                            <a>
+                                <span class="oi oi-pencil" aria-hidden="true" style="display: inline;"></span> <a style="display: inline;"> Editieren</a>
+                            </a>
                         </button>
                     </td>
                     <td class="smalltd">
                         <button class="btn btn-danger" id="DeleteS @softskill" @onclick="() => PopDelete(softskill, BasicDataType.SoftSkill)">
-                            <a><span class="oi oi-trash" style="display: inline;"></span> <a style="display: inline;"> Löschen</a></a>
+                            <a>
+                                <span class="oi oi-trash" style="display: inline;"></span> <a style="display: inline;"> Löschen</a>
+                            </a>
                         </button>
                     </td>
                 </tr>
@@ -138,16 +146,26 @@
     }
     else if (_show[1])
     {
-        <div class="form-group col-8">
-            <span class="oi oi-magnifying-glass"></span>
-            <input id="FilterHardskill" class="form-control" type="text" placeholder="Filtern nach Hardskills..."
-                   @bind="Filter[1]"
-                   @bind:event="oninput">
+        <div class="form-group row col-8">
+            <label for="FilterHardskill" class="col-sm-1 col-form-label mt-sm-3 ml-n4">
+                <MudIcon Icon="@Icons.Filled.Search" style="color: black;"/>
+            </label>
+            <div class="col-sm-11 col-form-label ml-xl-n5 mt-sm-1">
+                <input id="FilterHardskill" class="form-control" type="text" placeholder="Filtern nach Hardskills..."
+                       @bind="Filter[1]"
+                       @bind:event="oninput">
+            </div>
         </div>
-        <div class="form-group col-8">
-            <span class="oi oi-magnifying-glass"></span>
-            <input id="FilterHardskillCategorys" class="form-control" type="text" placeholder="Filtern nach Hardskillkategorien..."
-                   @bind="Filter[5]" @bind:event="oninput">
+
+
+        <div class="form-group row col-8">
+            <label for="FilterHardskillCategorys" class="col-sm-1 col-form-label mt-sm-3 ml-n4">
+                <MudIcon Icon="@Icons.Filled.Search" style="color: black;"/>
+            </label>
+            <div class="col-sm-11 col-form-label ml-xl-n5 mt-sm-1">
+                <input id="FilterHardskillCategorys" class="form-control" type="text" placeholder="Filtern nach Hardskillkategorien..."
+                       @bind="Filter[5]" @bind:event="oninput">
+            </div>
         </div>
         @if (_hardskills != null && _hardskills.Any(x => IsVisible(x, 1)))
         {
@@ -241,11 +259,15 @@
     }
     else if (_show[2])
     {
-        <div class="form-group col-8">
-            <span class="oi oi-magnifying-glass"></span>
-            <input id="FilterCategory" class="form-control" type="text" placeholder="Filter..."
-                   @bind="Filter[2]"
-                   @bind:event="oninput">
+        <div class="form-group row col-8">
+            <label for="FilterCategory" class="col-sm-1 col-form-label mt-sm-3 ml-n4">
+                <MudIcon Icon="@Icons.Filled.Search" style="color: black;"/>
+            </label>
+            <div class="col-sm-11 col-form-label ml-xl-n5 mt-sm-1">
+                <input id="FilterCategory" class="form-control" type="text" placeholder="Filter..."
+                       @bind="Filter[2]"
+                       @bind:event="oninput">
+            </div>
         </div>
         @if (_allRoots != null && _allRoots.Any(x => IsVisible(x, 2)))
         {
@@ -352,11 +374,15 @@
 </h3>
 @if (_show[3])
 {
-    <div class="form-group col-6">
-        <span class="oi oi-magnifying-glass"></span>
-        <input id="FilterField" class="form-control" type="text" placeholder="Filter..."
-               @bind="Filter[3]"
-               @bind:event="oninput">
+    <div class="form-group row col-6">
+        <label for="FilterField" class="col-sm-1 col-form-label mt-sm-3 ml-n4">
+            <MudIcon Icon="@Icons.Filled.Search" style="color: black;"/>
+        </label>
+        <div class="col-sm-11 col-form-label ml-xl-n5 mt-sm-1">
+            <input id="FilterField" class="form-control" type="text" placeholder="Filter..."
+                   @bind="Filter[3]"
+                   @bind:event="oninput">
+        </div>
     </div>
     <table class="table align-middle mb-5 table-striped">
         @if (_fields.Any(x => IsVisible(x, 3)))
@@ -417,11 +443,15 @@
 </h3>
 @if (_show[4])
 {
-    <div class="form-group col-6">
-        <span class="oi oi-magnifying-glass"></span>
-        <input id="FilterRole" class="form-control" type="text" placeholder="Filter..."
-               @bind="Filter[4]"
-               @bind:event="oninput">
+    <div class="form-group row col-6">
+        <label for="FilterRole" class="col-sm-1 col-form-label mt-sm-3 ml-n4">
+            <MudIcon Icon="@Icons.Filled.Search" style="color: black;"/>
+        </label>
+        <div class="col-sm-11 col-form-label ml-xl-n5 mt-sm-1">
+            <input id="FilterRole" class="form-control" type="text" placeholder="Filter..."
+                   @bind="Filter[4]"
+                   @bind:event="oninput">
+        </div>
     </div>
     <table class="table align-middle mb-5 table-striped">
         @if (_roles.Any(x => IsVisible(x, 4)))
