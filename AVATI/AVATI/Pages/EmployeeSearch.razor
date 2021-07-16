@@ -261,20 +261,7 @@
                             else
                             {
                                 <td style="width: 10%" class="text-center">
-                                    
-                                    @if (employee.IsActive)
-                                    {
-                                        <button class="btn btn-success" id="employeeStatus" @onclick=@(() => { _employee.EditStatus(employee.EmployeeID, false); employee.IsActive = false; })>
-                                            Aktiv
-                                        </button>
-                                    }
-                                    else
-                                    {
-                                        <button class="btn btn-danger" id="employeeStatus" @onclick=@(() => { _employee.EditStatus(employee.EmployeeID, true); employee.IsActive = true; })>
-                                            Inaktiv
-                                        </button>
-                                    }
-                                    <MudSwitch @bind-Checked="employee.IsActive" Color="MudBlazor.Color.Success" class="ml-1" @onclick=@(() => { _employee.EditStatus(employee.EmployeeID, true); employee.IsActive = true; })></MudSwitch>
+                                    <MudSwitch @bind-Checked="employee.IsActive" Color="MudBlazor.Color.Success" class="ml-1" @onclick=@(() => {Emp = employee; _booleanStatus = true;})></MudSwitch>
                                 </td>
                             }
 
@@ -386,6 +373,37 @@ else
     </div>
 }
 
+@if (_booleanStatus)
+{
+    <div class="modal fade show" id="myModal" style=" display:block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Status verändern</h4>
+                    <button type="button" class="close" data-dismiss="modal" @onclick="() => {_booleanStatus = !_booleanStatus; StateHasChanged();}">&times;</button>
+                </div>
+                <div class="modal-body">
+                    @if (Emp.IsActive)
+                    {
+                        <text>Sind Sie sicher, dass ihren Status von Aktiv auf Inaktiv setzen wollen?</text>
+                    }
+                    else
+                    {
+                        <text>Sind Sie sicher, dass ihren Status von Inaktiv auf Aktiv setzen wollen?</text>
+                    }
+                       
+                    <!-- HTML to write -->
+                </div>
+                <div class="modal-footer" >
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => {_booleanStatus = !_booleanStatus; Emp.IsActive = !Emp.IsActive;  StateHasChanged(); }"><MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="() => {StateHasChanged(); _booleanStatus = !_booleanStatus; _employee.EditStatus(Emp.EmployeeID ,Emp.IsActive);}"><MudIcon Icon="@Icons.Filled.Save"/> Bestätigen</button>
+                </div>
+                   
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
 
 </Authorized>
 </AuthorizeView>
@@ -399,7 +417,9 @@ else
     public int ProjectId { get; set; }
 
     private bool _pageIsLoaded;
-    
+
+    private Employee Emp;
+    private bool _booleanStatus;
 
     private Data.Proposal _proposalToCompare;
 

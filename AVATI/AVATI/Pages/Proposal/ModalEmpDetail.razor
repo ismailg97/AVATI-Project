@@ -75,9 +75,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card col border-secondary ml-2" style="max-width: 30%;">
+                                    <div class="card col border-secondary ml-2 overflow-auto" style="max-width: 30%;">
                                         <div class="card-header text-left bg-transparent border-secondary">Projekt(e) + Tätigkeit(en)</div>
-                                        <div class="card-body text-left overflow-auto">
+                                        <div class="card-body text-left overflow-auto" style=" max-height: 80%">
                                             @foreach (var proj in _projectsWithActivities.Keys)
                                             {
                                                 if (_projectsWithActivities[proj].Any())
@@ -184,7 +184,7 @@
                                     <span class="oi oi-check"></span> Änderungen erfolgreich gespeichert!
                                 </div>
                                 <div class="alert alert-danger font-weight-bolder text-center @(!_visiblePrompt ? "collapse" : "")">
-                                    <span class="oi oi-warning"></span> Keine Attribute ausgewählt!
+                                    <span class="oi oi-warning"></span> Mind. eine Rolle notwendig!
                                 </div>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-danger mr-1" @onclick=@(Close) data-dismiss="modal">Abbrechen</button>
@@ -281,7 +281,7 @@
         const string empTemplatePath = "wwwroot\\templates\\AvatiWorkerDoc.docx";
         var emp = _employeeService.GetEmployeeProfile(EmpId);
         var empDetail = _employeeDetailService.GetEmployeeDetail(emp.EmployeeID, PropId).Result;
-        if (!empDetail.Fields.Any() && !empDetail.Roles.Any() && !empDetail.Hardskills.Any() && !empDetail.Languages.Any() && !empDetail.ProjectActivities.Any() && !empDetail.Softskills.Any())
+        if (!empDetail.Roles.Any())
         {
             _visiblePrompt = true;
             StateHasChanged();
