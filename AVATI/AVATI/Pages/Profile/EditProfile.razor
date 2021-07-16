@@ -38,7 +38,10 @@
                     <img class="rounded" src="@Emp.Image" style="margin-left: -45px" width="300" height="200" alt=""/>
                 }
                 <div class="file btn btn-lg btn-primary" style="margin-top: 50px; margin-left: -30px">
-                    <InputFile class="rounded" type="file" id="empImage" OnChange="HandlePhotoSelected" name="file"/>
+                    <container class="row">
+                        <MudIcon Icon="@Icons.Filled.AttachFile"/>
+                        <InputFile class="rounded" type="file" id="empImage" OnChange="HandlePhotoSelected" name="file"/>
+                    </container>
                 </div>
             </div>
         </div>
@@ -104,12 +107,12 @@
         <!------ Edit Profile Button ---------->
         <div class="form-group col">
             <button type="submit" class="form-group btn btn-success m-2">
-                <span class="oi oi-document" aria-hidden="true"></span> Bestätigen
+                <MudIcon Icon="@Icons.Filled.Save"/> Bestätigen
             </button>
 
             <!------ Return Button ---------->
             <button type="button" class="form-group btn btn-danger m-2" @onclick="() => { NavigateToProjectEdit(Emp.EmployeeID); }">
-                <span class="oi oi-x" aria-hidden="true"></span> Abbrechen
+                <MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen
             </button>
         </div>
     </div>
@@ -191,11 +194,11 @@
                 Weitere Hard Skills
                 @if (_booleanHardSkill)
                 {
-                    <span class="oi oi-expand-up"></span>
+                    <MudIcon Icon="@Icons.Filled.ExpandLess"/>
                 }
                 else
                 {
-                    <span class="oi oi-expand-down"></span>
+                    <MudIcon Icon="@Icons.Filled.ExpandMore"/>
                 }
             </button>
         </div>
@@ -496,8 +499,8 @@ else
                     <!-- HTML to write -->
                 </div>
                 <div class="modal-footer" >
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => {_booleanStatus = !_booleanStatus; StateHasChanged(); }">Abbrechen</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="() => {Emp.IsActive = !Emp.IsActive;  StateHasChanged();_booleanStatus = !_booleanStatus;}">Bestätigen</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => {_booleanStatus = !_booleanStatus; StateHasChanged(); }"><MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="() => {Emp.IsActive = !Emp.IsActive;  StateHasChanged();_booleanStatus = !_booleanStatus;}"><MudIcon Icon="@Icons.Filled.Save"/> Bestätigen</button>
                 </div>
                    
             </div>

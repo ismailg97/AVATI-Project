@@ -188,7 +188,6 @@
                             <tr>
                                 <td class="font-weight-bold" style="width: 15%">@employee.FirstName @employee.LastName</td>
                                 <td style="width: 5%">
-
                                     <button type="button" class="btn btn-primary align-middle col">@employee.Rc</button>
                                 </td>
                                 <td style="width:20%">
@@ -301,11 +300,7 @@
                             </div>
                         </td>
                         <td style="width: 10%" class="text-center">
-                            
-                                <button class="btn btn-sm btn-outline-danger" @onclick=@(() => { _chosenEmployees.RemoveAll(e => e.EmployeeID == employee.EmployeeID); StateHasChanged(); })>Löschen</button>
-                            
-
-
+                            <button class="btn btn-sm btn-outline-danger" @onclick=@(() => { _chosenEmployees.RemoveAll(e => e.EmployeeID == employee.EmployeeID); StateHasChanged(); })>Löschen</button>
                         </td>
                     </tr>
                 }
@@ -318,8 +313,8 @@
     @if (_searchService.TableIsVisible)
     {
         <div class="float-right mb-4">
-            <button class="btn btn-info mt-2" @onclick="Close">Abbrechen</button>
-            <button class="btn btn-success mt-2" @onclick="UpdateEmployees">Speichern</button>
+            <button class="btn btn-danger mt-2" @onclick="Close"><MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen</button>
+            <button class="btn btn-success mt-2" @onclick="UpdateEmployees"><MudIcon Icon="@Icons.Filled.Check"/> Speichern</button>
         </div>
     }
     </div>

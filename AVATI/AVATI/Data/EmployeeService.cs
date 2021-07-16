@@ -20,8 +20,8 @@ namespace AVATI.Data
 
         public EmployeeService(IConfiguration configuration)
         {
-            _projectActivityService = new ProjectActivityService2();
             _configuration = configuration;
+            _projectActivityService = new ProjectActivityService2(_configuration.GetConnectionString("AVATI-Database"));
         }
 
         public DbConnection GetConnection()
@@ -36,7 +36,7 @@ namespace AVATI.Data
         
         public EmployeeService(string connect)
         {
-            _projectActivityService = new ProjectActivityService2();
+            _projectActivityService = new ProjectActivityService2(connect);
             _connection = connect;
         }
 

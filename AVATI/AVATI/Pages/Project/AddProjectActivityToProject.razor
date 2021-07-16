@@ -30,66 +30,33 @@
                     <MudPopover Open="@_showError" Class="alert alert-danger" Style="width: 600px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
                         @if (_whatToShow == 0)
                         {
-                            <a>Hinzufügen misslungen, Aktiviät exsistiert bereits im Projekt</a>
+                            <a>Hinzufügen misslungen, die Aktiviät exsistiert bereits im Projekt</a>
                         } else if (_whatToShow == 1)
                         {
-                            <a>Hinzufügen misslungen, globale Aktivität exsistiert bereits!</a>
+                            <a>Hinzufügen misslungen, die globale Aktivität exsistiert bereits!</a>
                         }
                         else if (_whatToShow == 2)
                         {
-                            <a>Hinzufügen misslungen, Aktivität exsistiert bereits im Reiter "Zu entfernende Tätigkeiten"!</a>
+                            <a>Hinzufügen misslungen, die Aktivität exsistiert bereits im Reiter "Zu entfernende Tätigkeiten"!</a>
+                        }
+                        else if (_whatToShow == 3)
+                        {
+                            <a>Hinzufügen misslungen, die Bezeichnung fehlt!</a>
+                        }
+                        else if (_whatToShow == 4)
+                        {
+                            <a>Hinzufügen misslungen, die Bezeichnung ist zu lang (max. 150 Zeichen)!</a>
                         }
                     </MudPopover>
                 </a>
                     <div>
-                        @if (!_create)
-                        {
-                            <label class="form-label">Projekttätigkeit hinzufügen:</label>
-                            <button class="btn btn-success" @onclick=@(() => { _create = true; })> <span class="oi oi-plus"></span></button>
-                        }
-                        else
-                        {
-                            <input class="form-control" @bind="_createActivity"/>
-                            <div>
-                                <label class="form-label">Global hinzufügen: <button type="button" class="global inline" @onclick="() => AddActivity(true)">+</button></label>
-                                <label class="form-label">Lokal hinzufügen: <button type="button" class="local inline" @onclick="() => AddActivity(false)">+</button></label>
-                                <label class="form-label">Abbrechen: <button type="button" class="stop inline" @onclick=@(() => { _createActivity = ""; _create = false; })>&#10005;</button></label> 
-                            </div>
-                        }
-                    </div>
-                    <hr class="mx-2"/> 
-                    @if (_globalActivities.Any())
-                    {
-                        <label class="font-weight-bold">Tätigkeiten zur Auswahl stehend:</label>
-                        <div class="list-group col overflow-auto border-dark" style="height: 325px">
-                            
-                            @foreach (var activity in _globalActivities)
-                            {
-                                if (!_activitiesInProject.Contains(activity) && !_deleteActivities.Contains(activity))
-                                {
-                                    <button type="button" class="btn btn-outline-dark wordBreak" @onclick=@(() => { _activitiesInProject.Add(activity); })>@activity</button>
-                                }
-                            }
-                            
+                        <label class="form-label">Neue Tätigkeit erstellen:</label>
+                        <input class="form-control" @bind="_createActivity"/>
+                        <div>
+                            <label class="form-label"><a class="small">Global hinzufügen: <button type="button" class="global inline" @onclick="() => AddActivity(true)">+</button></a></label>
+                            <label class="form-label"><a class="small" >Lokal hinzufügen: <button type="button" class="local inline" @onclick="() => AddActivity(false)">+</button></a></label>
                         </div>
-                        <hr class="mx-2"/>
-                        <!--line divider -->
-                    }
-                    <label class="font-weight-bold ">Zu entfernende Tätigkeiten: </label>
-                    <div class="list-group col overflow-auto text-center border-dark" style="height: 325px">
-                        @foreach (var activity in _deleteActivities)
-                        {
-                            if (!_projectActivityService.AlreadyExistsGlobalActivity(activity))
-                            {
-                                <button type="button" class="btn btn-outline-danger wordBreak" @onclick=@(() => { _deleteActivities.Remove(activity); _activitiesInProject.Add(activity); })>@activity</button>
-                            }
-                            else
-                            {
-                                <button type="button" class="btn btn-outline-dark wordBreak" @onclick=@(() => { _deleteActivities.Remove(activity); _activitiesInProject.Add(activity); })>@activity</button>
-                            }
-                        }
                     </div>
-
                     <hr class="mx-2"/> <!--line divider -->
                     <label class="font-weight-bold ">Tätigkeiten im Projekt:</label>
                     <div class="list-group col overflow-auto text-center border-dark" style="height: 325px">
@@ -104,10 +71,43 @@
                                 <button type="button" class="btn btn-outline-dark wordBreak" @onclick="() => RemoveOfList(activity)">@activity</button>
                             }
                         }
+                        </div>
+                    
+                    <label class="font-weight-bold ">Zu entfernende Tätigkeiten: </label>
+                    <div class="list-group col overflow-auto text-center border-dark" style="height: 325px">
+                        @foreach (var activity in _deleteActivities)
+                        {
+                            if (!_projectActivityService.AlreadyExistsGlobalActivity(activity))
+                            {
+                                <button type="button" class="btn btn-outline-danger wordBreak" @onclick=@(() => { _deleteActivities.Remove(activity); _activitiesInProject.Add(activity); })>@activity</button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-outline-dark wordBreak" @onclick=@(() => { _deleteActivities.Remove(activity); _activitiesInProject.Add(activity); })>@activity</button>
+                            }
+                        }
                     </div>
+                    <hr class="mx-2"/> 
+                    @if (_globalActivities.Any())
+                    {
+                        <label class="font-weight-bold">Globale Tätigkeiten zum Hinzufügen:</label>
+                        <div class="list-group col overflow-auto border-dark" style="height: 325px">
+                            
+                            @foreach (var activity in _globalActivities)
+                            {
+                                if (!_activitiesInProject.Contains(activity) && !_deleteActivities.Contains(activity))
+                                {
+                                    <button type="button" class="btn btn-outline-dark wordBreak" @onclick=@(() => { _activitiesInProject.Add(activity); })>@activity</button>
+                                }
+                            }
+                            
+                        </div>
+                        <hr class="mx-2"/>
+                        <!--line divider -->
+                    }
                     <div class="div float-right">
-                        <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="Close">Abbrechen</button>
-                        <button type="button" class="btn btn-success" @onclick="Submit">Speichern</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Close"><MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen</button>
+                        <button type="button" class="btn btn-success" @onclick="Submit"><MudIcon Icon="@Icons.Filled.Check"/> Speichern</button>
                     </div>
                 </div>
                
@@ -139,7 +139,6 @@
     private bool _show = false;
 
     private string _createActivity;
-    private bool _create;
     private bool _showError;
     private int _whatToShow;
 
@@ -148,9 +147,8 @@
     
     public void Showing()
     {
-        _whatToShow = 0;
+        _whatToShow = -1;
         _showError = false;
-        _create = false;
         _deleteActivities = new List<string>();
         _addedActivities = new List<string>();
         _activitiesInProject = new List<string>(Project.ProjectActivities);
@@ -208,6 +206,18 @@
 
         private void AddActivity(bool isGlobal)
         {
+            if (string.IsNullOrEmpty(_createActivity) || string.IsNullOrWhiteSpace(_createActivity))
+            {
+                ShowErrorMessage(3);
+                return;
+            }
+            
+            if (_createActivity.Length > 150)
+            {
+                ShowErrorMessage(4);
+                return;
+            }
+            
             if (AlreadyExists(_createActivity, _activitiesInProject))
             {
                 ShowErrorMessage(0);
@@ -219,14 +229,15 @@
                 ShowErrorMessage(2);
                 return;
             }
+            
+            if (AlreadyExists(_createActivity, _globalActivities))
+            {
+                ShowErrorMessage(1);
+                return;
+            }
 
             if (isGlobal)
             {
-                if (AlreadyExists(_createActivity, _globalActivities))
-                {
-                    ShowErrorMessage(1);
-                    return;
-                }
                 _projectActivityService.AddGlobalProjectActivity(_createActivity);
                 _globalActivities = _projectActivityService.GetAllGlobalProjectActivities();
             }
@@ -234,7 +245,6 @@
             _addedActivities.Add(_createActivity);
             _activitiesInProject.Add(_createActivity);
             _createActivity = "";
-            _create = false;
             StateHasChanged();
         }
 
