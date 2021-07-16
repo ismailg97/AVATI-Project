@@ -552,7 +552,7 @@
         return element;
     }
 
-    public static Paragraph GenerateRoleListItem(string role)
+    public static Paragraph GenerateRoleList(string role)
     {
         var element = new Paragraph(
             new ParagraphProperties(new ParagraphStyleId() {Val = "Listenabsatz"}, new NumberingProperties(new NumberingLevelReference() {Val = 0}, new NumberingId() {Val = 3})),
@@ -560,12 +560,58 @@
         return element;
     }
 
-    public static Paragraph GenerateProjectActivityListItem(ProjectActivity projAct, string projTitle)
-    {
-        var element = new Paragraph(new ParagraphMarkRunProperties(new ParagraphStyleId() {Val = "Listenabsatz"}, new NumberingProperties(new NumberingLevelReference() {Val = 0}, new NumberingId() {Val = 3})),
-            new Run(new RunProperties(new RunFonts() {ComplexScriptTheme = ThemeFontValues.MinorHighAnsi}, new FontSize() {Val = "28"}),new Text(projTitle), new TabChar() ,new Text(projAct.Description)));
-        Console.WriteLine(projAct.Description);
-        return element;
+        public Table GenerateProjectActivityTable(EmployeeDetail emp, Dictionary<int, List<ProjectActivity>> dictionary)
+        {
+            var counter = 0;
+            var keyCollection = dictionary.Keys;
+            var projectTable = new Table();
+            var projectTableProp = new TableProperties(
+                new TableStyle() {Val = "EinfacheTabelle4"}, new TableWidth() {Type = TableWidthUnitValues.Dxa, Width = 9000.ToString()});
+            projectTable.AppendChild(projectTableProp);
+            var tableHead = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+            var leftHeadCell = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Double}), new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Center}), new Run(new RunProperties(new FontSize() {Val = 28.ToString()}), new Text("Projekttitel"))));
+            var rightHeadCell = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Double}), new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Center}), new Run(new RunProperties(new FontSize() {Val = 28.ToString()}), new Text("Projekttätigkeit(en)"))));
+            tableHead.Append(leftHeadCell, rightHeadCell);
+            projectTable.AppendChild(tableHead);
+            foreach (var key in keyCollection)
+            {
+                var projectActivities = dictionary[key];
+                foreach (var proj in projectActivities.ToList())
+                {
+                    if (emp.ProjectActivities.Exists(e => e.ProjectActivityID == proj.ProjectActivityID) == false)
+                        projectActivities.Remove(proj);
+                }
+                if (projectActivities.Count > 0)
+                {
+                    var projectTitle = _project.GetProject(projectActivities.First().ProjectID).Projecttitel;
+                    var tableRow = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+                    var leftCell = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single}), new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Center}), new Run(new RunProperties(new FontSize() {Val = 28.ToString()}), new Text(projectTitle))));
+                    var rightCell = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single}));
+                    var rightPar = new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Center}));
+                    var rightRun = new Run(new RunProperties(new FontSize() {Val = 28.ToString()}));
+                    var rightText = new Text() {Space = SpaceProcessingModeValues.Preserve};
+                    var k = projectActivities.Count - 1;
+                    foreach (var activity in projectActivities)
+                    {
+                        rightText.Text += activity.Description;
+                        if (k > 0)
+                        {
+                            rightText.Text += ", ";
+                            --k;
+                            
+                        }
+                    }
+                    rightRun.AppendChild(rightText);
+                    rightPar.AppendChild(rightRun);
+                    rightCell.AppendChild(rightPar);
+                    tableRow.Append(leftCell, rightCell);
+                    projectTable.AppendChild(tableRow);
+                    ++counter;
+                }
+            }
+            if (counter == 0)
+                tableHead.Remove();
+            return projectTable;
     }
 
     public Table GenerateRoleTable(Proposal prop)
@@ -713,18 +759,26 @@
                                 switch (text.Text)
                                 {
                                     case "Name":
-                                        var tempname = emp.FirstName + " " + emp.LastName;
-                                        text.Text = text.Text.Replace("Name", tempname);
+                                        var tempName = emp.FirstName + " " + emp.LastName;
+                                        text.Text = text.Text.Replace("Name", tempName);
                                         break;
                                     case "numb":
                                         text.Text = text.Text.Replace("numb", tempEmp.Rc.ToString());
                                         break;
+                                    case "Branchen":
+                                        if (tempEmp.Fields.Count == 0) 
+                                            par.Remove();
+                                        break;
                                     case "branch":
                                         foreach (var field in tempEmp.Fields)
-                                        {
-                                            par.InsertAfterSelf(GenerateFieldListItem(field));
-                                        }
+                                            {
+                                                par.InsertAfterSelf(GenerateFieldListItem(field));
+                                            }
                                         par.Remove();
+                                        break;
+                                    case "Hardskills":
+                                        if (tempEmp.Hardskills.Count == 0) 
+                                            par.Remove();
                                         break;
                                     case "hards":
                                         foreach (var hardskill in tempEmp.Hardskills)
@@ -733,6 +787,10 @@
                                         }
                                         par.Remove();
                                         break;
+                                        case "Softskills":
+                                            if (tempEmp.Softskills.Count == 0) 
+                                                par.Remove();
+                                            break;
                                     case "softs":
                                         foreach (var softskill in tempEmp.Softskills)
                                         {
@@ -740,6 +798,10 @@
                                         }
                                         par.Remove();
                                         break;
+                                        case "Sprachen:":
+                                            if (tempEmp.Languages.Count == 0) 
+                                                par.Remove();
+                                            break;
                                     case "langs":
                                         foreach (var lang in tempEmp.Languages)
                                         {
@@ -747,17 +809,23 @@
                                         }
                                         par.Remove();
                                         break;
-                                    case "project":
-                                        foreach (var proj in tempEmp.ProjectActivities)
+                                    case "Projekte:":
+                                        if (tempEmp.ProjectActivities.Count == 0)
+                                            par.Remove();
+                                        else
                                         {
-                                            par.InsertAfterSelf(GenerateProjectActivityListItem(proj, _project.GetProject(proj.ProjectID).Projecttitel));
+                                            par.InsertBeforeSelf(pageBreaker.CloneNode(true));
+                                            empBody.AppendChild(GenerateProjectActivityTable(tempEmp, _activity.GetActivitiesWithProjectsGrouped(tempEmp.EmployeeId)));
                                         }
-                                        par.Remove();
-                                        break;    
+                                        break;
+                                        case "Rollen":
+                                            if (tempEmp.Roles.Count == 0) 
+                                                par.Remove();
+                                            break;
                                     case "roles":
                                         foreach (var role in tempEmp.Roles)
                                         {
-                                            par.InsertAfterSelf(GenerateRoleListItem(role));
+                                            par.InsertAfterSelf(GenerateRoleList(role));
                                         }
                                         par.Remove();
                                         break;

@@ -4,6 +4,7 @@
 @using DocumentFormat.OpenXml.Packaging
 @using System.IO
 @using BlazorDownloadFile
+@using DocumentFormat.OpenXml
 
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject IProposalService _proposal
@@ -275,7 +276,44 @@
         _visibleSafe = false;
         StateHasChanged();
     }
-
+    
+    public Table GenerateProjectActivityTable(EmployeeDetail emp, Dictionary<int,List<ProjectActivity>> dictionary)
+    {
+        
+        var keyCollection = dictionary.Keys;
+        var projectTable = new Table();
+        var projectTableProp = new TableProperties(
+            new TableStyle() {Val = "EinfacheTabelle4"}, new TableWidth() {Type = TableWidthUnitValues.Dxa, Width = 9000.ToString()});
+        projectTable.AppendChild(projectTableProp);
+        foreach (var key in keyCollection)
+        {
+            var projectActivities = dictionary[key];
+            var projectTitle = _project.GetProject(projectActivities.First().ProjectID).Projecttitel;
+            var tableRow = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+            var leftCell = new TableCell(new Paragraph(new Run(new Text(projectTitle))));
+            var rightCell = new TableCell();
+            var rightPar = new Paragraph();
+            var rightRun = new Run();
+            var rightText = new Text() {Space = SpaceProcessingModeValues.Preserve};
+            var k = projectActivities.Count - 1;
+            foreach (var activity in projectActivities)
+            {
+                rightText.Text += activity.Description;
+                if (k > 0)
+                {
+                    rightText.Text += ", ";
+                    --k;
+                }
+            }    
+            rightRun.AppendChild(rightText);
+            rightPar.AppendChild(rightRun);
+            rightCell.AppendChild(rightPar);
+            tableRow.Append(leftCell, rightCell);
+            projectTable.AppendChild(tableRow);
+        }
+        return projectTable;
+    }
+    
     public async Task CreateDocument()
     {
         const string empTemplatePath = "wwwroot\\templates\\AvatiWorkerDoc.docx";
@@ -340,16 +378,13 @@
                                 par.Remove();
                                 break;
                             case "project":
-                                foreach (var proj in empDetail.ProjectActivities)
-                                {
-                                    par.InsertAfterSelf(ProposalOverview.GenerateProjectActivityListItem(proj, _project.GetProject(proj.ProjectID).Projecttitel));
-                                }
+                                par.InsertAfterSelf(GenerateProjectActivityTable(empDetail, _activity.GetActivitiesWithProjectsGrouped(empDetail.EmployeeId)));
                                 par.Remove();
                                 break;
                             case "roles":
                                 foreach (var role in empDetail.Roles)
                                 {
-                                    par.InsertAfterSelf(ProposalOverview.GenerateRoleListItem(role));
+                                    par.InsertAfterSelf(ProposalOverview.GenerateRoleList(role));
                                 }
                                 par.Remove();
                                 break;
