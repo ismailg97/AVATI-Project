@@ -35,7 +35,19 @@ else
             <div class="col-auto">
                 <a style="position: relative;">
                     <MudPopover Open="@ShowErrorCreate" Class="alert alert-danger" Style="width: 600px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
-                        Anlegen der Tätigkeit misslungen, Bezeichnung existiert bereits!
+                        @if (_whatToShow == 0)
+                        {
+                            <a>Anlegen der Tätigkeit misslungen, die Bezeichnung existiert bereits!</a>
+                        }
+                        else if (_whatToShow == 1)
+                        {
+                            <a>Anlegen der Tätigkeit misslungen, die Bezeichnung fehlt!</a>
+                        } 
+                        else if (_whatToShow == 2)
+                        {
+                            <a>Anlegen der Tätigkeit misslungen, die Bezeichnung ist zu lang (max. 150 Zeichen)!</a>
+                        }
+                        
                     </MudPopover>
                 </a>
                 <div class="form-group row">
@@ -132,7 +144,18 @@ else
                     <p>Die Tätigkeit, die hier geändert wird, verbleibt im Projekt, kann aber nicht mehr gelöscht und dann wieder hinzugefügt werden.</p>
                     <a style="position: relative;">
                         <MudPopover Open="@ShowErrorEdit" Class="alert alert-danger" Style="width: auto; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
-                            Abändern der Tätigkeit misslungen, Bezeichnung existiert bereits!
+                            @if (_whatToShow == 0)
+                            {
+                                <a>Editieren der Tätigkeit misslungen, die Bezeichnung existiert bereits!</a>
+                            }
+                            else if (_whatToShow == 1)
+                            {
+                                <a>Editieren der Tätigkeit misslungen, die Bezeichnung fehlt!</a>
+                            } 
+                            else if (_whatToShow == 2)
+                            {
+                                <a>Editieren der Tätigkeit misslungen, die Bezeichnung ist zu lang (max. 150 Zeichen)!</a>
+                            }
                         </MudPopover>
                     </a>
                     <input class="form-control mb-2" @bind=@Description>
@@ -165,20 +188,23 @@ else
     public bool ShowPopUpdate { get; set; }
         public bool ShowErrorCreate;
         public bool ShowErrorEdit;
-        
+
+        private int _whatToShow;
         private List<string> _globalActivities; 
 
         private string filterSearch { get; set; }
 
     protected override void OnInitialized()
     {
+        _whatToShow = -1;
         _globalActivities = _projectActivityService.GetAllGlobalProjectActivities();
         ShowErrorCreate = false;
         ShowErrorEdit = false;
     }
         
-    private async void ShowErrorMessage(bool isCreate)
+    private async void ShowErrorMessage(bool isCreate, int whatToShow)
     {
+        _whatToShow = whatToShow;
         if (isCreate)
         {
             ShowErrorCreate = true;
@@ -205,24 +231,53 @@ else
         }
 
         public void AddProjectActivity(string description)
-    {
-        if (AlreadyExists(description))
         {
-            ShowErrorMessage(true);
-            return;
+            if (string.IsNullOrEmpty(description) || string.IsNullOrWhiteSpace(description))
+            {
+                ShowErrorMessage(true, 1);
+                return;
+            }
+            
+            if (description.Length > 150)
+            {
+                ShowErrorMessage(true, 2);
+                return;
+            }
+            
+            if (AlreadyExists(description))
+            {
+                ShowErrorMessage(true, 0);
+                return;
+            }
+            _projectActivityService.AddGlobalProjectActivity(description);
+            Description = "";
+            _globalActivities = _projectActivityService.GetAllGlobalProjectActivities();
+            StateHasChanged();
         }
-        _projectActivityService.AddGlobalProjectActivity(description);
-        Description = "";
-        _globalActivities = _projectActivityService.GetAllGlobalProjectActivities();
-        StateHasChanged();
-    }
 
     public void UpdateActivity(string old, string newstring)
     {
-        if (old == newstring) return;
+        if (old == newstring)
+        {
+            ShowPopUpdate = !ShowPopUpdate;
+            return;
+        }
+        
+        if (string.IsNullOrEmpty(newstring) || string.IsNullOrWhiteSpace(newstring))
+        {
+            ShowErrorMessage(false, 1);
+            return;
+        }
+            
+        if (newstring.Length > 150)
+        {
+            ShowErrorMessage(false, 2);
+            return;
+        }
+        
         if (AlreadyExists(newstring))
         {
-            ShowErrorMessage(false);
+            ShowErrorMessage(false, 0);
             return;
         }
         _projectActivityService.UpdateGlobalProjectActivity(old, newstring);

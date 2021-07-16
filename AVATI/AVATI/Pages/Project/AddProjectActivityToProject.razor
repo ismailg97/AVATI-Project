@@ -30,14 +30,22 @@
                     <MudPopover Open="@_showError" Class="alert alert-danger" Style="width: 600px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
                         @if (_whatToShow == 0)
                         {
-                            <a>Hinzufügen misslungen, Aktiviät exsistiert bereits im Projekt</a>
+                            <a>Hinzufügen misslungen, die Aktiviät exsistiert bereits im Projekt</a>
                         } else if (_whatToShow == 1)
                         {
-                            <a>Hinzufügen misslungen, globale Aktivität exsistiert bereits!</a>
+                            <a>Hinzufügen misslungen, die globale Aktivität exsistiert bereits!</a>
                         }
                         else if (_whatToShow == 2)
                         {
-                            <a>Hinzufügen misslungen, Aktivität exsistiert bereits im Reiter "Zu entfernende Tätigkeiten"!</a>
+                            <a>Hinzufügen misslungen, die Aktivität exsistiert bereits im Reiter "Zu entfernende Tätigkeiten"!</a>
+                        }
+                        else if (_whatToShow == 3)
+                        {
+                            <a>Hinzufügen misslungen, die Bezeichnung fehlt!</a>
+                        }
+                        else if (_whatToShow == 4)
+                        {
+                            <a>Hinzufügen misslungen, die Bezeichnung ist zu lang (max. 150 Zeichen)!</a>
                         }
                     </MudPopover>
                 </a>
@@ -139,7 +147,7 @@
     
     public void Showing()
     {
-        _whatToShow = 0;
+        _whatToShow = -1;
         _showError = false;
         _deleteActivities = new List<string>();
         _addedActivities = new List<string>();
@@ -198,6 +206,18 @@
 
         private void AddActivity(bool isGlobal)
         {
+            if (string.IsNullOrEmpty(_createActivity) || string.IsNullOrWhiteSpace(_createActivity))
+            {
+                ShowErrorMessage(3);
+                return;
+            }
+            
+            if (_createActivity.Length > 150)
+            {
+                ShowErrorMessage(4);
+                return;
+            }
+            
             if (AlreadyExists(_createActivity, _activitiesInProject))
             {
                 ShowErrorMessage(0);
