@@ -10,9 +10,7 @@
                <div class="modal-dialog">
                  <div class="modal-content">
                    <div class="modal-header">
-                     <h4 class="modal-title">
-                         <a>Bitte wählen Sie ein Hardskill-Level für "<b>@_hardskill?.Description</b>" aus</a>
-                       </h4>
+                     <h4 class="modal-title">Bitte wählen Sie ein Hardskill-Level für "<b></b>" aus</h4>
                      <button type="button" class="close" data-dismiss="modal" @onclick="Close">&times;</button>
                    </div>
                    <div class="modal-body">
@@ -64,9 +62,10 @@
 }
 
 @code {
-  [Parameter]
-  public EditProfile Abstract { get; set; }
   
+  
+  [Parameter]
+  public CreateProfile Abstract { get; set; }
 
   [Parameter] 
   public Hardskill OldHardskill{ get; set; }
@@ -101,7 +100,7 @@
     _employee.HardSkillLevel.Add(new Tuple<Hardskill, int>(_hardskill, buttonId));
     _show = !_show;
     Abstract.Update();
-   
+    
   }
 
 }

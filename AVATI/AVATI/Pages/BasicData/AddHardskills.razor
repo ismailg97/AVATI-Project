@@ -4,185 +4,193 @@
 @inject IHardskillService _hardskillService
 
 <div class="modal @(_show ? "fade show" : "" )" id="myModal" style=" display: @(_show ? "block" : "none");">
-               <div class="modal-dialog">
-                 <div class="modal-content">
-                   @if (_finishedLoadPage)
-                   {
-                     <div class="modal-header">
-                       @if (ShowCreateCat)
-                       {
-                         <h5 class="modal-title">
-                           Erstellen einer neuen Kategorie
-                         </h5>
-                       }
-                       else
-                       {
-                         <h5 class="modal-title">
-                           Kategorisierung von Hardskills in "<b>@Description</b>"
-                         </h5>
-                       }
-                       <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
-                     </div>
-                     <div class="modal-body">
-                       <div class="container">
-                         @if (_showExistErrorCategory){
-                           <div class="errormessage">
-                             <a><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></a>
-                           </div>
-                           
-                         } else if (_showEmptyErrorCategory){
-                           <div class="errormessage">
-                             <a><b>Die Bezeichnung ist erforderlich</b></a>
-                           </div>
-                           
-                         } else if (_showTooLongErrorCategory)
-                         {
-                           <div class="errormessage">
-                             <a><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></a>
-                           </div>
-                         }
+  <div class="modal-dialog">
+    <div class="modal-content">
+      @if (_finishedLoadPage)
+      {
+        <div class="modal-header">
+          @if (ShowCreateCat)
+          {
+            <h5 class="modal-title">
+              Erstellen einer neuen Kategorie
+            </h5>
+          }
+          else
+          {
+            <h5 class="modal-title">
+              Kategorisierung von Hardskills in "<b>@Description</b>"
+            </h5>
+          }
+          <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            @if (_showExistErrorCategory)
+            {
+              <div class="errormessage">
+                <a><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></a>
+              </div>
 
-                         @if (ShowCreateCat)
-                         {
-                           <div class="form-group">
-                             <label>Bezeichnung der Kategorie:</label>
-                             <input class="form-control" type="text" @bind="_cat"/>
-                           </div>
-                         }
+            }
+            else if (_showEmptyErrorCategory)
+            {
+              <div class="errormessage">
+                <a><b>Die Bezeichnung ist erforderlich</b></a>
+              </div>
 
-                         @if (Subcat.Any())
-                         {
-                           <h6>Enthaltene Hardskills</h6>
-                           <hr/>
+            }
+            else if (_showTooLongErrorCategory)
+            {
+              <div class="errormessage">
+                <a><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></a>
+              </div>
+            }
 
-                           foreach (var hardskill in Subcat)
-                           {
-                             <button type="button" class="@(IsInList(hardskill) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">
-                               <a><a class="@(IsInList(hardskill) ? "showRemove" : "")">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a></a>
-                             </button>
-                           }
-                         }
+            @if (ShowCreateCat)
+            {
+              <div class="form-group">
+                <label>Bezeichnung der Kategorie:</label>
+                <input class="form-control" type="text" @bind="_cat"/>
+              </div>
+            }
 
-                         @if (_toDeleteSkills != null && _toDeleteSkills.Any())
-                         {
-                           <h6>Zu entferndende Hardskills</h6>
-                           <hr/>
-                           foreach (var hardskill in _toDeleteSkills)
-                           {
-                             <button type="button" class="@(IsInList(hardskill) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">
-                               <a><a class="@(IsInList(hardskill) ? "showRemove" : "")">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a></a>
-                             </button>
-                           }
-                         }
+            @if (Subcat.Any())
+            {
+              <h6>Enthaltene Hardskills</h6>
+              <hr/>
 
-                         @if (_hardskills != null && _hardskills.Any())
-                         {
-                           <h6>Hardskills ohne Hardskillkategorie</h6>
-                           <hr/>
-                           foreach (var hardskill in _hardskills)
-                           {
-                             <button type="button" class="@(IsInList(hardskill) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">
-                               <a><a class="@(IsInList(hardskill) ? "showRemove" : "")">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a></a>
-                             </button>
-                           }
-                         }
+              foreach (var hardskill in Subcat)
+              {
+                <button type="button" class="@(IsInList(hardskill) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">
+                  <a><a class="@(IsInList(hardskill) ? "showRemove" : "")">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a></a>
+                </button>
+              }
+            }
 
-                         @if (_showCreateSkill)
-                         {
-                           @if (_showExistErrorHardskill){
-                             <div class="errormessage">
-                               <a><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></a>
-                             </div>
-                           
-                           } else if (_showEmptyErrorHardskill){
-                             <div class="errormessage">
-                               <a><b>Die Bezeichnung ist erforderlich</b></a>
-                             </div>
-                           } else if (_showTooLongErrorHardskill)
-                           {
-                             <div class="errormessage">
-                               <a><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></a>
-                             </div>
-                           }
-                           
-                           <div class="distance">
-                             <label>Bezeichnung des Hardskills:</label>
-                             <input class="form-control" style="display: inline;" type="text" @bind="_hardskill"/>
-                             <button class="check" style="display: inline;" @onclick="CreateHardskill">&#10003;</button>
-                             <button class="stop" style="display: inline;" @onclick="ShowingCreateHardskill">&#10005;</button>
-                           </div>
-                         }
-                         else
-                         {
-                           <div>
-                             <button class="btn btn-outline-success" @onclick="ShowingCreateHardskill">Create New Hardskill</button>
-                           </div>
-                         }
+            @if (_toDeleteSkills != null && _toDeleteSkills.Any())
+            {
+              <h6>Zu entferndende Hardskills</h6>
+              <hr/>
+              foreach (var hardskill in _toDeleteSkills)
+              {
+                <button type="button" class="@(IsInList(hardskill) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">
+                  <a><a class="@(IsInList(hardskill) ? "showRemove" : "")">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a></a>
+                </button>
+              }
+            }
 
-                         <div>
-                           <button class="btn btn-outline-info" @onclick="ShowingCat">Hardskills mit Kategorien @(_showCat ? "ausblenden" : "einblenden")</button>
-                         </div>
-                         @if (_finishedLoadCats)
-                         {
-                           if (_showCat && SubHardskills.Any())
-                           {
-                             <div class="list-group border-dark overflow-auto mr-3 col-9" style="height: 200px">
-                               @foreach (var hardskillcat in SubHardskills.Keys.Where(x => x != Description))
-                               {
-                                 <div class="container">
-                                   <h6>@hardskillcat</h6>
-                                   <hr/>
-                                   @foreach (var description in SubHardskills[hardskillcat])
-                                   {
-                                     <button type="button" class="@(IsInList(description) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(description)">
-                                       <a><a class="@(IsInList(description) ? "showRemove" : "")">@description</a> <a class="remove"><span class="oi oi-x"></span></a></a>
-                                     </button>
-                                   }
-                                 </div>
-                               }
-                             </div>
-                           }
-                         }
-                         else
-                         {
-                           <div class="d-flex flex-column align-items-center justify-content-center" style="margin-top: 15px;">
-                             <div class="row">
-                               <div class="spinner-border" role="status">
-                                 <span class="sr-only">Loading...</span>
-                               </div>
-                             </div>
-                             <div class="row">
-                               <strong>Lade...</strong>
-                             </div>
-                           </div>
-                         }
+            @if (_hardskills != null && _hardskills.Any())
+            {
+              <h6>Hardskills ohne Hardskillkategorie</h6>
+              <hr/>
+              foreach (var hardskill in _hardskills)
+              {
+                <button type="button" class="@(IsInList(hardskill) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">
+                  <a><a class="@(IsInList(hardskill) ? "showRemove" : "")">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a></a>
+                </button>
+              }
+            }
 
-                       </div>
-                     </div>
-                     <div class="modal-footer">
-                       <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">
-                         <span class="oi oi-circle-x" aria-hidden="true"></span>Abbrechen
-                       </button>
-                       <button type="button" class="btn btn-success" @onclick="AddingHardskills">
-                         <span class="oi oi-document" aria-hidden="true"></span>Speichern
-                       </button>
-                     </div>
-                   }
-                   else
-                   {
-                     <div class="d-flex flex-column align-items-center justify-content-center">
-                       <div class="row">
-                         <div class="spinner-border" role="status">
-                           <span class="sr-only">Loading...</span>
-                         </div>
-                       </div>
-                       <div class="row">
-                         <strong>Lade...</strong>
-                       </div>
-                     </div>
-                   }
-                 </div>
-               </div>
+            @if (_showCreateSkill)
+            {
+              @if (_showExistErrorHardskill)
+              {
+                <div class="errormessage">
+                  <a><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></a>
+                </div>
+
+              }
+              else if (_showEmptyErrorHardskill)
+              {
+                <div class="errormessage">
+                  <a><b>Die Bezeichnung ist erforderlich</b></a>
+                </div>
+              }
+              else if (_showTooLongErrorHardskill)
+              {
+                <div class="errormessage">
+                  <a><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></a>
+                </div>
+              }
+
+              <div class="distance">
+                <label>Bezeichnung des Hardskills:</label>
+                <input class="form-control" style="display: inline;" type="text" @bind="_hardskill"/>
+                <button class="check" style="display: inline;" @onclick="CreateHardskill">&#10003;</button>
+                <button class="stop" style="display: inline;" @onclick="ShowingCreateHardskill">&#10005;</button>
+              </div>
+            }
+            else
+            {
+              <div>
+                <button class="btn btn-outline-success" @onclick="ShowingCreateHardskill">Create New Hardskill</button>
+              </div>
+            }
+
+            <div>
+              <button class="btn btn-outline-info" @onclick="ShowingCat">Hardskills mit Kategorien @(_showCat ? "ausblenden" : "einblenden")</button>
+            </div>
+            @if (_finishedLoadCats)
+            {
+              if (_showCat && SubHardskills.Any())
+              {
+                <div class="list-group border-dark overflow-auto mr-3 col-9" style="height: 200px">
+                  @foreach (var hardskillcat in SubHardskills.Keys.Where(x => x != Description))
+                  {
+                    <div class="container">
+                      <h6>@hardskillcat</h6>
+                      <hr/>
+                      @foreach (var description in SubHardskills[hardskillcat])
+                      {
+                        <button type="button" class="@(IsInList(description) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(description)">
+                          <a><a class="@(IsInList(description) ? "showRemove" : "")">@description</a> <a class="remove"><span class="oi oi-x"></span></a></a>
+                        </button>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            }
+            else
+            {
+              <div class="d-flex flex-column align-items-center justify-content-center" style="margin-top: 15px;">
+                <div class="row">
+                  <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                </div>
+                <div class="row">
+                  <strong>Lade...</strong>
+                </div>
+              </div>
+            }
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">
+            <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
+          </button>
+          <button type="button" class="btn btn-success" @onclick="AddingHardskills">
+            <span class="oi oi-document" aria-hidden="true"></span> Speichern
+          </button>
+        </div>
+      }
+      else
+      {
+        <div class="d-flex flex-column align-items-center justify-content-center">
+          <div class="row">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+          <div class="row">
+            <strong>Lade...</strong>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
           </div>
 @if (_show)
 {

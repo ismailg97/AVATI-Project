@@ -1,32 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AVATI.Data;
 using AVATI.Data.DatabaseConnection;
 using AVATI.Data.EmployeeDetailFiles;
-using AVATI.Pages;
 using AVATI.Pages.Project;
 using BlazorDownloadFile;
-using Blazored.LocalStorage;
-using Dapper;
+
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+
+using MudBlazor.Services;
 
 namespace AVATI
 {
@@ -69,6 +54,7 @@ namespace AVATI
             services.AddHttpClient();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
+            services.AddMudServices();
 
 
         }

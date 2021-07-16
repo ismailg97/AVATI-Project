@@ -11,7 +11,6 @@ namespace AVATI.Data
     public class SearchService : ISearchService
     {
         private readonly IConfiguration _configuration;
-
         public DbConnection GetConnection()
         {
             return new SqlConnection

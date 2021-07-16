@@ -13,6 +13,7 @@
 @using Text = DocumentFormat.OpenXml.Wordprocessing.Text
 @using ParagraphProperties = DocumentFormat.OpenXml.Wordprocessing.ParagraphProperties
 @using RunProperties = DocumentFormat.OpenXml.Wordprocessing.RunProperties
+@using WordColor = DocumentFormat.OpenXml.Wordprocessing.Color
 
 @inject IProjectActivityService _activity
 @inject IBlazorDownloadFileService _blazorDownloadFileService
@@ -783,7 +784,7 @@
                 i++;
                 costDoc.ChangeDocumentType(WordprocessingDocumentType.Document);
                 var costBody = costDoc.MainDocumentPart.Document.Body;
-                costBody.AppendChild(new Paragraph(new Run(new RunProperties(new FontSize() {Val = 64.ToString()}, new RunFonts() {Ascii = "Calibri Light"}, new Color() {Val = "8496B0"}), new Text("Kostenmixkalkulation"))));
+                costBody.AppendChild(new Paragraph(new Run(new RunProperties(new FontSize() {Val = 64.ToString()}, new RunFonts() {Ascii = "Calibri Light"}, new WordColor() {Val = "8496B0"}), new Text("Kostenmixkalkulation"))));
                 var runtime = (int)(tempProp.End - tempProp.Start).TotalDays / 7;
                 double overallHours = 0, overallPt = 0, overallListPrice = 0, overallRealPrice = 0;
                 var costTable = new Table();
@@ -793,16 +794,16 @@
                 costTable.AppendChild<TableProperties>(costTableProp);
                 
                 var tableRow1 = new TableRow(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)});
-                var tc11 = new TableCell(new Paragraph(new Run(new RunProperties(new FontSize() {Val = "24"}, new Color() {Val = "2f6ec2"}),new Text(tempProp.ProposalTitle) {Space = SpaceProcessingModeValues.Preserve})));
+                var tc11 = new TableCell(new Paragraph(new Run(new RunProperties(new FontSize() {Val = "24"}, new WordColor() {Val = "2f6ec2"}),new Text(tempProp.ProposalTitle) {Space = SpaceProcessingModeValues.Preserve})));
                 var tc12 = new TableCell(new Paragraph(new Run(new TabChar())));
                 var tc13 = new TableCell(new Paragraph(new Run(new TabChar())));
                 var tc14 = new TableCell(new Paragraph(new Run(new TabChar())));
-                var tc15 = new TableCell(new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Right}), new Run(new RunProperties( new Color() {Val = "2f6ec2"}), new Text("Laufzeit"))));
+                var tc15 = new TableCell(new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Right}), new Run(new RunProperties( new WordColor() {Val = "2f6ec2"}), new Text("Laufzeit"))));
                 tableRow1.Append(tc11, tc12, tc13, tc14, tc15);
                 costTable.AppendChild(tableRow1);
 
                 var tableRow2 = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
-                var tc21 = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single, Color = "2f6ec2"}) , new Paragraph(new Run(new TabChar()))); 
+                var tc21 = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single, Color = "2f6ec2"}), new Paragraph(new Run(new TabChar()))); 
                 var tc22 = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single, Color = "2f6ec2"}) , new Paragraph(new Run(new TabChar()))); 
                 var tc23 = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single, Color = "2f6ec2"}) , new Paragraph(new Run(new TabChar()))); 
                 var tc24 = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single, Color = "2f6ec2"}) , new Paragraph(new Run(new TabChar()))); 
@@ -811,11 +812,11 @@
                 costTable.AppendChild(tableRow2);
 
                 var tableRow3 = new TableRow(new TableRowProperties(new BottomBorder() , new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
-                var tc31 = new TableCell(new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}),new Text("Rolle (Tätigkeiten, Schwerpunkte)"))));
-                var tc32 = new TableCell(new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Right}), new Run(new RunProperties(new Color() {Val = "2f6ec2"}), new Text("Rabatt"))));
-                var tc33 = new TableCell(new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Right}), new Run(new RunProperties(new Color() {Val = "2f6ec2"}), new Text("Sätze"))));
-                var tc34 = new TableCell(new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Right}), new Run(new RunProperties(new Color() {Val = "2f6ec2"}), new Text("Kapazität"))));
-                var tc35 = new TableCell(new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Right}), new Run(new RunProperties(new Color() {Val = "2f6ec2"}), new Text("Zeit und Kosten"))));
+                var tc31 = new TableCell(new Paragraph(new Run(new RunProperties(new WordColor() {Val = "2f6ec2"}),new Text("Rolle (Tätigkeiten, Schwerpunkte)"))));
+                var tc32 = new TableCell(new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Right}), new Run(new RunProperties(new WordColor() {Val = "2f6ec2"}), new Text("Rabatt"))));
+                var tc33 = new TableCell(new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Right}), new Run(new RunProperties(new WordColor() {Val = "2f6ec2"}), new Text("Sätze"))));
+                var tc34 = new TableCell(new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Right}), new Run(new RunProperties(new WordColor() {Val = "2f6ec2"}), new Text("Kapazität"))));
+                var tc35 = new TableCell(new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Right}), new Run(new RunProperties(new WordColor() {Val = "2f6ec2"}), new Text("Zeit und Kosten"))));
                 tableRow3.Append(tc31, tc32, tc33, tc34, tc35);
                 costTable.AppendChild(tableRow3);
                 
@@ -894,7 +895,7 @@
                 }
 
                 var tableRow4A = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
-                var tc41A = new TableCell(new TableCellProperties(new TopBorder() {Val = BorderValues.Double}), new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}), new Text("Gesamt über Laufzeit"))));
+                var tc41A = new TableCell(new TableCellProperties(new TopBorder() {Val = BorderValues.Double}), new Paragraph(new Run(new RunProperties(new DocumentFormat.OpenXml.Wordprocessing.Color() {Val = "2f6ec2"}), new Text("Gesamt über Laufzeit"))));
                 var tc42A = new TableCell(new TableCellProperties(new TopBorder() {Val = BorderValues.Double}), new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Right}), new Run(new Text(Math.Round((1 - overallRealPrice / overallListPrice) * 100, 2) + "%"))));
                 var tc43A = new TableCell(new TableCellProperties(new TopBorder() {Val = BorderValues.Double}), new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Right}), new Run(new Text(Math.Round(overallRealPrice / overallPt, 2) + " €/PT") {Space = SpaceProcessingModeValues.Preserve})));
                 var tc44A = new TableCell(new TableCellProperties(new TopBorder() {Val = BorderValues.Double}), new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Right}), new Run(new Text(Math.Round(overallHours / 40, 2) + " FTE") {Space = SpaceProcessingModeValues.Preserve})));
@@ -910,14 +911,14 @@
                 costTable.Append(tableRow4A, tableRow4B);
 
                 var tableRow5A = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
-                var tc51A = new TableCell(new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}), new Text("Listenpreis"))));
+                var tc51A = new TableCell(new Paragraph(new Run(new RunProperties(new DocumentFormat.OpenXml.Wordprocessing.Color() {Val = "2f6ec2"}), new Text("Listenpreis"))));
                 var tc52A = new TableCell(new Paragraph(new Run(new TabChar())));
                 var tc53A = new TableCell(new Paragraph(new Run(new TabChar())));
                 var tc54A = new TableCell(new Paragraph(new Run(new TabChar())));
                 var tc55A = new TableCell(new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Right}), new Run(new Text(overallListPrice + " €") {Space = SpaceProcessingModeValues.Preserve})));
                 tableRow5A.Append(tc51A, tc52A, tc53A, tc54A, tc55A);
                 var tableRow5B = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
-                var tc51B = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single}), new Paragraph(new Run(new RunProperties(new Color() {Val = "2f6ec2"}), new Text("Summe der Rabatte"))));
+                var tc51B = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single}), new Paragraph(new Run(new RunProperties(new DocumentFormat.OpenXml.Wordprocessing.Color() {Val = "2f6ec2"}), new Text("Summe der Rabatte"))));
                 var tc52B = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single}), new Paragraph(new Run(new TabChar())));
                 var tc53B = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single}), new Paragraph(new Run(new TabChar())));
                 var tc54B = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single}), new Paragraph(new Run(new TabChar())));

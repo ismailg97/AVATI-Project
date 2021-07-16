@@ -23,7 +23,7 @@
             <div class="card mb-4 border-dark" style="width: auto; background-color: #86cfda">
                 <div class="card-body text-center">
                     <h4 class="card-title">@_project.Projecttitel</h4>
-                    <label class="text">@_project.Projectdescription</label>
+                    <text class="text">@_project.Projectdescription</text>
                 </div>
             </div>
             <div class="card mb-4 border-dark " style="width: auto">
@@ -40,7 +40,7 @@
                         @if (!_project.Employees.Any())
                         {
                             <tr>
-                                <td>[Kein Mitarbeiter vorhanden]</td>
+                                <td>[Kein Mitarbeiter im Projekt]</td>
                                 <td></td>
                             </tr>
                         }
@@ -69,7 +69,7 @@
                         @if (!_project.ProjectActivities.Any())
                         {
                             <tr>
-                                <td>[Keine Tätigkeiten vorhanden]</td>
+                                <td>[Keine Tätigkeiten]</td>
                                 <td></td>
                             </tr>
                         }
@@ -90,7 +90,7 @@
                                     }
                                     else
                                     {
-                                        <a>[Kein Mitarbeiter hat sich zugewiesen!]</a>
+                                        <a>[Kein Mitarbeiter zugewiesen!]</a>
                                     }
                             </tr>
                         }
@@ -114,7 +114,7 @@
                         @if (!_project.Fields.Any())
                         {
                             <tr>
-                                <td>[Keine Branchen dem Projekt zugewiesen]</td>
+                                <td>[Keine Branchen zugewiesen]</td>
                             </tr>
                         }
                         @foreach (var field in _project.Fields)
@@ -153,7 +153,7 @@
                         <thead style="background-color: #c3e6cb;">
                         <tr>
                             <th scope="col">Zweck</th>
-                            <th scope="col">Lösung durch folgende Tätigkeit</th>
+                            <th scope="col">Lösung durch  Tätigkeit:</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -172,7 +172,7 @@
                                     <td>@purpose.Key</td>
                                     @if (purpose.Value == null)
                                     {
-                                        <td>[Noch durch keine Projekttätigkeit gelöst!]</td>
+                                        <td>[Durch keine Projekttätigkeit gelöst!]</td>
                                     }
                                     else
                                     {

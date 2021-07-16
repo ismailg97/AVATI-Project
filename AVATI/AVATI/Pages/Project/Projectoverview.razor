@@ -7,89 +7,99 @@
 
 <AuthorizeView Roles="SalesStaff,Administrator">
     <NotAuthorized>
-        @if(true){_navigationManager.NavigateTo("/profile");}
+        @if (true)
+        {
+            _navigationManager.NavigateTo("/profile");
+        }
     </NotAuthorized>
     <Authorized>
-        
- 
 
-    <h3>Projektübersicht</h3>
 
-    <table id="table" data-show-refresh="true" class="table align-middle table-hover mb-5 table-striped">
-        <thead>
-        <div class="form-group">
-            <input class="form-control" type="text" placeholder="Suche Projekt..."
-                   @bind="filterSearch"
-                   @bind:event="oninput">
-        </div>
-        <tr>
-            <th>Projekttitel</th>
-            <th>Projektbeschreibung</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        @if (_projectService.GetAllProjects().Any())
-        {
-            foreach (var project in _projectService.GetAllProjects())
+        <h3>Projektübersicht</h3>
+        <hr/>
+        <table id="table" data-show-refresh="true" class="table align-middle table-hover mb-5 table-striped">
+            <colgroup>
+                <col span="1" style="width: 20%"/><col span="1" style="width: 68%"/><col span="1" style="width: 12%"/>
+            </colgroup>
+            <thead class="thead-dark">
+            <div class="form-group">
+                <input class="form-control" type="text" placeholder="Suche Projekt..."
+                       @bind="filterSearch"
+                       @bind:event="oninput">
+            </div>
+            <tr>
+                <th>Projekttitel</th>
+                <th>Projektbeschreibung</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @if (_projectService.GetAllProjects().Any())
             {
-                @if (filterSearch == null || project.Projecttitel.Contains(filterSearch, StringComparison.OrdinalIgnoreCase))
+                foreach (var project in _projectService.GetAllProjects())
                 {
-                    <tr>
-                        <td style="width: 30%">@project.Projecttitel</td>
-                        <td style="width: 40%">@project.Projectdescription</td>
-                        <td class="text-right" style="width: 30%">
-                            <a href="/Projektübersicht/Projektedit/@project.ProjectID">
-                                <button type="button" class="btn btn-primary btn-sm"><span class="oi oi-pencil" aria-hidden="true"></span> Bearbeiten</button>
-                            </a>
+                    @if (filterSearch == null || project.Projecttitel.Contains(filterSearch, StringComparison.OrdinalIgnoreCase))
+                    {
+                        <tr>
+                            <td style="width: 15%">@project.Projecttitel</td>
+                            <td style="max-width: 60%;">
+                                <div id="projectDescription">
+                                    <text>@project.Projectdescription</text>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="/Projektübersicht/Projektedit/@project.ProjectID">
+                                    <button type="button" class="btn btn-primary btn-sm">
+                                        <span class="oi oi-pencil" aria-hidden="true"></span>
+                                    </button>
+                                </a>
 
-                            <a href="/Projektübersicht/ProjectDetailedView/@project.ProjectID">
-                                <button type="button" class="btn btn-info btn-sm"><span class="oi oi-project" aria-hidden="true"></span> Details</button>
-                            </a>
-                            <button type="button" class="btn btn-danger btn-sm"
-                                    @onclick=@(() => { ShowDelete(project.ProjectID); })>
-                                <span class="oi oi-delete" aria-hidden="true"></span> Löschen
-                            </button>
-                        </td>
-                    </tr>
+                                <a href="/Projektübersicht/ProjectDetailedView/@project.ProjectID">
+                                    <button type="button" class="btn btn-info btn-sm"><span class="oi oi-project" aria-hidden="true"></span> Details</button>
+                                </a>
+                                <button type="button" class="btn btn-danger btn-sm"
+                                        @onclick=@(() => { ShowDelete(project.ProjectID); })>
+                                    <span class="oi oi-trash" aria-hidden="true"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    }
                 }
             }
-        }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
 
-
-@if (ShowPop)
-{
-    <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
-        <div class="modal-dialog border-dark">
-            <div class="modal-content">
-                <div class="modal-header flex-column">
-                    <h4 class="modal-title col-12 text-center">Sind Sie sicher?</h4>
-                </div>
-                <div class="modal-body text-center">
-                    <p>Wollen Sie das Projekt wirklich löschen? Der Prozess kann nicht rückgängig gemacht werden!</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { ShowPop = !ShowPop; })">Abbrechen</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { DeleteProject(tempID); ShowPop = !ShowPop;})">Löschen</button>
+        @if (ShowPop)
+        {
+            <div class="modal fade show mt-5" id="myModal" style=" display: inline-block;">
+                <div class="modal-dialog border-dark">
+                    <div class="modal-content">
+                        <div class="modal-header flex-column">
+                            <h4 class="modal-title col-12 text-center">Sind Sie sicher?</h4>
+                        </div>
+                        <div class="modal-body text-center">
+                            <p>Wollen Sie das Projekt wirklich löschen? Der Prozess kann nicht rückgängig gemacht werden!</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { ShowPop = !ShowPop; })">Abbrechen</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="(() => { DeleteProject(tempID); ShowPop = !ShowPop;})">Löschen</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="modal-backdrop fade show"></div>
-}
-    
-    
-            
-        </Authorized>
-    </AuthorizeView>
-    
-    @code{
+            <div class="modal-backdrop fade show"></div>
+        }
+
+
+
+    </Authorized>
+</AuthorizeView>
+
+@code{
     public string Input { get; set; }
     public bool Clicked { get; set; } = false;
-    
+
     public bool ShowPop { get; set; }
     private string filterSearch { get; set; }
 
