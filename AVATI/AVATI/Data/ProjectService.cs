@@ -12,19 +12,20 @@ namespace AVATI.Data
 {
     public class ProjectService : IProjektService
     {
-        private ProjectActivityService2 _projectActivityService = new ProjectActivityService2(true);
+        private ProjectActivityService2 _projectActivityService;
         public List<Project> Projects { get; set; }
         private string ConnectionString; //global connectionstring
         
         public ProjectService(IConfiguration configuration)
         {
             ConnectionString = configuration.GetConnectionString("AVATI-Database");
+            _projectActivityService = new ProjectActivityService2(ConnectionString);
         }
         public ProjectService(string connection) //for testing database connections -> for testpurposes
         {
             ConnectionString = connection;
+            _projectActivityService = new ProjectActivityService2(ConnectionString);
         }
-        
         public DbConnection GetConnection()
         {
             return new SqlConnection
@@ -179,6 +180,7 @@ namespace AVATI.Data
 
         public Project GetProject(int projectId)
         {
+            Console.WriteLine("----ProjectID: " + projectId + " --------");
             Project temp;
             using IDbConnection db = GetConnection();
             temp = new Project();
