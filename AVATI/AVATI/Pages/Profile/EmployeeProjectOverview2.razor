@@ -120,7 +120,7 @@
                                         }
                                     </td>
                                     <td class="tEdit">
-                                        <button type="button" class="btn btn-secondary" @onclick="() => ShowPopUpEdit(activity)"><MudIcon Icon="@Icons.Filled.Brush"/></button>
+                                        <button type="button" class="btn btn-info" @onclick="() => ShowPopUpEdit(activity)"><MudIcon Icon="@Icons.Filled.Brush"/></button>
                                     </td>
                                     <td class="tDelte">
                                         <button type="button" class="btn btn-danger" @onclick="() => ShowPopUpDelete(activity)"><MudIcon Icon="@Icons.Filled.Delete"/></button>
@@ -150,7 +150,11 @@
         <div class="modal-dialog border-dark modal-dialog- modal-lg">
             <div class="modal-content">
                 <div class="modal-header flex-column">
-                    @if(_showCreate) {
+                    <button type="button" class="close" data-dismiss="modal" @onclick="() => { _showCreate = _showEdit = false; }">
+                                            <span aria-hidden="true">x</span>
+                                        </button>
+                    @if (_showCreate)
+                    {
                         <h4 style="word-break: break-word;" class="modal-title col-12 text-center">Hinzufügen einer Projekttätigkeit im Projekts <br>"<b>@projecttitle</b>"</h4>
                     }
                     else
