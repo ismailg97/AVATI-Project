@@ -7,11 +7,18 @@ namespace AVATI.Data
     public interface ISearchService
     {
        
+        /// <summary>
+        /// True if employee exists that has all attributes in query
+        /// </summary>
         bool PerfectMatch { get; set; }
         List<string> SoftskillsToDisplay { get; set; }
         List<string> RolesToDisplay { get; set; }
         List<Hardskill> HardskillsToDisplay { get; set; }
         List<Hardskill> CategoriesToDisplay { get; set; }
+        
+        /// <summary>
+        /// Used for searching specific employee, can be NULL
+        /// </summary>
         string EmployeeName { get; set; }
         List<string> SoftskillsToSearch { get; set; }
         List<string> RolesToSearch { get; set; }
@@ -20,9 +27,28 @@ namespace AVATI.Data
         List<string> SoftskillsToSearchTemp { get; set; }
         List<string> RolesToSearchTemp { get; set; }
         List<Hardskill> HardskillsToSearchTemp { get; set; }
+        
+        /// <summary>
+        /// Swaps softskill from display-list to search-list (insertion at index = 0)
+        /// </summary>
+        /// <param name="softskill"></param>
         void AddSoftSearch(string softskill);
+        /// <summary>
+        /// Swaps hardskill from display-list to hardskill-list (insertion at index = 0)
+        /// </summary>
+        /// <param name="hardskill"></param>
         void AddHardSearch(Hardskill hardskill);
+        
+        /// <summary>
+        /// Swaps role from display-list to role-list (insertion at index = 0)
+        /// </summary>
+        /// <param name="role"></param>
         void AddRoleSearch(string role);
+        
+        /// <summary>
+        /// Swaps hardskillcat from display-list to role-list (insertion at index = 0)
+        /// </summary>
+        /// <param name="hardskill"></param>
         void AddCategorySearch(Hardskill hardskill);
 
         bool TableIsVisible { get; set; }
