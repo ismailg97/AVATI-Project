@@ -86,12 +86,14 @@ else
                                     <tr>
                                         <td>@activity</td>
                                         <td>
-                                            <button type="button" class="btn btn-info text-right" @onclick="() => { ShowUpdate(activity); }">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-info text-right" @onclick="() => { ShowUpdate(activity); }">
                                                 <span class="oi oi-pencil"></span>
                                             </button>
                                             <button type="button" class="btn btn-danger text-right" @onclick="(() => { ShowDelete(activity); })">
                                                 <span class="oi oi-trash"></span>
                                             </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 }

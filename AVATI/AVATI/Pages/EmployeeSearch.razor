@@ -261,18 +261,20 @@
                             else
                             {
                                 <td style="width: 10%" class="text-center">
+                                    
                                     @if (employee.IsActive)
                                     {
-                                    <button class="btn btn-success" id="employeeStatus" @onclick=@(() => { _employee.EditStatus(employee.EmployeeID, false); employee.IsActive = false; })>
-                                        Aktiv
-                                    </button>
+                                        <button class="btn btn-success" id="employeeStatus" @onclick=@(() => { _employee.EditStatus(employee.EmployeeID, false); employee.IsActive = false; })>
+                                            Aktiv
+                                        </button>
                                     }
                                     else
                                     {
-                                    <button class="btn btn-danger" id="employeeStatus" @onclick=@(() => { _employee.EditStatus(employee.EmployeeID, true); employee.IsActive = true; })>
-                                        Inaktiv
-                                    </button>
+                                        <button class="btn btn-danger" id="employeeStatus" @onclick=@(() => { _employee.EditStatus(employee.EmployeeID, true); employee.IsActive = true; })>
+                                            Inaktiv
+                                        </button>
                                     }
+                                    <MudSwitch @bind-Checked="employee.IsActive" Color="MudBlazor.Color.Success" class="ml-1" @onclick=@(() => { _employee.EditStatus(employee.EmployeeID, true); employee.IsActive = true; })></MudSwitch>
                                 </td>
                             }
 

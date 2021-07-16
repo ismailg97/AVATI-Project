@@ -17,7 +17,7 @@ namespace AVATI.Data
 
         private string _connectionString;
         public List<Proposal> Proposals { get; set; }
-        private readonly EmployeeDetailService _employeeDetailService;
+        private readonly IEmployeeDetailService _employeeDetailService;
         public DbConnection GetConnection()
         {
             if (_connectionString != null)
