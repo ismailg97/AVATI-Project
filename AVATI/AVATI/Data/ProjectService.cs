@@ -12,19 +12,20 @@ namespace AVATI.Data
 {
     public class ProjectService : IProjektService
     {
-        private ProjectActivityService2 _projectActivityService = new ProjectActivityService2(true);
+        private ProjectActivityService2 _projectActivityService;
         public List<Project> Projects { get; set; }
         private string ConnectionString; //global connectionstring
         
         public ProjectService(IConfiguration configuration)
         {
             ConnectionString = configuration.GetConnectionString("AVATI-Database");
+            _projectActivityService = new ProjectActivityService2(ConnectionString);
         }
         public ProjectService(string connection) //for testing database connections -> for testpurposes
         {
             ConnectionString = connection;
+            _projectActivityService = new ProjectActivityService2(ConnectionString);
         }
-        
         public DbConnection GetConnection()
         {
             return new SqlConnection
@@ -179,13 +180,14 @@ namespace AVATI.Data
 
         public Project GetProject(int projectId)
         {
+            Console.WriteLine("----ProjectID: " + projectId + " --------");
             Project temp;
             using IDbConnection db = GetConnection();
             temp = new Project();
-            temp.Projecttitel = db.QuerySingle<string>("SELECT Projecttitle from Project WHERE ProjectId = @proId",
-                new {proId = projectId});
             temp.Projectdescription = db.QuerySingle<string>(
                 "SELECT Projectdescription from Project WHERE ProjectId = @proId",
+                new {proId = projectId});
+            temp.Projecttitel = db.QuerySingle<string>("SELECT Projecttitle from Project WHERE ProjectID = @proId",
                 new {proId = projectId});
             temp.Projectbeginning = db.QuerySingle<DateTime>(
                 "SELECT Projectbegin from Project WHERE ProjectId = @proId",
@@ -244,7 +246,7 @@ namespace AVATI.Data
             return fields;
         }
 
-        public bool DeleteEmployeeFromProject(int projectId, int employeeId)
+        private bool DeleteEmployeeFromProject(int projectId, int employeeId)
         {
             using IDbConnection db = GetConnection();
             var activities = db.Query<string>("SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectID = @project AND EmployeeID = @emp AND ProjectActivity IS NOT NULL",

@@ -8,7 +8,7 @@
 @inject IEmployeeService _employeeServiceSimple
 @inject IProjektService _projectService
 @inject NavigationManager _navigationManager
-@inject SearchService _searchService
+@inject ISearchService _searchService
 @inject IProposalService _proposal
 @inject JsonImport _import
 @inject IEmployeeService _employee
@@ -149,7 +149,7 @@
                 <button class="btn btn-sm btn-outline-info  mb-1 mr-1" @onclick=@(() => { _searchService.AddRoleSearch(role); })>@role</button>
             }
         </div>
-        <button type="submit" id="submitQuery" @onclick=@(() => { CallSearch(); _searchService.TableIsVisible = true;}) class="btn btn-success col-2 mb-5">Suchen</button>
+        <button type="submit" id="submitQuery" @onclick=@(() => {CallSearch(); _searchService.TableIsVisible = true;}) class="btn btn-success col-2 mb-5">Suchen</button>
     </EditForm>
     @if (_searchService.TableIsVisible)
     {
@@ -168,7 +168,7 @@
             {
                 <h4 class="mb-3 font-weight-bold">Gefundene Mitarbeiter:</h4>
 
-                <table class="table table-bordered table-striped text-center">
+                <table class="table table-bordered table-striped text-center" id="result-table">
                     <thead class="thead-dark">
                     <tr>
                         <th>Name</th>
@@ -188,7 +188,6 @@
                             <tr>
                                 <td class="font-weight-bold" style="width: 15%">@employee.FirstName @employee.LastName</td>
                                 <td style="width: 5%">
-
                                     <button type="button" class="btn btn-primary align-middle col">@employee.Rc</button>
                                 </td>
                                 <td style="width:20%">
@@ -244,7 +243,7 @@
             
             <h4 class="mb-3 font-weight-bold">Bereits im Projekt befindliche Mitarbeiter:</h4>
 
-            <table class="table table-bordered table-hover table-striped text-center">
+            <table class="table table-bordered table-hover table-striped text-center" id="result-table">
                 <thead class="thead-light">
                 <tr>
                     <th>Name</th>
@@ -252,7 +251,7 @@
                     <th>Hardskills</th>
                     <th>Softskills</th>
                     <th>Rolle(n)</th>
-                    <th>Hinzufügen</th>
+                    <th>Löschen</th>
 
                 </tr>
                 </thead>
@@ -301,11 +300,7 @@
                             </div>
                         </td>
                         <td style="width: 10%" class="text-center">
-                            
-                                <button class="btn btn-sm btn-outline-danger" @onclick=@(() => { _chosenEmployees.RemoveAll(e => e.EmployeeID == employee.EmployeeID); StateHasChanged(); })>Löschen</button>
-                            
-
-
+                            <button class="btn btn-sm btn-outline-danger" @onclick=@(() => { _chosenEmployees.RemoveAll(e => e.EmployeeID == employee.EmployeeID); StateHasChanged(); })>Löschen</button>
                         </td>
                     </tr>
                 }
@@ -318,8 +313,8 @@
     @if (_searchService.TableIsVisible)
     {
         <div class="float-right mb-4">
-            <button class="btn btn-info mt-2" @onclick="Close">Abbrechen</button>
-            <button class="btn btn-success mt-2" @onclick="UpdateEmployees">Speichern</button>
+            <button class="btn btn-danger mt-2" @onclick="Close"><MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen</button>
+            <button class="btn btn-success mt-2" @onclick="UpdateEmployees"><MudIcon Icon="@Icons.Filled.Check"/> Speichern</button>
         </div>
     }
     </div>
@@ -389,6 +384,8 @@ else
     {
         SelectEmployees = _searchService.SearchEmployee(_searchService.EmployeeName, _searchService.SoftskillsToSearch, _searchService.HardskillsToSearch, _searchService.RolesToSearch, _searchService.CategoriesToSearch, new List<Tuple<string, int>>(), false);
         _searchService.EmptyQuery();
+        StateHasChanged();
+       
     }
 
     public async Task Showing()

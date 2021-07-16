@@ -11,9 +11,6 @@
     </NotAuthorized>
     <Authorized Context="authContext">
         
-
-
-
 @if (Loading)
 {
     <div class="d-flex flex-column align-items-center justify-content-center">
@@ -33,29 +30,56 @@ else
         <DataAnnotationsValidator/>
         <div class="container col">
             <h2 class="mb-3">Globale Projekttätigkeiten</h2>
-            <p>Hier können Sie Tätigkeiten im Projekt hinzufügen, verwalten, editieren und löschen. Diese stehen als Auswahlmöglichkeit für alle Projekte zur Verfügung. </p>
+            <p>Hier können Sie Tätigkeiten für Projekt hinzufügen, verwalten, editieren und löschen. Diese stehen als Auswahlmöglichkeit für alle Projekte zur Verfügung. </p>
             <hr/>
+            <div class="col-auto">
+                <a style="position: relative;">
+                    <MudPopover Open="@ShowErrorCreate" Class="alert alert-danger" Style="width: 600px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
+                        @if (_whatToShow == 0)
+                        {
+                            <a>Anlegen der Tätigkeit misslungen, die Bezeichnung existiert bereits!</a>
+                        }
+                        else if (_whatToShow == 1)
+                        {
+                            <a>Anlegen der Tätigkeit misslungen, die Bezeichnung fehlt!</a>
+                        } 
+                        else if (_whatToShow == 2)
+                        {
+                            <a>Anlegen der Tätigkeit misslungen, die Bezeichnung ist zu lang (max. 150 Zeichen)!</a>
+                        }
+                        
+                    </MudPopover>
+                </a>
+                <div class="form-group row">
+                    <label class="col-form-label mr-2 font-weight-bold" value="@Description">Neue Tätigkeit anlegen:</label>
+                    <input type="text" class="form-group form-control" style="width: auto" @bind-value="Description"/>
+                    <button type="button" class="form-group btn btn-success mx-1" @onclick="(() => { AddProjectActivity(Description); })">+</button>
+                </div>
+            </div>
             <div class="row">
-                <div class="col-8">
-                    <div class="form-group col-10">
+                <div class="col">
+                    <div class="form-group">
                         <input class="form-control" type="text" placeholder="Suche Aktivität..."
                                    @bind="filterSearch"
                                    @bind:event="oninput">
                         <table class="table table-hover">
-                            <thead>
+                        <colgroup>
+                                                    <col span="1" style="width: 90%"/><col span="1" style="width: 10%"/>
+                                                </colgroup>
+                            <thead class="thead-dark">
                             <tr>
                                 <th scope="col">Beschreibung</th>
-                                <th scope="col"></th>
+                                <th scope="col"class="text-right"></th>
                             </tr>
                             </thead>
                             <tbody>
-                            @if (!_projectActivityService.GetAllGlobalProjectActivities().Any())
+                            @if (!_globalActivities.Any())
                             {
                                 <tr>
                                     <td>[Keine Aktivitäten hinzugefügt!]</td>
                                 </tr>
                             }
-                            @foreach (var activity in _projectActivityService.GetAllGlobalProjectActivities())
+                            @foreach (var activity in _globalActivities)
                             {
                                 @if (filterSearch == null || activity.Contains(filterSearch, StringComparison.OrdinalIgnoreCase))
                                 {
@@ -76,19 +100,8 @@ else
                         </table>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="col-auto">
-                        <div class="form-group row">
-                            <label class="col-form-label mr-2 font-weight-bold" value="@Description">Neue Tätigkeit anlegen:</label>
-                            <input type="text" class="form-group form-control" style="width: auto" @bind-value="Description"/>
-                            <button type="button" class="form-group btn btn-success mx-1" @onclick="(() => { AddProjectActivity(Description); })">+</button>
-                        </div>
-                    </div>
-                </div>
             </div>
-
         </div>
-
     </EditForm>
 }
 @if (ShowPopDelete)
@@ -129,12 +142,28 @@ else
                         <text class="font-weight-bold">Achtung!</text>
                     </p>
                     <p>Die Tätigkeit, die hier geändert wird, verbleibt im Projekt, kann aber nicht mehr gelöscht und dann wieder hinzugefügt werden.</p>
+                    <a style="position: relative;">
+                        <MudPopover Open="@ShowErrorEdit" Class="alert alert-danger" Style="width: auto; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
+                            @if (_whatToShow == 0)
+                            {
+                                <a>Editieren der Tätigkeit misslungen, die Bezeichnung existiert bereits!</a>
+                            }
+                            else if (_whatToShow == 1)
+                            {
+                                <a>Editieren der Tätigkeit misslungen, die Bezeichnung fehlt!</a>
+                            } 
+                            else if (_whatToShow == 2)
+                            {
+                                <a>Editieren der Tätigkeit misslungen, die Bezeichnung ist zu lang (max. 150 Zeichen)!</a>
+                            }
+                        </MudPopover>
+                    </a>
                     <input class="form-control mb-2" @bind=@Description>
-                    <div class="float-right">
+                    <div class="btn-group">
                         <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { ShowPopUpdate = !ShowPopUpdate; })">
                             <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
                         </button>
-                        <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { UpdateActivity(OldDescription, Description); ShowPopUpdate = !ShowPopUpdate;})">
+                        <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { UpdateActivity(OldDescription, Description);})">
                             <span class="oi oi-document" aria-hidden="true"></span> Speichern
                         </button>
                     </div>
@@ -145,8 +174,6 @@ else
     <div class="modal-backdrop fade show"></div>
 }
 
-    
-            
         </Authorized>
     </AuthorizeView>
     
@@ -159,18 +186,103 @@ else
     public string OldDescription;
     public bool ShowPopDelete { get; set; }
     public bool ShowPopUpdate { get; set; }
+        public bool ShowErrorCreate;
+        public bool ShowErrorEdit;
 
-    private string filterSearch { get; set; }
+        private int _whatToShow;
+        private List<string> _globalActivities; 
 
-    public void AddProjectActivity(string description)
+        private string filterSearch { get; set; }
+
+    protected override void OnInitialized()
     {
-        _projectActivityService.AddGlobalProjectActivity(description);
-        StateHasChanged();
+        _whatToShow = -1;
+        _globalActivities = _projectActivityService.GetAllGlobalProjectActivities();
+        ShowErrorCreate = false;
+        ShowErrorEdit = false;
     }
+        
+    private async void ShowErrorMessage(bool isCreate, int whatToShow)
+    {
+        _whatToShow = whatToShow;
+        if (isCreate)
+        {
+            ShowErrorCreate = true;
+            StateHasChanged();
+            await Task.Delay(3000);
+            ShowErrorCreate = false;
+            StateHasChanged();
+        }
+        else
+        {
+            ShowErrorEdit = true;
+            StateHasChanged();
+            await Task.Delay(3000);
+            ShowErrorEdit = false;
+            StateHasChanged();
+        }
+
+    }
+
+        private bool AlreadyExists(string description)
+        {
+            var trimDesc = description.Replace(" ", "");
+            return _globalActivities.Exists(x => trimDesc.Equals(x.Replace(" ", ""), StringComparison.OrdinalIgnoreCase));
+        }
+
+        public void AddProjectActivity(string description)
+        {
+            if (string.IsNullOrEmpty(description) || string.IsNullOrWhiteSpace(description))
+            {
+                ShowErrorMessage(true, 1);
+                return;
+            }
+            
+            if (description.Length > 150)
+            {
+                ShowErrorMessage(true, 2);
+                return;
+            }
+            
+            if (AlreadyExists(description))
+            {
+                ShowErrorMessage(true, 0);
+                return;
+            }
+            _projectActivityService.AddGlobalProjectActivity(description);
+            Description = "";
+            _globalActivities = _projectActivityService.GetAllGlobalProjectActivities();
+            StateHasChanged();
+        }
 
     public void UpdateActivity(string old, string newstring)
     {
+        if (old == newstring)
+        {
+            ShowPopUpdate = !ShowPopUpdate;
+            return;
+        }
+        
+        if (string.IsNullOrEmpty(newstring) || string.IsNullOrWhiteSpace(newstring))
+        {
+            ShowErrorMessage(false, 1);
+            return;
+        }
+            
+        if (newstring.Length > 150)
+        {
+            ShowErrorMessage(false, 2);
+            return;
+        }
+        
+        if (AlreadyExists(newstring))
+        {
+            ShowErrorMessage(false, 0);
+            return;
+        }
         _projectActivityService.UpdateGlobalProjectActivity(old, newstring);
+        _globalActivities = _projectActivityService.GetAllGlobalProjectActivities();
+        ShowPopUpdate = !ShowPopUpdate;
         StateHasChanged();
     }
 
@@ -198,6 +310,7 @@ else
     public void DeleteActivity(string description)
     {
         _projectActivityService.DeleteGlobalProjectActivity(description);
+        _globalActivities = _projectActivityService.GetAllGlobalProjectActivities();
         StateHasChanged();
     }
 

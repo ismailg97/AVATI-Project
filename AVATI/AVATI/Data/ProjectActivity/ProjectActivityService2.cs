@@ -12,39 +12,22 @@ namespace AVATI.Data
     public class ProjectActivityService2: IProjectActivityService
     {
         private IConfiguration _config;
-        private bool _toTest;
-        private bool _inService;
+        private string _connection;
 
         public ProjectActivityService2(IConfiguration config)
         {
             _config = config;
-            _toTest = false;
-            _inService = false;
         }
 
-        public ProjectActivityService2()
+        public ProjectActivityService2(string connection)
         {
-            _toTest = true;
-            _inService = false;
-        }
-
-        public ProjectActivityService2(bool inService)
-        {
-            _toTest = false;
-            _inService = inService;
+            _connection = connection;
         }
 
         private IDbConnection GetConnection()
         {
-            if (!_inService && !_toTest) return new SqlConnection(_config.GetConnectionString("AVATI-Database"));
-            var json = File.ReadAllText("appsettings.json");
-            var jObject = JObject.Parse(json);
-            string name;
-            if(_toTest)
-                name = (string) jObject["ConnectionStrings"]?["TEST-Database"];
-            else
-                name = (string) jObject["ConnectionStrings"]?["AVATI-Database"];
-            return new SqlConnection(name);
+            if (_config != null) return new SqlConnection(_config.GetConnectionString("AVATI-Database"));
+            return new SqlConnection(_connection);
         }
 
         private int GetProjectActivityId(int projectId, int empId, string activity)
@@ -458,7 +441,7 @@ namespace AVATI.Data
         public bool UpdateGlobalProjectActivity(string oldDescription, string newDescription)
         {
             using var db = GetConnection();
-            return db.Execute("UPDATE ProjectActivity SET Description = @oldD WHERE Description = @newD", 
+            return db.Execute("UPDATE ProjectActivity SET Description = @newD WHERE Description = @oldD", 
                 new { oldD = oldDescription, newD = newDescription}) == 1;
         }
 

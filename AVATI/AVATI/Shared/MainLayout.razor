@@ -1,10 +1,12 @@
 ﻿@using DocumentFormat.OpenXml.Drawing
 @using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
 @using Microsoft.AspNetCore.Http
 @inherits LayoutComponentBase
 @inject IHttpContextAccessor _httpContextAccessor
 @inject NavigationManager _navigationManager
 @inject IHttpClientFactory _httpClient
+@inject HttpClient _http
 
 
 <div class="page">
@@ -18,18 +20,20 @@
                 
                 <NotAuthorized>
                     <li class="nav-item px-3">
-                        <NavLink class="nav-link" href="/Login">
+                        <NavLink class="nav-link" href="/">
                             <span class="oi oi-account-login" aria-hidden="true"></span> Login
                         </NavLink>
                     </li>
                 </NotAuthorized>
                 
                 <Authorized>
-                    <li @onclick="(() => { LogOut(); })" class="nav-item px-3">
-                        <NavLink class="nav-link">
-                            <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
-                        </NavLink>
+                    
+                    <li class="nav-item px-3">
+                        <form action="cookie/Logout" method="post" >
+                            <input value="Abmelden" type="submit"/>
+                        </form>
                     </li>
+                        
                     <li class="nav-item px-3">
                         <NavLink class="nav-link" href="/profile" Match="NavLinkMatch.All">
                             <span class="oi oi-person" aria-hidden="true"></span> Profil
@@ -89,7 +93,7 @@
             <button class="openButton" @onclick="OpenNav"><span class="oi oi-menu"></span></button>
             <a class="brand" id="brandCollapsed" href="">AVATI</a>
             <img class="logo" id="logoCollapsed" src="XITASO_Logo.png" alt="Xitaso Logo">
-            <a class="about" id="aboutCollapsed" href="">About</a>
+            
         }
         else
         {
@@ -113,39 +117,7 @@
 
     
 
-    private void LogOut()
-    {
-
-        
-        
-        //Console.WriteLine("test");
-        //if (_httpContextAccessor.HttpContext != null)
-        //{
-        //    CookieOptions option = new CookieOptions();
-        //    option.Expires = DateTime.Now.AddDays(-1);
-        //    option.Secure = true;
-        //    option.IsEssential = true;
-        //    _httpContextAccessor.HttpContext.Request.Cookies.Append(".AspNetCore.Cookies", string.Empty, option);
-    //Then delete the cookie
-        //    _httpContextAccessor.HttpContext.Response.Cookies.Delete(".AspNetCore.Cookies");
-        //    _navigationManager.NavigateTo("Login");
-            
-            //_httpContextAccessor.HttpContext.Response.Cookies[""]
-            //var authProperties = new AuthenticationProperties
-            //{
-            //    IsPersistent = true,
-            //    RedirectUri = _httpContextAccessor.HttpContext.Request.Host.Value,
-    //Set Your Expire Cookie
-            //    ExpiresUtc = DateTime.UtcNow.AddDays(-1)
-            //};
-            //CookieOptions option = new CookieOptions();
-            //option.Expires = DateTime.Now.AddDays(-1);
-            //option.Secure = true;
-            //option.IsEssential = true;
-            //_httpContextAccessor.HttpContext.Response.Cookies.Append(".AspNetCore.Cookies", string.Empty, option);
-    //Then delete the cookie
-            //_httpContextAccessor.HttpContext.Response.Cookies.Delete(".AspNetCore.Cookies");
-        }
+   
         
         
     }

@@ -47,42 +47,42 @@ namespace UnitTests
                 Projecttitel = "Just a small test no biggie", Projectbeginning = DateTime.Now,
                 Projectend = DateTime.Now, Employees = new List<Employee>(),
                 Projectdescription = "Just a small Project nothing more", Fields = new List<string>(),
-                Projectpurpose = new List<ProjectPurpose>(), ProjectActivities = new List<string>(),
+                 ProjectActivities = new List<string>(),
             }));
             testCaseData.Add(new TestCaseData(new Project()
             {
                 Projecttitel = "This should also work?", Projectbeginning = DateTime.Now.AddDays(-30),
                 Projectend = DateTime.Now.AddDays(30), Employees = new List<Employee>(),
                 Projectdescription = "Just a small Project nothing more or less", Fields = new List<string>(),
-                Projectpurpose = new List<ProjectPurpose>(), ProjectActivities = new List<string>(),
+                 ProjectActivities = new List<string>(),
             }));
             testCaseData.Add(new TestCaseData(new Project()
             {
                 Projecttitel = "Jusadssdasaddsasdasadadst a smallasdadsdasdas", Projectbeginning = DateTime.Now,
                 Projectend = DateTime.Now, Employees = new List<Employee>(),
                 Projectdescription = "Just a smasdsadsaddasdasdasdasdasddsaasddsasaddasdsadsa", Fields = new List<string>(),
-                Projectpurpose = new List<ProjectPurpose>(), ProjectActivities = new List<string>(),
+                 ProjectActivities = new List<string>(),
             }));
             testCaseData.Add(new TestCaseData(new Project()
             {
                 Projecttitel = "@@@@_@@@@@@", Projectbeginning = DateTime.Now.AddDays(-400),
                 Projectend = DateTime.Now.AddDays(-200), Employees = new List<Employee>(),
                 Projectdescription = "", Fields = new List<string>(),
-                Projectpurpose = new List<ProjectPurpose>(), ProjectActivities = new List<string>(),
+                ProjectActivities = new List<string>(),
             }));
             testCaseData.Add(new TestCaseData(new Project()
             {
                 Projecttitel = " asd", Projectbeginning = DateTime.Now,
                 Projectend = DateTime.Now, Employees = new List<Employee>(),
                 Projectdescription = "sad", Fields = new List<string>(),
-                Projectpurpose = new List<ProjectPurpose>(), ProjectActivities = new List<string>(),
+                 ProjectActivities = new List<string>(),
             }));
             testCaseData.Add(new TestCaseData(new Project()
             {
                 Projecttitel = "Just a small test no biggie", Projectbeginning = DateTime.Now,
                 Projectend = DateTime.Now, Employees = new List<Employee>(),
                 Projectdescription = "Just a small Project nothing more", Fields = new List<string>(),
-                Projectpurpose = new List<ProjectPurpose>(), ProjectActivities = new List<string>(),
+                 ProjectActivities = new List<string>(),
             }));
             return testCaseData.AsEnumerable();
         }

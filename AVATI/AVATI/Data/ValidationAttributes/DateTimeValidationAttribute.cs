@@ -25,7 +25,8 @@ namespace AVATI.Data.ValidationAttributes
                 }
                     
                     
-            } else if (value is Project project)
+            } 
+            else if (value is Project project)
             {
                 if (project.Projectbeginning.CompareTo(project.Projectend.AddDays(1)) >= 0)
                 {
@@ -42,9 +43,6 @@ namespace AVATI.Data.ValidationAttributes
                 }
                 
             }
-
-
-
             return ValidationResult.Success;
         }
     }

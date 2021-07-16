@@ -5,13 +5,14 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Drawing;
 using Dapper;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.Extensions.Configuration;
 
 namespace AVATI.Data
 {
     public class EmployeeService : IEmployeeService
     {
-        private ProjectActivityService2 _projectActivityService = new ProjectActivityService2(true); 
+        private ProjectActivityService2 _projectActivityService;
         private string _connection;
         private readonly IConfiguration _configuration;
         public List<Employee> Employees { get; set; }
@@ -20,6 +21,7 @@ namespace AVATI.Data
         public EmployeeService(IConfiguration configuration)
         {
             _configuration = configuration;
+            _projectActivityService = new ProjectActivityService2(_configuration.GetConnectionString("AVATI-Database"));
         }
 
         public DbConnection GetConnection()
@@ -34,10 +36,11 @@ namespace AVATI.Data
         
         public EmployeeService(string connect)
         {
+            _projectActivityService = new ProjectActivityService2(connect);
             _connection = connect;
         }
 
-
+        
         public List<Employee> GetAllEmployees()
         {
             using DbConnection db = GetConnection();
@@ -101,7 +104,7 @@ namespace AVATI.Data
                 var rc = db.Query<int>("SELECT RCLevel from Employee WHERE EmployeeId = @ID",
                     new {ID = emp.EmployeeID}).FirstOrDefault();
                 employee.Rc = rc;
-                
+                employee.EmployeeID = emp.EmployeeID;
                 empList.Add(employee);
             }
 
@@ -109,48 +112,56 @@ namespace AVATI.Data
             return empList;
         }
 
-        public bool CreateEmployeeProfile(Employee emp)
+        public int CreateEmployeeProfile(Employee emp)
         {
             using DbConnection db = GetConnection();
+            Console.WriteLine(emp.FirstName + emp.LastName);
             db.Query(
-                "INSERT INTO Employee VALUES (Employee ID = @ID, @Firstname ,@Lastname , NULL , @RWE, @EmpTime, @Rc, @EmpType, @IA)",
+                "INSERT INTO Employee VALUES ( @Firstname ,@Lastname ,@RWE, @EmpTime,@Rc,@EmpType, @IA, @img)",
                 new
                 {
-                    ID = emp.EmployeeID, Firstname = emp.FirstName, Lastname = emp.LastName,
-                    RWE = emp.RelevantWorkExperience, EmpTime = emp.EmploymentTime, EmpType = emp.EmpType, Rc = emp.Rc,
+                     Firstname = emp.FirstName, Lastname= emp.LastName, img = emp.Image ,
+                    RWE = emp.RelevantWorkExperience, EmpTime = emp.EmploymentTime, EmpType = "SalesStaff", Rc = emp.Rc,
                     IA = emp.IsActive
                 });
+
+            var id = db.QuerySingle<int>(
+                "Select EmployeeID From Employee WHERE Firstname = @Firstname AND Lastname = @Lastname", new
+                {
+                    Firstname = emp.FirstName, LastName = emp.LastName
+                });
+            
             foreach (var field in emp.Field)
             {
-                db.Query("INSERT INTO Employee_Field VALUES (@ID, @fields)", new {ID = emp.EmployeeID, fields = field});
+                db.Query("INSERT INTO Employee_Field VALUES (@ID, @fields)", new {ID = id, fields = field});
             }
 
             foreach (var hardskill in emp.HardSkillLevel)
             {
                 db.Query(
                     "INSERT INTO Employee_HardSkill VALUES (@ID, @Desc,@Level )",
-                    new {ID = emp.EmployeeID, Desc = hardskill.Item1.Description, Level = hardskill.Item2});
+                    new {ID = id, Desc = hardskill.Item1.Description, Level = hardskill.Item2});
             }
 
             foreach (var language in emp.Language)
             {
-                db.Query(
-                    "INSERT INTO Employee_Language VALUES (@emp.EmployeeID, @languages,@level )",
-                    new {ID = emp.EmployeeID, languages = language.Item1, level = language.Item2});
+                db.Query("INSERT INTO Employee_Language VALUES (@ID, @DESC, @LEVEL)",
+                    new {ID = id, DESC = language.Item1, LEVEL = language.Item2.ToString()});
             }
+            
 
             foreach (var roles in emp.Roles)
             {
-                db.Query("INSERT INTO Employee_Role VALUES (@ID, @role)", new {ID = emp.EmployeeID, role = roles});
+                db.Query("INSERT INTO Employee_Role VALUES (@ID, @role)", new {ID = id, role = roles});
             }
 
             foreach (var softskills in emp.Softskills)
             {
                 db.Query("INSERT INTO Employee_Softskill VALUES (@ID, @softskill)",
-                    new {ID = emp.EmployeeID, softskill = softskills});
+                    new {ID = id, softskill = softskills});
             }
 
-            return true;
+            return id;
         }
 
         public bool EditEmployeeProfile(Employee emp)
@@ -224,7 +235,12 @@ namespace AVATI.Data
                 {
                     db.Query("INSERT INTO Employee_Hardskill VALUES (@id, @hardsk,@level)",
                         new {hardsk = hard.Item1.Description, id = emp.EmployeeID, level=hard.Item2});
-                } 
+                }
+                else
+                {
+                    db.Query("UPDATE Employee_Hardskill SET Level = @level WHERE Hardskill = @hardsk AND EmployeeID = @id",
+                        new {hardsk = hard.Item1.Description, id = emp.EmployeeID, level=hard.Item2});
+                }
             }
             
             

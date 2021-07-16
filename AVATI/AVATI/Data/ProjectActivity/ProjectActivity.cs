@@ -8,6 +8,7 @@ namespace AVATI.Data
     public class ProjectActivity
     {
         [Required][NotNull]
+        [StringLength(150, ErrorMessage = "Projektaktivität ist zu lang (150 Zeichen)")]
         public string Description { get; set; }
         public int ProjectID { get; set; }
         public int EmployeeID { get; set; }

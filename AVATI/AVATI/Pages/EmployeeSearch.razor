@@ -7,7 +7,7 @@
 @using AVATI.Data.EmployeeDetailFiles
 @using AVATI.Pages.Project
 @using Microsoft.Extensions.Configuration
-@inject SearchService _searchService
+@inject ISearchService _searchService
 @inject IHardskillService _hard
 @inject JsonImport _import
 @inject IEmployeeService _employee
@@ -62,7 +62,7 @@
                 }
                 @foreach (var hardskill in _searchService.CategoriesToSearch)
                 {
-                    <button type="button" class="btn btn-info btn-sm border border-dark section" @onclick=@(() => { _searchService.CategoriesToSearch.Remove(hardskill); _searchService.HardskillsToDisplay.Add(hardskill); _searchService.HardskillsToDisplay = _searchService.HardskillsToDisplay.OrderBy(e => e.Description).ToList();})>
+                    <button type="button" class="btn btn-info btn-sm border border-dark section" @onclick=@(() => { _searchService.CategoriesToSearch.Remove(hardskill); _searchService.CategoriesToDisplay.Add(hardskill); _searchService.CategoriesToDisplay = _searchService.CategoriesToDisplay.OrderBy(e => e.Description).ToList();})>
                         @hardskill.Description <span class="oi oi-x cross"></span>
                     </button>
                 }
