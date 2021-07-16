@@ -484,6 +484,13 @@ else
     {
         _navigationManager.NavigateTo("/Projektübersicht");
     }
+    
+    private bool AlreadyExists(string description)
+    {
+        var list = Project.Projectpurpose.Keys.ToList();
+        var trimDesc = description.Replace(" ", "");
+        return list.Exists(x => trimDesc.Equals(x.Replace(" ", ""), StringComparison.OrdinalIgnoreCase));
+    }
 
     private async void EditPurpose(string purpose)
     {
@@ -496,8 +503,8 @@ else
             StateHasChanged();
             return;
         }
-        var added = Project.Projectpurpose.TryAdd(newKey, newValue);
-        if (!added)
+        
+        if (AlreadyExists(newKey))
         {
             _showErrorPurpose = true;
             StateHasChanged();
@@ -506,6 +513,7 @@ else
             StateHasChanged();
             return;
         }
+        Project.Projectpurpose.TryAdd(newKey, newValue);
         _showEditPurpose.TryAdd(newKey, false);
         _purposeKeyEdit.TryAdd(newKey, newKey);
         _purposeValueEdit.TryAdd(newKey, newValue);
@@ -518,8 +526,7 @@ else
 
     private async void AddPurpose()
     {
-        var added = Project.Projectpurpose.TryAdd(_newPurposeKey, _newPurposeValue);
-        if (!added)
+        if (AlreadyExists(_newPurposeKey))
         {
             _showErrorPurpose = true;
             StateHasChanged();
@@ -531,6 +538,7 @@ else
             _newPurposeValue = "";
             return;
         }
+        Project.Projectpurpose.TryAdd(_newPurposeKey, _newPurposeValue);
         _showEditPurpose.TryAdd(_newPurposeKey, false);
         _purposeKeyEdit.TryAdd(_newPurposeKey, _newPurposeKey);
         _purposeValueEdit.TryAdd(_newPurposeKey, _newPurposeValue == "" ? null : _newPurposeValue);

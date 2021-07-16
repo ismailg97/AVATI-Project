@@ -33,6 +33,11 @@ else
             <p>Hier können Sie Tätigkeiten im Projekt hinzufügen, verwalten, editieren und löschen. Diese stehen als Auswahlmöglichkeit für alle Projekte zur Verfügung. </p>
             <hr/>
             <div class="col-auto">
+                <a style="position: relative;">
+                    <MudPopover Open="@ShowErrorCreate" Class="alert alert-danger" Style="width: 600px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
+                        Anlegen der Tätigkeit misslungen, Bezeichnung existiert bereits!
+                    </MudPopover>
+                </a>
                 <div class="form-group row">
                     <label class="col-form-label mr-2 font-weight-bold" value="@Description">Neue Tätigkeit anlegen:</label>
                     <input type="text" class="form-group form-control" style="width: auto" @bind-value="Description"/>
@@ -56,13 +61,13 @@ else
                             </tr>
                             </thead>
                             <tbody>
-                            @if (!_projectActivityService.GetAllGlobalProjectActivities().Any())
+                            @if (!_globalActivities.Any())
                             {
                                 <tr>
                                     <td>[Keine Aktivitäten hinzugefügt!]</td>
                                 </tr>
                             }
-                            @foreach (var activity in _projectActivityService.GetAllGlobalProjectActivities())
+                            @foreach (var activity in _globalActivities)
                             {
                                 @if (filterSearch == null || activity.Contains(filterSearch, StringComparison.OrdinalIgnoreCase))
                                 {
@@ -125,12 +130,17 @@ else
                         <text class="font-weight-bold">Achtung!</text>
                     </p>
                     <p>Die Tätigkeit, die hier geändert wird, verbleibt im Projekt, kann aber nicht mehr gelöscht und dann wieder hinzugefügt werden.</p>
+                    <a style="position: relative;">
+                        <MudPopover Open="@ShowErrorEdit" Class="alert alert-danger" Style="width: auto; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
+                            Abändern der Tätigkeit misslungen, Bezeichnung existiert bereits!
+                        </MudPopover>
+                    </a>
                     <input class="form-control mb-2" @bind=@Description>
                     <div class="float-right">
                         <button type="button" class="btn btn-info" data-dismiss="modal" @onclick="(() => { ShowPopUpdate = !ShowPopUpdate; })">
                             <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
                         </button>
-                        <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { UpdateActivity(OldDescription, Description); ShowPopUpdate = !ShowPopUpdate;})">
+                        <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="(() => { UpdateActivity(OldDescription, Description);})">
                             <span class="oi oi-document" aria-hidden="true"></span> Speichern
                         </button>
                     </div>
@@ -153,18 +163,71 @@ else
     public string OldDescription;
     public bool ShowPopDelete { get; set; }
     public bool ShowPopUpdate { get; set; }
+        public bool ShowErrorCreate;
+        public bool ShowErrorEdit;
+        
+        private List<string> _globalActivities; 
 
-    private string filterSearch { get; set; }
+        private string filterSearch { get; set; }
 
-    public void AddProjectActivity(string description)
+    protected override void OnInitialized()
     {
+        _globalActivities = _projectActivityService.GetAllGlobalProjectActivities();
+        ShowErrorCreate = false;
+        ShowErrorEdit = false;
+    }
+        
+    private async void ShowErrorMessage(bool isCreate)
+    {
+        if (isCreate)
+        {
+            ShowErrorCreate = true;
+            StateHasChanged();
+            await Task.Delay(3000);
+            ShowErrorCreate = false;
+            StateHasChanged();
+        }
+        else
+        {
+            ShowErrorEdit = true;
+            StateHasChanged();
+            await Task.Delay(3000);
+            ShowErrorEdit = false;
+            StateHasChanged();
+        }
+
+    }
+
+        private bool AlreadyExists(string description)
+        {
+            var trimDesc = description.Replace(" ", "");
+            return _globalActivities.Exists(x => trimDesc.Equals(x.Replace(" ", ""), StringComparison.OrdinalIgnoreCase));
+        }
+
+        public void AddProjectActivity(string description)
+    {
+        if (AlreadyExists(description))
+        {
+            ShowErrorMessage(true);
+            return;
+        }
         _projectActivityService.AddGlobalProjectActivity(description);
+        Description = "";
+        _globalActivities = _projectActivityService.GetAllGlobalProjectActivities();
         StateHasChanged();
     }
 
     public void UpdateActivity(string old, string newstring)
     {
+        if (old == newstring) return;
+        if (AlreadyExists(newstring))
+        {
+            ShowErrorMessage(false);
+            return;
+        }
         _projectActivityService.UpdateGlobalProjectActivity(old, newstring);
+        _globalActivities = _projectActivityService.GetAllGlobalProjectActivities();
+        ShowPopUpdate = !ShowPopUpdate;
         StateHasChanged();
     }
 
@@ -192,6 +255,7 @@ else
     public void DeleteActivity(string description)
     {
         _projectActivityService.DeleteGlobalProjectActivity(description);
+        _globalActivities = _projectActivityService.GetAllGlobalProjectActivities();
         StateHasChanged();
     }
 
