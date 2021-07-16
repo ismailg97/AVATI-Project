@@ -7,7 +7,6 @@ namespace AVATI.Data
     {
         public ProjectActivity GetProjectActivity(int projectId, int empId, string activity);
         public bool SetProjectActivityToEmployee(ProjectActivity activity);
-        public bool UpdateProjectActivityToEmployee(ProjectActivity activity);
         public bool UpdateSkillsToActivity(int projectActivityId, List<string> hardSkills, List<string> softSkills);
         public bool DeleteProjectActivityToEmployee(int projectActivityId);
         public Dictionary<int, List<ProjectActivity>> GetActivitiesWithProjectsGrouped(int employeeId);

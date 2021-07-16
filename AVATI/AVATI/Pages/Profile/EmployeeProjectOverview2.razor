@@ -2,7 +2,7 @@
 @using DocumentFormat.OpenXml.Drawing
 @using Microsoft.AspNetCore.Http
 
-@inject IProjektService _projektService
+@inject IProjectService _projectService
 @inject JsonImport _jsonImport
 @inject IHardskillService _hardskillService
 @inject IProjectActivityService _projectActivityService
@@ -144,7 +144,7 @@
 
 @if (_showCreate || _showEdit )
 {
-    var projecttitle = _projektService.GetProject(_projectActivity.ProjectID).Projecttitel;
+    var projecttitle = _projectService.GetProject(_projectActivity.ProjectID).Projecttitel;
     
     <div class="modal fade show" id="myModal" style=" display: inline-block;">
         <div class="modal-dialog border-dark modal-dialog- modal-lg">
@@ -430,7 +430,7 @@
         _projects = new List<Project>();
         foreach (var projectId in _projectWithGroupedActivities.Keys)
         {
-            var project = _projektService.GetProject(projectId);
+            var project = _projectService.GetProject(projectId);
             if(project != null)
                 _projects.Add(project);
             var activitiesOfProject = _projectActivityService.GetActivitiesDesOfProject(projectId);

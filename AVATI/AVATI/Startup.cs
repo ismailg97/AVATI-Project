@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AVATI.Data;
-using AVATI.Data.DatabaseConnection;
 using AVATI.Data.EmployeeDetailFiles;
 using AVATI.Pages.Project;
 using BlazorDownloadFile;
@@ -48,8 +47,7 @@ namespace AVATI
             services.AddBlazorDownloadFile();
             services.AddSingleton<IEmployeeDetailService, EmployeeDetailService>();
             services.AddSingleton<IProjectActivityService, ProjectActivityService2>();
-            services.AddSingleton<DatabaseUtils>();
-            services.AddSingleton<IProjektService, ProjectService>();
+            services.AddSingleton<IProjectService, ProjectService>();
             services.AddHttpContextAccessor();
             services.AddHttpClient();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
