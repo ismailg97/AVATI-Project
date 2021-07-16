@@ -2,6 +2,7 @@
 @page "/ProposalOverview/{Open:int}"
 @using System.IO
 @using System.Linq
+@using System.Text.RegularExpressions
 @using AVATI.Data
 @using AVATI.Data.EmployeeDetailFiles
 @using BlazorDownloadFile
@@ -1018,7 +1019,7 @@
             }
             wordDoc.Save();
             wordDoc.Close();
-            await _blazorDownloadFileService.DownloadFile("test.docx", memStream, "application/octet-stream");
+            await _blazorDownloadFileService.DownloadFile(tempProp.ProposalTitle.Replace(" ", "_") + ".docx", memStream, "application/octet-stream");
         }    
     }
 }
