@@ -124,12 +124,14 @@
         <!------ Hard Skills ---------->
         <div class=" form-group">
             <MudIcon Icon="@Icons.Filled.InfoOutline" Style="color: black;" @onclick="() => { _isOpenHardskill = !_isOpenHardskill;}"/>
-            <MudPopover Open="@_isOpenHardskill" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 300px; height: auto;">
+            <a style="position: relative;">
+            <MudPopover Open="@_isOpenHardskill" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 300px; height: auto;" OffsetX="true">
                 <div>
                     <MudText Style="font-size: 14px;">Wenn Sie auf einem Hardskill einen Rechtsklick betätigen, können Sie dessen Level ändern</MudText>
                     <MudButton Style="font-size: 14px;" OnClick="() => { _isOpenHardskill = false;}" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
                 </div>
             </MudPopover>
+            </a>
             <label class="mr-3 mt-2"><b>Hard Skills:</b> </label>
             @if (Emp.Hardskills.Any())
             {
@@ -323,14 +325,15 @@
     <!------ Languages ---------->
 
     <div class=" form-group">
-    <MudIcon Icon="@Icons.Filled.InfoOutline" Style="color: black;" @onclick="() => { _isOpenLanguage = !_isOpenLanguage;}"/>
-                <MudPopover Open="@_isOpenLanguage" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 300px; height: auto;">
-                    <div>
-                        <MudText Style="font-size: 14px;">Wenn Sie auf eine Sprache einen Rechtsklick betätigen, können Sie deren Level ändern</MudText>
+        <MudIcon Icon="@Icons.Filled.InfoOutline" Style="color: black; display: inline;" @onclick="() => { _isOpenLanguage = !_isOpenLanguage;}"/>
+        <a style="position: relative;">
+            <MudPopover Open="@_isOpenLanguage" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 300px; height: auto;">
+                    <MudText Style="font-size: 14px;">Wenn Sie auf eine Sprache einen Rechtsklick betätigen, können Sie deren Level ändern</MudText>
                         <MudButton Style="font-size: 14px;" OnClick="() => { _isOpenLanguage = false;}" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
-                    </div>
                 </MudPopover>
-        <label class="mr-3 mt-2"><b>Sprachen:</b> </label>
+        </a>
+    
+        <label style="display: inline;" class="mr-3 mt-2"><b>Sprachen:</b> </label>
         @if (Emp.Language.Any())
         {
             foreach (var language in Emp.Language)

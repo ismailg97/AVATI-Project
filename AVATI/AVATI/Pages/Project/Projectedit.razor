@@ -204,6 +204,11 @@ else
 
     <div class="form-group row">
         <label class="col-sm-3 col-form-label font-weight-bold">Projektzwecke</label>
+        <a style="position: relative;">
+                    <MudPopover Open="@_showErrorPurpose" Class="alert alert-danger" Style="width: 600px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
+                             Hinzufügen bzw. Ändern des Zwecks misslungen, Bezeichnung existiert bereits!
+                    </MudPopover>
+                </a>
         <table class="table border-primary col">
             <thead class="thead-dark">
             <th scope="col">Zweck</th>
@@ -402,6 +407,7 @@ else
 
     public List<string> Activitieslist { get; set; } = new();
 
+    private bool _showErrorPurpose;
     private bool _showAddPurpose;
     private string _newPurposeKey;
     private string _newPurposeValue;
@@ -443,6 +449,7 @@ else
 
     protected override void OnInitialized()
     {
+        _showErrorPurpose = false;
         _showAddPurpose = false;
         _showEditPurpose = new Dictionary<string, bool>();
         _purposeKeyEdit = new Dictionary<string, string>();
@@ -478,11 +485,27 @@ else
         _navigationManager.NavigateTo("/Projektübersicht");
     }
 
-    private void EditPurpose(string purpose)
+    private async void EditPurpose(string purpose)
     {
         var newKey = _purposeKeyEdit[purpose];
         var newValue = _purposeValueEdit[purpose] == "" ? null : _purposeValueEdit[purpose];
-        Project.Projectpurpose.TryAdd(newKey, newValue);
+        if (newKey == purpose)
+        {
+            Project.Projectpurpose[purpose] = newValue;
+            _showEditPurpose[purpose] = false;
+            StateHasChanged();
+            return;
+        }
+        var added = Project.Projectpurpose.TryAdd(newKey, newValue);
+        if (!added)
+        {
+            _showErrorPurpose = true;
+            StateHasChanged();
+            await Task.Delay(3000);
+            _showErrorPurpose = false;
+            StateHasChanged();
+            return;
+        }
         _showEditPurpose.TryAdd(newKey, false);
         _purposeKeyEdit.TryAdd(newKey, newKey);
         _purposeValueEdit.TryAdd(newKey, newValue);
@@ -493,9 +516,21 @@ else
         StateHasChanged();
     }
 
-    private void AddPurpose()
+    private async void AddPurpose()
     {
-        Project.Projectpurpose.TryAdd(_newPurposeKey, _newPurposeValue);
+        var added = Project.Projectpurpose.TryAdd(_newPurposeKey, _newPurposeValue);
+        if (!added)
+        {
+            _showErrorPurpose = true;
+            StateHasChanged();
+            await Task.Delay(3000);
+            _showErrorPurpose = false;
+            StateHasChanged();
+            _showAddPurpose = false;
+            _newPurposeKey = "";
+            _newPurposeValue = "";
+            return;
+        }
         _showEditPurpose.TryAdd(_newPurposeKey, false);
         _purposeKeyEdit.TryAdd(_newPurposeKey, _newPurposeKey);
         _purposeValueEdit.TryAdd(_newPurposeKey, _newPurposeValue == "" ? null : _newPurposeValue);
