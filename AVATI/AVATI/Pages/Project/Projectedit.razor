@@ -293,10 +293,10 @@ else
                 {
                     <tr>
                         <td>
-                            <input class="form-control col-5" @bind="_purposeKeyEdit[purpose.Key]"/>
+                            <input class="form-control col-10" @bind="_purposeKeyEdit[purpose.Key]"/>
                         </td>
                         <td>
-                            <select class="form-control col-5" @bind="_purposeValueEdit[purpose.Key]">
+                            <select class="form-control col-10" @bind="_purposeValueEdit[purpose.Key]">
                                 @{ string empty = ""; }
                                 <option value="@empty">[Keine Projekttätigkeit]</option>
                                 @foreach (var activity in Project.ProjectActivities)
@@ -517,6 +517,7 @@ else
         _showEditPurpose.TryAdd(newKey, false);
         _purposeKeyEdit.TryAdd(newKey, newKey);
         _purposeValueEdit.TryAdd(newKey, newValue);
+        
         Project.Projectpurpose.Remove(purpose);
         _showEditPurpose.Remove(purpose);
         _purposeKeyEdit.Remove(purpose);
