@@ -1,6 +1,6 @@
-﻿@inject DatabaseUtils _database
+﻿
 @page "/index"
-@using AVATI.Data.DatabaseConnection
+
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Authorization.Infrastructure
 
@@ -25,10 +25,5 @@
 {
     
     
-    protected override void OnInitialized()
-    {
-        _database.CreateTables();
-    //await _authenticationStateProvider.GetAuthenticationStateAsync();
-
-    }
+  
 }
