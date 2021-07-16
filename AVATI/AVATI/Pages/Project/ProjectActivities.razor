@@ -32,13 +32,24 @@ else
             <h2 class="mb-3">Globale Projekttätigkeiten</h2>
             <p>Hier können Sie Tätigkeiten im Projekt hinzufügen, verwalten, editieren und löschen. Diese stehen als Auswahlmöglichkeit für alle Projekte zur Verfügung. </p>
             <hr/>
-            <div class="row m-2">
-                <div class="col-9">
-                    <div class="form-group col-11">
+            <div class="col-auto">
+                <div class="form-group row">
+                    <label class="col-form-label mr-2 font-weight-bold" value="@Description">Neue Tätigkeit anlegen:</label>
+                    <input type="text" class="form-group form-control" style="width: auto" @bind-value="Description"/>
+                    <button type="button" class="form-group btn btn-success mx-1" @onclick="(() => { AddProjectActivity(Description); })">+</button>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
                         <input class="form-control" type="text" placeholder="Suche Aktivität..."
                                    @bind="filterSearch"
                                    @bind:event="oninput">
                         <table class="table table-hover">
+                        <colgroup>
+                                                    <col span="1" style="width: 90%"/><col span="1" style="width: 10%"/>
+                                                </colgroup>
                             <thead class="thead-dark">
                             <tr>
                                 <th scope="col">Beschreibung</th>
@@ -73,19 +84,8 @@ else
                         </table>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="col-auto">
-                        <div class="form-group row">
-                            <label class="col-form-label mr-2 font-weight-bold" value="@Description">Neue Tätigkeit anlegen:</label>
-                            <input type="text" class="form-group form-control" style="width: auto" @bind-value="Description"/>
-                            <button type="button" class="form-group btn btn-success mx-1" @onclick="(() => { AddProjectActivity(Description); })">+</button>
-                        </div>
-                    </div>
-                </div>
             </div>
-
         </div>
-
     </EditForm>
 }
 @if (ShowPopDelete)

@@ -9,9 +9,12 @@
 @inject IEmployeeService _employeeService
 
 <AuthorizeView Roles="SalesStaff,Administrator">
-    <NotAuthorized>
-        @if(true){_navigationManager.NavigateTo("/profile");}
-    </NotAuthorized>
+<NotAuthorized>
+    @if (true)
+    {
+        _navigationManager.NavigateTo("/profile");
+    }
+</NotAuthorized>
 <Authorized Context="authContext">
 
 <AddFieldToProject @ref="_addFieldToProject" Project="@Project" Abstract="@this"/>
@@ -100,14 +103,19 @@ else
     <div class="form-group row">
         <label class="col-sm-3 col-form-label font-weight-bold">Mitarbeiter</label>
         <table class="table border-primary col">
-            <thead>
+            <colgroup>
+                            <col span="1" style="width: 50%"/><col span="1" style="width: 30%"/><col span="1" style="width: 20%"/>
+                        </colgroup>
+            <thead class="thead-dark">
             <tr>
                 <th scope="col" style="width: 50%">Mitarbeiter</th>
+                <th></th>
                 <th>
-                    <div class="form-group text-right">
-                        <button type="button" class="btn btn-info text-right" @onclick="async () => { await _addEmployeeToProject.Showing();}">+ Mitarbeiter</button>
+                    <div class="form-group m-0 p-0 text-right">
+                        <button type="button" class="btn btn-info text-right" @onclick="async () => { await _addEmployeeToProject.Showing(); }">+ Mitarbeiter</button>
                     </div>
                 </th>
+                
             </tr>
             </thead>
             <tbody>
@@ -116,17 +124,20 @@ else
                 <tr>
                     <td>[Weisen Sie Mitarbeiter dem Projekt zu!]</td>
                     <td></td>
+                    <td></td>
                 </tr>
             }
             @foreach (var emp in Project.Employees)
             {
                 <tr>
                     <td>@emp.FirstName @emp.LastName</td>
+                    <td></td>
                     <td>
-                        <button type="button" class="btn btn-danger" @onclick="() => { DeleteEmployee(emp); }">
+                        <button type="button" class="btn btn-danger" @onclick="() => { PopUpDeleteConfirmationEmployee(emp); }">
                             <span class="oi oi-trash" aria-hidden="true"></span>
                         </button>
                     </td>
+                    
                 </tr>
             }
             </tbody>
@@ -138,19 +149,22 @@ else
     <div class="form-group row">
         <label class="col-sm-3 col-form-label font-weight-bold">Projekttätigkeiten</label>
         <table class="table border-primary col">
-            <thead>
+            <colgroup>
+                            <col span="1" style="width: 30%"/><col span="1" style="width: 50%"/><col span="1" style="width: 20%"/>
+                        </colgroup>
+            <thead class="thead-dark">
             <th scope="col">Tätigkeit</th>
             <th scope="col">Zugewiesene Mitarbeiter</th>
             <th scope="col">
-                <div class="form-group text-right">
-                    <button type="button" class="btn btn-info text-right" @onclick="() => {_addProjectActivityToProject.Showing();}">
+                <div class="form-group m-0 p-0 text-right">
+                    <button type="button" class="btn btn-info text-right" @onclick="() => { _addProjectActivityToProject.Showing(); }">
                         <span class="oi oi-pencil" title="Edit" aria-hidden="true"></span> Projekttätigkeit
                     </button>
                 </div>
             </th>
             </thead>
             <tbody>
-            @if (! Project.ProjectActivities.Any())
+            @if (!Project.ProjectActivities.Any())
             {
                 <tr>
                     <td>[Weisen Sie dem Projekt passende Projekttätigkeiten zu!]</td>
@@ -188,19 +202,21 @@ else
 
     <!-- PROJEKTZWECKE ------------------------------------------------------------------------------------------------------->
 
-    @if(!_showAddPurpose) {
-                <div class="form-group text-right">
-                    <button type="button" class="btn btn-info text-right" @onclick="() => { _showAddPurpose = true;}">+ Projektzweck</button>
-                </div>
-            }
     <div class="form-group row">
         <label class="col-sm-3 col-form-label font-weight-bold">Projektzwecke</label>
         <table class="table border-primary col">
-            <thead>
+            <thead class="thead-dark">
             <th scope="col">Zweck</th>
             <th scope="col">Gelöst durch...</th>
             <th scope="col"></th>
-            <th scope="col"></th>
+            <th scope="col">
+                @if (!_showAddPurpose)
+                {
+                    <div class="form-group p-0 m-0 text-right">
+                        <button type="button" class="btn btn-info text-right" @onclick="() => { _showAddPurpose = true; }">+ Projektzweck</button>
+                    </div>
+                }
+            </th>
             </thead>
             <tbody>
             @if (!Project.Projectpurpose.Any() && !_showAddPurpose)
@@ -215,10 +231,12 @@ else
             else if (_showAddPurpose)
             {
                 <tr>
-                    <td><input class="form-control col-5" @bind="_newPurposeKey"/></td>
+                    <td>
+                        <input class="form-control col-5" @bind="_newPurposeKey"/>
+                    </td>
                     <td>
                         <select class="form-control col-5" @bind="_newPurposeValue">
-                            @{string empty = "";}
+                            @{ string empty = ""; }
                             <option value="@empty">[Keine Projekttätigkeit]</option>
                             @foreach (var activity in Project.ProjectActivities)
                             {
@@ -227,13 +245,13 @@ else
                         </select>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-success" @onclick="AddPurpose">
-                            <span class="oi oi-document" aria-hidden="true"></span>
+                        <button type="button" class="btn btn-danger" @onclick="StopAddingPurpose">
+                            <span class="oi oi-circle-x" aria-hidden="true"></span>
                         </button>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-danger" @onclick="StopAddingPurpose">
-                            <span class="oi oi-circle-x" aria-hidden="true"></span>
+                        <button type="button" class="btn btn-success" @onclick="AddPurpose">
+                            <span class="oi oi-document" aria-hidden="true"></span>
                         </button>
                     </td>
 
@@ -269,7 +287,9 @@ else
                 else
                 {
                     <tr>
-                        <td><input class="form-control col-5" @bind="_purposeKeyEdit[purpose.Key]"/></td>
+                        <td>
+                            <input class="form-control col-5" @bind="_purposeKeyEdit[purpose.Key]"/>
+                        </td>
                         <td>
                             <select class="form-control col-5" @bind="_purposeValueEdit[purpose.Key]">
                                 @{ string empty = ""; }
@@ -286,7 +306,7 @@ else
                             </button>
                         </td>
                         <td>
-                            <button type="button" class="btn btn-danger" @onclick="() => { _showEditPurpose[purpose.Key] = false; _purposeKeyEdit[purpose.Key] = purpose.Key; _purposeValueEdit[purpose.Key] = purpose.Value; }">
+                            <button type="button" class="btn btn-danger" @onclick="() => { _showEditPurpose[purpose.Key] = false; _purposeKeyEdit[purpose.Key] = purpose.Key; _purposeValueEdit[purpose.Key] = purpose.Value;}">
                                 <span class="oi oi-circle-x" aria-hidden="true"></span>
                             </button>
                         </td>
@@ -299,9 +319,9 @@ else
     <ValidationSummary/>
     <div class="form-group text-right">
         <button type="button" class="btn btn-danger" @onclick="NavigateToProjectoverview">
-                    <span class="oi oi-circle-x" aria-hidden="true"></span>Abbrechen
+            <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
         </button>
-        <button type="submit" class="btn btn-success">
+        <button type="submit" class="btn btn-success" @onclick="() => _show = !_show">
             <span class="oi oi-document" aria-hidden="true"></span> Speichern
         </button>
     </div>
@@ -310,20 +330,75 @@ else
     </EditForm>
 }
 
-    
-            
-        </Authorized>
-    </AuthorizeView>
+@if (_show)
+{
+    <div class="modal fade show d-block" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content bg-light">
+                <div class="modal-header">
+                    <h3 class="modal-title">Sind Sie sicher?</h3>
+                    <button type="button" class="close" data-dismiss="modal" @onclick="Showing">
+                        <span aria-hidden="true">x</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                        <label>Wollen Sie Ihre Änderungen für "@Project.Projecttitel" übernehmen?</label>
+                    </div>
+                <div class="modal-footer">
+                    <div class="form-group ml-5">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing"><span class="oi oi-circle-x" aria-hidden="true"></span> Nein</button>
+                        <button type="submit" class="btn btn-success" @onclick="() => { NavigateToProjectoverview(); _projectService.UpdateProject(Project); }"><span class="oi oi-document" aria-hidden="true"></span> Ja</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@if (_showDeleteConfirmation)
+{
+    <div class="modal fade show d-block" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content bg-light">
+                <div class="modal-header">
+                    <h3 class="modal-title">Sind Sie sicher?</h3>
+                    <button type="button" class="close" data-dismiss="modal" @onclick="Showing2">
+                        <span aria-hidden="true">x</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                        <label>Wollen Sie "@EmployeeToDelete.FirstName @EmployeeToDelete.LastName" wirklich aus dem Projekt löschen?</label>
+                    </div>
+                <div class="modal-footer">
+                    <div class="form-group ml-5">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing2"><span class="oi oi-circle-x" aria-hidden="true"></span> Nein</button>
+                        <button type="submit" class="btn btn-success" @onclick="() => { DeleteEmployee(EmployeeToDelete); _showDeleteConfirmation = !_showDeleteConfirmation; }"><span class="oi oi-document" aria-hidden="true"></span> Ja</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (_show)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+@if (_showDeleteConfirmation)
+{
+    <div class="modal-backdrop fade show"></div>
+}
 
 
-    @code {
+</Authorized>
+</AuthorizeView>
+
+
+@code {
     private Project Project { get; set; } = new Project();
 
     AddFieldToProject _addFieldToProject;
     AddEmployeeToProject _addEmployeeToProject;
     AddProjectActivityToProject _addProjectActivityToProject;
-
-    public Employee EmployeeToDelete { get; set; }
 
     public List<string> Activitieslist { get; set; } = new();
 
@@ -347,12 +422,16 @@ else
     public DateTime time { get; set; }
     public string field { get; set; }
     public List<string> FieldstoDisplay { get; set; }
+    
+    //modal windows 
+    public bool _show = false;
+    public Employee EmployeeToDelete { get; set; }
+    private bool _showDeleteConfirmation = false;
+    
 
     private void Save()
     {
-        Project.ProjectID = ID;
         _projectService.UpdateProject(Project);
-        _navigationManager.NavigateTo("/Projektübersicht");
         StateHasChanged();
     }
 
@@ -439,4 +518,21 @@ else
         Project.Employees.Remove(emp);
     }
 
+    public void Showing()
+    {
+        _show = !_show;
+        StateHasChanged();
+    }
+    public void Showing2()
+    {
+        _showDeleteConfirmation = !_showDeleteConfirmation;
+        StateHasChanged();
+    }
+
+    public void PopUpDeleteConfirmationEmployee(Employee emp)
+    {
+        EmployeeToDelete = emp;
+        _showDeleteConfirmation = !_showDeleteConfirmation;
+    }
+    
 }
