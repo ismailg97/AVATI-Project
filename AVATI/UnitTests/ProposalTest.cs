@@ -40,6 +40,71 @@ namespace UnitTests
             return testCaseData.AsEnumerable();
         }
 
+        public static IEnumerable<TestCaseData> CreateDummyProposals()
+        {
+            var rand = new Random();
+            var testCaseData = new List<TestCaseData>();
+            testCaseData.Add(new TestCaseData(new Proposal()
+            {
+                ProposalTitle = "Project with the random number: " + rand.Next(1111),
+                AdditionalInfo = "More numbers: " + rand.Next(1111), End = DateTime.Now.AddDays(rand.Next(100)),
+                Start = DateTime.Now.AddDays(rand.Next(100) * -1),
+                Softskills = new List<string>() {"Lehrfähigkeit", "Soziale Kompetenz", "Rhetorik"},
+                Fields = new List<string>() {"Automobil", "Gastronomie", "IT", "Kunst/Kultur"}
+            }));
+            testCaseData.Add(new TestCaseData(new Proposal()
+            {
+                ProposalTitle = "Project with the random number: " + rand.Next(1111),
+                AdditionalInfo = "More numbers: " + rand.Next(1111), End = DateTime.Now.AddDays(rand.Next(100)),
+                Start = DateTime.Now.AddDays(rand.Next(100) * -1),
+                Softskills = new List<string>() {"Lehrfähigkeit", "Soziale Kompetenz", "Rhetorik"},
+                Fields = new List<string>() {"Gastronomie", "IT", "Kunst/Kultur"}
+            }));
+            testCaseData.Add(new TestCaseData(new Proposal()
+            {
+                ProposalTitle = "Project with the random number: " + rand.Next(1111),
+                AdditionalInfo = "More numbers: " + rand.Next(1111), End = DateTime.Now.AddDays(rand.Next(100)),
+                Start = DateTime.Now.AddDays(rand.Next(100) * -1),
+                Softskills = new List<string>() {"Lehrfähigkeit", "Soziale Kompetenz", "Rhetorik"},
+                Fields = new List<string>() {"Gastronomie", "IT", "Kunst/Kultur"}
+            }));
+            testCaseData.Add(new TestCaseData(new Proposal()
+            {
+                ProposalTitle = "Project with the random number: " + rand.Next(1111),
+                AdditionalInfo = "More numbers: " + rand.Next(1111), End = DateTime.Now.AddDays(rand.Next(100)),
+                Start = DateTime.Now.AddDays(rand.Next(100) * -1),
+                Softskills = new List<string>() {"Rhetorik"},
+                Fields = new List<string>() {"Automobil", "Gastronomie", "IT", "Kunst/Kultur"}
+            }));
+            testCaseData.Add(new TestCaseData(new Proposal()
+            {
+                ProposalTitle = "Project with the random number: " + rand.Next(1111),
+                AdditionalInfo = "More numbers: " + rand.Next(1111), End = DateTime.Now.AddDays(rand.Next(100)),
+                Start = DateTime.Now.AddDays(rand.Next(100) * -1),
+                Softskills = new List<string>() {"Soziale Kompetenz"},
+                Fields = new List<string>() {"Automobil", "Gastronomie", "IT", "Kunst/Kultur"}
+            }));
+            testCaseData.Add(new TestCaseData(new Proposal()
+            {
+                ProposalTitle = "Project with the random number: " + rand.Next(1111),
+                AdditionalInfo = "More numbers: " + rand.Next(1111), End = DateTime.Now.AddDays(rand.Next(100)),
+                Start = DateTime.Now.AddDays(rand.Next(100) * -1),
+                Softskills = new List<string>(),
+                Fields = new List<string>() {"Automobil", "Gastronomie", "IT", "Kunst/Kultur", "Robotik"}
+            }));
+            testCaseData.Add(new TestCaseData(new Proposal()
+            {
+                ProposalTitle = "Project with the random number: " + rand.Next(1111),
+                AdditionalInfo = "More numbers: " + rand.Next(1111), End = DateTime.Now.AddDays(rand.Next(100)),
+                Start = DateTime.Now.AddDays(rand.Next(100) * -1),
+                Softskills = new List<string>() {"Lehrfähigkeit", "Soziale Kompetenz", "Rhetorik"},
+                Fields = new List<string>() {"Automobil", "Gastronomie", "IT", "Kunst/Kultur"}
+            }));
+
+
+            return testCaseData.AsEnumerable();
+        }
+
         [TestCase("asadsasddsa", "asdasddsasadadsadsdas", true)]
         [TestCase("^^__^^!!!@@@loAAAA", "öäöääöäöäö??!!!", true)]
         [TestCase("", "asdasddsasadadsadsdas", false)]
@@ -119,11 +184,13 @@ namespace UnitTests
 
         [TestCase(
             "asdfjaoiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii" +
-            "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii", false)]
+            "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
+            false)]
         [TestCase("", false)]
         [TestCase("Thine hollowed heavens", true)]
         [TestCase(
-            "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPPPPPPPPPPPSLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOCKkkkkkkkk", false)]
+            "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPPPPPPPPPPPSLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOCKkkkkkkkk",
+            false)]
         public async Task TestDbManipulation(string proposalTitle, bool isValid)
         {
             var proposalService =
@@ -135,7 +202,6 @@ namespace UnitTests
             {
                 if (isValid)
                 {
-                    
                     Assert.IsTrue(proposalService.UpdateProposal(0, new Proposal() {ProposalTitle = proposalTitle}));
                 }
                 else
@@ -149,15 +215,37 @@ namespace UnitTests
                 if (isValid)
                 {
                     Assert.IsTrue(proposalService.UpdateProposal(list[0].ProposalID, list[0]));
-                    Assert.IsTrue(proposalService.GetProposal(list[0].ProposalID) != null && proposalService.GetProposal(list[0].ProposalID).ProposalTitle == proposalTitle);
+                    Assert.IsTrue(proposalService.GetProposal(list[0].ProposalID) != null &&
+                                  proposalService.GetProposal(list[0].ProposalID).ProposalTitle == proposalTitle);
                 }
                 else
                 {
                     Assert.IsFalse(proposalService.UpdateProposal(list[0].ProposalID, list[0]));
-                    Assert.IsTrue(proposalService.GetProposal(list[0].ProposalID) != null && proposalService.GetProposal(list[0].ProposalID).ProposalTitle != proposalTitle);
+                    Assert.IsTrue(proposalService.GetProposal(list[0].ProposalID) != null &&
+                                  proposalService.GetProposal(list[0].ProposalID).ProposalTitle != proposalTitle);
                 }
             }
-            
+        }
+
+        [TestCaseSource("CreateDummyProposals")]
+        public void CreateRandomProposals(Proposal prop)
+        {
+            var propSer = new ProposalService(connection);
+            Assert.IsTrue(propSer.UpdateProposal(0, prop));
+            Assert.IsTrue(propSer.GetAllProposals().Result.Exists(e =>
+                e.ProposalTitle == prop.ProposalTitle && e.AdditionalInfo == prop.AdditionalInfo));
+        }
+
+        [Test]
+        public void WipeProposals()
+        {
+            var proSer = new ProposalService(connection);
+            var allProps = proSer.GetAllProposals().Result;
+            foreach (var prop in allProps)
+            {
+                Assert.IsTrue(proSer.DeleteProposal(prop.ProposalID));
+            }
+            Assert.IsTrue(!proSer.GetAllProposals().Result.Any());
         }
     }
 }

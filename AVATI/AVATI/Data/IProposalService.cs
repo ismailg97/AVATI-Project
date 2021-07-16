@@ -14,7 +14,7 @@ namespace AVATI.Data
         public List<string> GetFields(int proposalId);
 
         /// <summary>
-        /// Loads Proposal from Database and compares with proposal Value. Deletes/Adds Attribute that got changed
+        /// Loads Proposal from Database and compares with proposal Value. Deletes/Adds Attribute that got changed, If Id == 0 Creates new Proposal
         /// </summary>
         /// <param name="Id">Identification for Proposal</param>
         /// <param name="proposal">Object containing all values</param>

@@ -166,7 +166,33 @@ namespace UnitTests
             var result = list.Find(e =>
                 e.Projecttitel.Equals(dummy.Projecttitel) && e.Projectdescription.Equals(dummy.Projectdescription));
             Assert.IsNotNull(result);
+            result.Fields = new List<string>()
+            {
+                "Automobil", "IT", "Kunst/Kultur", "Gastronomie"
+            };
+            result.Employees.Add(new Employee()
+            {
+                EmployeeID = 14
+            });
+            result.Projectbeginning = DateTime.Now;
+            result.Projectend = DateTime.Now.AddDays(4000);
             Assert.IsTrue(ProjectService.UpdateProject(result));
+            result = list.Find(e =>
+                e.Projecttitel.Equals(dummy.Projecttitel) && e.Projectdescription.Equals(dummy.Projectdescription));
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Employees.Exists(e => e.EmployeeID == 14));
+            
+        }
+        [Test]
+        public void WipeProjects()
+        {
+            var projects = ProjectService.GetAllProjects();
+            Assert.IsTrue(projects != null);
+            foreach (var variableProject in projects)
+            {
+                Assert.IsTrue(ProjectService.DeleteProject(variableProject.ProjectID));
+            }
+            Assert.IsTrue(!ProjectService.GetAllProjects().Any());
         }
     }
 }
