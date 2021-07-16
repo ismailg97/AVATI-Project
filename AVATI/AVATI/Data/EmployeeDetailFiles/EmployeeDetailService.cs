@@ -334,7 +334,11 @@ namespace AVATI.Data.EmployeeDetailFiles
             temp.ProjectActivities = db.Query<ProjectActivity>(
                 "SELECT * FROM ProjectActivity_Project_Employee p LEFT JOIN EmployeeDetail_ProjectActivity e ON p.ProjectActivityID = e.ProjectActivityID WHERE EmployeeID = @empId and ProposalID = @propId and InDetail = 1",
             new {empId = employeeId, propId = proposalId}).ToList();
-
+            foreach (var activity in temp.ProjectActivities)
+            {
+                activity.Description = db.Query<string>("SELECT ProjectActivity FROM ProjectActivity_Project_Employee WHERE ProjectActivityID = @projectActId",
+                    new{ projectActId = activity.ProjectActivityID }).SingleOrDefault();
+            }
             temp.EmployeeId = employeeId;
             foreach (var projectact in temp.ProjectActivities)
             {

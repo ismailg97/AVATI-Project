@@ -567,20 +567,32 @@
     {
         var table = new Table();
         var tableProp = new TableProperties(
-            new TableStyle() {Val = "EinfacheTabelle4"}, new TableWidth() {Type = TableWidthUnitValues.Dxa, Width = 7000.ToString()});
+            new TableStyle() {Val = "EinfacheTabelle4"}, new TableWidth() {Type = TableWidthUnitValues.Dxa, Width = 9000.ToString()});
         table.AppendChild(tableProp);
         foreach (var emp in _detailService.GetAllEmployeeDetail(prop.ProposalID))
         {
+            var j = emp.Roles.Count - 1;
+            var tableRow = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+            var cell1 = new TableCell(new TableCellProperties(new TableCellWidth() {Type = TableWidthUnitValues.Dxa, Width = 3500.ToString()}));
+            cell1.AppendChild(new Paragraph(new Run(new RunProperties(new FontSize() {Val = 28.ToString()}, new Bold() {Val = OnOffValue.FromBoolean(false)}), new Text(prop.Employees.Find(e => e.EmployeeID == emp.EmployeeId)?.FirstName + " " + prop.Employees.Find(e => e.EmployeeID == emp.EmployeeId)?.LastName){Space = SpaceProcessingModeValues.Preserve})));
+            var cell2 = new TableCell(new TableCellProperties(new TableCellWidth() {Type = TableWidthUnitValues.Dxa, Width = 5500.ToString()}));
+            var cell2Par = new Paragraph();
+            var cell2Run = new Run(new RunProperties(new FontSize() {Val = 28.ToString()}, new Bold() {Val = OnOffValue.FromBoolean(false)}));
+            var cell2Text = new Text() {Space = SpaceProcessingModeValues.Preserve};
             foreach (var role in emp.Roles)
             {
-                var tableRow = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
-                var cell1 = new TableCell(new TableCellProperties(new TableCellWidth() {Type = TableWidthUnitValues.Dxa, Width = 3500.ToString()}));
-                cell1.AppendChild(new Paragraph(new Run(new RunProperties(new FontSize() {Val = 28.ToString()}, new Bold() {Val = OnOffValue.FromBoolean(false)}), new Text(prop.Employees.Find(e => e.EmployeeID == emp.EmployeeId)?.FirstName + prop.Employees.Find(e => e.EmployeeID == emp.EmployeeId)?.LastName))));//added ? to prevent possible Sys Null Ref
-                var cell2 = new TableCell(new TableCellProperties(new TableCellWidth() {Type = TableWidthUnitValues.Dxa, Width = 3500.ToString()}));
-                cell2.AppendChild(new Paragraph(new Run(new RunProperties(new FontSize() {Val = 28.ToString()}, new Bold() {Val = OnOffValue.FromBoolean(false)}), new Text(role))));
-                tableRow.Append(cell1, cell2);
-                table.AppendChild(tableRow);
+                cell2Text.Text += role;
+                if (j > 0)
+                {
+                    cell2Text.Text += ", ";
+                    --j;
+                }
             }
+            cell2Run.AppendChild(cell2Text);
+            cell2Par.AppendChild(cell2Run);
+            cell2.AppendChild(cell2Par);
+            tableRow.Append(cell1, cell2);
+            table.AppendChild(tableRow);
         }
         return table;
     }
@@ -627,7 +639,7 @@
         {
             var tempProp = _proposal.GetProposal(id); 
             wordDoc.ChangeDocumentType(WordprocessingDocumentType.Document);
-            var body = wordDoc.MainDocumentPart?.Document.Body; //? added to prevent possible System Null Reference
+            var body = wordDoc.MainDocumentPart?.Document.Body;         //? added to prevent possible System Null Reference
             var paragraphs = body.Descendants<Paragraph>().ToList();
             foreach (var par in paragraphs)
             {
@@ -683,7 +695,6 @@
                 var clearTempDoc = new FileStream(empTempDocPath, FileMode.Create, FileAccess.ReadWrite);
                 await clearTempDoc.DisposeAsync();
                 var tempEmp = _detailService.GetEmployeeDetail(emp.EmployeeID, id).Result;
-                var projAct = tempEmp.ProjectActivities;
                 using (var empDoc = WordprocessingDocument.Open(empMemStream, true))
                 {
                     var empBody = empDoc.MainDocumentPart.Document.Body;
@@ -697,7 +708,8 @@
                                 switch (text.Text)
                                 {
                                     case "Name":
-                                        text.Text = text.Text.Replace("Name", emp.FirstName + " " + emp.LastName);
+                                        var tempname = emp.FirstName + " " + emp.LastName;
+                                        text.Text = text.Text.Replace("Name", tempname);
                                         break;
                                     case "numb":
                                         text.Text = text.Text.Replace("numb", tempEmp.Rc.ToString());
@@ -731,19 +743,9 @@
                                         par.Remove();
                                         break;
                                     case "project":
-                                        foreach (var proj in _activity.GetActivitiesWithProjectsGrouped(tempEmp.EmployeeId).Keys)
+                                        foreach (var proj in tempEmp.ProjectActivities)
                                         {
-                                            Console.WriteLine("1stForeach");
-                                            foreach (var activity in _activity.GetActivitiesWithProjectsGrouped(tempEmp.EmployeeId)[proj])
-                                            {
-                                                Console.WriteLine("2ndForeach");
-                                                if (projAct.Exists(x => x.ProjectActivityID == activity.ProjectActivityID))
-                                                {
-                                                    var temp = projAct.Find(x => x.ProjectActivityID == activity.ProjectActivityID);
-                                                    Console.WriteLine(temp.Description + "--" + temp.ProjectActivityID + "--" + "Hallo");
-                                                    par.InsertAfterSelf(GenerateProjectActivityListItem(temp, _project.GetProject(temp.ProjectID).Projecttitel));
-                                                }
-                                            }    
+                                            par.InsertAfterSelf(GenerateProjectActivityListItem(proj, _project.GetProject(proj.ProjectID).Projecttitel));
                                         }
                                         par.Remove();
                                         break;    
@@ -829,8 +831,16 @@
                     var tcA1 = new TableCell();
                     var tcA1Par = new Paragraph();
                     var tcA1Run = new Run();
-                    foreach (var role in employeeDetail.Roles)
-                        tcA1Run.AppendChild(new Text(role + ", ") {Space = SpaceProcessingModeValues.Preserve});
+                    var k = employeeDetail.Roles.Count - 1;
+                    foreach (var role in employeeDetail.Roles){
+                        var tempText = new Text(role) {Space = SpaceProcessingModeValues.Preserve};
+                        if (k > 0)
+                        {
+                            tempText.Text += ", ";
+                            --k;
+                        }
+                        tcA1Run.AppendChild(tempText);
+                    }
                     tcA1Par.AppendChild(tcA1Run);
                     tcA1.AppendChild(tcA1Par);
                     var tcA2 = new TableCell();
