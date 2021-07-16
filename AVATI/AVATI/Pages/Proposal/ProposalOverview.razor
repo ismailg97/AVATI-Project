@@ -1001,7 +1001,7 @@
                 var tc52B = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single}), new Paragraph(new Run(new TabChar())));
                 var tc53B = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single}), new Paragraph(new Run(new TabChar())));
                 var tc54B = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single}), new Paragraph(new Run(new TabChar())));
-                var tc55B = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single}), new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Right}), new Run(new Text(overallRealPrice - overallListPrice + " €") {Space = SpaceProcessingModeValues.Preserve})));
+                var tc55B = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single}), new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Right}), new Run(new Text(Math.Round(overallRealPrice - overallListPrice, 2) + " €") {Space = SpaceProcessingModeValues.Preserve})));
                 tableRow5B.Append(tc51B, tc52B, tc53B, tc54B, tc55B);
                 costTable.Append(tableRow5A, tableRow5B);
                 costBody.AppendChild(costTable);
