@@ -112,7 +112,7 @@ namespace AVATI.Data
             return empList;
         }
 
-        public int CreateEmployeeProfile(Employee emp)
+        public int CreateEmployeeProfile(Employee emp, string username)
         {
             using DbConnection db = GetConnection();
             Console.WriteLine(emp.FirstName + emp.LastName);
@@ -121,7 +121,7 @@ namespace AVATI.Data
                 new
                 {
                      Firstname = emp.FirstName, Lastname= emp.LastName, img = emp.Image ,
-                    RWE = emp.RelevantWorkExperience, EmpTime = emp.EmploymentTime, EmpType = "SalesStaff", Rc = emp.Rc,
+                    RWE = emp.RelevantWorkExperience, EmpTime = emp.EmploymentTime, EmpType = emp.EmpType.ToString(), Rc = emp.Rc,
                     IA = emp.IsActive
                 });
 
@@ -160,6 +160,8 @@ namespace AVATI.Data
                 db.Query("INSERT INTO Employee_Softskill VALUES (@ID, @softskill)",
                     new {ID = id, softskill = softskills});
             }
+
+            db.Query("UPDATE Login SET EmployeeID=@ID WHERE Username=@user", new { ID = id, user = username});
 
             return id;
         }

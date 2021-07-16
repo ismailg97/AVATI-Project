@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using DocumentFormat.OpenXml.Bibliography;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -32,13 +33,13 @@ namespace AVATI.Data
             if (Id == -1)
             {
                 //return Redirect("/LoginFail");
-                return Redirect("/profile/create");
+                return Redirect("/LoginFail");
             }
-            else if (Id == 0)
+            if (Id == -2)
             {
-                return Redirect("/profile/create");
+                return Redirect("/profile/create/" + username);
             }
-                Employee emp = _employeeService.GetEmployeeProfile(Id);
+            Employee emp = _employeeService.GetEmployeeProfile(Id);
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, emp.EmployeeID.ToString()),

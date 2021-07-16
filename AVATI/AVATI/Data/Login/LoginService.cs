@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using System;
+using System.Data.Common;
 using System.Linq;
 using Dapper;
 using Microsoft.Data.SqlClient;
@@ -37,9 +38,16 @@ namespace AVATI.Data
                 return -1;
             }
 
-            var id = db.Query<int>("SELECT EmployeeID FROM Login WHERE Username = @usern AND Password=@passw ",
+            var id = db.Query<string>("SELECT Username FROM Login WHERE Username = @usern AND Password=@passw AND EmployeeID is null ",
                 new {usern = username, passw = password}).ToList();
-            return id[0];
+            if (id.FirstOrDefault() == username)
+            {
+                Console.WriteLine("test");
+                return -2;
+            }
+            int Id = db.QuerySingle<int>("SELECT EmployeeID FROM Login WHERE Username = @usern AND Password=@passw ",
+                new {usern = username, passw = password});
+            return Id;
         }
 
         public string Login_EmpType(int Id)
