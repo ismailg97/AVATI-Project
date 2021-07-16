@@ -430,7 +430,9 @@
         _projects = new List<Project>();
         foreach (var projectId in _projectWithGroupedActivities.Keys)
         {
-            _projects.Add(_projektService.GetProject(projectId));
+            var project = _projektService.GetProject(projectId);
+            if(project != null)
+                _projects.Add(project);
             var activitiesOfProject = _projectActivityService.GetActivitiesDesOfProject(projectId);
             var activitiesAlreadyIn = _projectWithGroupedActivities[projectId];
             var result = new List<string>();
