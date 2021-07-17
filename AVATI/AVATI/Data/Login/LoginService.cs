@@ -45,8 +45,8 @@ namespace AVATI.Data
                 Console.WriteLine("test");
                 return -2;
             }
-            int Id = db.QuerySingle<int>("SELECT EmployeeID FROM Login WHERE Username = @usern AND Password=@passw ",
-                new {usern = username, passw = password});
+            int Id = db.Query<int>("SELECT EmployeeID FROM Login WHERE Username = @usern AND Password=@passw ",
+                new {usern = username, passw = password}).SingleOrDefault();
             return Id;
         }
 
