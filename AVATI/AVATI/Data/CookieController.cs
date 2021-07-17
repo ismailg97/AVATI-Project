@@ -68,15 +68,15 @@ namespace AVATI.Data
         [HttpPost("Registration")]
         public async Task<ActionResult> Registration([FromForm] string username, [FromForm] string password, [FromForm] string passwordCheck)
         {
-            /*if (password != passwordCheck)
+            if (password != passwordCheck)
             {
                 return Redirect("/Registration/Fail");
-            }*/
+            }
 
-            /*if (_loginService.CheckUsernameAvailable(username))
+            if (!_loginService.CheckUsernameAvailable(username))
             {
                 return Redirect("/Registration/Fail");
-            }*/
+            }
 
             _loginService.CreateLogIn(username, password);
             return Redirect("/profile/create/" + username);
