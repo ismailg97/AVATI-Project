@@ -20,7 +20,7 @@ namespace AVATI.Data
         /// </summary>
         /// <param name="emp">Object containing all relevant information</param>
         /// <returns>Id of employee</returns>
-        public int CreateEmployeeProfile(Employee emp);
+        public int CreateEmployeeProfile(Employee emp, string username);
         
         /// <summary>
         /// Compares current EmployeeProfile in DB with passed Employee-Object and Saves all changes

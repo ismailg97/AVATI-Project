@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/Registration"
 @using AVATI.Data
 @using DocumentFormat.OpenXml.Drawing
 
@@ -30,19 +30,20 @@
                     <aside class="col-sm-4">
                         <div style="margin-top: 50%" class="card">
                             <article class="card-body">
-                                <h4 class="card-title text-center mb-4 mt-1">Anmelden</h4>
+                                <h4 class="card-title text-center mb-4 mt-1">Registrieren</h4>
                                 <hr>
                                 <p class=" text-center">Bitte geben Sie hier ihre Nutzerdaten ein</p>
                                 <p class="@(_booleanLoginCheck ? "" : "collapse") " style=" color: #ff0000">
                                     <div class="alert alert-danger">Falscher Benutzername oder falsches Passwort eingegeben.<br/> Bitte versuchen Sie erneut.</div>
                                 </p>
-                                <form action="cookie/Login" method="post">
+                                <form action="cookie/Registration" method="post">
                                     <div class="form-group">
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text">
                                                     <i class="fa fa-user"></i>
                                                 </span>
+                                                <label>Nutzernamen</label>
                                             </div>
                                             <input name="username" class="form-control" id="username"/>
                                         </div> <!-- input-group.// -->
@@ -53,16 +54,23 @@
                                                 <span class="input-group-text">
                                                     <i class="fa fa-lock"></i>
                                                 </span>
+                                                <label>Passwort</label>
+                                            </div>
+                                            <input class="form-control" name="password" type="password"/>
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="fa fa-lock"></i>
+                                                </span>
+                                                <label>Passwort wiederholen</label>
                                             </div>
                                             <input class="form-control" name="password" type="password"/>
                                         </div> <!-- input-group.// -->
                                     </div> <!-- form-group// -->
                                     <div class="form-group">
-                                        <button type="submit" class="btn btn-primary btn-block">Login</button>
-                                        <button type="button" @onclick="Register" class="btn btn-primary btn-block">Registrieren</button>
+                                        <input type="submit" class="btn btn-primary btn-block">
                                     </div> <!-- form-group// -->
                                 </form>
-                                
+
                             </article>
                         </div> <!-- card.// -->
 
@@ -97,7 +105,17 @@
 
     private void Register()
     {
-        _navManager.NavigateTo("Registration");
+        Id = _login.LogIn(Log.Username, Log.Password);
+        if (Id == -1)
+        {
+            _booleanLoginCheck = true;
+        }
+        else
+        {
+            empType = _login.Login_EmpType(Id);
+
+            _navManager.NavigateTo("/profile/" + Id);
+        }
     }
 
 
