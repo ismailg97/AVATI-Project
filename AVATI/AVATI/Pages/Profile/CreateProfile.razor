@@ -561,6 +561,7 @@ else
 
     public void NavigateToLogin()
     {
+        _loginService.DeleteLogin(username);
         _navManager.NavigateTo("/" );
     }
 
