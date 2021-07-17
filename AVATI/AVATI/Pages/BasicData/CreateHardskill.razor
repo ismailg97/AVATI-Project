@@ -5,10 +5,10 @@
 @inject NavigationManager _navigationManager
 
 <div class="modal @(_show ? "fade show" : "" )" id="myModal" style=" display: @(_show ? "block" : "none");">
-               <div class="modal-dialog">
+               <div class="modal-dialog modal-dialog-scrollable">
                  <div class="modal-content">
                    <div class="modal-header">
-                     <h4 class="modal-title">Erstelle ein Hardskill</h4>
+                     <h4 class="modal-title">Erstellen eines Hardskills</h4>
                      <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
                    </div>
                    <div class="modal-body">
@@ -30,41 +30,51 @@
                       </a>
                      <label class="form-label">Bezeichnung:</label>
                      <input class="form-control" @bind="@_hardskill.Description"/>
-                     <label class="form-label">Oberkategorie:</label>
-                     <div>
+                     <label class="form-label" style="margin-top: 15px;">Oberkategorien:</label>
+                     <div class="alert alert-primary">
                        @if (UpperCat != null && UpperCat.Any())
                        {
                          foreach (var uppercat in UpperCat)
                          {
-                           <a style="margin-left: 5px; margin-top: 5px; color: white !important;" class="btn btn-primary" type="button" @onclick="() => UpperCatList(uppercat)">
+                           <a style="margin-left: 5px; margin-top: 5px; color: white !important;" class="btn btn-primary btn-sm" type="button" @onclick="() => UpperCatList(uppercat)">
                              <a class="showRemove">@uppercat</a> <a class="remove"><span class="oi oi-x"></span></a>
                            </a>
                          }
                        }
                        else
                        {
-                         <tr style="color: #818181 !important;">Keine Oberkategorie</tr>
+                         <small class="text-center" style="color: #0275d8;">[Keine Oberkategorie]</small>
                        }
                      </div>
+                     <h6>Auswahl an Oberkategorien:</h6>
                      <hr/>
-                     <div class="list-group border-dark overflow-auto mr-3 col-9" style="height: 100px">
-                       @if (_allCategorys != null)
-                       {
-                         foreach (var cat in _allCategorys)
-                         {
-                           <button style="margin-bottom: 3px;" type="button" class="@(IsInList(cat) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => UpperCatList(cat)">
-                             <a><a class="@(IsInList(cat) ? "showRemove" : "")">@cat</a> <a class="remove"><span class="oi oi-x"></span></a></a>
-                           </button>
-                         }
-                       }
-                     </div>
+                     <input id="Filter" class="form-control" type="text" placeholder="Filter nach Oberkategorie..."
+                            style="margin-top: 15px;"
+                            @bind="_filter"
+                            @bind:event="oninput">
+                     @if (_allCategorys != null && _allCategorys.Exists(IsVisible))
+                      {
+                        <div class="list-group overflow-auto alert alert-info" style="max-height: 80%; margin-top: 15px;">
+
+                          @foreach (var cat in _allCategorys.Where(IsVisible))
+                          {
+                            <button style="margin-bottom: 3px;" type="button" class="btn btn-info btn-sm" @onclick="() => UpperCatList(cat)">
+                              <a>@cat</a>
+                            </button>
+                          }
+                        </div>
+                      }
+                     else
+                     {
+                       <small style="color: #818181; margin-top: 15px !important;">[Keine Oberkategorie gefunden]</small>
+                     }
                    </div>
                      <div class="modal-footer">
                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">
-                         <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
+                         <MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen
                        </button>
                        <button type="button" class="btn btn-success" @onclick="Create">
-                         <span class="oi oi-document" aria-hidden="true"></span> Speichern
+                         <MudIcon Icon="@Icons.Filled.Save"/> Speichern
                        </button>
                      </div>
                  </div>
@@ -87,6 +97,8 @@
 
   private List<string> _allCategorys;
   
+  private string _filter;
+  
   private int _whatToShow;
 
   private bool _showError;
@@ -100,7 +112,12 @@
     var taskAllCategorys = _hardskillService.GetAllDesCategorys();
     _allCategorys = await taskAllCategorys;
   }
-  
+
+  private bool IsVisible(string description)
+  {
+    return string.IsNullOrEmpty(_filter) || description.Contains(_filter, StringComparison.OrdinalIgnoreCase);
+  }
+
   private async void ShowErrorMessage(int whatToShow)
   {
     _whatToShow = whatToShow;
@@ -143,7 +160,7 @@
     UpperCat.Clear();
     _hardskill.Description = "";
     await Abstract.UpdateCategorys();
-    await Abstract.UpdateHardskills();
+    await Abstract.UpdateHardskills(hardskill.Description);
   }
 
   private void UpperCatList(string description)
@@ -156,9 +173,9 @@
     }
     else
     {
-      UpperCat.Add(description);
-      if(_allCategorys.Contains(description))
-        _allCategorys.Remove(description);
+      if(!UpperCat.Contains(description))
+        UpperCat.Add(description);
+      _allCategorys.Remove(description);
     }
     StateHasChanged();
   }

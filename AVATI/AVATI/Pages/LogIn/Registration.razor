@@ -1,14 +1,13 @@
-﻿@page "/"
+﻿@page "/Registration"
 @using AVATI.Data
 @using Blazorise
 
-@inject ILoginService _login
-@inject NavigationManager _navManager
+@layout Emptylayout
 
 @inherits LayoutComponentBase
 
-@layout Emptylayout
-
+@inject ILoginService _login
+@inject NavigationManager _navManager
 
 <AuthorizeView>
     <Authorized>
@@ -18,33 +17,40 @@
         }
     </Authorized>
     <NotAuthorized Context="authContext">
-        
-        <form action="cookie/Login" method="post">
+
+        <form action="cookie/Registration" method="post">
             <div class="container col-md-3">
                 <div class="row">
                     <div class="card">
                         <div class="box">
-                            <h1>Login</h1>
-                            <p class="text-muted"> Geben Sie Ihre Anmeldedaten ein!</p>
+                            <h1>Registrierung</h1>
                             <div class="input-group-prepend">
-                                <input type="text" name="username" id="username" placeholder="Username"/>
                                 <i class="fa fa-user"></i>
+                                <label>Nutzername</label>
+                                <input name="username" class="form-control" id="username"/>
                             </div>
                             <div class="input-group-prepend">
-                                <input type="password" name="password" id="password" placeholder="Password"/>
                                 <i class="fa fa-lock"></i>
+                                <label>Passwort</label>
+                                <input class="form-control" name="password" type="password"/>
                             </div>
-                            <input type="submit" value="Login"/>
-                            <input type="button" value="Registrierung" @onclick="() => { Register(); }"/>
+                            <div class="input-group-prepend">
+                                <i class="fa fa-lock"></i>
+                                <label>Passwort wiederholen</label>
+                                <input class="form-control" name="password" type="password"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Registrieren" class="btn btn-primary btn-block">
                         </div>
                     </div>
                 </div>
             </div>
+        </form>
 
-            <style type="text/css">
+        <style type="text/css">
             body{ background-image: url("https://images.pexels.com/photos/2246476/pexels-photo-2246476.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")  !important; }
         </style>
-        </form>
     </NotAuthorized>
 </AuthorizeView>
 
@@ -69,8 +75,19 @@
 
     private void Register()
     {
-        _navManager.NavigateTo("/Registration");
+        Id = _login.LogIn(Log.Username, Log.Password);
+        if (Id == -1)
+        {
+            _booleanLoginCheck = true;
+        }
+        else
+        {
+            empType = _login.Login_EmpType(Id);
+
+            _navManager.NavigateTo("/profile/" + Id);
+        }
     }
+
 
 
 }

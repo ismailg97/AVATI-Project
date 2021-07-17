@@ -10,15 +10,15 @@
                     <div class="modal-header">
                       @if (Type == BasicDataType.SoftSkill)
                       {
-                        <h4 class="modal-title">Ändere den Softskill</h4>
+                        <h4 class="modal-title">Editieren des Softskills "<b>@OldDescription</b>"</h4>
                       }
                       else if (Type == BasicDataType.Field)
                       {
-                        <h4 class="modal-title">Ändere die Branche</h4>
+                        <h4 class="modal-title">Editieren der Branche "<b>@OldDescription</b>"</h4>
                       }
                       else
                       {
-                        <h4 class="modal-title">Ändere die Rolle</h4>
+                        <h4 class="modal-title">Editieren der Rolle "<b>@OldDescription</b>"</h4>
                       }
                       <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
                     </div>
@@ -51,15 +51,16 @@
                             <a>Editieren misslungen, die Bezeichnung ist zu lang (max. 150 Zeichen)!</a>
                           }
                         </MudPopover>
-                      </a>                      
+                      </a>
+                      <label class="form-label">Bezeichnung:</label>
                       <input class="form-control col-7" type="text" id="softskill" @bind="NewDescription"/>
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">
-                        <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
+                        <MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen
                       </button>
                       <button type="button" class="btn btn-success" @onclick="Update">
-                        <span class="oi oi-document" aria-hidden="true"></span> Speichern
+                        <MudIcon Icon="@Icons.Filled.Save"/> Speichern
                       </button>
                     </div>
                   </div>
@@ -129,15 +130,15 @@
     {
       case BasicDataType.SoftSkill:
         _basicDataService.UpdateSoftSkill(NewDescription, OldDescription);
-        Abstract.UpdateSoftskills();
+        Abstract.UpdateSoftskills(NewDescription);
         break;
       case BasicDataType.Field:
         _basicDataService.UpdateField(NewDescription, OldDescription);
-        Abstract.UpdateFields();
+        Abstract.UpdateFields(NewDescription);
         break;
       default:
         _basicDataService.UpdateRole(NewDescription, OldDescription);
-        Abstract.UpdateRoles();
+        Abstract.UpdateRoles(NewDescription);
         break;
     }
     Showing();

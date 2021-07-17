@@ -115,7 +115,7 @@ else
                         <button type="button" class="btn btn-info text-right" @onclick="async () => { await _addEmployeeToProject.Showing(); }"><MudIcon Icon="@Icons.Filled.Add"/> Mitarbeiter</button>
                     </div>
                 </th>
-                
+
             </tr>
             </thead>
             <tbody>
@@ -137,7 +137,7 @@ else
                             <MudIcon Icon="@Icons.Filled.Delete"/>
                         </button>
                     </td>
-                    
+
                 </tr>
             }
             </tbody>
@@ -213,7 +213,7 @@ else
                 else if (_whatToShow == 1)
                 {
                     <a>Hinzufügen bzw. Ändern des Zwecks misslungen, die Bezeichnung fehlt!</a>
-                } 
+                }
                 else if (_whatToShow == 2)
                 {
                     <a>Hinzufügen bzw. Ändern des Zwecks misslungen, die Bezeichnung ist zu lang (max. 150 Zeichen)!</a>
@@ -260,15 +260,16 @@ else
                             }
                         </select>
                     </td>
+                    <td/>
                     <td>
-                        <button type="button" class="btn btn-success" @onclick="AddPurpose">
-                           <MudIcon Icon="@Icons.Filled.Save"/>
-                        </button>
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-danger" @onclick="StopAddingPurpose">
-                            <MudIcon Icon="@Icons.Filled.Cancel"/>
-                        </button>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success" @onclick="AddPurpose">
+                                <MudIcon Icon="@Icons.Filled.Save"/>
+                            </button>
+                            <button type="button" class="btn btn-danger" @onclick="StopAddingPurpose">
+                                <MudIcon Icon="@Icons.Filled.Cancel"/>
+                            </button>
+                        </div>
                     </td>
 
                 </tr>
@@ -287,16 +288,16 @@ else
                         {
                             <td>@purpose.Value</td>
                         }
-
+                        <td/>
                         <td>
-                            <button type="button" class="btn btn-info" @onclick="() => { _showEditPurpose[purpose.Key] = true; }">
-                                <MudIcon Icon="@Icons.Filled.Brush"/>
-                            </button>
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-danger" @onclick="() => Project.Projectpurpose.Remove(purpose.Key)">
-                                <MudIcon Icon="@Icons.Filled.Delete"/>
-                            </button>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-info" @onclick="() => { _showEditPurpose[purpose.Key] = true; }">
+                                    <MudIcon Icon="@Icons.Filled.Brush"/>
+                                </button>
+                                <button type="button" class="btn btn-danger" @onclick="() => Project.Projectpurpose.Remove(purpose.Key)">
+                                    <MudIcon Icon="@Icons.Filled.Delete"/>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 }
@@ -316,15 +317,16 @@ else
                                 }
                             </select>
                         </td>
+                        <td/>
                         <td>
-                            <button type="button" class="btn btn-success" @onclick="() => { EditPurpose(purpose.Key); }">
-                                <MudIcon Icon="@Icons.Filled.Save"/>
-                            </button>
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-danger" @onclick="() => { _showEditPurpose[purpose.Key] = false; _purposeKeyEdit[purpose.Key] = purpose.Key; _purposeValueEdit[purpose.Key] = purpose.Value;}">
-                                <MudIcon Icon="@Icons.Filled.Cancel"/>
-                            </button>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-success" @onclick="() => { EditPurpose(purpose.Key); }">
+                                    <MudIcon Icon="@Icons.Filled.Save"/>
+                                </button>
+                                <button type="button" class="btn btn-danger" @onclick="() => { _showEditPurpose[purpose.Key] = false; _purposeKeyEdit[purpose.Key] = purpose.Key; _purposeValueEdit[purpose.Key] = purpose.Value;}">
+                                    <MudIcon Icon="@Icons.Filled.Cancel"/>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 }
@@ -343,7 +345,7 @@ else
     </div>
     </div>
     </div>
-    
+
     @if (_show)
     {
         <div class="modal fade show d-block" id="myModal">
@@ -356,8 +358,8 @@ else
                         </button>
                     </div>
                     <div class="modal-body">
-                            <label>Wollen Sie Ihre Änderungen für "@Project.Projecttitel" übernehmen?</label>
-                        </div>
+                        <label>Wollen Sie Ihre Änderungen für "@Project.Projecttitel" übernehmen?</label>
+                    </div>
                     <div class="modal-footer">
                         <div class="form-group ml-5">
                             <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing"><MudIcon Icon="@Icons.Filled.Cancel"/> Nein</button>
@@ -373,29 +375,29 @@ else
 }
 
 @if (_showDeleteConfirmation)
-    {
-        <div class="modal fade show d-block" id="myModal">
-            <div class="modal-dialog">
-                <div class="modal-content bg-light">
-                    <div class="modal-header">
-                        <h3 class="modal-title">Sind Sie sicher?</h3>
-                        <button type="button" class="close" data-dismiss="modal" @onclick="Showing2">
-                            <span aria-hidden="true">x</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                            <label>Wollen Sie "@EmployeeToDelete.FirstName @EmployeeToDelete.LastName" wirklich aus dem Projekt löschen?</label>
-                        </div>
-                    <div class="modal-footer">
-                        <div class="form-group ml-5">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing2"><MudIcon Icon="@Icons.Filled.Cancel"/> Nein</button>
-                            <button type="button" class="btn btn-success" @onclick="() => { DeleteEmployee(EmployeeToDelete); _showDeleteConfirmation = !_showDeleteConfirmation; }"><MudIcon Icon="@Icons.Filled.Check"/> Ja</button>
-                        </div>
+{
+    <div class="modal fade show d-block" id="myModal">
+        <div class="modal-dialog ">
+            <div class="modal-content bg-light">
+                <div class="modal-header">
+                    <h3 class="modal-title">Sind Sie sicher?</h3>
+                    <button type="button" class="close" data-dismiss="modal" @onclick="Showing2">
+                        <span aria-hidden="true">x</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label>Wollen Sie "@EmployeeToDelete.FirstName @EmployeeToDelete.LastName" wirklich aus dem Projekt löschen?</label>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group ml-5">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing2"><MudIcon Icon="@Icons.Filled.Cancel"/> Nein</button>
+                        <button type="button" class="btn btn-success" @onclick="() => { DeleteEmployee(EmployeeToDelete); _showDeleteConfirmation = !_showDeleteConfirmation; }"><MudIcon Icon="@Icons.Filled.Check"/> Ja</button>
                     </div>
                 </div>
             </div>
         </div>
-    }
+    </div>
+}
 @if (_show)
 {
     <div class="modal-backdrop fade show"></div>
@@ -441,12 +443,12 @@ else
     public DateTime time { get; set; }
     public string field { get; set; }
     public List<string> FieldstoDisplay { get; set; }
-    
+
     //modal windows 
     public bool _show = false;
     public Employee EmployeeToDelete { get; set; }
     private bool _showDeleteConfirmation = false;
-    
+
 
     private void Save()
     {
@@ -499,14 +501,14 @@ else
     {
         _navigationManager.NavigateTo("/Projektübersicht");
     }
-    
+
     private bool AlreadyExists(string description)
     {
         var list = Project.Projectpurpose.Keys.ToList();
         var trimDesc = description.Replace(" ", "");
         return list.Exists(x => trimDesc.Equals(x.Replace(" ", ""), StringComparison.OrdinalIgnoreCase));
     }
-    
+
     private async void ShowErrorMessage(int whatToShow)
     {
         _whatToShow = whatToShow;
@@ -550,7 +552,7 @@ else
         _showEditPurpose.TryAdd(newKey, false);
         _purposeKeyEdit.TryAdd(newKey, newKey);
         _purposeValueEdit.TryAdd(newKey, newValue);
-        
+
         Project.Projectpurpose.Remove(purpose);
         _showEditPurpose.Remove(purpose);
         _purposeKeyEdit.Remove(purpose);
@@ -571,7 +573,7 @@ else
             ShowErrorMessage(2);
             return;
         }
-        
+
         if (AlreadyExists(_newPurposeKey))
         {
             ShowErrorMessage(0);
@@ -605,6 +607,7 @@ else
         _show = !_show;
         StateHasChanged();
     }
+
     public void Showing2()
     {
         _showDeleteConfirmation = !_showDeleteConfirmation;
@@ -616,5 +619,5 @@ else
         EmployeeToDelete = emp;
         _showDeleteConfirmation = !_showDeleteConfirmation;
     }
-    
+
 }

@@ -1,0 +1,84 @@
+﻿@page "/Login/Fail"
+@using AVATI.Data
+@using DocumentFormat.OpenXml.Drawing
+
+@inject ILoginService _login
+@inject NavigationManager _navManager
+
+@inherits LayoutComponentBase
+
+@layout Emptylayout
+
+
+<AuthorizeView>
+    <Authorized>
+        @if (true)
+        {
+            _navManager.NavigateTo("/profile");
+        }
+    </Authorized>
+    <NotAuthorized Context="authContext">
+        <aside>
+
+            <form action="cookie/Login" method="post">
+
+                <div class="container col-md-3">
+                    <div class="row">
+                        <div class="card">
+                            <div class="box">
+                                <h1>Login</h1>
+                                <p style="color: white" > Geben Sie Ihre Anmeldedaten erneut ein!</p>
+                                <p><text style="color: white">Falscher Nutzername oder Kennwort eingegeben!</text></p>
+                                <p><text style="color: white">Bitte versuchen Sie es erneut!</text></p>
+                                <div class="input-group-prepend">
+                                    <input type="text" name="username" id="username" placeholder="Username"/>
+                                    <i class="fa fa-user"></i>
+                                </div>
+                                <div class="input-group-prepend">
+                                    <input type="password" name="password" id="password" placeholder="Password"/>
+                                    <i class="fa fa-lock"></i>
+                                </div>
+                                <input type="submit" value="Login"/>
+                                <input type="button" value="Registrierung" @onclick="() => { Register(); }"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <style type="text/css">
+            body{ background-image: url("https://images.pexels.com/photos/2246476/pexels-photo-2246476.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")  !important; }
+        </style>
+
+            </form>
+        </aside>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+
+@if (_booleanSignedIn)
+{
+    <form action="cookie" method="post">
+        <input type="text" name="name"/>
+        <input type="text" name="empType"/>
+        <input type="submit"/>
+    </form>
+}
+
+
+@code {
+    private bool _booleanLoginCheck = false;
+    LoginClass Log = new LoginClass();
+    public int Id { get; set; }
+    public string empType { get; set; }
+    private bool _booleanSignedIn { get; set; }
+    //private bool _booleanRegister = false;
+
+    private void Register()
+    {
+        _navManager.NavigateTo("Registration");
+    }
+
+
+
+}

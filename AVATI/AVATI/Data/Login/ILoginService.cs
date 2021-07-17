@@ -24,6 +24,10 @@
         /// <param name="username">Specified Username</param>
         /// <param name="password">Specified Password</param>
         /// <returns></returns>
-        public bool CreateLogIn(int employeeID, string username, string password);
+        public bool CreateLogIn(string username, string password);
+
+        bool CheckUsernameAvailable(string username);
+
+        bool DeleteLogin(string username);
     }
 }

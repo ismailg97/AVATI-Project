@@ -45,6 +45,7 @@
         <label for="sucheprop" class="col-form-label mr-2 font-weight-bold">Suche:</label>
         <input type="search" class="col-5 form-control" id="sucheProp" @bind-value="_filterSearch" placeholder="Angebotstitel..." @bind-value:event="oninput"/>
     </div>
+    <hr/>
     <div class="row @((_proposals.FindAll((e => e.ProposalTitle.Contains(_filterSearch, StringComparison.OrdinalIgnoreCase))).Count < 3) ? "justify-content-center" : "")">
         @{
             Proposal proposalToSwap;

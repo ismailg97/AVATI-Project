@@ -13,7 +13,7 @@
           @if (ShowCreateCat)
           {
             <h5 class="modal-title">
-              Erstellen einer neuen Kategorie
+              Erstellen einer neuen Kategorie <b>(Wurzelelement)</b>
             </h5>
           }
           else
@@ -149,7 +149,7 @@
                        @bind:event="oninput">
                 if (exists)
                 {
-                  <div class="list-group border-dark overflow-scroll mr-3 col-9" style="margin-top: 15px; max-height: 10%;">
+                  <div class="list-group border-dark overflow-auto mr-3 col-9" style="margin-top: 15px; max-height: 10%;">
                     @foreach (var hardskillcat in SubHardskills.Keys.Where(x => x != Description && SubHardskills[x].ToList().Exists(e => IsVisible(e))))
                     {
                         <h6>@hardskillcat:</h6>
@@ -167,7 +167,7 @@
                 }
                 else
                 {
-                  <small style="color: #818181; margin-top: 15px; position: center;">[Keine Hardskills gefunden]</small>
+                  <small style="color: #818181; margin-top: 15px !important; position: center !important;">[Keine Hardskills gefunden]</small>
                 }
               }
             }
@@ -367,7 +367,7 @@
     var hardskill = await _hardskillService.GetHardskill(description);
     if (hardskill == null) return;
     var upperCat = hardskill.Uppercat;
-    var hasNoUpperCat = (upperCat == null) || !upperCat.Any();
+    var hasNoUpperCat = upperCat == null || !upperCat.Any();
     var hasUpperCat = !hasNoUpperCat && upperCat.Exists(x => x == Description);
     
 
@@ -381,7 +381,8 @@
     }
     else
     {
-      Subcat.Add(description);
+      if(!Subcat.Contains(description))
+        Subcat.Add(description);
       _hardskills.Remove(description);
       _toDeleteSkills.Remove(description);
     }
@@ -448,7 +449,7 @@
       _show = !_show;
       Subcat.Clear();
       await Abstract.UpdateHardskills();
-      await Abstract.UpdateCategorys();
+      await Abstract.UpdateCategorys(cat.Description);
     }
     else
     {

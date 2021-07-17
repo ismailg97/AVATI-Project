@@ -20,7 +20,7 @@
     {
         <button type="button" @onclick="HandleClickZeigen" class="btn btn-info">Zeigen</button>
     }
-    <div style="color: darkred; margin-left: 10px; font-weight: 650;" class="alert alert-danger @(!_showAlert ? "collapse" : "")" role="alert">
+    <div style="color: darkred; margin-left: 5px; font-weight: 650;" class="alert alert-danger @(!_showAlert ? "collapse" : "")" role="alert">
                 Es existiert kein Projekt, bei welchem Sie sich zu keiner Projekttätigkeit zugewiesen haben
             </div>
 </div>
@@ -82,13 +82,12 @@
                     else
                     {
                         <table class="table table-striped">
-                            <thead class="tWrite">
+                            <thead class="tWrite" style="background-color: #5a6066; color: white">
                             <tr>
                                 <th class="tActivity">Tätigkeit</th>
                                 <th class="tHardskills">Hardskills</th>
                                 <th class="tSoftskills">Softskills</th>
-                                <th class="tEdit"></th>
-                                <th class="tDelte"></th>
+                                <th></th>
                             </tr>
                             </thead>
 
@@ -123,10 +122,8 @@
                                             <small style="color: #818181;">[Keine Softskills zugewiesen]</small>
                                         }
                                     </td>
-                                    <td class="tEdit">
+                                    <td class="row btn-group float-right mr-3">
                                         <button type="button" class="btn btn-info" @onclick="() => ShowPopUpEdit(activity)"><MudIcon Icon="@Icons.Filled.Brush"/></button>
-                                    </td>
-                                    <td class="tDelte">
                                         <button type="button" class="btn btn-danger" @onclick="() => ShowPopUpDelete(activity)"><MudIcon Icon="@Icons.Filled.Delete"/></button>
                                     </td>
                                 </tr>
@@ -150,8 +147,8 @@
 {
     var projecttitle = _projectService.GetProject(_projectActivity.ProjectID).Projecttitel;
     
-    <div class="modal fade show" id="myModal" style=" display: inline-block;">
-        <div class="modal-dialog border-dark modal-dialog- modal-lg">
+    <div class="modal fade show" id="myModal" style=" display: inline-block; max-height: 90%;">
+        <div class="modal-dialog border-dark modal-dialog-scrollable modal-lg">
             <div class="modal-content">
                 <div class="modal-header flex-column">
                     <button type="button" class="close" data-dismiss="modal" @onclick="() => { _showCreate = _showEdit = false; }">
@@ -163,7 +160,7 @@
                     }
                     else
                     {
-                        <h4 style="word-break: break-word;" class="modal-title col-12 text-center">Aktivität <br>"<b>@_projectActivity.Description</b>" <br/>des Projekts <br><b>"@projecttitle"</b> <br>bearbeiten</h4>
+                        <h4 style="word-break: break-word;" class="modal-title col-12 text-center">Aktivität "<b>@_projectActivity.Description</b>" des Projekts <b>"@projecttitle"</b> bearbeiten</h4>
                     }
                 </div>
                 <div class="modal-body">
@@ -360,10 +357,11 @@
 
     private void EditProjectActivity()
     {
-        //_projectActivityService.UpdateSkillsToActivity(_projectActivity.ProjectActivityID, _projectActivity.HardSkills, _projectActivity.SoftSkills);
         var editActivity = Employee.ProjectActivities.Find(x => x.ProjectActivityID == _projectActivity.ProjectActivityID);
         
-        if(editActivity != null) {
+        if(editActivity != null)
+        {
+            Console.WriteLine();
             editActivity.HardSkills = new List<string>(_projectActivity.HardSkills);
             editActivity.SoftSkills = new List<string>(_projectActivity.SoftSkills);
         }

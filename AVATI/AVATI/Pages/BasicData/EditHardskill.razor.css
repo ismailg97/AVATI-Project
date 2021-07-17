@@ -23,3 +23,17 @@
     margin-top: 10px;
     margin-bottom: -5px;
 }
+
+hr{
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+h6{
+    margin-top: 15px;
+    color: #7a7a7a;
+}
+
+.btn-info {
+    margin-left: 5px; margin-top: 5px;
+}
