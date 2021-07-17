@@ -1,4 +1,4 @@
-﻿@page "/Registration"
+﻿@page "/Registration/Fail"
 @using AVATI.Data
 @using Blazorise
 
@@ -28,8 +28,9 @@
                             <input name="username" type="text" class="form-control" id="Username"/>
                             <input class="form-control" name="password" type="password"/>
                             <input style="background-color: white; color: black" class="form-control" name="passwordCheck" type="password"/>
+                            <p style="color:white;">Benutzername ist schon vergeben oder Passwörter stimmen nicht überein.</p>
                             <div class="form-group">
-                                <input type="submit" value="Registrieren" >
+                                <input type="submit" value="Registrieren">
                                 <input type="button" @onclick="() => { BacktoLogin();}" value="Zurück zum Login"/>
                             </div>
                         </div>
