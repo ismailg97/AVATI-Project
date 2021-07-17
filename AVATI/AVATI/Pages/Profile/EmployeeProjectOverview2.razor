@@ -20,7 +20,7 @@
     {
         <button type="button" @onclick="HandleClickZeigen" class="btn btn-info">Zeigen</button>
     }
-    <div style="color: darkred; margin-left: 10px; font-weight: 650;" class="alert alert-danger @(!_showAlert ? "collapse" : "")" role="alert">
+    <div style="color: darkred; margin-left: 5px; font-weight: 650;" class="alert alert-danger @(!_showAlert ? "collapse" : "")" role="alert">
                 Es existiert kein Projekt, bei welchem Sie sich zu keiner Projekttätigkeit zugewiesen haben
             </div>
 </div>
@@ -150,7 +150,7 @@
 {
     var projecttitle = _projectService.GetProject(_projectActivity.ProjectID).Projecttitel;
     
-    <div class="modal fade show" id="myModal" style=" display: inline-block;">
+    <div class="modal fade show" id="myModal" style=" display: inline-block; max-height: 90%;">
         <div class="modal-dialog border-dark modal-dialog-scrollable modal-lg">
             <div class="modal-content">
                 <div class="modal-header flex-column">
@@ -163,10 +163,10 @@
                     }
                     else
                     {
-                        <h4 style="word-break: break-word;" class="modal-title col-12 text-center">Aktivität <br>"<b>@_projectActivity.Description</b>" <br/>des Projekts <br><b>"@projecttitle"</b> <br>bearbeiten</h4>
+                        <h4 style="word-break: break-word;" class="modal-title col-12 text-center">Aktivität "<b>@_projectActivity.Description</b>" des Projekts <b>"@projecttitle"</b> bearbeiten</h4>
                     }
                 </div>
-                <div class="modal-body overflow-auto">
+                <div class="modal-body">
                     <div class="form-group">
 
                         @if(_showCreate) 
@@ -286,14 +286,14 @@
 @if (_showDelete)
 {
     <div class="modal fade show" id="myModal" style=" display: block;">
-        <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Löschvorgang bestätigen</h4>
                     <button type="button" class="close" data-dismiss="modal" @onclick="() => { _showDelete = false; }">&times;</button>
                 </div>
             
-                <div class="modal-body overflow-auto">
+                <div class="modal-body">
                     Sind Sie sicher, dass die Projektaktivität "<b style="word-break: break-word;">@_projectActivity.Description</b>" gelöscht werden soll?
                 </div>
             
@@ -360,10 +360,11 @@
 
     private void EditProjectActivity()
     {
-        //_projectActivityService.UpdateSkillsToActivity(_projectActivity.ProjectActivityID, _projectActivity.HardSkills, _projectActivity.SoftSkills);
         var editActivity = Employee.ProjectActivities.Find(x => x.ProjectActivityID == _projectActivity.ProjectActivityID);
         
-        if(editActivity != null) {
+        if(editActivity != null)
+        {
+            Console.WriteLine();
             editActivity.HardSkills = new List<string>(_projectActivity.HardSkills);
             editActivity.SoftSkills = new List<string>(_projectActivity.SoftSkills);
         }
