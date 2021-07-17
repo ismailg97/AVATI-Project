@@ -170,6 +170,15 @@ namespace AVATI.Data
         {
             using DbConnection db = GetConnection();
             
+            if (emp.FirstName.Length > 70 || emp.FirstName is null or "")
+            {
+                return false;
+            }
+            if (emp.LastName.Length > 70 || emp.LastName is null or "")
+            {
+                return false;
+            }
+            
             db.Query(
                 "UPDATE Employee SET Firstname= @Firstname ,Lastname = @Lastname , Image = @img , WorkExperience = @RWE, EmploymentTime = @EmpTime,RCLevel = @RC, IsActive = @IA WHERE EmployeeID = @ID",
                 new

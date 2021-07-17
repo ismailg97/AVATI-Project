@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using AVATI.Data;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
@@ -75,6 +76,63 @@ namespace UnitTests
                     empService.EditEmployeeProfile(emp);
                     Assert.IsTrue(empService.GetEmployeeProfile(emp.EmployeeID) != null);
                     Assert.IsTrue(empService.GetEmployeeProfile(emp.EmployeeID).Rc == rc);
+                }
+            }
+        }
+        
+        
+        [TestCase(
+            "asdfjaoiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii" +
+            "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
+            false)]
+        [TestCase("", false)]
+        [TestCase("Thine hollowed heavens", true)]
+        [TestCase(
+            "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPPPPPPPPPPPSLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOCKkkkkkkkk",
+            false)]
+        public async Task TestDbManipulation(string firstname, bool isValid)
+        {
+            var empService =
+                new EmployeeService(
+                    Connection);
+            var list = empService.GetAllEmployees();
+           
+            if (list.Count == 0)
+            {
+                if (isValid)
+                {
+                    Assert.IsTrue(empService.EditEmployeeProfile(new Employee()
+                    {
+                        EmployeeID = 1, FirstName = firstname, LastName = firstname
+                    }));
+                }
+                else
+                {
+                    Assert.IsFalse(empService.EditEmployeeProfile(new Employee()
+                    {
+                        EmployeeID = 1, FirstName = firstname, LastName = firstname
+                    }));
+                }
+            }
+            else
+            {
+                list[0].FirstName = firstname;
+                list[0].LastName = firstname;
+                if (isValid)
+                {
+                    Assert.IsTrue(empService.EditEmployeeProfile(list[0]));
+                    Assert.IsTrue(empService.GetEmployeeProfile(list[0].EmployeeID) != null &&
+                                  empService.GetEmployeeProfile(list[0].EmployeeID).FirstName == firstname);
+                    Assert.IsTrue(empService.GetEmployeeProfile(list[0].EmployeeID) != null &&
+                                  empService.GetEmployeeProfile(list[0].EmployeeID).LastName == firstname);
+                }
+                else
+                {
+                    Assert.IsFalse(empService.EditEmployeeProfile(list[0]));
+                    Assert.IsTrue(empService.GetEmployeeProfile(list[0].EmployeeID) != null &&
+                                  empService.GetEmployeeProfile(list[0].EmployeeID).FirstName != firstname);
+                    Assert.IsTrue(empService.GetEmployeeProfile(list[0].EmployeeID) != null &&
+                                  empService.GetEmployeeProfile(list[0].EmployeeID).LastName != firstname);
                 }
             }
         }
