@@ -10,45 +10,53 @@
                   <div class="modal-content">
                     <div class="modal-header">
                       @if (Type == BasicDataType.SoftSkill){
-                        <h4 class="modal-title">Erstelle ein Softskill</h4>
+                        <h4 class="modal-title">Erstellen eines Softskills</h4>
                       } else if (Type == BasicDataType.Field) {
-                        <h4 class="modal-title">Erstelle eine Branche</h4>
+                        <h4 class="modal-title">Erstellen einer Branche</h4>
                       } else {
-                        <h4 class="modal-title">Erstelle eine Rolle</h4>
+                        <h4 class="modal-title">Erstellen einer Rolle</h4>
                       }
                       <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
                     </div>
                     <div class="modal-body">
-                      @if (_showExistError)
-                      {
-                        @if (Type == BasicDataType.SoftSkill)
-                        {
-                          <a style="color: red; margin-bottom: 20px;"><b>Es existiert bereits ein Softskill mit derselben Bezeichnung</b></a>
-                        }
-                        else if (Type == BasicDataType.Field)
-                        {
-                          <a style="color: red; margin-bottom: 20px;"><b>Es existiert bereits eine Branche mit derselben Bezeichnung</b></a>
-                        }
-                        else
-                        {
-                          <a style="color: red; margin-bottom: 20px;"><b>Es existiert bereits eine Rolle mit derselben Bezeichnung</b></a>
-                        }
-                      } else if (_showEmptyError)
-                      {
-                        <a style="color: red; margin-bottom: 20px;"><b>Die Bezeichnung ist erforderlich</b></a>
-                      } else if (_showTooLongError)
-                      {
-                        <a style="color: red; margin-bottom: 20px;"><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></a>
-                      }
-                      
+                      <a style="position: relative;">
+                        <MudPopover Open="@_showError" Class="alert alert-danger text-center" Style="width: 380px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
+                          @if (_whatToShow == 0)
+                          {
+                            <a>Hinzufügen misslungen, 
+                              @if (Type == BasicDataType.Field)
+                              {
+                                <a>die Branche</a>
+                              }
+                              else if (Type == BasicDataType.Role)
+                              {
+                                <a>die Rolle</a>
+                              }
+                              else if (Type == BasicDataType.SoftSkill)
+                              {
+                                <a>der Softskill</a>
+                              }
+                              exsistiert bereits!</a>
+                          } 
+                          else if (_whatToShow == 1)
+                          {
+                            <a>Hinzufügen misslungen, die Bezeichnung fehlt!</a>
+                          }
+                          else if (_whatToShow == 2)
+                          {
+                            <a>Hinzufügen misslungen, die Bezeichnung ist zu lang (max. 150 Zeichen)!</a>
+                          }
+                        </MudPopover>
+                      </a>
+                      <label class="form-label">Bezeichnung:</label>
                       <input class="form-control col-7" type="text" id="softskill" @bind="Description"/>
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">
-                        <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
+                        <MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen
                       </button>
                       <button type="button" class="btn btn-success" @onclick="Create">
-                        <span class="oi oi-document" aria-hidden="true"></span> Speichern
+                        <MudIcon Icon="@Icons.Filled.Save"/> Speichern
                       </button>
                     </div>
                   </div>
@@ -70,59 +78,60 @@
 
   private string Description { get; set; }
 
-  private bool _showEmptyError;
+  private int _whatToShow;
 
-  private bool _showExistError;
-
-  private bool _showTooLongError;
+  private bool _showError;
 
   protected override void OnParametersSet()
   {
-    _showEmptyError = false;
-    _showExistError = false;
-    _showTooLongError = false;
+    _showError = false;
+    _whatToShow = -1;
     Description = "";
+  }
+  
+  private async void ShowErrorMessage(int whatToShow)
+  {
+    _whatToShow = whatToShow;
+    _showError = true;
+    StateHasChanged();
+    await Task.Delay(3000);
+    _showError = false;
+    StateHasChanged();
   }
 
   private void Create()
   {
     if (!_basicDataService.CheckEmptyBasicData(Description))
     {
-      _showEmptyError = true;
-      _showExistError = false;
-      _showTooLongError = false;
+      ShowErrorMessage(1);
       return;
     }
-    _showEmptyError = false;
 
     if (CheckDescription())
     {
-      _showExistError = true;
-      _showTooLongError = false;
+      ShowErrorMessage(0);
       return;
     }
-    _showExistError = false;
 
     if (!_basicDataService.CheckLengthBasicData(Description))
     {
-      _showTooLongError = true;
+      ShowErrorMessage(2);
       return;
     }
-    _showTooLongError = false;
 
     switch (Type)
     {
       case BasicDataType.SoftSkill:
         _basicDataService.CreateSoftSkill(Description);
-        Abstract.UpdateSoftskills();
+        Abstract.UpdateSoftskills(Description);
         break;
       case BasicDataType.Field:
         _basicDataService.CreateField(Description);
-        Abstract.UpdateFields();
+        Abstract.UpdateFields(Description);
         break;
       default:
         _basicDataService.CreateRole(Description);
-        Abstract.UpdateRoles();
+        Abstract.UpdateRoles(Description);
         break;
     }
     Description = "";

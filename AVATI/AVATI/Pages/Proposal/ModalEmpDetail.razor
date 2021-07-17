@@ -4,13 +4,14 @@
 @using DocumentFormat.OpenXml.Packaging
 @using System.IO
 @using BlazorDownloadFile
+@using DocumentFormat.OpenXml
 
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject IProposalService _proposal
 @inject IEmployeeService _employeeService
 @inject IEmployeeDetailService _employeeDetailService
 @inject IProjectActivityService _activity
-@inject IProjektService _project
+@inject IProjectService _project
 @inject NavigationManager _navigationManager
 
 <AuthorizeView Roles="SalesStaff">
@@ -31,8 +32,8 @@
         <EditForm Model="@EmployeeDetailView" OnValidSubmit="@UpdateEmployeeDetail">
             <DataAnnotationsValidator/>
             <ValidationSummary/>
-            <div class="modal fade show d-block overflow-auto" data-bs-backdrop="static" id="exampleModal" role="dialog">
-                <div class="modal-dialog" role="document" style="min-width:100%">
+            <div class="modal fade show d-block" data-bs-backdrop="static" id="exampleModal" role="dialog">
+                <div class="modal-dialog modal-dialog-scrollable" role="document" style="min-width:100%; max-height: 100%">
                     <div class="modal-content bg-light text-black" style="min-height: 100%; max-height: 100%">
                         @if (_isLoaded)
                         {
@@ -75,9 +76,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card col border-secondary ml-2" style="max-width: 30%;">
+                                    <div class="card col border-secondary ml-2 overflow-auto" style="max-width: 30%">
                                         <div class="card-header text-left bg-transparent border-secondary">Projekt(e) + Tätigkeit(en)</div>
-                                        <div class="card-body text-left overflow-auto">
+                                        <div class="card-body text-left overflow-auto" style="max-height: 600px">
                                             @foreach (var proj in _projectsWithActivities.Keys)
                                             {
                                                 if (_projectsWithActivities[proj].Any())
@@ -176,15 +177,15 @@
                                 <div>
                                     <button class="btn btn-secondary" type="button" @onclick=@(CreateDocument)>Dokument <span class="ml-1 oi oi-document"></span></button>
                                     <label class="col-form-label ml-2 font-weight-bold">Rabatt (in %): </label>
-                                    <InputNumber min="0" max="100" class="form-control-lg col-lg-2 col-sm-2 col-md-2" @bind-Value="EmployeeDetailView.Discount"/>
+                                    <InputNumber min="0" max="100" class="form-control-md col-lg-2 col-sm-2 col-md-2" @bind-Value="EmployeeDetailView.Discount"/>
                                     <label class="col-form-label ml-2 font-weight-bold"> Std.: </label>
-                                    <InputNumber min="0" max="70" class="form-control-lg col-lg-2 col-sm-2 col-md-2" @bind-Value="EmployeeDetailView.Hours"/>
+                                    <InputNumber min="0" max="70" class="form-control-md col-lg-2 col-sm-2 col-md-2" @bind-Value="EmployeeDetailView.Hours"/>
                                 </div>
                                 <div class="alert alert-success font-weight-bolder text-center @(!_visibleSafe ? "collapse" : "")">
                                     <span class="oi oi-check"></span> Änderungen erfolgreich gespeichert!
                                 </div>
                                 <div class="alert alert-danger font-weight-bolder text-center @(!_visiblePrompt ? "collapse" : "")">
-                                    <span class="oi oi-warning"></span> Keine Attribute ausgewählt!
+                                    <span class="oi oi-warning"></span> Mind. eine Rolle notwendig!
                                 </div>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-danger mr-1" @onclick=@(Close) data-dismiss="modal">Abbrechen</button>
@@ -275,13 +276,67 @@
         _visibleSafe = false;
         StateHasChanged();
     }
-
+    
+    public Table GenerateProjectActivityTable(EmployeeDetail emp, Dictionary<int,List<ProjectActivity>> dictionary)
+    {
+       var counter = 0;
+            var keyCollection = dictionary.Keys;
+            var projectTable = new Table();
+            var projectTableProp = new TableProperties(
+                new TableStyle() {Val = "EinfacheTabelle4"}, new TableWidth() {Type = TableWidthUnitValues.Dxa, Width = 9000.ToString()});
+            projectTable.AppendChild(projectTableProp);
+            var tableHead = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+            var leftHeadCell = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Double}), new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Center}), new Run(new RunProperties(new FontSize() {Val = 28.ToString()}), new Text("Projekttitel"))));
+            var rightHeadCell = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Double}), new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Center}), new Run(new RunProperties(new FontSize() {Val = 28.ToString()}), new Text("Projekttätigkeit(en)"))));
+            tableHead.Append(leftHeadCell, rightHeadCell);
+            projectTable.AppendChild(tableHead);
+            foreach (var key in keyCollection)
+            {
+                var projectActivities = dictionary[key];
+                foreach (var proj in projectActivities.ToList())
+                {
+                    if (emp.ProjectActivities.Exists(e => e.ProjectActivityID == proj.ProjectActivityID) == false)
+                        projectActivities.Remove(proj);
+                }
+                if (projectActivities.Count > 0)
+                {
+                    var projectTitle = _project.GetProject(projectActivities.First().ProjectID).Projecttitel;
+                    var tableRow = new TableRow(new TableRowProperties(new TableRowHeight() {HeightType = HeightRuleValues.AtLeast, Val = UInt32Value.ToUInt32(555)}));
+                    var leftCell = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single}), new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Center}), new Run(new RunProperties(new FontSize() {Val = 28.ToString()}), new Text(projectTitle))));
+                    var rightCell = new TableCell(new TableCellProperties(new BottomBorder() {Val = BorderValues.Single}));
+                    var rightPar = new Paragraph(new ParagraphProperties(new Justification() {Val = JustificationValues.Center}));
+                    var rightRun = new Run(new RunProperties(new FontSize() {Val = 28.ToString()}));
+                    var rightText = new Text() {Space = SpaceProcessingModeValues.Preserve};
+                    var k = projectActivities.Count - 1;
+                    foreach (var activity in projectActivities)
+                    {
+                        rightText.Text += activity.Description;
+                        if (k > 0)
+                        {
+                            rightText.Text += ", ";
+                            --k;
+                            
+                        }
+                    }
+                    rightRun.AppendChild(rightText);
+                    rightPar.AppendChild(rightRun);
+                    rightCell.AppendChild(rightPar);
+                    tableRow.Append(leftCell, rightCell);
+                    projectTable.AppendChild(tableRow);
+                    ++counter;
+                }
+            }
+            if (counter == 0)
+                tableHead.Remove();
+            return projectTable;
+    }
+    
     public async Task CreateDocument()
     {
         const string empTemplatePath = "wwwroot\\templates\\AvatiWorkerDoc.docx";
         var emp = _employeeService.GetEmployeeProfile(EmpId);
         var empDetail = _employeeDetailService.GetEmployeeDetail(emp.EmployeeID, PropId).Result;
-        if (!empDetail.Fields.Any() && !empDetail.Roles.Any() && !empDetail.Hardskills.Any() && !empDetail.Languages.Any() && !empDetail.ProjectActivities.Any() && !empDetail.Softskills.Any())
+        if (!empDetail.Roles.Any())
         {
             _visiblePrompt = true;
             StateHasChanged();
@@ -311,12 +366,20 @@
                             case "numb":
                                 text.Text = text.Text.Replace("numb", empDetail.Rc.ToString());
                                 break;
+                            case "Branchen":
+                                if (empDetail.Fields.Count == 0) 
+                                    par.Remove();
+                                break;
                             case "branch":
                                 foreach (var field in empDetail.Fields)
                                 {
                                     par.InsertAfterSelf(ProposalOverview.GenerateFieldListItem(field));
                                 }
                                 par.Remove();
+                                break;
+                            case "Hardskills":
+                                if (empDetail.Hardskills.Count == 0) 
+                                    par.Remove();
                                 break;
                             case "hards":
                                 foreach (var hardskill in empDetail.Hardskills)
@@ -325,12 +388,20 @@
                                 }
                                 par.Remove();
                                 break;
+                            case "Softskills":
+                                if (empDetail.Softskills.Count == 0) 
+                                    par.Remove();
+                                break;
                             case "softs":
                                 foreach (var softskill in empDetail.Softskills)
                                 {
                                     par.InsertAfterSelf(ProposalOverview.GenerateSoftskillListItem(softskill));
                                 }
                                 par.Remove();
+                                break;
+                            case "Sprachen:":
+                                if (empDetail.Languages.Count == 0) 
+                                    par.Remove();
                                 break;
                             case "langs":
                                 foreach (var lang in empDetail.Languages)
@@ -339,17 +410,23 @@
                                 }
                                 par.Remove();
                                 break;
-                            case "project":
-                                foreach (var proj in empDetail.ProjectActivities)
+                            case "Projekte:":
+                                if (empDetail.ProjectActivities.Count == 0)
+                                    par.Remove();
+                                else
                                 {
-                                    par.InsertAfterSelf(ProposalOverview.GenerateProjectActivityListItem(proj, _project.GetProject(proj.ProjectID).Projecttitel));
+                                    par.InsertBeforeSelf(new Paragraph(new Run(new Break {Type = BreakValues.Page})));
+                                    empBody.AppendChild(GenerateProjectActivityTable(empDetail, _activity.GetActivitiesWithProjectsGrouped(empDetail.EmployeeId)));
                                 }
-                                par.Remove();
+                                break;
+                            case "Rollen":
+                                if (empDetail.Roles.Count == 0) 
+                                    par.Remove();
                                 break;
                             case "roles":
                                 foreach (var role in empDetail.Roles)
                                 {
-                                    par.InsertAfterSelf(ProposalOverview.GenerateRoleListItem(role));
+                                    par.InsertAfterSelf(ProposalOverview.GenerateRoleList(role));
                                 }
                                 par.Remove();
                                 break;
@@ -360,7 +437,7 @@
             employeeDoc.Save();
             employeeDoc.Close();
         }
-        var task = await _blazorDownloadFileService.DownloadFile("Mitarbeiter.docx", memStream, "application/octet-stream");
+        var task = await _blazorDownloadFileService.DownloadFile(emp.FirstName + "_" + emp.LastName + ".docx", memStream, "application/octet-stream");
     }
 
 }

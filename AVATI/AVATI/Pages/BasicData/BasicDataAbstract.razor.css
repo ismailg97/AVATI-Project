@@ -1,6 +1,6 @@
 ﻿.cap {
     color: white;
-    background-color: #7a212e;
+    background-color: #343a40;
     padding: 15px;
     box-sizing: border-box;
     border-radius: 3px 15px 5px 30px;
@@ -29,7 +29,7 @@
 }
 
 caption {
-    color: #7a212e;
+    color: #343a40;
     caption-side: top;
 }
 
@@ -53,4 +53,9 @@ hr {
 
 .btn-outline-primary:hover {
     background-color: #0275d8;
+}
+.btn-primary{
+    background-color: #DC6F56 !important;
+    outline-color: #DC6F56; !important;
+    border-color: #DC6F56; !important;
 }

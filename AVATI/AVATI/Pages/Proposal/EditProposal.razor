@@ -9,164 +9,170 @@
 
 <AuthorizeView Roles="SalesStaff">
     <NotAuthorized>
-        @if(true){_navigationManager.NavigateTo("/profile");}
+        @if (true)
+        {
+            _navigationManager.NavigateTo("/profile");
+        }
     </NotAuthorized>
     <Authorized Context="authContext">
-        
-  
-@if (ShowEdit)
-{
-    <div class="modal fade show d-block overflow-auto" data-bs-backdrop="static" id="exampleModal" tabindex="-1" role="dialog" style="max-height: 94%;">
-        <div class="modal-dialog modal-xl" role="document">
-            <div class="modal-content bg-light font-weight-bold text-black" style="border-color: darkslategray; border-width: 5px">
-                @if (_finishedLoading)
-                {
-                    <div class="modal-header">
-                        @if (Id == 0)
-                        {
-                            <h5 class="modal-title font-weight-bolder" id="titleLabel">Angebot erstellen</h5>
-                        }
-                        else
-                        {
-                            <h5 class="modal-title font-weight-bolder" id="titleLabel">Angebot editieren</h5>
-                        }
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick=@Close>
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body text-left">
-                        <EditForm Model="@Proposal" OnValidSubmit="@HandleValidSubmit">
-                            <DataAnnotationsValidator/>
-                            <ValidationSummary/>
-                            <div class="form-group">
-                                <label for="title">Angebotstitel </label>
-                                <InputText id="title" class="form-control" @bind-Value="Proposal.ProposalTitle" placeholder="Titel"/>
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col">
-                                    <label for="start">Vsl. Start </label>
-                                    <InputDate id="start" class="form-control col" @bind-Value="Proposal.Start"/>
-                                </div>
-                                <div class="col">
-                                    <label for="end">Vsl. Ende </label>
-                                    <InputDate id="end" class="form-control col" @bind-Value="Proposal.End"/>
-                                </div>
 
-                            </div>
-                            <div class="form-group mt-4">
-                                <label class="mr-3">Hardskills: </label>
-                                @foreach (var hardskill in Proposal.Hardskills)
-                                {
-                                    <button type="button" class="btn btn-outline-success btn-sm section" @onclick=@(() => { Proposal.Hardskills.Remove(hardskill); })>
-                                        @hardskill.Description <span class="oi oi-x cross"></span>
-                                    </button>
-                                }
-                                <div class="form-group row col mt-2">
-                                    <input type="search" class="col-7 form-control mr-1" id="suche" @bind-value="TempHardskill" @bind-value:event="oninput" placeholder="C++, Javascript etc."/>
-                                </div>
-                            </div>
-                            <div class="form-group row col-10">
-                                
-                                    <div class="list-group border-dark overflow-auto mr-3 col-9" id="hardskills" style="height: 100px; border: 2px solid darkslategray">
-                                        @foreach (var hardskill in _hardskills)
-                                        {
-                                            @if ((TempHardskill == null || hardskill.Description.Contains(TempHardskill)) && !Proposal.Hardskills.Contains(hardskill))
-                                            {
-                                                <button type="button" class="btn btn-outline-dark" @onclick=@(() => { Proposal.Hardskills.Add(hardskill); })>@hardskill.Description</button>
-                                            }
-                                        }
-                                    </div>
-                            </div>
 
-                            <div class="form-group">
-                                <label class="mr-3 mt-2">Softskills: </label>
-                                @foreach (var softskilll in Proposal.Softskills)
-                                {
-                                    <button type="button" class="btn btn-outline-success btn-sm section" @onclick=@(() => { Proposal.Softskills.Remove(softskilll); })>
-                                        @softskilll <span class="oi oi-x cross"></span>
-                                    </button>
-                                }
-                            </div>
-                            @foreach (var softskill in _softskills)
-                            {
-                                if (!Proposal.Softskills.Contains(softskill))
-                                {
-                                    <button type="button" class="btn btn-outline-dark btn-sm" @onclick=@(() => { Proposal.Softskills.Add(softskill); })>
-                                        @softskill
-                                    </button>
-                                }
-                            }
-                            <div class="form-group mt-3">
-                                <label class="mr-2">Branchen: </label>
-                                @foreach (var field in Proposal.Fields)
-                                {
-                                    <button type="button" class="btn btn-outline-success btn-sm section" @onclick=@(() => { Proposal.Fields.Remove(field); })>
-                                        @field <span class="oi oi-x cross"></span>
-                                    </button>
-                                }
-                            </div>
-                            @foreach (var field in _fields)
-                            {
-                                if (!Proposal.Fields.Contains(field))
-                                {
-                                    <button type="button" class="btn btn-outline-dark btn-sm" @onclick=@(() => { Proposal.Fields.Add(field); })>
-                                        @field
-                                    </button>
-                                }
-                            }
-                            <div class="form-group">
-                                <label class="mt-2">Zusätzliche Informationen </label>
-                                <InputText id="addInfo" class="form-control" @bind-Value="@Proposal.AdditionalInfo" placeholder=" "></InputText>
-                            </div>
-                            <div class="form-row float-right">
-                                <button class="btn btn-danger mr-1" type="button" @onclick=@Close>Abbrechen</button>
+        @if (ShowEdit)
+        {
+            <div class="modal fade show d-block" data-bs-backdrop="static" id="exampleModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document" style="max-height: 100%">
+                    <div class="modal-content bg-light font-weight-bold text-black" style="border-color: darkslategray; border-width: 5px">
+                        @if (_finishedLoading)
+                        {
+                            <div class="modal-header">
                                 @if (Id == 0)
                                 {
-                                    <button type="submit" id="submit" class="btn btn-success">Angebot anlegen</button>
+                                    <h5 class="modal-title font-weight-bolder" id="titleLabel">Angebot erstellen</h5>
                                 }
                                 else
                                 {
-                                    <button type="submit" id="submit" class="btn btn-success">Änderungen speichern</button>
+                                    <h5 class="modal-title font-weight-bolder" id="titleLabel">Angebot editieren</h5>
                                 }
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick=@Close>
+                                    <span aria-hidden="true">×</span>
+                                </button>
                             </div>
-                        </EditForm>
-                    </div>
-                }
-                else
-                {
-                    <div class="d-flex flex-column align-items-center justify-content-center">
-                        <div class="row">
-                            <div class="spinner-border" role="status">
-                                <span class="sr-only">Loading...</span>
+                            <div class="modal-body text-left">
+                                <EditForm Model="@Proposal" OnValidSubmit="@HandleValidSubmit">
+                                    <DataAnnotationsValidator/>
+                                    <ValidationSummary/>
+                                    <div class="form-group">
+                                        <label for="title">Angebotstitel </label>
+                                        <InputText id="title" class="form-control" @bind-Value="Proposal.ProposalTitle" placeholder="Titel"/>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <label for="start">Vsl. Start </label>
+                                            <InputDate id="start" class="form-control col" @bind-Value="Proposal.Start"/>
+                                        </div>
+                                        <div class="col">
+                                            <label for="end">Vsl. Ende </label>
+                                            <InputDate id="end" class="form-control col" @bind-Value="Proposal.End"/>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group mt-4">
+                                        <label class="mr-3">Hardskills: </label>
+                                        @foreach (var hardskill in Proposal.Hardskills)
+                                        {
+                                            <button type="button" class="btn btn-outline-success btn-sm section" @onclick=@(() => { Proposal.Hardskills.Remove(hardskill); })>
+                                                @hardskill.Description <span class="oi oi-x cross"></span>
+                                            </button>
+                                        }
+                                        <div class="form-group row col mt-2">
+                                            <input type="search" class="col-7 form-control mr-1" id="suche" @bind-value="TempHardskill" @bind-value:event="oninput" placeholder="C++, Javascript etc."/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row col-10">
+
+                                        <div class="list-group border-dark overflow-auto mr-3 col-9" id="hardskills" style="height: 100px; border: 2px solid darkslategray">
+                                            @foreach (var hardskill in _hardskills)
+                                            {
+                                                @if ((TempHardskill == null || hardskill.Description.Contains(TempHardskill)) && !Proposal.Hardskills.Contains(hardskill))
+                                                {
+                                                    <button type="button" class="btn btn-outline-dark" @onclick=@(() => { Proposal.Hardskills.Add(hardskill); })>@hardskill.Description</button>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="mr-3 mt-2">Softskills: </label>
+                                        @foreach (var softskilll in Proposal.Softskills)
+                                        {
+                                            <button type="button" class="btn btn-outline-success btn-sm section" @onclick=@(() => { Proposal.Softskills.Remove(softskilll); })>
+                                                @softskilll <span class="oi oi-x cross"></span>
+                                            </button>
+                                        }
+                                    </div>
+                                    @foreach (var softskill in _softskills)
+                                    {
+                                        if (!Proposal.Softskills.Contains(softskill))
+                                        {
+                                            <button type="button" class="btn btn-outline-dark btn-sm" @onclick=@(() => { Proposal.Softskills.Add(softskill); })>
+                                                @softskill
+                                            </button>
+                                        }
+                                    }
+                                    <div class="form-group mt-3">
+                                        <label class="mr-2">Branchen: </label>
+                                        @foreach (var field in Proposal.Fields)
+                                        {
+                                            <button type="button" class="btn btn-outline-success btn-sm section" @onclick=@(() => { Proposal.Fields.Remove(field); })>
+                                                @field <span class="oi oi-x cross"></span>
+                                            </button>
+                                        }
+                                    </div>
+                                    @foreach (var field in _fields)
+                                    {
+                                        if (!Proposal.Fields.Contains(field))
+                                        {
+                                            <button type="button" class="btn btn-outline-dark btn-sm" @onclick=@(() => { Proposal.Fields.Add(field); })>
+                                                @field
+                                            </button>
+                                        }
+                                    }
+                                    <div class="form-group">
+                                        <label class="mt-2">Zusätzliche Informationen </label>
+                                        <InputText id="addInfo" class="form-control" @bind-Value="@Proposal.AdditionalInfo" placeholder=" "></InputText>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div class="form-row float-right">
+                                            <button class="btn btn-danger mr-1" type="button" @onclick=@Close>Abbrechen</button>
+                                            @if (Id == 0)
+                                            {
+                                                <button type="submit" id="submit" class="btn btn-success">Angebot anlegen</button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" id="submit" class="btn btn-success">Änderungen speichern</button>
+                                            }
+                                        </div>
+                                    </div>
+                                </EditForm>
                             </div>
-                        </div>
-                        <div class="row">
-                            <strong>Lade...</strong>
-                        </div>
+                        }
+                        else
+                        {
+                            <div class="d-flex flex-column align-items-center justify-content-center">
+                                <div class="row">
+                                    <div class="spinner-border" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <strong>Lade...</strong>
+                                </div>
+                            </div>
+                        }
                     </div>
-                }
+                </div>
             </div>
-        </div>
-    </div>
-}
+        }
 
-@if (ShowBackdrop)
-{
-    <div class="modal-backdrop fade show"></div>
-}
+        @if (ShowBackdrop)
+        {
+            <div class="modal-backdrop fade show"></div>
+        }
 
-    
-            
-        </Authorized>
-    </AuthorizeView>
 
-    @code {
+
+    </Authorized>
+</AuthorizeView>
+
+@code {
 
     [Parameter]
     public int Id { get; set; }
 
     [Parameter]
     public ProposalOverview Abstract { get; set; }
+
     private bool _finishedLoading = false;
     public string TempHardskill { get; set; }
     public bool ShowBackdrop { get; set; }
@@ -176,6 +182,7 @@
     List<Hardskill> _hardskills = new List<Hardskill>();
     List<string> _softskills = new List<string>();
     List<string> _fields = new List<string>();
+
     public void Close()
     {
         ShowEdit = !ShowEdit;

@@ -5,7 +5,7 @@
 
 @using Microsoft.AspNetCore.Http
 @using Direction = MudBlazor.Direction
-@inject IProjektService _projektService
+@inject IProjectService _projectService
 @inject IEmployeeService _employee
 @inject NavigationManager _navManager
 @inject IBasicDataService _basicDataService
@@ -19,7 +19,7 @@
 
 @if (_pageIsLoaded)
 {
-    <h3>Profil</h3>
+    <h3>Profil bearbeiten: @Emp.FirstName @Emp.LastName</h3>
     <hr/>
     <!------ Gets Employee with the same Id as the Router Parameter ---------->
     <EditForm Model="@Emp" OnValidSubmit="@EditProfiles">
@@ -77,12 +77,21 @@
                     <div style="margin-top: 20px" class="row">
                         <!------ Relevant Work Experience ---------->
                         <div class="col-6">
-                            <div class="card-title small font-weight-light lead text-left">Relevante Berufserfahrung</div>
-                            <input type="number" class="form-control" @bind-value="@Emp.RelevantWorkExperience" min="0" step="0.1" placeholder="@Emp.RelevantWorkExperience">
+                            <div class="form-group">
+
+                                <div class="card-title small font-weight-light lead text-left">Relevante Berufserfahrung</div>
+                                <div class="form-group row-cols-auto">
+                                    <input type="number" class="form-control col-4" @bind-value="@Emp.RelevantWorkExperience" min="0" step="0.1" placeholder="@Emp.RelevantWorkExperience">
+                                    <button @onclick="() => { ShowPopRelevantWorkExperiece(); }" type="button" class="btn btn-info col-4">
+                                        Berechnung
+                                    </button>
+                                </div>
+                            </div>
+
                         </div>
                         <div class="col-6">
                             <div class="card-title small font-weight-light lead text-left">Status:</div>
-                             <MudSwitch @bind-Checked="@Emp.IsActive" Color="MudBlazor.Color.Success"/>
+                            <MudSwitch @bind-Checked="@Emp.IsActive" Color="MudBlazor.Color.Success"/>
                             @if (Emp.IsActive)
                             {
                                 <button type="button" class="btn btn-success" id="employeeStatus" @onclick=@(() => { HandleStatusChangeClick(); })>
@@ -130,7 +139,7 @@
             <a style="position: relative;">
             <MudPopover Open="@_isOpenHardskill" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 300px; height: auto;" OffsetX="true">
                 <div>
-                    <MudText Style="font-size: 14px;">Wenn Sie auf einem Hardskill einen Rechtsklick betätigen, können Sie dessen Level ändern</MudText>
+                    <MudText Style="font-size: 14px;">Wenn Sie auf einem Hardskill einen Rechtsklick betätigen, können Sie das Level ändern</MudText>
                     <MudButton Style="font-size: 14px;" OnClick="() => { _isOpenHardskill = false;}" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
                 </div>
             </MudPopover>
@@ -331,11 +340,11 @@
         <MudIcon Icon="@Icons.Filled.InfoOutline" Style="color: black; display: inline;" @onclick="() => { _isOpenLanguage = !_isOpenLanguage;}"/>
         <a style="position: relative;">
             <MudPopover Open="@_isOpenLanguage" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 300px; height: auto;">
-                    <MudText Style="font-size: 14px;">Wenn Sie auf eine Sprache einen Rechtsklick betätigen, können Sie deren Level ändern</MudText>
-                        <MudButton Style="font-size: 14px;" OnClick="() => { _isOpenLanguage = false;}" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
-                </MudPopover>
+                <MudText Style="font-size: 14px;">Wenn Sie auf eine Sprache einen Rechtsklick betätigen, können Sie das Level ändern</MudText>
+                <MudButton Style="font-size: 14px;" OnClick="() => { _isOpenLanguage = false; }" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
+            </MudPopover>
         </a>
-    
+
         <label style="display: inline;" class="mr-3 mt-2"><b>Sprachen:</b> </label>
         @if (Emp.Language.Any())
         {
@@ -421,16 +430,17 @@
                             </a>
                         </button>
                     }
-                    
+
                 }
-        }
-            
+            }
+
+            }
         }
         else
         {
             <small style="color: #818181;">[Keine Sprachen zugewiesen]</small>
         }
-        
+
 
     </div>
     @foreach (var language in _basicDataService.GetAllLanguages())
@@ -487,22 +497,75 @@ else
                     <button type="button" class="close" data-dismiss="modal" @onclick="() => {_booleanStatus = !_booleanStatus; StateHasChanged();}">&times;</button>
                 </div>
                 <div class="modal-body">
-                    @if (Emp.IsActive)
+                    @if (!Emp.IsActive)
                     {
-                        <text>Sind Sie sicher, dass ihren Status von Aktiv auf Inaktiv setzen wollen?</text>
+                        <text>Sind Sie sicher, dass ihren Status von <a style="color: green;">Aktiv</a> auf <a style="color: red;">Inaktiv</a> setzen wollen?</text>
+                        <div class="alert alert-danger" style="color: darkred;">Sie können dann nicht mehr zu Angeboten und Projekten hinzugefügt werden!</div>
                     }
                     else
                     {
-                        <text>Sind Sie sicher, dass ihren Status von Inaktiv auf Aktiv setzen wollen?</text>
+                        <text>Sind Sie sicher, dass ihren Status von <a style="color: red;">Inaktiv</a> auf <a style="color: green;">Aktiv</a> setzen wollen?</text>
+                        <div class="alert alert-success" style="color: darkgreen;">Sie können dann wieder zu Angeboten und Projekten hinzugefügt werden!</div>
                     }
-                       
+
                     <!-- HTML to write -->
                 </div>
                 <div class="modal-footer" >
                     <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => {_booleanStatus = !_booleanStatus; StateHasChanged(); }"><MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="() => {Emp.IsActive = !Emp.IsActive;  StateHasChanged();_booleanStatus = !_booleanStatus;}"><MudIcon Icon="@Icons.Filled.Save"/> Bestätigen</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="() => {Emp.IsActive = !Emp.IsActive; StateHasChanged();_booleanStatus = !_booleanStatus;}"><MudIcon Icon="@Icons.Filled.Save"/> Bestätigen</button>
                 </div>
-                   
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+@if (_relevantWorkExperience)
+{
+    <div class="modal fade show" id="myModal" style=" display:block;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Berechnung der relevanten Berufserfahrung</h4>
+                    <button type="button" class="close" data-dismiss="modal" @onclick="() => {_relevantWorkExperience = !_relevantWorkExperience; StateHasChanged();}">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row align-content-center">
+                        <p class="col-4">Aktuelles Jahr</p>
+                        <input class="form-control col-3" @bind-value="@CurrentYear" step="0.1" min="0" type="number"/>
+                    </div>
+                    <p>
+                        <span class="oi oi-minus text-center"></span>
+                    </p>
+                    <div class="form-group row">
+                        <p class="col-4">Jahre Berufserfahrung</p>
+                        <input class="form-control  col-3" @bind-value="@YearsofProfessionalExperience" step="0.1" min="0" type="number"/>
+                    </div>
+                    <p>
+                        <span class="oi oi-minus text-center"></span>
+                    </p>
+                    <div class="form-group row">
+                        <p class="col-4">0,3 x Jahre als Studentische Hilfskraft</p>
+                        <input class="form-control col-3" @bind-value="@YearsAsAScientist" step="0.1" min="0" type="number"/>
+                    </div>
+                    <p>
+                        <span class="oi oi-minus text-center"></span>
+                    </p>
+                    <div class="form-group row">
+                        <p class="col-4">0,5 x Jahre Wissentschaftlicher Mitarbeiter</p>
+                        <input class="form-control col-3" @bind-value="@YearsAsAStudentAssistant" step="0.1" min="0" type="number"/>
+                    </div>
+                    <hr/>
+                    <div class="form-group row">
+                        <p class="col-4">Relevante Berufserfahrung</p>
+                        <input class="form-control col-3" type="text" readonly @bind-value="@Emp.RelevantWorkExperience" min="0" step="0.1" placeholder="@YearNumber"/>
+                        <button type="button" class="btn btn-info" @onclick="() => {  Calculate( CurrentYear,  YearsofProfessionalExperience,  YearsAsAScientist,  YearsAsAStudentAssistant); }">Berechnen</button>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => {_relevantWorkExperience = !_relevantWorkExperience; StateHasChanged(); }"><MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="() => {StateHasChanged(); _relevantWorkExperience = !_relevantWorkExperience; }"><MudIcon Icon="@Icons.Filled.Save"/> Bestätigen</button>
+                </div>
             </div>
         </div>
     </div>
@@ -531,10 +594,18 @@ else
     private bool _pageIsLoaded = false;
     private bool _booleanProj = false;
     private bool _booleanStatus = false;
-    
+    private bool _relevantWorkExperience = false;
+
     private Dictionary<int, List<ProjectActivity>> _projectWithGroupedActivities;
     //private bool _booleanName;
 
+    private double CurrentYear { get; set; }                        //1
+    private double YearsofProfessionalExperience { get; set; }      //2
+    private double YearsAsAScientist { get; set; }                  //3
+    private double YearsAsAStudentAssistant { get; set; }           //4
+    
+    private double YearNumber { get; set; }                         //5
+    
 
     public bool IsVisible(string titel)
     {
@@ -556,35 +627,31 @@ else
         _projectWithGroupedActivities = _projectActivityService.GetActivitiesWithProjectsGrouped(Id);
         HardskillList = await tempHard;
         Emp = _employee.GetEmployeeProfile(Id);
+        YearNumber = Emp.RelevantWorkExperience;
         _pageIsLoaded = true;
     }
-
-
+    
     public void NavigatoToEditProject()
     {
         _navManager.NavigateTo("/employeeProject/");
     }
-
-
+    
     public void EditProfiles()
     {
         _employee.EditEmployeeProfile(Emp);
         _navManager.NavigateTo("profile/");
     }
-
-
+    
     public void CollProj()
     {
         _booleanProj = !_booleanProj;
     }
-
-
+    
     public void HandleHardSkillClick(Hardskill hardskill)
     {
         _hardSkillLevel.Showing(Emp, hardskill);
     }
-
-
+    
     public void HandleLanguageClick(string language)
     {
         _languageLevel.Showing(Emp, language);
@@ -599,8 +666,7 @@ else
     {
         _booleanHardSkill = !_booleanHardSkill;
     }
-
-
+    
     private async Task HandlePhotoSelected(InputFileChangeEventArgs obj)
     {
         var imageFile = obj.File;
@@ -613,17 +679,30 @@ else
 
     public void NavigateToProjectEdit(int EmployeeID)
     {
-        _navManager.NavigateTo("/profile/" );
+        _navManager.NavigateTo("/profile/");
     }
 
     public void NavigateToEmployeeProject(int EmployeeID)
     {
-        _navManager.NavigateTo("/employeeProject2/" );
+        _navManager.NavigateTo("/employeeProject2/");
     }
 
     public void HandleStatusChangeClick()
     {
         _booleanStatus = !_booleanStatus;
     }
+
+    public void ShowPopRelevantWorkExperiece()
+    {
+        _relevantWorkExperience = !_relevantWorkExperience;
+    }
+
+    public void Calculate(double CurrentYear, double YearsofProfessionalExperience, double YearsAsAScientist, double YearsAsAStudentAssistant)
+    {
+        double result = 0;
+        result = CurrentYear - YearsofProfessionalExperience - (0.5 * YearsAsAScientist) - (0.3 * YearsAsAStudentAssistant);
+        YearNumber = result;
+    }
     
+
 }

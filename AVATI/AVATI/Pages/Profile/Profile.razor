@@ -6,7 +6,7 @@
 @inject NavigationManager _navManager
 @inject IEmployeeService _employee
 @inject IProjectActivityService _projctActivityService
-@inject IProjektService _projektService
+@inject IProjectService _projectService
 @inject AuthenticationStateProvider _authenticationStateProvider
 @inject NavigationManager _navigationManager
 @inject HttpClient _httpClient
@@ -183,7 +183,7 @@
                                     </tr>
                                     foreach (var projectId in _projectWithGroupedActivities.Keys)
                                     {
-                                        var projecttitle = _projektService.GetProject(projectId).Projecttitel;
+                                        var projecttitle = _projectService.GetProject(projectId).Projecttitel;
                                         <tr>
                                             <td>@projecttitle</td>
                                             <td>

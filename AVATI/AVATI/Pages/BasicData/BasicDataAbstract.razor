@@ -35,34 +35,37 @@
 <h3 class="cap">
     <b>Skills</b>
 </h3>
-<table class="table align-middle mb-5">
+<table class="table mb-5">
     <caption>
         <h4 style="display: inline;">
             <b>Softskills</b>
         </h4>
-        <button id="BlendinoutSoftskill" style="display: inline;" class="@(_show[0] ? "btn btn-outline-primary" : "btn btn-primary")" @onclick="() => Showing(0)">
-            @if (_show[0])
-            {
-                <a><span class="oi oi-expand-up"></span> Ausblenden</a>
-            }
-            else
-            {
-                <a><span class="oi oi-expand-down"></span> Einblenden</a>
-            }
-        </button>
-        <button id="CreateSoftskill" style="display: inline;" class="btn btn-success" @onclick="() => PopCreateBasicData(BasicDataType.SoftSkill)">
-            <span class="oi oi-plus"></span> Hinzufügen
-        </button>
+        <div class="btn-group float-right mr-4">
+            <button id="BlendinoutSoftskill" style="display: inline;" class="@(_show[0] ? "btn btn-primary" : "btn btn-primary")" @onclick="() => Showing(0)">
+                @if (_show[0])
+                {
+                    <a><MudIcon Icon="@Icons.Filled.ExpandLess"/> Ausblenden</a>
+                }
+                else
+                {
+                    <a><MudIcon Icon="@Icons.Filled.ExpandMore"/> Einblenden</a>
+                }
+            </button>
+            <button id="CreateSoftskill" style="display: inline;" class="btn btn-success" @onclick="() => PopCreateBasicData(BasicDataType.SoftSkill)">
+                <MudIcon Icon="@Icons.Filled.Add"/> Hinzufügen
+            </button>
+        </div>
     </caption>
 
 
     @if (_show[0])
     {
-        <div class="form-group col-8">
-            <span class="oi oi-magnifying-glass"></span>
-            <input id="FilterSoftskill" class="form-control" type="text" placeholder="Filter..."
-                   @bind="Filter[0]"
-                   @bind:event="oninput">
+        <div class="form-group row">
+            <div class="form-group col-6">
+                <input id="FilterSoftskill" class="form-group form-control" type="text" placeholder="Suche nach Softskillbezeichnung..."
+                       @bind="Filter[0]"
+                       @bind:event="oninput">
+            </div>
         </div>
         if (_softskills.Any(x => IsVisible(x, 0)))
         {
@@ -81,13 +84,17 @@
                 <tr class="@(count % 2 == 0 ? "grey" : "white")">
                     <td id="S @softskill">@softskill</td>
                     <td class="smalltd">
-                        <button class="btn btn-secondary" id="EditS @softskill" @onclick="() => PopEditBasicData(softskill, BasicDataType.SoftSkill)">
-                            <a><span class="oi oi-pencil" aria-hidden="true" style="display: inline;"></span> <a style="display: inline;"> Editieren</a></a>
+                        <button class="btn btn-info" id="EditS @softskill" @onclick="() => PopEditBasicData(softskill, BasicDataType.SoftSkill)">
+                            <a>
+                                <MudIcon Icon="@Icons.Filled.Brush"/> <a style="display: inline;"> Editieren</a>
+                            </a>
                         </button>
                     </td>
                     <td class="smalltd">
                         <button class="btn btn-danger" id="DeleteS @softskill" @onclick="() => PopDelete(softskill, BasicDataType.SoftSkill)">
-                            <a><span class="oi oi-trash" style="display: inline;"></span> <a style="display: inline;"> Löschen</a></a>
+                            <a>
+                                <MudIcon Icon="@Icons.Filled.Delete"/> <a style="display: inline;"> Löschen</a>
+                            </a>
                         </button>
                     </td>
                 </tr>
@@ -103,24 +110,28 @@
     }
 </table>
 
-<table class="table align-middle mb-5 table-striped">
+<hr/>
+
+<table class="table mb-5 ">
     <caption>
         <h4 style="display: inline;">
             <b>Hardskills</b>
         </h4>
-        <button id="BlendinoutHardskill" style="display: inline;" class="@(_show[1] ? "btn btn-outline-primary" : "btn btn-primary")" @onclick="() => Showing(1)">
-            @if (_show[1])
-            {
-                <a><span class="oi oi-expand-up"></span> Ausblenden</a>
-            }
-            else
-            {
-                <a><span class="oi oi-expand-down"></span> Einblenden</a>
-            }
-        </button>
-        <button id="CreateHardskill" style="display: inline;" class="btn btn-success" @onclick="PopCreateHardskill">
-            <span class="oi oi-plus"></span> Hinzufügen
-        </button>
+        <div class="btn-group float-right mr-4">
+            <button id="BlendinoutHardskill" style="display: inline;" class="@(_show[1] ? "btn btn-primary " : "btn btn-primary ")" @onclick="() => Showing(1)">
+                @if (_show[1])
+                {
+                    <a><MudIcon Icon="@Icons.Filled.ExpandLess"/> Ausblenden</a>
+                }
+                else
+                {
+                    <a><MudIcon Icon="@Icons.Filled.ExpandMore"/> Einblenden</a>
+                }
+            </button>
+            <button id="CreateHardskill" style="display: inline;" class="btn btn-success " @onclick="PopCreateHardskill">
+                <MudIcon Icon="@Icons.Filled.Add"/> Hinzufügen
+            </button>
+        </div>
     </caption>
 
     @if (_show[1] && !_loadHardskills)
@@ -138,16 +149,20 @@
     }
     else if (_show[1])
     {
-        <div class="form-group col-8">
-            <span class="oi oi-magnifying-glass"></span>
-            <input id="FilterHardskill" class="form-control" type="text" placeholder="Filtern nach Hardskills..."
-                   @bind="Filter[1]"
-                   @bind:event="oninput">
+        <div class="form-group row">
+            <div class="form-group col-6">
+                <input id="FilterHardskill" class="form-group form-control" type="text" placeholder="Suche nach Hardskillbezeichnung..."
+                       @bind="Filter[1]"
+                       @bind:event="oninput">
+            </div>
         </div>
-        <div class="form-group col-8">
-            <span class="oi oi-magnifying-glass"></span>
-            <input id="FilterHardskillCategorys" class="form-control" type="text" placeholder="Filtern nach Hardskillkategorien..."
-                   @bind="Filter[5]" @bind:event="oninput">
+
+
+        <div class="form-group row">
+            <div class="form-group col-6">
+                <input id="FilterHardskillCategorys" class="form-group form-control" type="text" placeholder="Suche nach Hardskillkategoriebezeichnung..."
+                       @bind="Filter[5]" @bind:event="oninput">
+            </div>
         </div>
         @if (_hardskills != null && _hardskills.Any(x => IsVisible(x, 1)))
         {
@@ -176,13 +191,13 @@
                 <tr class="@(count % 2 == 0 ? "grey" : "white")" @onmouseover="() => ShowingUpperCat(hardskill)" @onmouseout="() => StopShowingUpperCat(hardskill)">
                     <td id="H @hardskill">@hardskill</td>
                     <td class="smalltd">
-                        <button class="btn btn-secondary" id="EditH @hardskill" @onclick="() => PopEditHardskill(hardskill)">
-                            <span class="oi oi-pencil" aria-hidden="true"></span> Editieren
+                        <button class="btn btn-info" id="EditH @hardskill" @onclick="() => PopEditHardskill(hardskill)">
+                            <MudIcon Icon="@Icons.Filled.Brush"/> Editieren
                         </button>
                     </td>
                     <td class="smalltd">
                         <button class="btn btn-danger" id="DeleteH @hardskill" @onclick="() => PopDelete(hardskill, BasicDataType.HardSkill)">
-                            <span class="oi oi-trash"></span> Löschen
+                            <MudIcon Icon="@Icons.Filled.Delete"/> Löschen
                         </button>
                     </td>
                 </tr>
@@ -206,24 +221,28 @@
     }
 </table>
 
-<table class="table align-middle mb-5 table-striped">
+<hr/>
+
+<table class="table mb-5 ">
     <caption>
         <h4 style="display: inline;">
             <b>Hardskillkategorien</b>
         </h4>
-        <button style="display: inline;" class="@(_show[2] ? "btn btn-outline-primary" : "btn btn-primary")" @onclick="() => Showing(2)">
-            @if (_show[2])
-            {
-                <a><span class="oi oi-expand-up"></span> Ausblenden</a>
-            }
-            else
-            {
-                <a><span class="oi oi-expand-down"></span> Einblenden</a>
-            }
-        </button>
-        <button style="display: inline;" class="btn btn-success" @onclick="PopCreateHardskillCat">
-            <span class="oi oi-plus"></span> Hinzufügen
-        </button>
+        <div class="btn-group float-right mr-4">
+            <button style="display: inline;" class="@(_show[2] ? "btn btn-primary" : "btn btn-primary")" @onclick="() => Showing(2)">
+                @if (_show[2])
+                {
+                    <a><MudIcon Icon="@Icons.Filled.ExpandLess"/> Ausblenden</a>
+                }
+                else
+                {
+                    <a><MudIcon Icon="@Icons.Filled.ExpandMore"/> Einblenden</a>
+                }
+            </button>
+            <button style="display: inline;" class="btn btn-success" @onclick="PopCreateHardskillCat">
+                <MudIcon Icon="@Icons.Filled.Add"/> Hinzufügen
+            </button>
+        </div>
     </caption>
 
     @if (_show[2] && !_loadCategorys)
@@ -241,11 +260,12 @@
     }
     else if (_show[2])
     {
-        <div class="form-group col-8">
-            <span class="oi oi-magnifying-glass"></span>
-            <input id="FilterCategory" class="form-control" type="text" placeholder="Filter..."
-                   @bind="Filter[2]"
-                   @bind:event="oninput">
+        <div class="form-group row">
+            <div class="form-group col-6">
+                <input id="FilterCategory" class="form-group form-control" type="text" placeholder="Suche nach Hardskillkategoriebezeichnung..."
+                       @bind="Filter[2]"
+                       @bind:event="oninput">
+            </div>
         </div>
         @if (_allRoots != null && _allRoots.Any(x => IsVisible(x, 2)))
         {
@@ -276,33 +296,35 @@
                 <tr class="@(count % 2 == 0 ? "grey" : "white")">
                     <td id="C @hardskillcat">@hardskillcat</td>
                     <td class="smalltd">
+
                         @if (!_showEditCat[hardskillcat])
                         {
                             if (!_showSubCat[hardskillcat])
                             {
-                                <button class="btn btn-success" id="GetView @hardskillcat" @onclick="() => ShowingSubCat(hardskillcat)" type="button">
-                                    <span class="oi oi-expand-down"></span> Ansicht
+                                <button class="btn btn-light border-dark" id="GetView @hardskillcat" @onclick="() => ShowingSubCat(hardskillcat)" type="button">
+                                    <MudIcon Icon="@Icons.Filled.ExpandMore"/> Ansicht
                                 </button>
                             }
                             else
                             {
-                                <button class="btn btn-outline-success" id="StopView @hardskillcat" @onclick="() => ShowingSubCat(hardskillcat)" type="button">
-                                    <span class="oi oi-expand-up"></span> Ansicht stoppen
+                                <button class="btn btn-light border-dark" id="StopView @hardskillcat" @onclick="() => ShowingSubCat(hardskillcat)" type="button">
+                                    <MudIcon Icon="@Icons.Filled.ExpandLess"/> Ansicht stoppen
                                 </button>
                             }
                         }
                     </td>
+
                     <td class="smalltd">
                         @if (_showEditCat[hardskillcat])
                         {
-                            <button class="btn btn-primary" id="FinishEditC @hardskillcat" @onclick="() => ShowingEditCat(hardskillcat)">
-                                <span class="oi oi-circle-check"></span>Abgeschlossen
+                            <button class="btn btn-info" id="FinishEditC @hardskillcat" @onclick="() => ShowingEditCat(hardskillcat)">
+                                <MudIcon Icon="@Icons.Filled.CheckCircle"/> Abgeschlossen
                             </button>
                         }
                         else
                         {
-                            <button class="btn btn-secondary" id="EditC @hardskillcat" @onclick="() => ShowingEditCat(hardskillcat)">
-                                <span class="oi oi-pencil" aria-hidden="true"></span> Editieren
+                            <button class="btn btn-info" id="EditC @hardskillcat" @onclick="() => ShowingEditCat(hardskillcat)">
+                                <MudIcon Icon="@Icons.Filled.Brush"/> Editieren
                             </button>
                         }
                     </td>
@@ -335,30 +357,34 @@
 
 
 <h3 class="cap">
-    <b style="margin-right: 20px; display: inline;">Branchen</b>
-    <button style="display: inline;" class="@(_show[3] ? "btn btn-outline-primary" : "btn btn-primary")" @onclick="() => Showing(3)">
-        @if (_show[3])
-        {
-            <a><span class="oi oi-expand-up"></span> Ausblenden</a>
-        }
-        else
-        {
-            <a><span class="oi oi-expand-down"></span> Einblenden</a>
-        }
-    </button>
-    <button style="display: inline;" class="btn btn-success" @onclick="() => PopCreateBasicData(BasicDataType.Field)">
-        <span class="oi oi-plus"></span> Hinzufügen
-    </button>
+    <b>Branchen</b>
+    <div class="btn-group float-right">
+
+        <button style="display: inline;" class="@(_show[3] ? "btn btn-primary" : "btn btn-primary")" @onclick="() => Showing(3)">
+            @if (_show[3])
+            {
+                <a><MudIcon Icon="@Icons.Filled.ExpandLess"/> Ausblenden</a>
+            }
+            else
+            {
+                <a><MudIcon Icon="@Icons.Filled.ExpandMore"/> Einblenden</a>
+            }
+        </button>
+        <button style="display: inline;" class="btn btn-success" @onclick="() => PopCreateBasicData(BasicDataType.Field)">
+            <MudIcon Icon="@Icons.Filled.Add"/> Hinzufügen
+        </button>
+    </div>
 </h3>
 @if (_show[3])
 {
-    <div class="form-group col-6">
-        <span class="oi oi-magnifying-glass"></span>
-        <input id="FilterField" class="form-control" type="text" placeholder="Filter..."
-               @bind="Filter[3]"
-               @bind:event="oninput">
+    <div class="form-group row">
+        <div class="form-group col-6">
+            <input id="FilterField" class="form-group form-control" type="text" placeholder="Suche nach Branchenbezeichnung..."
+                   @bind="Filter[3]"
+                   @bind:event="oninput">
+        </div>
     </div>
-    <table class="table align-middle mb-5 table-striped">
+    <table class="table mb-5">
         @if (_fields.Any(x => IsVisible(x, 3)))
         {
             <tr>
@@ -373,17 +399,17 @@
             {
                 @if (!IsVisible(field, 3))
                     continue;
-
                 <tr class="@(count % 2 == 0 ? "grey" : "white")">
                     <td id="F @field">@field</td>
+                    
                     <td class="smalltd">
-                        <button id="EditF @field" class="btn btn-secondary" @onclick="() => PopEditBasicData(field, BasicDataType.Field)">
-                            <span class="oi oi-pencil" aria-hidden="true"></span> Editieren
+                        <button id="EditF @field" class="btn btn-info" @onclick="() => PopEditBasicData(field, BasicDataType.Field)">
+                            <MudIcon Icon="@Icons.Filled.Brush"/> Editieren
                         </button>
                     </td>
                     <td class="smalltd">
                         <button id="DeleteF @field" class="btn btn-danger" @onclick="() => PopDelete(field, BasicDataType.Field)">
-                            <span class="oi oi-trash"></span> Löschen
+                            <MudIcon Icon="@Icons.Filled.Delete"/> Löschen
                         </button>
                     </td>
                 </tr>
@@ -400,30 +426,34 @@
 }
 
 <h3 class="cap">
-    <b style="margin-right: 20px; display: inline;">Rollen</b>
-    <button style="display: inline;" class="@(_show[4] ? "btn btn-outline-primary" : "btn btn-primary")" @onclick="() => Showing(4)">
-        @if (_show[4])
-        {
-            <a><span class="oi oi-expand-up"></span> Ausblenden</a>
-        }
-        else
-        {
-            <a><span class="oi oi-expand-down"></span> Einblenden</a>
-        }
-    </button>
-    <button style="display: inline;" class="btn btn-success" @onclick="() => PopCreateBasicData(BasicDataType.Role)">
-        <span class="oi oi-plus"></span> Hinzufügen
-    </button>
+    <b>Rollen</b>
+    <div class="btn-group float-right">
+
+        <button style="display: inline;" class="@(_show[4] ? "btn btn-primary" : "btn btn-primary")" @onclick="() => Showing(4)">
+            @if (_show[4])
+            {
+                <a><MudIcon Icon="@Icons.Filled.ExpandLess"/> Ausblenden</a>
+            }
+            else
+            {
+                <a><MudIcon Icon="@Icons.Filled.ExpandMore"/> Einblenden</a>
+            }
+        </button>
+        <button style="display: inline;" class="btn btn-success" @onclick="() => PopCreateBasicData(BasicDataType.Role)">
+            <MudIcon Icon="@Icons.Filled.Add"/> Hinzufügen
+        </button>
+    </div>
 </h3>
 @if (_show[4])
 {
-    <div class="form-group col-6">
-        <span class="oi oi-magnifying-glass"></span>
-        <input id="FilterRole" class="form-control" type="text" placeholder="Filter..."
-               @bind="Filter[4]"
-               @bind:event="oninput">
+    <div class="form-group row">
+        <div class="form-group col-6">
+            <input id="FilterRole" class="form-group form-control" type="text" placeholder="Suche nach Rollenbezeichnung..."
+                   @bind="Filter[4]"
+                   @bind:event="oninput">
+        </div>
     </div>
-    <table class="table align-middle mb-5 table-striped">
+    <table class="table mb-5">
         @if (_roles.Any(x => IsVisible(x, 4)))
         {
             <tr>
@@ -441,14 +471,15 @@
 
                 <tr class="@(count % 2 == 0 ? "grey" : "white")">
                     <td id="R @role">@role</td>
+                    
                     <td class="smalltd">
-                        <button class="btn btn-secondary" id="EditR @role" @onclick="() => PopEditBasicData(role, BasicDataType.Role)">
-                            <span class="oi oi-pencil" aria-hidden="true"></span> Editieren
+                        <button class="btn btn-info" id="EditR @role" @onclick="() => PopEditBasicData(role, BasicDataType.Role)">
+                            <MudIcon Icon="@Icons.Filled.Brush"/> Editieren
                         </button>
                     </td>
                     <td class="smalltd">
                         <button class="btn btn-danger" id="DeleteR @role" @onclick="() => PopDelete(role, BasicDataType.Role)">
-                            <span class="oi oi-trash"></span> Löschen
+                            <MudIcon Icon="@Icons.Filled.Delete"/> Löschen
                         </button>
                     </td>
                 </tr>
@@ -550,10 +581,40 @@
         StateHasChanged();
     }
 
+    public async Task UpdateCategorys(string description)
+    {
+        _loadCategorys = false;
+        StateHasChanged();
+        Filter[2] = description;
+        var allRoots = _hardskillService.GetAllRoots();
+        _allRoots = await allRoots;
+        _loadCategorys = true;
+        StateHasChanged();
+    }
+
     public async Task UpdateHardskills()
     {
         _loadHardskills = false;
         StateHasChanged();
+        var hardskills = _hardskillService.GetAllDesHardskills();
+        _hardskills = await hardskills;
+        var taskCategorys = _hardskillService.GetAllDesCategorys();
+        var categorys = await taskCategorys;
+
+        foreach (var category in categorys)
+        {
+            var hardskillsOfCategory = _hardskillService.GetHardskillsOfCategory(category);
+            _allCategorys.TryAdd(category, await hardskillsOfCategory);
+        }
+        _loadHardskills = true;
+        StateHasChanged();
+    }
+    
+    public async Task UpdateHardskills(string description)
+    {
+        _loadHardskills = false;
+        StateHasChanged();
+        Filter[1] = description;
         var hardskills = _hardskillService.GetAllDesHardskills();
         _hardskills = await hardskills;
         var taskCategorys = _hardskillService.GetAllDesCategorys();
@@ -573,6 +634,13 @@
         _softskills = _basicDataService.GetAllSoftSkills();
         StateHasChanged();
     }
+    
+    public void UpdateSoftskills(string description)
+    {
+        _softskills = _basicDataService.GetAllSoftSkills();
+        Filter[0] = description;
+        StateHasChanged();
+    }
 
     public void UpdateFields()
     {
@@ -580,9 +648,23 @@
         StateHasChanged();
     }
 
+    public void UpdateFields(string description)
+    {
+        _fields = _basicDataService.GetAllFields();
+        Filter[3] = description;
+        StateHasChanged();
+    }
+
     public void UpdateRoles()
     {
         _roles = _basicDataService.GetAllRoles();
+        StateHasChanged();
+    }
+    
+    public void UpdateRoles(string description)
+    {
+        _roles = _basicDataService.GetAllRoles();
+        Filter[4] = description;
         StateHasChanged();
     }
 
