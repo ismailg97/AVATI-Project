@@ -24,6 +24,7 @@ namespace AVATI.Data
         public string LastName { get; set; }
         public string Image { get; set; }
         public float RelevantWorkExperience { get; set; }
+        
         public DateTime EmploymentTime { get; set; }
         public int Rc { get; set; }
         public List<string> Softskills { get; set; } = new List<string>();

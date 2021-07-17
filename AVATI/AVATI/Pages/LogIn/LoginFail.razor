@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/LoginFail"
 @using AVATI.Data
 @using DocumentFormat.OpenXml.Drawing
 
@@ -58,7 +58,8 @@
                                         </div> <!-- input-group.// -->
                                     </div> <!-- form-group// -->
                                     <div class="form-group">
-                                        <input type="submit" class="btn btn-primary btn-block">
+                                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                                        <button type="button" @onclick="Register" class="btn btn-primary btn-block">Registrieren</button>
                                     </div> <!-- form-group// -->
                                 </form>
                                 
@@ -96,17 +97,7 @@
 
     private void Register()
     {
-        Id = _login.LogIn(Log.Username, Log.Password);
-        if (Id == -1)
-        {
-            _booleanLoginCheck = true;
-        }
-        else
-        {
-            empType = _login.Login_EmpType(Id);
-
-            _navManager.NavigateTo("/profile/" + Id);
-        }
+        _navManager.NavigateTo("Registration");
     }
 
 
