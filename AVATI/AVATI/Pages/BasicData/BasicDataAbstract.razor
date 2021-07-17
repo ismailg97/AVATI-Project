@@ -580,10 +580,40 @@
         StateHasChanged();
     }
 
+    public async Task UpdateCategorys(string description)
+    {
+        _loadCategorys = false;
+        StateHasChanged();
+        Filter[2] = description;
+        var allRoots = _hardskillService.GetAllRoots();
+        _allRoots = await allRoots;
+        _loadCategorys = true;
+        StateHasChanged();
+    }
+
     public async Task UpdateHardskills()
     {
         _loadHardskills = false;
         StateHasChanged();
+        var hardskills = _hardskillService.GetAllDesHardskills();
+        _hardskills = await hardskills;
+        var taskCategorys = _hardskillService.GetAllDesCategorys();
+        var categorys = await taskCategorys;
+
+        foreach (var category in categorys)
+        {
+            var hardskillsOfCategory = _hardskillService.GetHardskillsOfCategory(category);
+            _allCategorys.TryAdd(category, await hardskillsOfCategory);
+        }
+        _loadHardskills = true;
+        StateHasChanged();
+    }
+    
+    public async Task UpdateHardskills(string description)
+    {
+        _loadHardskills = false;
+        StateHasChanged();
+        Filter[1] = description;
         var hardskills = _hardskillService.GetAllDesHardskills();
         _hardskills = await hardskills;
         var taskCategorys = _hardskillService.GetAllDesCategorys();
@@ -603,6 +633,13 @@
         _softskills = _basicDataService.GetAllSoftSkills();
         StateHasChanged();
     }
+    
+    public void UpdateSoftskills(string description)
+    {
+        _softskills = _basicDataService.GetAllSoftSkills();
+        Filter[0] = description;
+        StateHasChanged();
+    }
 
     public void UpdateFields()
     {
@@ -610,9 +647,23 @@
         StateHasChanged();
     }
 
+    public void UpdateFields(string description)
+    {
+        _fields = _basicDataService.GetAllFields();
+        Filter[3] = description;
+        StateHasChanged();
+    }
+
     public void UpdateRoles()
     {
         _roles = _basicDataService.GetAllRoles();
+        StateHasChanged();
+    }
+    
+    public void UpdateRoles(string description)
+    {
+        _roles = _basicDataService.GetAllRoles();
+        Filter[4] = description;
         StateHasChanged();
     }
 

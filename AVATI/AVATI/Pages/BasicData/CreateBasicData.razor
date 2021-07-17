@@ -10,11 +10,11 @@
                   <div class="modal-content">
                     <div class="modal-header">
                       @if (Type == BasicDataType.SoftSkill){
-                        <h4 class="modal-title">Erstelle ein Softskill</h4>
+                        <h4 class="modal-title">Erstellen eines Softskills</h4>
                       } else if (Type == BasicDataType.Field) {
-                        <h4 class="modal-title">Erstelle eine Branche</h4>
+                        <h4 class="modal-title">Erstellen einer Branche</h4>
                       } else {
-                        <h4 class="modal-title">Erstelle eine Rolle</h4>
+                        <h4 class="modal-title">Erstellen einer Rolle</h4>
                       }
                       <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
                     </div>
@@ -48,7 +48,7 @@
                           }
                         </MudPopover>
                       </a>
-                      
+                      <label class="form-label">Bezeichnung:</label>
                       <input class="form-control col-7" type="text" id="softskill" @bind="Description"/>
                     </div>
                     <div class="modal-footer">
@@ -123,15 +123,15 @@
     {
       case BasicDataType.SoftSkill:
         _basicDataService.CreateSoftSkill(Description);
-        Abstract.UpdateSoftskills();
+        Abstract.UpdateSoftskills(Description);
         break;
       case BasicDataType.Field:
         _basicDataService.CreateField(Description);
-        Abstract.UpdateFields();
+        Abstract.UpdateFields(Description);
         break;
       default:
         _basicDataService.CreateRole(Description);
-        Abstract.UpdateRoles();
+        Abstract.UpdateRoles(Description);
         break;
     }
     Description = "";
