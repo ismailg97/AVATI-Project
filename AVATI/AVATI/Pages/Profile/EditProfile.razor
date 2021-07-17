@@ -19,7 +19,7 @@
 
 @if (_pageIsLoaded)
 {
-    <h3>Profil</h3>
+    <h3>Profil bearbeiten: @Emp.FirstName @Emp.LastName</h3>
     <hr/>
     <!------ Gets Employee with the same Id as the Router Parameter ---------->
     <EditForm Model="@Emp" OnValidSubmit="@EditProfiles">
@@ -77,12 +77,21 @@
                     <div style="margin-top: 20px" class="row">
                         <!------ Relevant Work Experience ---------->
                         <div class="col-6">
-                            <div class="card-title small font-weight-light lead text-left">Relevante Berufserfahrung</div>
-                            <input type="number" class="form-control" @bind-value="@Emp.RelevantWorkExperience" min="0" step="0.1" placeholder="@Emp.RelevantWorkExperience">
+                            <div class="form-group">
+
+                                <div class="card-title small font-weight-light lead text-left">Relevante Berufserfahrung</div>
+                                <div class="form-group row-cols-auto">
+                                    <input type="number" class="form-control col-4" @bind-value="@Emp.RelevantWorkExperience" min="0" step="0.1" placeholder="@Emp.RelevantWorkExperience">
+                                    <button @onclick="() => { ShowPopRelevantWorkExperiece(); }" type="button" class="btn btn-info col-4">
+                                        Berechnung
+                                    </button>
+                                </div>
+                            </div>
+
                         </div>
                         <div class="col-6">
                             <div class="card-title small font-weight-light lead text-left">Status:</div>
-                             <MudSwitch @bind-Checked="@Emp.IsActive" Color="MudBlazor.Color.Success"/>
+                            <MudSwitch @bind-Checked="@Emp.IsActive" Color="MudBlazor.Color.Success"/>
                             @if (Emp.IsActive)
                             {
                                 <button type="button" class="btn btn-success" id="employeeStatus" @onclick=@(() => { HandleStatusChangeClick(); })>
@@ -121,21 +130,25 @@
     <!------ Skills ---------->
     <div class="form-col">
 
-        <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider"><b>Skills</b></div>
+        <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">
+            <b>Skills</b>
+        </div>
 
 
         <!------ Hard Skills ---------->
         <div class=" form-group">
-            <MudIcon Icon="@Icons.Filled.InfoOutline" Style="color: black;" @onclick="() => { _isOpenHardskill = !_isOpenHardskill;}"/>
+            <MudIcon Icon="@Icons.Filled.InfoOutline" Style="color: black;" @onclick="() => { _isOpenHardskill = !_isOpenHardskill; }"/>
             <a style="position: relative;">
-            <MudPopover Open="@_isOpenHardskill" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 300px; height: auto;" OffsetX="true">
-                <div>
-                    <MudText Style="font-size: 14px;">Wenn Sie auf einem Hardskill einen Rechtsklick betätigen, können Sie dessen Level ändern</MudText>
-                    <MudButton Style="font-size: 14px;" OnClick="() => { _isOpenHardskill = false;}" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
-                </div>
-            </MudPopover>
+                <MudPopover Open="@_isOpenHardskill" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 300px; height: auto;" OffsetX="true">
+                    <div>
+                        <MudText Style="font-size: 14px;">Wenn Sie auf einem Hardskill einen Rechtsklick betätigen, können Sie dessen Level ändern</MudText>
+                        <MudButton Style="font-size: 14px;" OnClick="() => { _isOpenHardskill = false; }" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
+                    </div>
+                </MudPopover>
             </a>
-            <label class="mr-3 mt-2"><b>Hard Skills:</b> </label>
+            <label class="mr-3 mt-2">
+                <b>Hard Skills:</b>
+            </label>
             @if (Emp.Hardskills.Any())
             {
                 foreach (var hardskill in Emp.Hardskills)
@@ -148,34 +161,46 @@
                             {
                                 if (hardskillTuple.Item2 == 1)
                                 {
-                                    <button style="margin-left: 7px;" type="button" class="btn btn-outline-success btn-sm" 
-                                            @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" 
+                                    <button style="margin-left: 7px;" type="button" class="btn btn-outline-success btn-sm"
+                                            @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }"
                                             @oncontextmenu="() => HandleHardSkillClick(hardskill)" @oncontextmenu:preventDefault="true">
-                                        <a class="showRemove">@hardskill.Description | 1 </a> <a class="remove"><span class="oi oi-x"></span></a>
+                                        <a class="showRemove">@hardskill.Description | 1 </a>
+                                        <a class="remove">
+                                            <span class="oi oi-x"></span>
+                                        </a>
                                     </button>
                                 }
                                 if (hardskillTuple.Item2 == 2)
                                 {
-                                    <button style="margin-left: 7px;" type="button" class="btn btn-outline-primary btn-sm"  
-                                            @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" 
+                                    <button style="margin-left: 7px;" type="button" class="btn btn-outline-primary btn-sm"
+                                            @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }"
                                             @oncontextmenu="() => HandleHardSkillClick(hardskill)" @oncontextmenu:preventDefault="true">
-                                        <a class="showRemove">@hardskill.Description | 2 </a> <a class="remove"><span class="oi oi-x"></span></a>
+                                        <a class="showRemove">@hardskill.Description | 2 </a>
+                                        <a class="remove">
+                                            <span class="oi oi-x"></span>
+                                        </a>
                                     </button>
                                 }
                                 if (hardskillTuple.Item2 == 3)
                                 {
-                                    <button style="margin-left: 7px;" type="button" class="btn btn-outline-secondary btn-sm"  
-                                            @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" 
+                                    <button style="margin-left: 7px;" type="button" class="btn btn-outline-secondary btn-sm"
+                                            @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }"
                                             @oncontextmenu="() => HandleHardSkillClick(hardskill)" @oncontextmenu:preventDefault="true">
-                                        <a class="showRemove">@hardskill.Description | 3 </a> <a class="remove"><span class="oi oi-x"></span></a>
+                                        <a class="showRemove">@hardskill.Description | 3 </a>
+                                        <a class="remove">
+                                            <span class="oi oi-x"></span>
+                                        </a>
                                     </button>
                                 }
                                 if (hardskillTuple.Item2 == 4)
                                 {
-                                    <button style="margin-left: 7px;" type="button" class="btn btn-outline-dark btn-sm"  
-                                            @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" 
+                                    <button style="margin-left: 7px;" type="button" class="btn btn-outline-dark btn-sm"
+                                            @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }"
                                             @oncontextmenu="() => HandleHardSkillClick(hardskill)" @oncontextmenu:preventDefault="true">
-                                        <a class="showRemove">@hardskill.Description | 4 </a> <a class="remove"><span class="oi oi-x"></span></a>
+                                        <a class="showRemove">@hardskill.Description | 4 </a>
+                                        <a class="remove">
+                                            <span class="oi oi-x"></span>
+                                        </a>
                                     </button>
                                 }
                             }
@@ -202,7 +227,7 @@
                 }
             </button>
         </div>
-        
+
         <div class="card-text @(_booleanHardSkill ? "" : "collapse")">
             <input class="form-control" type="text" placeholder="Suche Hardskill..."
                    @bind="Filter"
@@ -225,8 +250,11 @@
 
     <!------ Soft Skills ---------->
     <div class="form-group">
-        <label class="mr-3 mt-2"><b>Softskills:</b> </label>
-        @if(Emp.Softskills.Any()) {
+        <label class="mr-3 mt-2">
+            <b>Softskills:</b>
+        </label>
+        @if (Emp.Softskills.Any())
+        {
             @foreach (var softskilll in Emp.Softskills)
             {
                 <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Softskills.Remove(softskilll); StateHasChanged();})>
@@ -258,7 +286,9 @@
 
     <!------ Rollen ---------->
     <div class="form-group">
-        <label class="mr-3 mt-2"><b>Rollen:</b> </label>
+        <label class="mr-3 mt-2">
+            <b>Rollen:</b>
+        </label>
         @if (Emp.Roles.Any())
         {
             @foreach (var empRoles in Emp.Roles)
@@ -293,7 +323,9 @@
     <!------ Fields ---------->
 
     <div class="form-group">
-        <label class="mr-3 mt-2"><b>Branchenwissen:</b> </label>
+        <label class="mr-3 mt-2">
+            <b>Branchenwissen:</b>
+        </label>
         @if (Emp.Field.Any())
         {
             @foreach (var empField in Emp.Field)
@@ -328,15 +360,17 @@
     <!------ Languages ---------->
 
     <div class=" form-group">
-        <MudIcon Icon="@Icons.Filled.InfoOutline" Style="color: black; display: inline;" @onclick="() => { _isOpenLanguage = !_isOpenLanguage;}"/>
+        <MudIcon Icon="@Icons.Filled.InfoOutline" Style="color: black; display: inline;" @onclick="() => { _isOpenLanguage = !_isOpenLanguage; }"/>
         <a style="position: relative;">
             <MudPopover Open="@_isOpenLanguage" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 300px; height: auto;">
-                    <MudText Style="font-size: 14px;">Wenn Sie auf eine Sprache einen Rechtsklick betätigen, können Sie deren Level ändern</MudText>
-                        <MudButton Style="font-size: 14px;" OnClick="() => { _isOpenLanguage = false;}" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
-                </MudPopover>
+                <MudText Style="font-size: 14px;">Wenn Sie auf eine Sprache einen Rechtsklick betätigen, können Sie deren Level ändern</MudText>
+                <MudButton Style="font-size: 14px;" OnClick="() => { _isOpenLanguage = false; }" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
+            </MudPopover>
         </a>
-    
-        <label style="display: inline;" class="mr-3 mt-2"><b>Sprachen:</b> </label>
+
+        <label style="display: inline;" class="mr-3 mt-2">
+            <b>Sprachen:</b>
+        </label>
         @if (Emp.Language.Any())
         {
             foreach (var language in Emp.Language)
@@ -345,7 +379,7 @@
                 {
                     if (language.Item2 == LanguageLevel.A1)
                     {
-                        <button type="button" class="btn btn-outline-success btn-sm mr-2"  
+                        <button type="button" class="btn btn-outline-success btn-sm mr-2"
                                 @onclick="() => { Emp.Language.Remove(language); }"
                                 @oncontextmenu="() => HandleLanguageClick(language.Item1)" @oncontextmenu:preventDefault="true">
                             <a>
@@ -358,7 +392,7 @@
                     }
                     if (language.Item2 == LanguageLevel.A2)
                     {
-                        <button type="button" class="btn btn-outline-primary btn-sm mr-2" 
+                        <button type="button" class="btn btn-outline-primary btn-sm mr-2"
                                 @onclick="() => { Emp.Language.Remove(language); }"
                                 @oncontextmenu="() => HandleLanguageClick(language.Item1)" @oncontextmenu:preventDefault="true">
                             <a>
@@ -371,7 +405,7 @@
                     }
                     @if (language.Item2 == LanguageLevel.B1)
                     {
-                        <button type="button" class="btn btn-outline-secondary btn-sm mr-2"  
+                        <button type="button" class="btn btn-outline-secondary btn-sm mr-2"
                                 @onclick="() => { Emp.Language.Remove(language); }"
                                 @oncontextmenu="() => HandleLanguageClick(language.Item1)" @oncontextmenu:preventDefault="true">
                             <a>
@@ -384,7 +418,7 @@
                     }
                     @if (language.Item2 == LanguageLevel.B2)
                     {
-                        <button type="button" class="btn btn-outline-dark btn-sm mr-2"  
+                        <button type="button" class="btn btn-outline-dark btn-sm mr-2"
                                 @onclick="() => { Emp.Language.Remove(language); }"
                                 @oncontextmenu="() => HandleLanguageClick(language.Item1)" @oncontextmenu:preventDefault="true">
                             <a>
@@ -397,7 +431,7 @@
                     }
                     @if (language.Item2 == LanguageLevel.C1)
                     {
-                        <button type="button" class="btn btn-outline-info btn-sm mr-2"  
+                        <button type="button" class="btn btn-outline-info btn-sm mr-2"
                                 @onclick="() => { Emp.Language.Remove(language); }"
                                 @oncontextmenu="() => HandleLanguageClick(language.Item1)" @oncontextmenu:preventDefault="true">
                             <a>
@@ -410,7 +444,7 @@
                     }
                     @if (language.Item2 == LanguageLevel.C2)
                     {
-                        <button type="button" class="btn btn-outline-warning btn-sm mr-2"  
+                        <button type="button" class="btn btn-outline-warning btn-sm mr-2"
                                 @onclick="() => { Emp.Language.Remove(language); }"
                                 @oncontextmenu="() => HandleLanguageClick(language.Item1)" @oncontextmenu:preventDefault="true">
                             <a>
@@ -421,16 +455,14 @@
                             </a>
                         </button>
                     }
-                    
                 }
-        }
-            
+            }
         }
         else
         {
             <small style="color: #818181;">[Keine Sprachen zugewiesen]</small>
         }
-        
+
 
     </div>
     @foreach (var language in _basicDataService.GetAllLanguages())
@@ -443,13 +475,15 @@
         }
     }
 
-    <div style="margin-top: 20px; border-width: medium; color: black" class="dropdown-divider"><b>Skills</b></div>
+    <div style="margin-top: 20px; border-width: medium; color: black" class="dropdown-divider">
+        <b>Skills</b>
+    </div>
 
     <!---Projects --->
     <div class="form-group ">
         <label class="mr-3 mt-2">
-            
-            <b>Projekte:  </b>
+
+            <b>Projekte: </b>
         </label>
         @if (_projectWithGroupedActivities.Any())
         {
@@ -495,14 +529,65 @@ else
                     {
                         <text>Sind Sie sicher, dass ihren Status von Inaktiv auf Aktiv setzen wollen?</text>
                     }
-                       
+
                     <!-- HTML to write -->
                 </div>
-                <div class="modal-footer" >
+                <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => {_booleanStatus = !_booleanStatus; StateHasChanged(); }"><MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="() => {Emp.IsActive = !Emp.IsActive;  StateHasChanged();_booleanStatus = !_booleanStatus;}"><MudIcon Icon="@Icons.Filled.Save"/> Bestätigen</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="() => {Emp.IsActive = !Emp.IsActive; StateHasChanged();_booleanStatus = !_booleanStatus;}"><MudIcon Icon="@Icons.Filled.Save"/> Bestätigen</button>
                 </div>
-                   
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+@if (_relevantWorkExperience)
+{
+    <div class="modal fade show" id="myModal" style=" display:block;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Berechnung der relevanten Berufserfahrung</h4>
+                    <button type="button" class="close" data-dismiss="modal" @onclick="() => {_relevantWorkExperience = !_relevantWorkExperience; StateHasChanged();}">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row align-content-center">
+                        <p class="col-4">Aktuelles Jahr</p>
+                        <input class="form-control col-3" @bind-value="@CurrentYear" step="0.1" min="0" type="number"/>
+                    </div>
+                    <p>
+                        <span class="oi oi-minus text-center"></span>
+                    </p>
+                    <div class="form-group row">
+                        <p class="col-4">Jahre Berufserfahrung</p>
+                        <input class="form-control  col-3" @bind-value="@YearsofProfessionalExperience" step="0.1" min="0" type="number"/>
+                    </div>
+                    <p>
+                        <span class="oi oi-minus text-center"></span>
+                    </p>
+                    <div class="form-group row">
+                        <p class="col-4">0,3 x Jahre als Studentische Hilfskraft</p>
+                        <input class="form-control col-3" @bind-value="@YearsAsAScientist" step="0.1" min="0" type="number"/>
+                    </div>
+                    <p>
+                        <span class="oi oi-minus text-center"></span>
+                    </p>
+                    <div class="form-group row">
+                        <p class="col-4">0,5 x Jahre Wissentschaftlicher Mitarbeiter</p>
+                        <input class="form-control col-3" @bind-value="@YearsAsAStudentAssistant" step="0.1" min="0" type="number"/>
+                    </div>
+                    <hr/>
+                    <div class="form-group row">
+                        <p class="col-4">Relevante Berufserfahrung</p>
+                        <input class="form-control col-3" type="text" readonly @bind-value="@Emp.RelevantWorkExperience" min="0" step="0.1" placeholder="@YearNumber"/>
+                        <button type="button" class="btn btn-info" @onclick="() => {  Calculate( CurrentYear,  YearsofProfessionalExperience,  YearsAsAScientist,  YearsAsAStudentAssistant); }">Berechnen</button>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => {_relevantWorkExperience = !_relevantWorkExperience; StateHasChanged(); }"><MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="() => {StateHasChanged(); _relevantWorkExperience = !_relevantWorkExperience; }"><MudIcon Icon="@Icons.Filled.Save"/> Bestätigen</button>
+                </div>
             </div>
         </div>
     </div>
@@ -531,10 +616,18 @@ else
     private bool _pageIsLoaded = false;
     private bool _booleanProj = false;
     private bool _booleanStatus = false;
-    
+    private bool _relevantWorkExperience = false;
+
     private Dictionary<int, List<ProjectActivity>> _projectWithGroupedActivities;
     //private bool _booleanName;
 
+    private double CurrentYear { get; set; }                        //1
+    private double YearsofProfessionalExperience { get; set; }      //2
+    private double YearsAsAScientist { get; set; }                  //3
+    private double YearsAsAStudentAssistant { get; set; }           //4
+    
+    private double YearNumber { get; set; }                         //5
+    
 
     public bool IsVisible(string titel)
     {
@@ -556,35 +649,31 @@ else
         _projectWithGroupedActivities = _projectActivityService.GetActivitiesWithProjectsGrouped(Id);
         HardskillList = await tempHard;
         Emp = _employee.GetEmployeeProfile(Id);
+        YearNumber = Emp.RelevantWorkExperience;
         _pageIsLoaded = true;
     }
-
-
+    
     public void NavigatoToEditProject()
     {
         _navManager.NavigateTo("/employeeProject/");
     }
-
-
+    
     public void EditProfiles()
     {
         _employee.EditEmployeeProfile(Emp);
         _navManager.NavigateTo("profile/");
     }
-
-
+    
     public void CollProj()
     {
         _booleanProj = !_booleanProj;
     }
-
-
+    
     public void HandleHardSkillClick(Hardskill hardskill)
     {
         _hardSkillLevel.Showing(Emp, hardskill);
     }
-
-
+    
     public void HandleLanguageClick(string language)
     {
         _languageLevel.Showing(Emp, language);
@@ -599,8 +688,7 @@ else
     {
         _booleanHardSkill = !_booleanHardSkill;
     }
-
-
+    
     private async Task HandlePhotoSelected(InputFileChangeEventArgs obj)
     {
         var imageFile = obj.File;
@@ -613,17 +701,30 @@ else
 
     public void NavigateToProjectEdit(int EmployeeID)
     {
-        _navManager.NavigateTo("/profile/" );
+        _navManager.NavigateTo("/profile/");
     }
 
     public void NavigateToEmployeeProject(int EmployeeID)
     {
-        _navManager.NavigateTo("/employeeProject2/" );
+        _navManager.NavigateTo("/employeeProject2/");
     }
 
     public void HandleStatusChangeClick()
     {
         _booleanStatus = !_booleanStatus;
     }
+
+    public void ShowPopRelevantWorkExperiece()
+    {
+        _relevantWorkExperience = !_relevantWorkExperience;
+    }
+
+    public void Calculate(double CurrentYear, double YearsofProfessionalExperience, double YearsAsAScientist, double YearsAsAStudentAssistant)
+    {
+        double result = 0;
+        result = CurrentYear - YearsofProfessionalExperience - (0.5 * YearsAsAScientist) - (0.3 * YearsAsAStudentAssistant);
+        YearNumber = result;
+    }
     
+
 }

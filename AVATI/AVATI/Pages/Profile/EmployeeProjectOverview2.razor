@@ -151,7 +151,7 @@
     var projecttitle = _projectService.GetProject(_projectActivity.ProjectID).Projecttitel;
     
     <div class="modal fade show" id="myModal" style=" display: inline-block;">
-        <div class="modal-dialog border-dark modal-dialog- modal-lg">
+        <div class="modal-dialog border-dark modal-dialog-scrollable modal-lg">
             <div class="modal-content">
                 <div class="modal-header flex-column">
                     <button type="button" class="close" data-dismiss="modal" @onclick="() => { _showCreate = _showEdit = false; }">
@@ -166,7 +166,7 @@
                         <h4 style="word-break: break-word;" class="modal-title col-12 text-center">Aktivität <br>"<b>@_projectActivity.Description</b>" <br/>des Projekts <br><b>"@projecttitle"</b> <br>bearbeiten</h4>
                     }
                 </div>
-                <div class="modal-body">
+                <div class="modal-body overflow-auto">
                     <div class="form-group">
 
                         @if(_showCreate) 
@@ -286,14 +286,14 @@
 @if (_showDelete)
 {
     <div class="modal fade show" id="myModal" style=" display: block;">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Löschvorgang bestätigen</h4>
                     <button type="button" class="close" data-dismiss="modal" @onclick="() => { _showDelete = false; }">&times;</button>
                 </div>
             
-                <div class="modal-body">
+                <div class="modal-body overflow-auto">
                     Sind Sie sicher, dass die Projektaktivität "<b style="word-break: break-word;">@_projectActivity.Description</b>" gelöscht werden soll?
                 </div>
             
