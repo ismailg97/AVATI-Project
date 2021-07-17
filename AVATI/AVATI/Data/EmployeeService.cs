@@ -115,7 +115,6 @@ namespace AVATI.Data
         public int CreateEmployeeProfile(Employee emp, string username)
         {
             using DbConnection db = GetConnection();
-            Console.WriteLine(emp.FirstName + emp.LastName);
             db.Query(
                 "INSERT INTO Employee VALUES ( @Firstname ,@Lastname ,@RWE, @EmpTime,@Rc,@EmpType, @IA, @img)",
                 new
@@ -178,37 +177,7 @@ namespace AVATI.Data
                     RWE = emp.RelevantWorkExperience, EmpTime = emp.EmploymentTime, RC = emp.Rc, IA = emp.IsActive, img = emp.Image
                 });
             
-            //-----------ProjectActivities-----------
-            var oldActivities = _projectActivityService.GetProjectActivitiesOfEmployee(emp.EmployeeID);
-            var newActivities = new List<ProjectActivity>(emp.ProjectActivities);
             
-            foreach (var oldActivity in oldActivities)
-            {
-                var newActivity = newActivities.Find(x => x.ProjectActivityID == oldActivity.ProjectActivityID);
-                if (newActivity == null)
-                {
-                    Console.WriteLine("!!!!!!!!!!!!!Aktivität ist null obwohl sie nicht null sein darf!!!!!!!!!!!!");
-                    continue;
-                };
-
-                if (oldActivity.Description != null && newActivity.Description == oldActivity.Description)
-                {
-                    _projectActivityService.UpdateSkillsToActivity(newActivity.ProjectActivityID, newActivity.HardSkills, newActivity.SoftSkills);
-                } 
-                else if (oldActivity.Description != null && newActivity.Description == null)
-                {
-                    _projectActivityService.DeleteProjectActivityToEmployee(oldActivity.ProjectActivityID);
-                }
-
-                newActivities.Remove(newActivity);
-            }
-
-            foreach (var activity in newActivities)
-            {
-                if (activity.Description == null) continue;
-                _projectActivityService.SetProjectActivityToEmployee(activity);
-            }
-            //--------------------------------------------
 
             db.Query("DELETE FROM Employee_Field WHERE EmployeeID = @ID", new {ID = emp.EmployeeID});
             if (emp.Field.Any())
@@ -305,6 +274,36 @@ namespace AVATI.Data
             //            new {ID = emp.EmployeeID, SOFTSKILL = softskill});
             //    }
             //}
+            //-----------ProjectActivities-----------
+            var oldActivities = _projectActivityService.GetProjectActivitiesOfEmployee(emp.EmployeeID);
+            var newActivities = new List<ProjectActivity>(emp.ProjectActivities);
+            
+            foreach (var oldActivity in oldActivities)
+            {
+                var newActivity = newActivities.Find(x => x.ProjectActivityID == oldActivity.ProjectActivityID);
+                if (newActivity == null)
+                {
+                    continue;
+                };
+
+                if (oldActivity.Description != null && newActivity.Description == oldActivity.Description)
+                {
+                    _projectActivityService.UpdateSkillsToActivity(newActivity.ProjectActivityID, newActivity.HardSkills, newActivity.SoftSkills);
+                } 
+                else if (oldActivity.Description != null && newActivity.Description == null)
+                {
+                    _projectActivityService.DeleteProjectActivityToEmployee(oldActivity.ProjectActivityID);
+                }
+
+                newActivities.Remove(newActivity);
+            }
+
+            foreach (var activity in newActivities)
+            {
+                if (activity.Description == null) continue;
+                _projectActivityService.SetProjectActivityToEmployee(activity);
+            }
+            //--------------------------------------------
 
             return true;
         }
