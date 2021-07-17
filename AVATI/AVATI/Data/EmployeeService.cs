@@ -407,7 +407,7 @@ namespace AVATI.Data
             return defaultImage;
         }
 
-        public bool? GetSatus(int employeeId)
+        public bool GetStatus(int employeeId)
         {
             using DbConnection db = GetConnection();
             var status = db.Query<byte>("select IsActive from Employee where EmployeeId = @ID", new {ID = employeeId})

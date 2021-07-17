@@ -72,7 +72,7 @@
                         <div class="col-6">
                             <div class="card-title small font-weight-light lead text-left">Beschäftigungszeit</div>
                             <!--<InputDate type="date" class="form-control" @bind-value="@Emp.EmploymentTime" placeholder="@Emp.EmploymentTime" required/>-->
-                            <InputDate class="form-control col" @bind-Value="@Emp.EmploymentTime"/>
+                            <InputDate class="form-control col" min="2000-01-01" @bind-Value="@Emp.EmploymentTime" required/>
                         </div>
                     </div>
                     <div style="margin-top: 20px" class="row">
