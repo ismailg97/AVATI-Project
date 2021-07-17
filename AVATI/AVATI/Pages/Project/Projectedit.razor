@@ -205,8 +205,19 @@ else
     <div class="form-group row">
         <label class="col-sm-3 col-form-label font-weight-bold">Projektzwecke</label>
         <a style="position: relative;">
-            <MudPopover Open="@_showErrorPurpose" Class="alert alert-danger" Style="width: 600px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
-                Hinzufügen bzw. Ändern des Zwecks misslungen, Bezeichnung existiert bereits!
+            <MudPopover Open="@_showErrorPurpose" Class="alert alert-danger text-center" Style="width: 700px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
+                @if (_whatToShow == 0)
+                {
+                    <a>Hinzufügen bzw. Ändern des Zwecks misslungen, Bezeichnung existiert bereits!</a>
+                }
+                else if (_whatToShow == 1)
+                {
+                    <a>Hinzufügen bzw. Ändern des Zwecks misslungen, die Bezeichnung fehlt!</a>
+                } 
+                else if (_whatToShow == 2)
+                {
+                    <a>Hinzufügen bzw. Ändern des Zwecks misslungen, die Bezeichnung ist zu lang (max. 150 Zeichen)!</a>
+                }
             </MudPopover>
         </a>
         <table class="table border-primary col">
@@ -412,6 +423,7 @@ else
     private bool _showAddPurpose;
     private string _newPurposeKey;
     private string _newPurposeValue;
+    private int _whatToShow;
 
     private Dictionary<string, bool> _showEditPurpose;
     private Dictionary<string, string> _purposeKeyEdit;
@@ -451,6 +463,7 @@ else
 
     protected override void OnInitialized()
     {
+        _whatToShow = -1;
         _showErrorPurpose = false;
         _showAddPurpose = false;
         _showEditPurpose = new Dictionary<string, bool>();
@@ -493,8 +506,18 @@ else
         var trimDesc = description.Replace(" ", "");
         return list.Exists(x => trimDesc.Equals(x.Replace(" ", ""), StringComparison.OrdinalIgnoreCase));
     }
+    
+    private async void ShowErrorMessage(int whatToShow)
+    {
+        _whatToShow = whatToShow;
+        _showErrorPurpose = true;
+        StateHasChanged();
+        await Task.Delay(3000);
+        _showErrorPurpose = false;
+        StateHasChanged();
+    }
 
-    private async void EditPurpose(string purpose)
+    private void EditPurpose(string purpose)
     {
         var newKey = _purposeKeyEdit[purpose];
         var newValue = _purposeValueEdit[purpose] == "" ? null : _purposeValueEdit[purpose];
@@ -505,14 +528,22 @@ else
             StateHasChanged();
             return;
         }
-        
+
+        if (string.IsNullOrEmpty(newKey) || string.IsNullOrWhiteSpace(newKey))
+        {
+            ShowErrorMessage(1);
+            return;
+        }
+
+        if (newKey.Length > 150)
+        {
+            ShowErrorMessage(2);
+            return;
+        }
+
         if (AlreadyExists(newKey))
         {
-            _showErrorPurpose = true;
-            StateHasChanged();
-            await Task.Delay(3000);
-            _showErrorPurpose = false;
-            StateHasChanged();
+            ShowErrorMessage(0);
             return;
         }
         Project.Projectpurpose.TryAdd(newKey, newValue);
@@ -527,18 +558,23 @@ else
         StateHasChanged();
     }
 
-    private async void AddPurpose()
+    private void AddPurpose()
     {
+        if (string.IsNullOrEmpty(_newPurposeKey) || string.IsNullOrWhiteSpace(_newPurposeKey))
+        {
+            ShowErrorMessage(1);
+            return;
+        }
+
+        if (_newPurposeKey.Length > 150)
+        {
+            ShowErrorMessage(2);
+            return;
+        }
+        
         if (AlreadyExists(_newPurposeKey))
         {
-            _showErrorPurpose = true;
-            StateHasChanged();
-            await Task.Delay(3000);
-            _showErrorPurpose = false;
-            StateHasChanged();
-            _showAddPurpose = false;
-            _newPurposeKey = "";
-            _newPurposeValue = "";
+            ShowErrorMessage(0);
             return;
         }
         Project.Projectpurpose.TryAdd(_newPurposeKey, _newPurposeValue);
