@@ -63,7 +63,7 @@
                         <div class="card-header text-center">
                             <p class="font-weight-bolder">Angebot: @proposal.ProposalID.ToString()</p>
                             <div class="row justify-content-center mb-1">
-                                <button class="btn btn-outline-dark btn-sm" @onclick=@(async () => { await CreateDocument(proposal.ProposalID); })>Dokument erzeugen</button>
+                                <button class="btn btn-outline-dark btn-sm" @onclick=@(async () => { await CreateProposalDocument(proposal.ProposalID); })>Dokument erzeugen</button>
                                 <button class="btn btn-outline-success btn-sm ml-1" id="createProj" @onclick=@(() => { CallConfirmation(proposal.ProposalID); })>Projekt erzeugen</button>
                             </div>
                             <button class="btn btn-outline-secondary btn-sm" id="editProposal" @onclick=@(() => { ShowEdit(proposal.ProposalID); })> Editieren</button>
@@ -675,7 +675,7 @@
         Rc7 = 195,
     }
     
-    public async Task CreateDocument(int id)
+    public async Task CreateProposalDocument(int id)
     {
     var i = 0;
         const string costCalcTemplateDoc = "wwwroot\\templates\\AvatiCostCalcDoc.docx";
