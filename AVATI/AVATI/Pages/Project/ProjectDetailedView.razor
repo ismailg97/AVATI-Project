@@ -17,184 +17,189 @@
         
  
 
-<div class="container">
-    <div class="row">
-        <div class="col-sm-6 mb-4 align-content-center">
-            <div class="card mb-4 border-dark" style="width: auto; background-color: #86cfda">
+        <div class="container">
+            <div class="card mb-4 align-content-center border-dark" style="width: auto; background-color: #86cfda">
                 <div class="card-body text-center">
                     <h4 class="card-title">@_project.Projecttitel</h4>
                     <text class="text">@_project.Projectdescription</text>
                 </div>
             </div>
-            <div class="card mb-4 border-dark " style="width: auto">
-                <div class="card-body">
-                    <h4 class="card-title text-xl-center">Mitarbeiter</h4>
-                    <table class="table table-hover">
-                        <thead style="background-color: #c3e6cb;">
-                        <tr>
-                            <th scope="col">Vorname</th>
-                            <th scope="col">Nachname</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @if (!_project.Employees.Any())
-                        {
-                            <tr>
-                                <td>[Kein Mitarbeiter im Projekt]</td>
-                                <td></td>
-                            </tr>
-                        }
-                        @foreach (var emp in _project.Employees)
-                        {
-                            <tr>
-                                <td>@emp.FirstName</td>
-                                <td>@emp.LastName</td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="card mb-4 border-dark " style="width: auto">
-                <div class="card-body">
-                    <h4 class="card-title text-xl-center">Projekttätigkeiten</h4>
-                    <table class="table table-hover">
-                        <thead style="background-color: #c3e6cb;">
-                        <tr>
-                            <th scope="col">Tätigkeit</th>
-                            <th scope="col">Zugewiesener Mitarbeiter</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @if (!_project.ProjectActivities.Any())
-                        {
-                            <tr>
-                                <td>[Keine Tätigkeiten]</td>
-                                <td></td>
-                            </tr>
-                        }
-                        @foreach (var activity in _activitesGroupedemp.Keys)
-                        {
-                            <tr>
-                                <td>@activity</td>
-                                    @if (_activitesGroupedemp[activity].Any())
-                                    {
-                                        <ul>
-                                            @foreach (var employeeId in _activitesGroupedemp[activity])
-                                            {
-                                                var employee = _employeeService.GetEmployeeProfile(employeeId);
-            
-                                                <li>@employee.FirstName @employee.LastName</li>
-                                            }
-                                        </ul>
-                                    }
-                                    else
-                                    {
-                                        <a>[Kein Mitarbeiter zugewiesen!]</a>
-                                    }
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 mb-4 align-content-center">
-            <div class="card mb-4 border-dark" style="width:auto;">
-                <div class="card-body">
-                    <h4 class="card-title text-xl-center">Branchen</h4>
-                    <table class="table table-hover text-center">
-                        <thead style="background-color: #c3e6cb;">
-                        <tr>
-                            <th scope="col">Titel</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @if (!_project.Fields.Any())
-                        {
-                            <tr>
-                                <td>[Keine Branchen zugewiesen]</td>
-                            </tr>
-                        }
-                        @foreach (var field in _project.Fields)
-                        {
-                            <tr>
-                                <td>@field</td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="card mb-4 border-dark" style="width: auto;">
-                <div class="card-body">
-                    <h4 class="card-title text-xl-center">Projektlaufzeit</h4>
-                    <table class="table border-dark">
-                        <thead style="background-color: #c3e6cb;">
-                        <tr>
-                            <th scope="col" class="text-center">Projektanfang</th>
-                            <th scope="col" class="text-center">Projektende</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td class="text-center">@_project.Projectbeginning.ToString("dd.MM.yy")</td>
-                            <td class="text-center">@_project.Projectend.ToString("dd.MM.yy")</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="card mb-4 border-dark" style="width:auto;">
-                <div class="card-body">
-                    <h4 class="card-title text-xl-center">Projektzwecke</h4>
-                    <table class="table table-hover text-center">
-                        <thead style="background-color: #c3e6cb;">
-                        <tr>
-                            <th scope="col">Zweck</th>
-                            <th scope="col">Lösung durch  Tätigkeit:</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @if (!_project.Projectpurpose.Any())
-                        {
-                            <tr>
-                                <td>[Keine Projektzwecke vorhanden]</td>
-                                <td></td>
-                            </tr>
-                        }
-                        else
-                        {
-                            @foreach (var purpose in _project.Projectpurpose)
-                            {
+            <hr>
+            <div class="row">
+                <div class="col-sm-6 mb-4 align-content-center">
+                    <div class="card mb-4 border-dark " style="width: auto">
+                        <div class="card-body">
+                            <h4 class="card-title text-xl-center">Mitarbeiter</h4>
+                            <table class="table table-hover">
+                                <thead style="background-color: #abcadb;">
                                 <tr>
-                                    <td>@purpose.Key</td>
-                                    @if (purpose.Value == null)
-                                    {
-                                        <td>[Durch keine Projekttätigkeit gelöst!]</td>
-                                    }
-                                    else
-                                    {
-                                        <td>@purpose.Value</td>
-                                    }
+                                    <th scope="col">Vorname</th>
+                                    <th scope="col">Nachname</th>
                                 </tr>
-                            }
-                        }
-                        </tbody>
-                    </table>
+                                </thead>
+                                <tbody>
+                                @if (!_project.Employees.Any())
+                                {
+                                    <tr>
+                                        <td>[Kein Mitarbeiter im Projekt]</td>
+                                        <td></td>
+                                    </tr>
+                                }
+                                @foreach (var emp in _project.Employees)
+                                {
+                                    <tr>
+                                        <td>@emp.FirstName</td>
+                                        <td>@emp.LastName</td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card mb-4 border-dark " style="width: auto">
+                        <div class="card-body">
+                            <h4 class="card-title text-xl-center">Projekttätigkeiten</h4>
+                            <table class="table table-hover">
+                                <thead style="background-color: #c7deeb;">
+                                <tr>
+                                    <th scope="col">Tätigkeit</th>
+                                    <th scope="col">Zugewiesener Mitarbeiter</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @if (!_project.ProjectActivities.Any())
+                                {
+                                    <tr>
+                                        <td>[Keine Tätigkeiten]</td>
+                                        <td></td>
+                                    </tr>
+                                }
+                                @foreach (var activity in _activitesGroupedemp.Keys)
+                                {
+                                    <tr>
+                                        <td>@activity</td>
+                                            @if (_activitesGroupedemp[activity].Any())
+                                            {
+                                            <td>    
+                                                <ul>
+                                                    @foreach (var employeeId in _activitesGroupedemp[activity])
+                                                    {
+                                                        var employee = _employeeService.GetEmployeeProfile(employeeId);
+
+                                                        <li>@employee.FirstName @employee.LastName</li>
+                                                    }
+                                                </ul>
+                                            </td>  
+                                            }
+                                        else
+                                        {
+                                        <td>
+                                            <a>[Kein Mitarbeiter zugewiesen!]</a>
+                                        </td>
+                                        }
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 mb-4 align-content-center">
+                    <div class="card mb-4 border-dark" style="width:auto;">
+                        <div class="card-body">
+                            <h4 class="card-title text-xl-center">Branchen</h4>
+                            <table class="table table-hover text-center">
+                                <thead style="background-color: #c7deeb;">
+                                <tr>
+                                    <th scope="col">Titel</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @if (!_project.Fields.Any())
+                                {
+                                    <tr>
+                                        <td>[Keine Branchen zugewiesen]</td>
+                                    </tr>
+                                }
+                                @foreach (var field in _project.Fields)
+                                {
+                                    <tr>
+                                        <td>@field</td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card mb-4 border-dark" style="width: auto;">
+                        <div class="card-body">
+                            <h4 class="card-title text-xl-center">Projektlaufzeit</h4>
+                            <table class="table border-dark">
+                                <thead style="background-color: #c7deeb;">
+                                <tr>
+                                    <th scope="col" class="text-center">Projektanfang</th>
+                                    <th scope="col" class="text-center">Projektende</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td class="text-center">@_project.Projectbeginning.ToString("dd.MM.yy")</td>
+                                    <td class="text-center">@_project.Projectend.ToString("dd.MM.yy")</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card mb-4 border-dark" style="width:auto;">
+                        <div class="card-body">
+                            <h4 class="card-title text-xl-center">Projektzwecke</h4>
+                            <table class="table table-hover text-center">
+                                <thead style="background-color: #c7deeb;">
+                                <tr>
+                                    <th scope="col">Zweck</th>
+                                    <th scope="col">Lösung durch Tätigkeit:</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @if (!_project.Projectpurpose.Any())
+                                {
+                                    <tr>
+                                        <td>[Keine Projektzwecke vorhanden]</td>
+                                        <td></td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var purpose in _project.Projectpurpose)
+                                    {
+                                        <tr>
+                                            <td>@purpose.Key</td>
+                                            @if (purpose.Value == null)
+                                            {
+                                                <td>[Durch keine Projekttätigkeit gelöst!]</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@purpose.Value</td>
+                                            }
+                                        </tr>
+                                    }
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <div class="form-group text-right">
+                <a href="/Projektübersicht" class="sm form-label">
+                    <button type="button" class="btn btn-info">
+                        <MudIcon Icon="@Icons.Filled.ArrowBack"/> Zurück zur Übersicht
+                    </button>
+                </a>
+            </div>
         </div>
-    </div>
-    <div class="form-group text-right">
-        <a href="/Projektübersicht" class="sm form-label">
-            <button type="button" class="btn btn-info">
-                <MudIcon Icon="@Icons.Filled.ArrowBack"/> Zurück zur Übersicht
-            </button>
-        </a>
-    </div>
-</div>
 
     
             
