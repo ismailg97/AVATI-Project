@@ -72,7 +72,7 @@ namespace UnitTests
             }));
             testCaseData.Add(new TestCaseData(new Project()
             {
-                Projecttitel = " asd", Projectbeginning = DateTime.Now,
+                Projecttitel = " asd", Projectbeginning = DateTime.Now.AddDays(-1),
                 Projectend = DateTime.Now, Employees = new List<Employee>(),
                 Projectdescription = "sad", Fields = new List<string>(),
                  ProjectActivities = new List<string>(),
@@ -81,7 +81,9 @@ namespace UnitTests
             {
                 Projecttitel = "Just a small test no biggie", Projectbeginning = DateTime.Now,
                 Projectend = DateTime.Now, Employees = new List<Employee>(),
-                Projectdescription = "Just a small Project nothing more", Fields = new List<string>(),
+                Projectdescription = "Just a small Project nothing more. On 15 April, Chancellor Angela Merkel spoke of fragile intermediate success" +
+                                     " that had been achieved in the fight against the pandemic. " +
+                                     "The same day, a first loosening of restrictions was announced, continued in early May, and eventually, holiday travels were allowed in cooperation with other European countries.", Fields = new List<string>(),
                  ProjectActivities = new List<string>(),
             }));
             return testCaseData.AsEnumerable();
