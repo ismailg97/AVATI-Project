@@ -51,15 +51,15 @@ else
                     </MudPopover>
                 </a>
                 <div class="form-group row">
-                    <label class="col-form-label mr-2 font-weight-bold" value="@Description">Neue Tätigkeit anlegen:</label>
+                    <label class="form-group col-form-label mr-2 font-weight-bold" value="@Description">Neue Tätigkeit anlegen:</label>
                     <input type="text" class="form-group form-control" style="width: auto" @bind-value="Description"/>
-                    <button type="button" class="form-group btn btn-success mx-1" @onclick="(() => { AddProjectActivity(Description); })">+</button>
+                    <button type="button" class="form-group btn btn-success" @onclick="(() => { AddProjectActivity(Description); })"><MudIcon Icon="@Icons.Filled.Add"/></button>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
                     <div class="form-group">
-                        <input class="form-control" type="text" placeholder="Suche Aktivität..."
+                        <input class="form-control mb-2" type="text" placeholder="Suche Aktivität..."
                                    @bind="filterSearch"
                                    @bind:event="oninput">
                         <table class="table table-hover">
@@ -88,10 +88,10 @@ else
                                         <td>
                                             <div class="btn-group">
                                                 <button type="button" class="btn btn-info text-right" @onclick="() => { ShowUpdate(activity); }">
-                                                <span class="oi oi-pencil"></span>
+                                                <MudIcon Icon="@Icons.Filled.Brush"/>
                                             </button>
                                             <button type="button" class="btn btn-danger text-right" @onclick="(() => { ShowDelete(activity); })">
-                                                <span class="oi oi-trash"></span>
+                                                <MudIcon Icon="@Icons.Filled.Delete"/>
                                             </button>
                                             </div>
                                         </td>
