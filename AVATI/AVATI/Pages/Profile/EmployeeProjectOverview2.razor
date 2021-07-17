@@ -82,13 +82,12 @@
                     else
                     {
                         <table class="table table-striped">
-                            <thead class="tWrite">
+                            <thead class="tWrite" style="background-color: #5a6066; color: white">
                             <tr>
                                 <th class="tActivity">Tätigkeit</th>
                                 <th class="tHardskills">Hardskills</th>
                                 <th class="tSoftskills">Softskills</th>
-                                <th class="tEdit"></th>
-                                <th class="tDelte"></th>
+                                <th></th>
                             </tr>
                             </thead>
 
@@ -123,10 +122,8 @@
                                             <small style="color: #818181;">[Keine Softskills zugewiesen]</small>
                                         }
                                     </td>
-                                    <td class="tEdit">
+                                    <td class="row btn-group float-right mr-3">
                                         <button type="button" class="btn btn-info" @onclick="() => ShowPopUpEdit(activity)"><MudIcon Icon="@Icons.Filled.Brush"/></button>
-                                    </td>
-                                    <td class="tDelte">
                                         <button type="button" class="btn btn-danger" @onclick="() => ShowPopUpDelete(activity)"><MudIcon Icon="@Icons.Filled.Delete"/></button>
                                     </td>
                                 </tr>

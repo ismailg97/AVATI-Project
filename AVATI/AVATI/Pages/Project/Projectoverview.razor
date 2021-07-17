@@ -1,6 +1,7 @@
 ﻿@page "/Projektübersicht"
 
 @using AVATI.Data
+@using Bunit.Extensions
 @inject IProjectService _projectService
 @inject JsonImport _jsonImport
 @inject NavigationManager _navigationManager
@@ -44,24 +45,28 @@
                             <td style="width: 15%">@project.Projecttitel</td>
                             <td style="max-width: 60%;">
                                 <div id="projectDescription">
-                                    <text>@project.Projectdescription</text>
+                                    @if (@project.Projectdescription.IsNullOrEmpty())
+                                    {
+                                        <text>[Keine Beschreibung]</text>
+                                    }
+                                    else
+                                    {
+                                        <text>@project.Projectdescription</text>
+                                    }
                                 </div>
                             </td>
                             <td>
                                 <div class="btn-group p-1">
-                                <a href="/Projektübersicht/Projektedit/@project.ProjectID">
-                                    <button type="button" class="btn btn-info btn-sm">
+                                    <button type="button" class="btn btn-info btn-sm" @onclick="() => { GoToProjectEdit(project.ProjectID); }">
                                         <MudIcon Icon="@Icons.Outlined.Brush"/>
                                     </button>
-                                </a>
-
-                                <a href="/Projektübersicht/ProjectDetailedView/@project.ProjectID">
-                                    <button type="button" class="btn btn-primary btn-sm"><MudIcon Icon="@Icons.Rounded.InfoOutline"/></button>
-                                </a>
-                                <button type="button" class="btn btn-danger btn-sm"
-                                        @onclick=@(() => { ShowDelete(project.ProjectID); })>
-                                    <MudIcon Icon="@Icons.Filled.DeleteForever"/>
-                                </button>
+                                    <button type="button" class="btn btn-primary btn-sm" @onclick="() => { GoToDetailedView(project.ProjectID); }">
+                                        <MudIcon Icon="@Icons.Rounded.InfoOutline"/>
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm"
+                                            @onclick=@(() => { ShowDelete(project.ProjectID); })>
+                                        <MudIcon Icon="@Icons.Filled.DeleteForever"/>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -121,6 +126,16 @@
         }
         ShowPop = !ShowPop;
     }
-    
+
+    public void GoToProjectEdit(int ProjectID)
+    {
+        _navigationManager.NavigateTo("/Projektübersicht/Projektedit/" + ProjectID);
+    }
+
+    public void GoToDetailedView(int ProjectID)
+    {
+        _navigationManager.NavigateTo("/Projektübersicht/ProjectDetailedView/" + ProjectID);
+    }
+
 
 }

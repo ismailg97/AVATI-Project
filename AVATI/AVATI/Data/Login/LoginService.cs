@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using System;
+using System.Data.Common;
 using System.Linq;
 using Dapper;
 using Microsoft.Data.SqlClient;
@@ -37,9 +38,16 @@ namespace AVATI.Data
                 return -1;
             }
 
-            var id = db.Query<int>("SELECT EmployeeID FROM Login WHERE Username = @usern AND Password=@passw ",
+            var id = db.Query<string>("SELECT Username FROM Login WHERE Username = @usern AND Password=@passw AND EmployeeID is null ",
                 new {usern = username, passw = password}).ToList();
-            return id[0];
+            if (id.FirstOrDefault() == username)
+            {
+                Console.WriteLine("test");
+                return -2;
+            }
+            int Id = db.Query<int>("SELECT EmployeeID FROM Login WHERE Username = @usern AND Password=@passw ",
+                new {usern = username, passw = password}).SingleOrDefault();
+            return Id;
         }
 
         public string Login_EmpType(int Id)
@@ -49,12 +57,36 @@ namespace AVATI.Data
             return empType[0];
         }
 
-        public bool CreateLogIn(int employeeID, string username, string password)
+        public bool CreateLogIn( string username, string password)
         {
             using DbConnection db = GetConnection();
-            db.Query("INSERT INTO Login VALUES (@id, @user, @pass)", new
+            db.Query("INSERT INTO Login VALUES (NULL, @user, @pass)", new
             {
-                id = employeeID, user = username, pass = password
+                 user = username, pass = password
+            });
+            return true;
+        }
+
+        public bool CheckUsernameAvailable(string username)
+        {
+            using DbConnection db = GetConnection();
+            if (db.Query<string>("Select Username From Login Where Username=@user ", new
+            {
+                user = username
+            }) != null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool DeleteLogin(string username)
+        {
+            using DbConnection db = GetConnection();
+            db.Query("Delete from Login Where Username=@user", new
+            {
+                user = username
             });
             return true;
         }

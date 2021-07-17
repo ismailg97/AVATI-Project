@@ -17,13 +17,18 @@ namespace AVATI.Data
         [NotNull][Required]
         public int EmployeeID { get; set; }
         
-        [NotNull][Required(ErrorMessage = "Vorname ist erforderlich")]
+        [NotNull]
+        [Required(ErrorMessage = "Vorname ist erforderlich")]
+        [StringLength(70, ErrorMessage = "Vorname ist zu lang (70 Zeichen)")]
         public string FirstName { get; set; }
         
-        [NotNull][Required(ErrorMessage = "Nachname ist erforderlich")]
+        [NotNull]
+        [Required(ErrorMessage = "Nachname ist erforderlich")]
+        [StringLength(70, ErrorMessage = "Nachname ist zu lang (70 Zeichen)")]
         public string LastName { get; set; }
         public string Image { get; set; }
         public float RelevantWorkExperience { get; set; }
+        
         public DateTime EmploymentTime { get; set; }
         public int Rc { get; set; }
         public List<string> Softskills { get; set; } = new List<string>();
