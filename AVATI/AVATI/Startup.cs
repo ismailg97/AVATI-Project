@@ -71,7 +71,8 @@ namespace AVATI
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection(); generates Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware[3] Failed to determine the https port for redirect. Warning in Docker
+           
             app.UseStaticFiles();
             
             app.UseRouting();
