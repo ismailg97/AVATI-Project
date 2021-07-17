@@ -15,13 +15,22 @@
                 <input class="form-control col-4 inline" type="text" id="softskill" @bind="_newCategory"/>
                 <button type="button" class="check inline" @onclick="CreateCategory">&#10003;</button>
                 <button type="button" class="stop inline" @onclick="ShowingNew">&#10005;</button>
-                @if (_showExistErrorNew){
-                    <p class="errormessage"><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></p>
-                } else if (_showEmptyErrorNew) {
-                    <p class="errormessage"><b>Die Bezeichnung ist erforderlich</b></p>
-                } else if (_showTooLongErrorNew) {
-                    <p class="errormessage"><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></p>
-                }
+                <a style="position: relative; border: none !important;">
+                    <MudPopover Open="@_showCreateError" Class="alert alert-danger text-center" Style="width: 380px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
+                        @if (_whatToShowCreate == 0)
+                        {
+                            <a style="border: none !important;">Erstellen misslungen, die Bezeichnung existiert bereits!</a>
+                        } 
+                        else if (_whatToShowCreate == 1)
+                        {
+                            <a style="border: none !important;">Erstellen misslungen, die Bezeichnung fehlt!</a>
+                        } 
+                        else if (_whatToShowCreate == 2)
+                        {
+                            <a style="border: none !important;">Erstellen misslungen, die Bezeichnung ist zu lang (max. 150 Zeichen)!</a>
+                        }
+                    </MudPopover>
+                </a>
             </li>
         }
     </ul>
@@ -34,7 +43,7 @@ else
         {
             if (ShowCategorys && _categorys.Any() || ShowHardskills)
             {
-                <div class="@(RenameProblem == 0 ? "between0": RenameProblem == 1 ? "between1" : "between2" )"><button type="button" class="plus" @onclick="ShowingNew">+</button></div>
+                <div class="@(RenameProblem ? "between1":  "between0" )"><button type="button" class="plus" @onclick="ShowingNew">+</button></div>
             }
             <ul>
                 @if (ShowCategorys)
@@ -61,23 +70,29 @@ else
                                 <input class="form-control col-4 inline" type="text" id="softskill" @bind="_rename[category]"/>
                                 <button type="button" class="check inline" @onclick="() => UpdateCategory(category)">&#10003;</button>
                                 <button type="button" class="stop inline" @onclick="() => ShowingRename(category)">&#10005;</button>
-                                if (_showExistError[category])
-                                {
-                                    <p class="errormessage"><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></p>
-                                }
-                                else if (_showEmptyError[category])
-                                {
-                                    <p class="errormessage"><b>Die Bezeichnung ist erforderlich</b></p>
-                                } else if (_showTooLongError[category]) {
-                                    <p class="errormessage"><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></p>
-                                }
+                                <a style="position: relative; border: none !important;">
+                                    <MudPopover Open="@_showEditError[category]" Class="alert alert-danger text-center" Style="width: 380px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
+                                        @if (_whatToShowEdit[category] == 0)
+                                        {
+                                            <a style="border: none !important;">Umbennen misslungen, die Bezeichnung existiert bereits!</a>
+                                        } 
+                                        else if (_whatToShowEdit[category] == 1)
+                                        {
+                                            <a style="border: none !important;">Umbennen misslungen, die Bezeichnung fehlt!</a>
+                                        } 
+                                        else if (_whatToShowEdit[category] == 2)
+                                        {
+                                            <a style="border: none !important;">Umbennen misslungen, die Bezeichnung ist zu lang (max. 150 Zeichen)!</a>
+                                        }
+                                    </MudPopover>
+                                </a>
                             }
 
                             @if (LoadSubfinished[category])
                             {
                                 <EditTreeElement @ref="_elements[category]" Subcats="@_subcatsofCategory[category]" Uppercat="@category" Abstract="@Abstract"
                                                  UpperElement="@this" ShowHardskills="@_showSubHardskills[category]" ShowCategorys="@_showSubCategorys[category]"
-                                                 RenameProblem="@_renameProblem[category]" ContainsJustHardskills="@_containsJustHardskills[category]"/>
+                                                 ContainsJustHardskills="@_containsJustHardskills[category]" RenameProblem="@_showRename[category]"/>
                             }
                             else
                             {
@@ -123,20 +138,35 @@ else
                     <input class="form-control col-4 inline" type="text" id="softskill" @bind="_newCategory"/>
                     <button type="button" class="check inline" @onclick="CreateCategory">&#10003;</button>
                     <button type="button" class="stop inline" @onclick="ShowingNew">&#10005;</button>
-                    @if (_showExistErrorNew)
-                    {
-                        <p class="errormessage"><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></p>
-                    } else if (_showEmptyErrorNew) { 
-                        <p class="errormessage"><b>Die Bezeichnung ist erforderlich</b></p>
-                    } else if (_showTooLongErrorNew) {
-                        <p class="errormessage"><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></p>
-                    }
+                    <MudIcon Icon="@Icons.Filled.InfoOutline" Style="color: #5a6066; display: inline;" @onclick="() => { _openExplain = !_openExplain;}"/>
+                                          <a style="position: relative; border: none !important;">
+                                              <MudPopover Open="@_openExplain" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 400px; height: auto;">
+                                                <MudText Style="font-size: 14px;">Wenn Sie eine Unterkategorie auswählen (blau makiert)</MudText>
+                                                          <MudButton Style="font-size: 14px;" OnClick="() => { _openExplain = false;}" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
+                                                  </MudPopover>
+                                          </a>
+                    <a style="position: relative; border: none !important;">
+                        <MudPopover Open="@_showCreateError" Class="alert alert-danger text-center" Style="width: 380px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
+                            @if (_whatToShowCreate == 0)
+                            {
+                                <a style="border: none !important;">Erstellen misslungen, die Bezeichnung existiert bereits!</a>
+                            } 
+                            else if (_whatToShowCreate == 1)
+                            {
+                                <a style="border: none !important;">Erstellen misslungen, die Bezeichnung fehlt!</a>
+                            } 
+                            else if (_whatToShowCreate == 2)
+                            {
+                                <a style="border: none !important;">Erstellen misslungen, die Bezeichnung ist zu lang (max. 150 Zeichen)!</a>
+                            }
+                        </MudPopover>
+                    </a>
                     <ul>
                         @foreach (var category in _categorys)
                         {
 
                             <li>
-                                <button class="@(IsInList(category) ? "btn btn-primary" : "btn btn-secondary")" type="button" @onclick="() => AddList(category)">
+                                <button class="@(IsInList(category) ? "btn btn-success" : "btn btn-outline-success")" type="button" @onclick="() => AddList(category)">
                                     <a style="border: none !important;" class="@(IsInList(category) ? "showRemove" : "")">@category</a> <a class="remove"><span class="oi oi-x"></span></a>
                                 </button>
                             </li>
@@ -146,7 +176,7 @@ else
                         {
 
                             <li>
-                                <button class="@(IsInList(hardskill) ? "btn btn-primary" : "btn btn-secondary")" type="button" @onclick="() => AddList(hardskill)">
+                                <button class="@(IsInList(hardskill) ? "btn btn-primary" : "btn btn-outline-primary")" type="button" @onclick="() => AddList(hardskill)">
                                     <a style="border: none !important;" class="@(IsInList(hardskill) ? "showRemove" : "")">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a>
                                 </button>
                             </li>
@@ -195,7 +225,7 @@ else
     public bool ShowCategorys { get; set; }
     
     [Parameter]
-    public int RenameProblem { get; set; }
+    public bool RenameProblem { get; set; }
     
     [Parameter]
     public bool ContainsJustHardskills { get; set; }
@@ -226,21 +256,15 @@ else
     
     private Dictionary<string, bool> _showSubCategorys = new();
 
-    private Dictionary<string, bool> _showExistError = new();
+    private Dictionary<string, bool> _showEditError = new();
 
-    private Dictionary<string, bool> _showEmptyError = new();
+    private bool _showCreateError;
 
-    private Dictionary<string, bool> _showTooLongError = new();
+    private int _whatToShowCreate;
 
-    private bool _showExistErrorNew;
-
-    private bool _showEmptyErrorNew;
-
-    private bool _showTooLongErrorNew;
+    private Dictionary<string, int> _whatToShowEdit = new();
     
     public Dictionary<string, bool> LoadSubfinished {get; set; } = new();
-
-    private Dictionary<string, int> _renameProblem = new();
 
     private bool _loadPagefinished;
     
@@ -248,17 +272,20 @@ else
 
     private string _categoryToAdd;
 
+    private bool _openExplain;
+
     protected override void OnInitialized()
     {
+        _openExplain = false;
+        _whatToShowCreate = -1;
+        _showCreateError = false;
         _loadPagefinished = false;
     }
 
 
     protected override async Task OnParametersSetAsync()
     {
-        _showExistErrorNew = false;
-        _showEmptyErrorNew = false;
-        _showTooLongErrorNew = false;
+        _showCreateError = false;
         _showNew = false;
         foreach(var description in Subcats)
         {
@@ -283,44 +310,53 @@ else
                 _rename.TryAdd(description, description);
                 _showSubHardskills.TryAdd(description, false);
                 _showSubCategorys.TryAdd(description, true);
-                _showExistError.TryAdd(description, false);
-                _showEmptyError.TryAdd(description, false);
-                _showTooLongError.TryAdd(description, false);
+                _whatToShowEdit.TryAdd(description, -1);
+                _showEditError.TryAdd(description, false);
                 LoadSubfinished.TryAdd(description, true);
-                _renameProblem.TryAdd(description, 0);
             }
         }
         _loadPagefinished = true;
+    }
+
+    private async void ShowErrorMessageCreate(int whatToShow)
+    {
+        _whatToShowCreate = whatToShow;
+        _showCreateError = true;
+        StateHasChanged();
+        await Task.Delay(3000);
+        _showCreateError = false;
+        StateHasChanged();
+    }
+    
+    private async void ShowErrorMessageEdit(int whatToShow, string skillOrCat)
+    {
+        _whatToShowEdit[skillOrCat] = whatToShow;
+        _showEditError[skillOrCat] = true;
+        StateHasChanged();
+        await Task.Delay(3000);
+        _showEditError[skillOrCat] = false;
+        StateHasChanged();
     }
 
     private async Task CreateCategory()
     {
         if (!_hardskillService.CheckEmptyHardskill(_newCategory))
         {
-            _showEmptyErrorNew = true;
-            _showExistErrorNew = false;
-            _showTooLongErrorNew = false;
-            StateHasChanged();
+            ShowErrorMessageCreate(1);
             return;
         }
-        _showEmptyErrorNew = false;
 
         if (!await _hardskillService.CheckExistHardskill(_newCategory))
         {
-            _showExistErrorNew = true;
-            _showTooLongErrorNew = false;
-            StateHasChanged();
+            ShowErrorMessageCreate(0);
             return;
         }
-        _showExistErrorNew = false;
 
         if (!_hardskillService.CheckLengthHardskill(_newCategory))
         {
-            _showTooLongErrorNew = true;
-            StateHasChanged();
+            ShowErrorMessageCreate(2);
             return;
         }
-        _showTooLongErrorNew = false;
 
         if (UpperTree != null)
             UpperTree.Loadfinished = false;
@@ -354,36 +390,21 @@ else
     {
         if (!_hardskillService.CheckEmptyHardskill(_rename[category]))
         {
-            _showEmptyError[category] = true;
-            _showExistError[category] = false;
-            _showTooLongError[category] = false;
-            _renameProblem[category] = 2;
-            StateHasChanged();
+            ShowErrorMessageEdit(1, category);
             return;
         }
-        _renameProblem[category] = 1;
-        _showEmptyError[category] = false;
         
         if (!await _hardskillService.CheckExistHardskill(_rename[category]) && _rename[category] != category)
         {
-            _showExistError[category] = true;
-            _showTooLongError[category] = false;
-            _renameProblem[category] = 2;
-            StateHasChanged();
+            ShowErrorMessageEdit(0, category);
             return;
         }
-        _renameProblem[category] = 1;
-        _showExistError[category] = false;
 
         if (!_hardskillService.CheckLengthHardskill(_rename[category]))
         {
-            _showTooLongError[category] = true;
-            _renameProblem[category] = 2;
-            StateHasChanged();
+            ShowErrorMessageEdit(2, category);
             return;
         }
-        _renameProblem[category] = 1;
-        _showTooLongError[category] = false;
 
         if (UpperTree != null)
             UpperTree.Loadfinished = false;
@@ -504,15 +525,6 @@ else
     private void ShowingRename(string category)
     {
         _showRename[category] = !_showRename[category];
-        if (_showRename[category])
-        {
-            if(_showExistError[category] || _showEmptyError[category])
-                _renameProblem[category] = 2;
-            else
-                _renameProblem[category] = 1;
-        }
-        else
-            _renameProblem[category] = 0;
         StateHasChanged();
     }
 
