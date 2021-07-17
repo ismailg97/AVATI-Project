@@ -33,7 +33,7 @@ namespace AVATI.Data
             if (Id == -1)
             {
                 //return Redirect("/LoginFail");
-                return Redirect("/LoginFail");
+                return Redirect("/Login/Fail");
             }
             if (Id == -2)
             {
@@ -63,6 +63,24 @@ namespace AVATI.Data
             }
            
             return Redirect("/");
+        }
+        
+        [HttpPost("Registration")]
+        public async Task<ActionResult> Registration([FromForm] string username, [FromForm] string password, [FromForm] string passwordCheck)
+        {
+            /*if (password != passwordCheck)
+            {
+                return Redirect("/Registration/Fail");
+            }*/
+
+            /*if (_loginService.CheckUsernameAvailable(username))
+            {
+                return Redirect("/Registration/Fail");
+            }*/
+
+            _loginService.CreateLogIn(username, password);
+            return Redirect("/profile/create/" + username);
+            
         }
     }
 }

@@ -57,12 +57,36 @@ namespace AVATI.Data
             return empType[0];
         }
 
-        public bool CreateLogIn(int employeeID, string username, string password)
+        public bool CreateLogIn( string username, string password)
         {
             using DbConnection db = GetConnection();
-            db.Query("INSERT INTO Login VALUES (@id, @user, @pass)", new
+            db.Query("INSERT INTO Login VALUES (NULL, @user, @pass)", new
             {
-                id = employeeID, user = username, pass = password
+                 user = username, pass = password
+            });
+            return true;
+        }
+
+        public bool CheckUsernameAvailable(string username)
+        {
+            using DbConnection db = GetConnection();
+            if (db.Query<string>("Select Username From Login Where Username=@user ", new
+            {
+                user = username
+            }) != null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool DeleteLogin(string username)
+        {
+            using DbConnection db = GetConnection();
+            db.Query("Delete from Login Where Username=@user", new
+            {
+                user = username
             });
             return true;
         }
