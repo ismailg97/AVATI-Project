@@ -12,11 +12,11 @@
                 @if (!_showRename)
                 {
                     <ContextMenu Id="@Description">
-                        <Item OnClick="() => DeleteCategory()">Löschen <span class="oi oi-trash"></span></Item>
+                        <Item OnClick="() => DeleteCategory()"><span class="oi oi-trash"></span> Löschen</Item>
 
-                        <Item OnClick="() => ShowingRename()">Umbenennen <span class="oi oi-pencil"></span></Item>
+                        <Item OnClick="() => ShowingRename()"><span class="oi oi-pencil"></span> Umbenennen</Item>
 
-                        <Item OnClick="() => ShowingAddHardskills()">Hardskills hinzufügen <span class="oi oi-plus"></span></Item>
+                        <Item OnClick="() => ShowingAddHardskills()"><span class="oi oi-plus"></span> Hardskills hinzufügen</Item>
 
                     </ContextMenu>
 
@@ -29,23 +29,29 @@
                     <input class="form-control col-4 inline" type="text" id="softskill" @bind="_rename"/>
                     <button type="button" class="check inline" @onclick="() => Update()">&#10003;</button>
                     <button type="button" class="stop inline" @onclick="() => ShowingRename()">&#10005;</button>
-                    if (_showExistError)
-                    {
-                        <p class="errormessage"><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></p>
-                    }
-                    else if (_showEmptyError)
-                    {
-                        <p class="errormessage"><b>Die Bezeichnung ist erforderlich</b></p>
-                    } else if (_showTooLongError) {
-                        <p class="errormessage"><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></p>
-                    }
+                    <a style="position: relative; border: none !important;">
+                        <MudPopover Open="@_showError" Class="alert alert-danger text-center" Style="width: 380px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
+                            @if (_whatToShow == 0)
+                            {
+                                <a style="border: none !important;">Umbennen misslungen, die Bezeichnung existiert bereits!</a>
+                            } 
+                            else if (_whatToShow == 1)
+                            {
+                                <a style="border: none !important;">Umbennen misslungen, die Bezeichnung fehlt!</a>
+                            } 
+                            else if (_whatToShow == 2)
+                            {
+                                <a style="border: none !important;">Umbennen misslungen, die Bezeichnung ist zu lang (max. 150 Zeichen)!</a>
+                            }
+                        </MudPopover>
+                    </a>
                 }
 
                 @if (Loadfinished)
                 {
                     <EditTreeElement @ref="@_element" Subcats="@_subcat" Uppercat="@Description" Abstract="@Abstract"
                                      ShowHardskills="@_showSubHardskills" ShowCategorys="@_showSubCategorys" UpperTree="@this"
-                                     RenameProblem="@_renameProblem" ContainsJustHardskills="@_containsJustHardskills"/>
+                                     ContainsJustHardskills="@_containsJustHardskills" RenameProblem="@_showRename"/>
                 }
                 else
                 {
@@ -107,16 +113,14 @@ else
 
     private bool _loadPagefinished;
 
-    private bool _showExistError;
+    private int _whatToShow;
 
-    private bool _showEmptyError;
-
-    private bool _showTooLongError;
-
-    private int _renameProblem;
+    private bool _showError;
 
     protected override void OnInitialized()
     {
+        _whatToShow = -1;
+        _showError = false;
         Loadfinished = true;
         _loadPagefinished = false;
     }
@@ -124,12 +128,8 @@ else
     protected override async Task OnParametersSetAsync()
     {
         _rename = Description;
-        _renameProblem = 0;
         _showSubCategorys = true;
         _showSubHardskills = false;
-        _showExistError = false;
-        _showEmptyError = false;
-        _showTooLongError = false;
         var taskCategory =  _hardskillService.GetHardskillCategory(Description);
         _subcat = (await taskCategory).Subcat;
         _showRename = false;
@@ -146,41 +146,36 @@ else
         await Abstract.UpdateCategorys();
         await Abstract.UpdateHardskills();
     }
+    
+    private async void ShowErrorMessage(int whatToShow)
+    {
+        _whatToShow = whatToShow;
+        _showError = true;
+        StateHasChanged();
+        await Task.Delay(3000);
+        _showError = false;
+        StateHasChanged();
+    }
 
     private async Task Update()
     {
         if (!_hardskillService.CheckEmptyHardskill(_rename))
         {
-            _showEmptyError = true;
-            _showExistError = false;
-            _showTooLongError = false;
-            _renameProblem = 2;
-            StateHasChanged();
+            ShowErrorMessage(1);
             return;
         }
-        _renameProblem = 1;
-        _showEmptyError = false;
 
         if (!await _hardskillService.CheckExistHardskill(_rename) && _rename != Description)
         {
-            _showExistError = true;
-            _showTooLongError = false;
-            _renameProblem = 2;
-            StateHasChanged();
+            ShowErrorMessage(0);
             return;
         }
-        _renameProblem = 1;
-        _showExistError = false;
         
         if (!_hardskillService.CheckLengthHardskill(_rename))
         {
-            _showTooLongError = true;
-            _renameProblem = 2;
-            StateHasChanged();
+            ShowErrorMessage(2);
             return;
         }
-        _renameProblem = 1;
-        _showTooLongError = false;
 
         _loadPagefinished = false;
         StateHasChanged();
@@ -195,15 +190,6 @@ else
     private void ShowingRename()
     {
         _showRename = !_showRename;
-        if (_showRename)
-        {
-            if(_showExistError || _showEmptyError)
-                _renameProblem = 2;
-            else
-                _renameProblem = 1;
-        }
-        else
-            _renameProblem = 0;
         StateHasChanged();
     }
 

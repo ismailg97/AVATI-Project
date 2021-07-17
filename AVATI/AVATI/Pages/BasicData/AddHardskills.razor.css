@@ -8,7 +8,7 @@
     color: white;
 }
 
-.btn-primary, .btn-secondary {
+.btn-primary, .btn-secondary, .btn-info {
     margin-left: 5px;
     margin-top: 5px;
 }

@@ -12,52 +12,54 @@
                      <h4 class="modal-title">Ändere den Hardskill</h4>
                      <button type="button" class="close" data-dismiss="modal" @onclick="Showing">&times;</button>
                    </div>
-                     @if (_showExistError){
-                       <div class="errormessage">
-                         <a><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></a>
-                       </div>
-                     } else if (_showEmptyError){
-                       <div class="errormessage">
-                         <a><b>Die Bezeichnung ist erforderlich</b></a>
-                       </div> 
-                     } else if (_showTooLongError)
-                     {
-                       <div class="errormessage">
-                         <a><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></a>
-                       </div>
-                     }
-                     <div class="modal-body">
-                       <label class="form-label">Bezeichnung:</label>
-                       <input class="form-control" @bind="@NewHardskill.Description"/>
-                       <label class="form-label" style="margin-top: 20px;">Oberkategorie:</label>
-                       <div>
-                         @if (UpperCat != null && UpperCat.Any())
+                   <div class="modal-body">
+                     <a style="position: relative;">
+                       <MudPopover Open="@_showError" Class="alert text-center" Style="width: 380px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
+                         @if (_whatToShow == 0)
                          {
-                           foreach (var uppercat in UpperCat)
-                           {
-                             <a style="margin-left: 5px; margin-top: 5px; color: white !important;" class="btn btn-primary" type="button" @onclick="() => UpperCatList(uppercat)">
-                               <a class="showRemove">@uppercat</a> <a class="remove"><span class="oi oi-x"></span></a>
-                             </a>
-                           }
-                         }
-                         else
+                           <a>Editieren misslungen, der Hardskill bzw. die Kategorie exsistiert bereits!</a>
+                         } 
+                         else if (_whatToShow == 1)
                          {
-                           <tr style="color: #818181 !important;">Keine Oberkategorie</tr>
+                           <a>Editieren misslungen, die Bezeichnung fehlt!</a>
                          }
-                       </div>
-                       <hr/>
-                       <div class="list-group border-dark overflow-auto mr-3 col-9" style="height: 100px">
-                         @if (_allCategorys != null)
+                         else if (_whatToShow == 2)
                          {
-                           foreach (var cat in _allCategorys)
-                           {
-                             <button style="margin-bottom: 3px;" type="button" class="@(IsInList(cat) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => UpperCatList(cat)">
-                               <a><a class="@(IsInList(cat) ? "showRemove" : "")">@cat</a> <a class="remove"><span class="oi oi-x"></span></a></a>
-                             </button>
-                           }
+                           <a>Editieren misslungen, die Bezeichnung ist zu lang (max. 150 Zeichen)!</a>
                          }
-                       </div>
+                       </MudPopover>
+                     </a>
+                     <label class="form-label">Bezeichnung:</label>
+                     <input class="form-control" @bind="@NewHardskill.Description"/>
+                     <label class="form-label" style="margin-top: 20px;">Oberkategorie:</label>
+                     <div>
+                       @if (UpperCat != null && UpperCat.Any())
+                       {
+                         foreach (var uppercat in UpperCat)
+                         {
+                           <a style="margin-left: 5px; margin-top: 5px; color: white !important;" class="btn btn-primary" type="button" @onclick="() => UpperCatList(uppercat)">
+                             <a class="showRemove">@uppercat</a> <a class="remove"><span class="oi oi-x"></span></a>
+                           </a>
+                         }
+                       }
+                       else
+                       {
+                         <tr style="color: #818181 !important;">Keine Oberkategorie</tr>
+                       }
                      </div>
+                     <hr/>
+                     <div class="list-group border-dark overflow-auto mr-3 col-9" style="height: 100px">
+                       @if (_allCategorys != null)
+                       {
+                         foreach (var cat in _allCategorys)
+                         {
+                           <button style="margin-bottom: 3px;" type="button" class="@(IsInList(cat) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => UpperCatList(cat)">
+                             <a><a class="@(IsInList(cat) ? "showRemove" : "")">@cat</a> <a class="remove"><span class="oi oi-x"></span></a></a>
+                           </button>
+                         }
+                       }
+                     </div>
+                   </div>
                      <div class="modal-footer">
                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">
                          <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
@@ -88,11 +90,9 @@
   
   private List<string> _allCategorys;
   
-  private bool _showEmptyError;
+  private int _whatToShow;
 
-  private bool _showExistError;
-
-  private bool _showTooLongError;
+  private bool _showError;
 
   protected override async Task OnInitializedAsync()
   {
@@ -102,41 +102,41 @@
 
   protected override void OnParametersSet()
   {
-    _showEmptyError = false;
-    _showExistError = false;
-    _showTooLongError = false;
+    _showError = false;
+    _whatToShow = -1;
     NewHardskill.Description = OldHardskill?.Description;
     UpperCat = OldHardskill?.Uppercat;
+  }
+  
+  private async void ShowErrorMessage(int whatToShow)
+  {
+    _whatToShow = whatToShow;
+    _showError = true;
+    StateHasChanged();
+    await Task.Delay(3000);
+    _showError = false;
+    StateHasChanged();
   }
 
   private async Task Update()
   {
     if (!_hardskillService.CheckEmptyHardskill(NewHardskill.Description))
     {
-      _showEmptyError = true;
-      _showExistError = false;
-      _showTooLongError = false;
-      StateHasChanged();
+      ShowErrorMessage(1);
       return;
     }
-    _showEmptyError = false;
 
     if (!await _hardskillService.CheckExistHardskill(NewHardskill.Description) && NewHardskill.Description != OldHardskill.Description)
     {
-      _showExistError = true;
-      _showTooLongError = false;
-      StateHasChanged();
+      ShowErrorMessage(0);
       return;
     }
-    _showExistError = false;
 
     if (!_hardskillService.CheckLengthHardskill(NewHardskill.Description))
     {
-      _showTooLongError = true;
-      StateHasChanged();
+      ShowErrorMessage(2);
       return;
     }
-    _showTooLongError = false;
     
     NewHardskill.Subcat = null;
 

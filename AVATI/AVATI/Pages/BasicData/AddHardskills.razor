@@ -1,10 +1,11 @@
 ﻿@using AVATI.Data
 @using System.Security.Cryptography
+@using Microsoft.EntityFrameworkCore.Query.SqlExpressions
 
 @inject IHardskillService _hardskillService
 
-<div class="modal @(_show ? "fade show" : "" )" id="myModal" style=" display: @(_show ? "block" : "none");">
-  <div class="modal-dialog">
+<div class="modal @(_show ? "fade show" : "" )" id="myModal" style=" display: @(_show ? "block" : "none"); width: 700px; position: center;"> 
+  <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
       @if (_finishedLoadPage)
       {
@@ -25,29 +26,25 @@
         </div>
         <div class="modal-body">
           <div class="container">
-            @if (_showExistErrorCategory)
-            {
-              <div class="errormessage">
-                <a><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></a>
-              </div>
-
-            }
-            else if (_showEmptyErrorCategory)
-            {
-              <div class="errormessage">
-                <a><b>Die Bezeichnung ist erforderlich</b></a>
-              </div>
-
-            }
-            else if (_showTooLongErrorCategory)
-            {
-              <div class="errormessage">
-                <a><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></a>
-              </div>
-            }
 
             @if (ShowCreateCat)
             {
+              <a style="position: relative;">
+            <MudPopover Open="@_showErrorCategory" Class="alert alert-danger text-center" Style="width: 380px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
+              @if (_whatToShowCategory == 0)
+              {
+                <a>Hinzufügen misslungen, der Hardskill bzw. die Kategorie exsistiert bereits!</a>
+              } 
+              else if (_whatToShowCategory == 1)
+              {
+                <a>Hinzufügen misslungen, die Bezeichnung fehlt!</a>
+              }
+              else if (_whatToShowCategory == 2)
+              {
+                <a>Hinzufügen misslungen, die Bezeichnung ist zu lang (max. 150 Zeichen)!</a>
+              }
+            </MudPopover>
+            </a>
               <div class="form-group">
                 <label>Bezeichnung der Kategorie:</label>
                 <input class="form-control" type="text" @bind="_cat"/>
@@ -56,65 +53,68 @@
 
             @if (Subcat.Any())
             {
-              <h6>Enthaltene Hardskills</h6>
+              <h6>Enthaltene Hardskills:</h6>
               <hr/>
-
-              foreach (var hardskill in Subcat)
-              {
-                <button type="button" class="@(IsInList(hardskill) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">
-                  <a><a class="@(IsInList(hardskill) ? "showRemove" : "")">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a></a>
-                </button>
-              }
+              <div class="alert alert-primary">
+                @foreach (var hardskill in Subcat)
+                {
+                  <button type="button" class="btn btn-primary btn-sm" @onclick="() => HardskillList(hardskill)">
+                    <a><a class="@(IsInList(hardskill) ? "showRemove" : "")">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a></a>
+                  </button>
+                }
+              </div>
             }
 
             @if (_toDeleteSkills != null && _toDeleteSkills.Any())
             {
-              <h6>Zu entferndende Hardskills</h6>
+              
+              <h6>Zu entferndende Hardskills:</h6>
               <hr/>
-              foreach (var hardskill in _toDeleteSkills)
+              <div class="alert alert-danger">
+              @foreach (var hardskill in _toDeleteSkills)
               {
-                <button type="button" class="@(IsInList(hardskill) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">
+                <button type="button" class="btn btn-danger btn-sm" style="margin-left: 5px !important; margin-top: 5px !important;" @onclick="() => HardskillList(hardskill)">
                   <a><a class="@(IsInList(hardskill) ? "showRemove" : "")">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a></a>
                 </button>
               }
+              </div>
             }
 
             @if (_hardskills != null && _hardskills.Any())
             {
-              <h6>Hardskills ohne Hardskillkategorie</h6>
+              <h6>Auswahl von Hardskills ohne Hardskillkategorie:</h6>
               <hr/>
-              foreach (var hardskill in _hardskills)
+              <div class="alert alert-secondary">
+              @foreach (var hardskill in _hardskills)
               {
-                <button type="button" class="@(IsInList(hardskill) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(hardskill)">
+                <button type="button" class="btn btn-secondary btn-sm" @onclick="() => HardskillList(hardskill)">
                   <a><a class="@(IsInList(hardskill) ? "showRemove" : "")">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a></a>
                 </button>
               }
+              </div>
             }
 
             @if (_showCreateSkill)
             {
-              @if (_showExistErrorHardskill)
+              <a style="position: relative;">
+            <MudPopover Open="@_showErrorSkill" Class="alert alert-danger text-center" Style="width: 380px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
+              @if (_whatToShowSkill == 0)
               {
-                <div class="errormessage">
-                  <a><b>Es existiert bereits ein Hardskill oder eine Hardskillkategorie mit derselben Bezeichnung</b></a>
-                </div>
-
-              }
-              else if (_showEmptyErrorHardskill)
+                <a>Hinzufügen misslungen, der Hardskill bzw. die Kategorie exsistiert bereits!</a>
+              } 
+              else if (_whatToShowSkill == 1)
               {
-                <div class="errormessage">
-                  <a><b>Die Bezeichnung ist erforderlich</b></a>
-                </div>
+                <a>Hinzufügen misslungen, die Bezeichnung fehlt!</a>
               }
-              else if (_showTooLongErrorHardskill)
+              else if (_whatToShowSkill == 2)
               {
-                <div class="errormessage">
-                  <a><b>Die Bezeichnung ist zu lang (max. 150 Zeichen)</b></a>
-                </div>
+                <a>Hinzufügen misslungen, die Bezeichnung ist zu lang (max. 150 Zeichen)!</a>
               }
+            </MudPopover>
+            </a>
 
               <div class="distance">
-                <label>Bezeichnung des Hardskills:</label>
+                <label><small>Bezeichnung des Hardskills:</small></label>
                 <input class="form-control" style="display: inline;" type="text" @bind="_hardskill"/>
                 <button class="check" style="display: inline;" @onclick="CreateHardskill">&#10003;</button>
                 <button class="stop" style="display: inline;" @onclick="ShowingCreateHardskill">&#10005;</button>
@@ -129,26 +129,46 @@
 
             <div>
               <button class="btn btn-outline-info" @onclick="ShowingCat">Hardskills mit Kategorien @(_showCat ? "ausblenden" : "einblenden")</button>
+              <MudIcon Icon="@Icons.Filled.InfoOutline" Style="color: #5a6066; display: inline;" @onclick="() => { _openExplain = !_openExplain;}"/>
+                      <a style="position: relative;">
+                          <MudPopover Open="@_openExplain" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 400px; height: auto;">
+                            <MudText Style="font-size: 14px;">Sie können Hardskills aus anderen 
+                              Kategorien ebenfalls in diese Kategorie hinzufügen; der Hardskill ist dann mehrfach kategorisiert</MudText>
+                                      <MudButton Style="font-size: 14px;" OnClick="() => { _openExplain = false;}" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
+                              </MudPopover>
+                      </a>
             </div>
             @if (_finishedLoadCats)
             {
+              bool exists = CheckedExists();
               if (_showCat && SubHardskills.Any())
               {
-                <div class="list-group border-dark overflow-auto mr-3 col-9" style="height: 200px">
-                  @foreach (var hardskillcat in SubHardskills.Keys.Where(x => x != Description))
-                  {
-                    <div class="container">
-                      <h6>@hardskillcat</h6>
-                      <hr/>
-                      @foreach (var description in SubHardskills[hardskillcat])
-                      {
-                        <button type="button" class="@(IsInList(description) ? "btn btn-primary btn-sm" : "btn btn-secondary btn-sm")" @onclick="() => HardskillList(description)">
-                          <a><a class="@(IsInList(description) ? "showRemove" : "")">@description</a> <a class="remove"><span class="oi oi-x"></span></a></a>
-                        </button>
-                      }
-                    </div>
-                  }
-                </div>
+                <input id="Filter" class="form-control" type="text" placeholder="Filter nach Hardskill..."
+                       style="margin-top: 15px;"
+                       @bind="_filter"
+                       @bind:event="oninput">
+                if (exists)
+                {
+                  <div class="list-group border-dark overflow-scroll mr-3 col-9" style="margin-top: 15px; max-height: 10%;">
+                    @foreach (var hardskillcat in SubHardskills.Keys.Where(x => x != Description && SubHardskills[x].ToList().Exists(e => IsVisible(e))))
+                    {
+                        <h6>@hardskillcat:</h6>
+                        <hr/>
+                        <div class="alert alert-info">
+                          @foreach (var description in SubHardskills[hardskillcat].Where(e => IsVisible(e)))
+                          {
+                            <button type="button" class="@(IsInList(description) ? "btn btn-primary btn-sm" : "btn btn-info btn-sm")" @onclick="() => HardskillList(description)">
+                              <a><a class="@(IsInList(description) ? "showRemove" : "")">@description</a> <a class="remove"><span class="oi oi-x"></span></a></a>
+                            </button>
+                          }
+                        </div>
+                    }
+                  </div>
+                }
+                else
+                {
+                  <small style="color: #818181; margin-top: 15px; position: center;">[Keine Hardskills gefunden]</small>
+                }
               }
             }
             else
@@ -178,7 +198,7 @@
       }
       else
       {
-        <div class="d-flex flex-column align-items-center justify-content-center">
+        <div class="d-flex flex-column align-items-center justify-content-center" style="margin-top: 15px;">
           <div class="row">
             <div class="spinner-border" role="status">
               <span class="sr-only">Loading...</span>
@@ -210,13 +230,13 @@
   [Parameter]
   public string Description { get; set; }
 
-  private List<string> Subcat { get; set; } = new();
-  
-  private Dictionary<string, List<string>> SubHardskills { get; set; } = new ();
+  private List<string> Subcat;
+
+  private Dictionary<string, List<string>> SubHardskills;
   
   private Hardskill Uppercat { get; set; }
   
-  private bool _finishedLoadPage;
+  private bool _finishedLoadPage = false;
 
   private bool _finishedLoadCats = true;
 
@@ -224,7 +244,7 @@
 
   private string _cat;
   
-  private bool _show;
+  private bool _show = false;
 
   private bool _showCat;
 
@@ -232,46 +252,36 @@
 
   private bool ShowCreateCat { get; set; }
 
-  private List<string> _toDeleteSkills = new();
+  private List<string> _toDeleteSkills;
 
-  private List<string> _hardskills = new();
+  private List<string> _hardskills;
   
-  private bool _showEmptyErrorCategory;
+  private bool _showErrorCategory;
+  private bool _showErrorSkill;
+  private int _whatToShowSkill;
+  private int _whatToShowCategory;
+  private bool _openExplain;
+  private string _filter;
 
-  private bool _showExistErrorCategory;
-  
-  private bool _showTooLongErrorCategory;
-  
-  private bool _showEmptyErrorHardskill;
-
-  private bool _showExistErrorHardskill;
-
-  private bool _showTooLongErrorHardskill;
-
-  protected override void OnInitialized()
-  {
-    _show = false;
-  }
-
-  protected override async Task OnParametersSetAsync()
+  protected override void OnParametersSet()
   {
     _finishedLoadPage = false;
+    _openExplain = false;
+    _showErrorCategory = _showErrorSkill = false;
+    _whatToShowCategory = _whatToShowSkill = -1;
     _finishedLoadCats = true;
     _showCat = false;
     _showCreateSkill = false;
     ShowCreateCat = false;
-    _showEmptyErrorCategory = false;
-    _showExistErrorCategory = false;
-    _showTooLongErrorCategory = false;
-    _showEmptyErrorHardskill = false;
-    _showExistErrorHardskill = false;
-    _showTooLongErrorHardskill = false;
     _cat = "";
-    _toDeleteSkills.Clear();
-    _hardskills.Clear();
-    Subcat.Clear();
-    SubHardskills.Clear();
-    
+    _toDeleteSkills = new();
+    _hardskills = new();
+    Subcat = new();
+    SubHardskills = new();
+  }
+
+  protected override async Task OnParametersSetAsync()
+  {
     var allSkills = await _hardskillService.GetAllHardskills();
 
     foreach (var hardskill in allSkills.ToList().Where(x => x.Uppercat == null || !x.Uppercat.Any()))
@@ -298,6 +308,21 @@
       }
     }
     _finishedLoadPage = true;
+  }
+
+  private bool IsVisible(string skill)
+  {
+    return string.IsNullOrEmpty(_filter) || skill.Contains(_filter, StringComparison.OrdinalIgnoreCase);
+  }
+
+  private bool CheckedExists()
+  {
+    foreach (var hardskills in SubHardskills.Values)
+    {
+      if (hardskills.Exists(IsVisible))
+        return true;
+    }
+    return false;
   }
 
   private async Task ShowingCat()
@@ -342,31 +367,52 @@
     var hardskill = await _hardskillService.GetHardskill(description);
     if (hardskill == null) return;
     var upperCat = hardskill.Uppercat;
+    var hasNoUpperCat = (upperCat == null) || !upperCat.Any();
+    var hasUpperCat = !hasNoUpperCat && upperCat.Exists(x => x == Description);
+    
 
     if (Subcat.Contains(description))
     {
       Subcat.Remove(description);
-      if (upperCat == null || !upperCat.Any())
-      {
-        if(!_hardskills.Contains(description))
-          _hardskills.Add(description);
-        
-      } else if(upperCat.Contains(Description) && !_toDeleteSkills.Contains(description))
+      if (hasNoUpperCat && !_hardskills.Contains(description))
+        _hardskills.Add(description);
+      else if(hasUpperCat && !_toDeleteSkills.Contains(description))
         _toDeleteSkills.Add(description);
     }
     else
     {
       Subcat.Add(description);
-      if (upperCat == null || !upperCat.Any())
-        _hardskills.Remove(description);
-      else if(upperCat.Contains(Description))
-        _toDeleteSkills.Remove(description);
+      _hardskills.Remove(description);
+      _toDeleteSkills.Remove(description);
     }
+    StateHasChanged();
   }
   
   private bool IsInList(string description)
   {
     return Subcat.Exists(x => x == description);
+  }
+  
+  private async void ShowErrorMessage(bool isSkill, int whatToShow)
+  {
+    if (isSkill)
+    {
+      _whatToShowSkill = whatToShow;
+      _showErrorSkill = true;
+      StateHasChanged();
+      await Task.Delay(3000);
+      _showErrorSkill = false;
+      StateHasChanged();
+    }
+    else
+    {
+      _whatToShowCategory = whatToShow;
+      _showErrorCategory = true;
+      StateHasChanged();
+      await Task.Delay(3000);
+      _showErrorCategory = false;
+      StateHasChanged();
+    }
   }
 
   private async Task AddingHardskills()
@@ -375,30 +421,21 @@
     {
       if (!_hardskillService.CheckEmptyHardskill(_cat))
       {
-        _showEmptyErrorCategory = true;
-        _showExistErrorCategory = false;
-        _showTooLongErrorCategory = false;
-        StateHasChanged();
+        ShowErrorMessage(false, 1);
         return;
       }
-      _showEmptyErrorCategory = false;
 
       if (!await _hardskillService.CheckExistHardskill(_cat))
       {
-        _showExistErrorCategory = true;
-        _showTooLongErrorCategory = false;
-        StateHasChanged();
+        ShowErrorMessage(false, 0);
         return;
       }
-      _showExistErrorCategory = false;
 
       if (!_hardskillService.CheckLengthHardskill(_cat))
       {
-        _showTooLongErrorCategory = true;
-        StateHasChanged();
+        ShowErrorMessage(false, 2);
         return;
       }
-      _showTooLongErrorCategory = false;
 
       var cat = new Hardskill()
       {
@@ -442,30 +479,21 @@
   {
     if (!_hardskillService.CheckEmptyHardskill(_hardskill))
     {
-      _showEmptyErrorHardskill = true;
-      _showExistErrorHardskill = false;
-      _showTooLongErrorHardskill = false;
-      StateHasChanged();
+      ShowErrorMessage(true, 1);
       return;
     }
-    _showEmptyErrorHardskill = false;
 
     if (!await _hardskillService.CheckExistHardskill(_hardskill))
     {
-      _showExistErrorHardskill = true;
-      _showTooLongErrorHardskill = false;
-      StateHasChanged();
+      ShowErrorMessage(true, 0);
       return;
     }
-    _showExistErrorHardskill = false;
 
     if (!_hardskillService.CheckLengthHardskill(_hardskill))
     {
-      _showTooLongErrorHardskill = true;
-      StateHasChanged();
+      ShowErrorMessage(true, 2);
       return;
     }
-    _showTooLongErrorHardskill = false;
 
     var hardskill = new Hardskill()
     {
