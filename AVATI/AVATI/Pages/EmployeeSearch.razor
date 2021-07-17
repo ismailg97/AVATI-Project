@@ -37,10 +37,12 @@
         @if (Id != 0)
         {
             <h1 class="mb-4">Mitarbeitersuche für <br><strong>@_proposal.GetProposal(Id).ProposalTitle</strong>:</h1>
+            <hr/>
         }
         else
         {
             <h1 class="mb-4">Mitarbeitersuche</h1>
+            <hr/>
         }
         <div class="form-group">
             <label class="font-weight-bold">Mitarbeitername <small class="text-muted">(Optional)</small> </label>
@@ -380,10 +382,10 @@ else
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Status verändern</h4>
-                    <button type="button" class="close" data-dismiss="modal" @onclick="() => {_booleanStatus = !_booleanStatus; StateHasChanged();}">&times;</button>
+                    <button type="button" class="close" data-dismiss="modal" @onclick="() => {_booleanStatus = !_booleanStatus; Emp.IsActive = !Emp.IsActive; StateHasChanged();}">&times;</button>
                 </div>
                 <div class="modal-body">
-                    @if (Emp.IsActive)
+                    @if (!Emp.IsActive)
                     {
                         <text>Sind Sie sicher, dass ihren Status von Aktiv auf Inaktiv setzen wollen?</text>
                     }
