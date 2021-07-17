@@ -4,7 +4,7 @@
 @using AVATI.Data
 
 @inject IProjectActivityService _projectActivityService
-@inject IProjektService _projectService
+@inject IProjectService _projectService
 @inject NavigationManager _navigationManager
 
 <AuthorizeView Roles="SalesStaff,Administrator">
@@ -27,7 +27,7 @@
                 </div>
                 <div class="modal-body" style="min-width: 100%">
                 <a style="position: relative;">
-                    <MudPopover Open="@_showError" Class="alert alert-danger" Style="width: 600px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
+                    <MudPopover Open="@_showError" Class="alert alert-danger text-center" Style="width: 500px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
                         @if (_whatToShow == 0)
                         {
                             <a>Hinzufügen misslungen, die Aktiviät exsistiert bereits im Projekt</a>

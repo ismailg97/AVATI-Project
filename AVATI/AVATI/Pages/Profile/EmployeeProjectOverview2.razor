@@ -2,7 +2,7 @@
 @using DocumentFormat.OpenXml.Drawing
 @using Microsoft.AspNetCore.Http
 
-@inject IProjektService _projektService
+@inject IProjectService _projectService
 @inject JsonImport _jsonImport
 @inject IHardskillService _hardskillService
 @inject IProjectActivityService _projectActivityService
@@ -25,12 +25,16 @@
             </div>
 </div>
 
-<div class="form-group col-6">
-        <span class="oi oi-magnifying-glass"></span>
-        <input id="FilterField" class="form-control" type="text" placeholder="Filter nach Projekttiteln..."
+<div class="form-group row col-6">
+    <label for="FilterField" class="col-sm-1 col-form-label ml-n5">
+        <MudIcon Icon="@Icons.Filled.Search" style="color: black;" />
+    </label>
+    <div class="col-sm-11 ml-n5">
+        <input id="FilterField" class="form-control mt-sm-1" type="text" placeholder="Filter nach Projekttiteln..."
                @bind="Filter"
                @bind:event="oninput">
-</div>
+    </div>
+    </div>
 
 <table class="table">
     @if (_projects.Exists(x => EqualsFilter(x.Projecttitel)))
@@ -120,7 +124,7 @@
                                         }
                                     </td>
                                     <td class="tEdit">
-                                        <button type="button" class="btn btn-secondary" @onclick="() => ShowPopUpEdit(activity)"><MudIcon Icon="@Icons.Filled.Brush"/></button>
+                                        <button type="button" class="btn btn-info" @onclick="() => ShowPopUpEdit(activity)"><MudIcon Icon="@Icons.Filled.Brush"/></button>
                                     </td>
                                     <td class="tDelte">
                                         <button type="button" class="btn btn-danger" @onclick="() => ShowPopUpDelete(activity)"><MudIcon Icon="@Icons.Filled.Delete"/></button>
@@ -144,13 +148,17 @@
 
 @if (_showCreate || _showEdit )
 {
-    var projecttitle = _projektService.GetProject(_projectActivity.ProjectID).Projecttitel;
+    var projecttitle = _projectService.GetProject(_projectActivity.ProjectID).Projecttitel;
     
     <div class="modal fade show" id="myModal" style=" display: inline-block;">
         <div class="modal-dialog border-dark modal-dialog- modal-lg">
             <div class="modal-content">
                 <div class="modal-header flex-column">
-                    @if(_showCreate) {
+                    <button type="button" class="close" data-dismiss="modal" @onclick="() => { _showCreate = _showEdit = false; }">
+                                            <span aria-hidden="true">x</span>
+                                        </button>
+                    @if (_showCreate)
+                    {
                         <h4 style="word-break: break-word;" class="modal-title col-12 text-center">Hinzufügen einer Projekttätigkeit im Projekts <br>"<b>@projecttitle</b>"</h4>
                     }
                     else
@@ -430,7 +438,7 @@
         _projects = new List<Project>();
         foreach (var projectId in _projectWithGroupedActivities.Keys)
         {
-            var project = _projektService.GetProject(projectId);
+            var project = _projectService.GetProject(projectId);
             if(project != null)
                 _projects.Add(project);
             var activitiesOfProject = _projectActivityService.GetActivitiesDesOfProject(projectId);

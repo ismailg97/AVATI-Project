@@ -10,85 +10,90 @@
 
 @inject Projectedit _projectedit
 @inject JsonImport _jsonImport
-@inject IProjektService _projectService
+@inject IProjectService _projectService
 @inject IBasicDataService _basic
 @inject NavigationManager _navigationManager
 
 <AuthorizeView Roles="SalesStaff,Administrator">
     <NotAuthorized>
-        @if(true){_navigationManager.NavigateTo("/profile");}
+        @if (true)
+        {
+            _navigationManager.NavigateTo("/profile");
+        }
     </NotAuthorized>
     <Authorized >
-        
 
 
-@if (_show)
-{
-    <div class="modal fade show d-block" id="myModal">
-        <div class="modal-dialog">
-            <div class="modal-content bg-light">
-                <div class="modal-header">
-                    <h3 class="modal-title">Auswahl Branchen</h3>
-                    <button type="button" class="close" data-dismiss="modal" @onclick="Showing">
-                        <span aria-hidden="true">x</span>
-                    </button>
-                </div>
-                <div class="modal-body" style="min-width: 100%">
-                    <label class="font-weight-bold">Branchen zur Auswahl stehend:</label>
-                    <div class="list-group col overflow-auto border-dark" style="height: 250px">
-                        @foreach (var field in _allFields)
-                        {
-                            if (!_fieldsChosen.Contains(field))
-                            {
-                                <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _fieldsChosen.Add(field); })>@field</button>
-                            }
-                        }
+
+        @if (_show)
+        {
+            <div class="modal fade show d-block" id="myModal">
+                <div class="modal-dialog modal-dialog-scrollable">
+                    <div class="modal-content bg-light">
+                        <div class="modal-header">
+                            <h3 class="modal-title">Auswahl Branchen</h3>
+                            <button type="button" class="close" data-dismiss="modal" @onclick="Showing">
+                                <span aria-hidden="true">x</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" style="min-width: 100%">
+                            <label class="font-weight-bold">Branchen im Projekt:</label>
+                            <div class="list-group col overflow-auto text-center border-dark" style="height: 250px">
+                                @foreach (var field in _fieldsChosen)
+                                {
+                                    <a class="btn btn-outline-dark" id="fieldButton" type="button" @onclick=@(() => { _fieldsChosen.Remove(field); })>
+                                        <a class="showRemove">@field</a> <a class="remove"><span class="oi oi-x"></span></a>
+                                    </a>
+                                }
+                            </div>
+                            <hr class="mx-2"/> <!--line divider -->
+                            <label class="font-weight-bold ">Branchen zur Auswahl stehend:</label>
+                            <div class="list-group col overflow-auto border-dark" style="height: 250px">
+                                @foreach (var field in _allFields)
+                                {
+                                    if (!_fieldsChosen.Contains(field))
+                                    {
+                                        <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _fieldsChosen.Add(field); })>@field</button>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="form-group ml-5">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing"><MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen</button>
+                                <button type="button" class="btn btn-success" @onclick="Submit"><MudIcon Icon="@Icons.Filled.Check"/> Speichern</button>
+                            </div>
+                        </div>
                     </div>
-                    <hr class="mx-2"/>                                  <!--line divider -->
-                    <label class="font-weight-bold ">Branchen im Projekt:</label>
-                    <div class="list-group col overflow-auto text-center border-dark" style="height: 250px">
-                        @foreach (var field in _fieldsChosen)
-                        {
-                            <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _fieldsChosen.Remove(field); })>@field</button>
-                        }
-                    </div>
                 </div>
-                <div class="modal-footer">
-                    <div class="form-group ml-5">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing"><MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen</button>
-                        <button type="button" class="btn btn-success" @onclick="Submit"><MudIcon Icon="@Icons.Filled.Check"/> Speichern</button>
-                    </div>
-                </div>
+
+
             </div>
-        </div>
+        }
+
+        @if (_show)
+        {
+            <div class="modal-backdrop fade show"></div>
+        }
 
 
-    </div>
-}
 
-@if (_show)
-{
-    <div class="modal-backdrop fade show"></div>
-}
+    </Authorized>
+</AuthorizeView>
 
-    
-            
-        </Authorized>
-    </AuthorizeView>
-    
-    @code {
+@code {
 
     [Parameter]
     public Projectedit Abstract { get; set; }
-    
+
     [Parameter]
     public Project Project { get; set; }
-    
+
     private bool _show;
 
     private List<string> _allFields;
     private List<string> _fieldsChosen;
-    
+
     public string Temp { get; set; }
 
     protected override void OnParametersSet()

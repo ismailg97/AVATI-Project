@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace AVATI.Data
 {
-    public class ProjectService : IProjektService
+    public class ProjectService : IProjectService
     {
         private ProjectActivityService2 _projectActivityService;
         public List<Project> Projects { get; set; }

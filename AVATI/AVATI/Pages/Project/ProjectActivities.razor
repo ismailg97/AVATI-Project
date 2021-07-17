@@ -2,7 +2,7 @@
 @using AVATI.Data
 
 @inject IProjectActivityService _projectActivityService
-@inject IProjektService _projektService
+@inject IProjectService _projectService
 @inject NavigationManager _navigationManager
 
 <AuthorizeView Roles="SalesStaff,Administrator">
@@ -34,7 +34,7 @@ else
             <hr/>
             <div class="col-auto">
                 <a style="position: relative;">
-                    <MudPopover Open="@ShowErrorCreate" Class="alert alert-danger" Style="width: 600px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
+                    <MudPopover Open="@ShowErrorCreate" Class="alert alert-danger text-center" Style="width: 450px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
                         @if (_whatToShow == 0)
                         {
                             <a>Anlegen der Tätigkeit misslungen, die Bezeichnung existiert bereits!</a>
@@ -86,12 +86,14 @@ else
                                     <tr>
                                         <td>@activity</td>
                                         <td>
-                                            <button type="button" class="btn btn-info text-right" @onclick="() => { ShowUpdate(activity); }">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-info text-right" @onclick="() => { ShowUpdate(activity); }">
                                                 <span class="oi oi-pencil"></span>
                                             </button>
                                             <button type="button" class="btn btn-danger text-right" @onclick="(() => { ShowDelete(activity); })">
                                                 <span class="oi oi-trash"></span>
                                             </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 }
@@ -143,7 +145,7 @@ else
                     </p>
                     <p>Die Tätigkeit, die hier geändert wird, verbleibt im Projekt, kann aber nicht mehr gelöscht und dann wieder hinzugefügt werden.</p>
                     <a style="position: relative;">
-                        <MudPopover Open="@ShowErrorEdit" Class="alert alert-danger" Style="width: auto; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
+                        <MudPopover Open="@ShowErrorEdit" Class="alert alert-danger text-center" Style="width: 400px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
                             @if (_whatToShow == 0)
                             {
                                 <a>Editieren der Tätigkeit misslungen, die Bezeichnung existiert bereits!</a>

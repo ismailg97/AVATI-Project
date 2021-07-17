@@ -5,7 +5,7 @@
 
 @using Microsoft.AspNetCore.Http
 @using Direction = MudBlazor.Direction
-@inject IProjektService _projektService
+@inject IProjectService _projectService
 @inject IEmployeeService _employee
 @inject NavigationManager _navManager
 @inject IBasicDataService _basicDataService
@@ -82,19 +82,8 @@
                         </div>
                         <div class="col-6">
                             <div class="card-title small font-weight-light lead text-left">Status:</div>
-                             <MudSwitch @bind-Checked="@Emp.IsActive" Color="MudBlazor.Color.Success"/>
-                            @if (Emp.IsActive)
-                            {
-                                <button type="button" class="btn btn-success" id="employeeStatus" @onclick=@(() => { HandleStatusChangeClick(); })>
-                                    Aktiv
-                                </button>
-                            }
-                            else
-                            {
-                                <button type="button" class="btn btn-danger" id="employeeStatus" @onclick=@(() => { HandleStatusChangeClick(); })>
-                                    Inaktiv
-                                </button>
-                            }
+                             <MudSwitch @bind-Checked="@Emp.IsActive" Color="MudBlazor.Color.Success" @onclick="HandleStatusChangeClick"/>
+                            
                         </div>
 
                     </div>
@@ -111,7 +100,7 @@
             </button>
 
             <!------ Return Button ---------->
-            <button type="button" class="form-group btn btn-danger m-2" @onclick="() => { NavigateToProjectEdit(Emp.EmployeeID); }">
+            <button type="button" class="form-group btn btn-danger m-2 margin" @onclick="() => { NavigateToProjectEdit(Emp.EmployeeID); }">
                 <MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen
             </button>
         </div>
@@ -130,7 +119,7 @@
             <a style="position: relative;">
             <MudPopover Open="@_isOpenHardskill" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 300px; height: auto;" OffsetX="true">
                 <div>
-                    <MudText Style="font-size: 14px;">Wenn Sie auf einem Hardskill einen Rechtsklick betätigen, können Sie dessen Level ändern</MudText>
+                    <MudText Style="font-size: 14px;">Wenn Sie auf einem Hardskill einen Rechtsklick betätigen, können Sie das Level ändern</MudText>
                     <MudButton Style="font-size: 14px;" OnClick="() => { _isOpenHardskill = false;}" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
                 </div>
             </MudPopover>
@@ -328,14 +317,14 @@
     <!------ Languages ---------->
 
     <div class=" form-group">
-        <MudIcon Icon="@Icons.Filled.InfoOutline" Style="color: black; display: inline;" @onclick="() => { _isOpenLanguage = !_isOpenLanguage;}"/>
+        <MudIcon Icon="@Icons.Filled.InfoOutline" Style="color: black; display: inline;" @onclick="() => { _isOpenLanguage = !_isOpenLanguage; }"/>
         <a style="position: relative;">
             <MudPopover Open="@_isOpenLanguage" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 300px; height: auto;">
-                    <MudText Style="font-size: 14px;">Wenn Sie auf eine Sprache einen Rechtsklick betätigen, können Sie deren Level ändern</MudText>
-                        <MudButton Style="font-size: 14px;" OnClick="() => { _isOpenLanguage = false;}" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
-                </MudPopover>
+                <MudText Style="font-size: 14px;">Wenn Sie auf eine Sprache einen Rechtsklick betätigen, können Sie das Level ändern</MudText>
+                <MudButton Style="font-size: 14px;" OnClick="() => { _isOpenLanguage = false; }" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
+            </MudPopover>
         </a>
-    
+
         <label style="display: inline;" class="mr-3 mt-2"><b>Sprachen:</b> </label>
         @if (Emp.Language.Any())
         {
@@ -345,7 +334,7 @@
                 {
                     if (language.Item2 == LanguageLevel.A1)
                     {
-                        <button type="button" class="btn btn-outline-success btn-sm mr-2"  
+                        <button type="button" class="btn btn-outline-success btn-sm mr-2"
                                 @onclick="() => { Emp.Language.Remove(language); }"
                                 @oncontextmenu="() => HandleLanguageClick(language.Item1)" @oncontextmenu:preventDefault="true">
                             <a>
@@ -358,7 +347,7 @@
                     }
                     if (language.Item2 == LanguageLevel.A2)
                     {
-                        <button type="button" class="btn btn-outline-primary btn-sm mr-2" 
+                        <button type="button" class="btn btn-outline-primary btn-sm mr-2"
                                 @onclick="() => { Emp.Language.Remove(language); }"
                                 @oncontextmenu="() => HandleLanguageClick(language.Item1)" @oncontextmenu:preventDefault="true">
                             <a>
@@ -371,7 +360,7 @@
                     }
                     @if (language.Item2 == LanguageLevel.B1)
                     {
-                        <button type="button" class="btn btn-outline-secondary btn-sm mr-2"  
+                        <button type="button" class="btn btn-outline-secondary btn-sm mr-2"
                                 @onclick="() => { Emp.Language.Remove(language); }"
                                 @oncontextmenu="() => HandleLanguageClick(language.Item1)" @oncontextmenu:preventDefault="true">
                             <a>
@@ -384,7 +373,7 @@
                     }
                     @if (language.Item2 == LanguageLevel.B2)
                     {
-                        <button type="button" class="btn btn-outline-dark btn-sm mr-2"  
+                        <button type="button" class="btn btn-outline-dark btn-sm mr-2"
                                 @onclick="() => { Emp.Language.Remove(language); }"
                                 @oncontextmenu="() => HandleLanguageClick(language.Item1)" @oncontextmenu:preventDefault="true">
                             <a>
@@ -397,7 +386,7 @@
                     }
                     @if (language.Item2 == LanguageLevel.C1)
                     {
-                        <button type="button" class="btn btn-outline-info btn-sm mr-2"  
+                        <button type="button" class="btn btn-outline-info btn-sm mr-2"
                                 @onclick="() => { Emp.Language.Remove(language); }"
                                 @oncontextmenu="() => HandleLanguageClick(language.Item1)" @oncontextmenu:preventDefault="true">
                             <a>
@@ -410,7 +399,7 @@
                     }
                     @if (language.Item2 == LanguageLevel.C2)
                     {
-                        <button type="button" class="btn btn-outline-warning btn-sm mr-2"  
+                        <button type="button" class="btn btn-outline-warning btn-sm mr-2"
                                 @onclick="() => { Emp.Language.Remove(language); }"
                                 @oncontextmenu="() => HandleLanguageClick(language.Item1)" @oncontextmenu:preventDefault="true">
                             <a>
@@ -421,16 +410,16 @@
                             </a>
                         </button>
                     }
-                    
+
                 }
-        }
-            
+            }
+
         }
         else
         {
             <small style="color: #818181;">[Keine Sprachen zugewiesen]</small>
         }
-        
+
 
     </div>
     @foreach (var language in _basicDataService.GetAllLanguages())
@@ -487,20 +476,22 @@ else
                     <button type="button" class="close" data-dismiss="modal" @onclick="() => {_booleanStatus = !_booleanStatus; StateHasChanged();}">&times;</button>
                 </div>
                 <div class="modal-body">
-                    @if (Emp.IsActive)
+                    @if (!Emp.IsActive)
                     {
-                        <text>Sind Sie sicher, dass ihren Status von Aktiv auf Inaktiv setzen wollen?</text>
+                        <text>Sind Sie sicher, dass ihren Status von <a style="color: green;">Aktiv</a> auf <a style="color: red;">Inaktiv</a> setzen wollen?</text>
+                        <div class="alert alert-danger" style="color: darkred;">Sie können dann nicht mehr zu Angeboten und Projekten hinzugefügt werden!</div>
                     }
                     else
                     {
-                        <text>Sind Sie sicher, dass ihren Status von Inaktiv auf Aktiv setzen wollen?</text>
+                        <text>Sind Sie sicher, dass ihren Status von <a style="color: red;">Inaktiv</a> auf <a style="color: green;">Aktiv</a> setzen wollen?</text>
+                        <div class="alert alert-success" style="color: darkgreen;">Sie können dann wieder zu Angeboten und Projekten hinzugefügt werden!</div>
                     }
                        
                     <!-- HTML to write -->
                 </div>
                 <div class="modal-footer" >
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => {_booleanStatus = !_booleanStatus; StateHasChanged(); }"><MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="() => {Emp.IsActive = !Emp.IsActive;  StateHasChanged();_booleanStatus = !_booleanStatus;}"><MudIcon Icon="@Icons.Filled.Save"/> Bestätigen</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => {Emp.IsActive = !Emp.IsActive; _booleanStatus = !_booleanStatus;}"><MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="() => {_booleanStatus = !_booleanStatus;}"><MudIcon Icon="@Icons.Filled.Save"/> Bestätigen</button>
                 </div>
                    
             </div>
