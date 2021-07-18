@@ -59,31 +59,31 @@
                     </div>
                     <hr class="mx-2"/> <!--line divider -->
                     <label class="font-weight-bold ">Tätigkeiten im Projekt:</label>
-                    <div class="list-group col overflow-auto text-center border-dark" style="height: 325px">
+                    <div class="list-group col overflow-auto text-center  alert alert-success m-1" style="height: 325px;  align-items: center;">
                         @foreach (var activity in _activitiesInProject)
                         {
                             if (!_projectActivityService.AlreadyExistsGlobalActivity(activity))
                             {
-                                <button type="button" class="btn btn-outline-danger wordBreak" @onclick="() => RemoveOfList(activity)">@activity</button>
+                                <button type="button" class="btn btn-secondary  wordBreak text-center m-1" @onclick="() => RemoveOfList(activity)">@activity</button>
                             }
                             else
                             {
-                                <button type="button" class="btn btn-outline-dark wordBreak" @onclick="() => RemoveOfList(activity)">@activity</button>
+                                <button type="button" class="btn btn-info wordBreak text-center m-1" @onclick="() => RemoveOfList(activity)">@activity</button>
                             }
                         }
                         </div>
-                    
+                    <hr class="mx-2"/>
                     <label class="font-weight-bold ">Zu entfernende Tätigkeiten: </label>
-                    <div class="list-group col overflow-auto text-center border-dark" style="height: 325px">
+                    <div class="list-group col overflow-auto text-center  alert alert-danger" style="height: 325px;  align-items: center;">
                         @foreach (var activity in _deleteActivities)
                         {
                             if (!_projectActivityService.AlreadyExistsGlobalActivity(activity))
                             {
-                                <button type="button" class="btn btn-outline-danger wordBreak" @onclick=@(() => { _deleteActivities.Remove(activity); _activitiesInProject.Add(activity); })>@activity</button>
+                                <button type="button" class="btn btn-secondary wordBreak text-center m-1"  @onclick=@(() => { _deleteActivities.Remove(activity); _activitiesInProject.Add(activity); })>@activity</button>
                             }
                             else
                             {
-                                <button type="button" class="btn btn-outline-dark wordBreak" @onclick=@(() => { _deleteActivities.Remove(activity); _activitiesInProject.Add(activity); })>@activity</button>
+                                <button type="button" class="btn btn-info wordBreak text-center m-1" @onclick=@(() => { _deleteActivities.Remove(activity); _activitiesInProject.Add(activity); })>@activity</button>
                             }
                         }
                     </div>
@@ -91,13 +91,13 @@
                     @if (_globalActivities.Any())
                     {
                         <label class="font-weight-bold">Globale Tätigkeiten zum Hinzufügen:</label>
-                        <div class="list-group col overflow-auto border-dark" style="height: 325px">
+                        <div class="list-group col overflow-auto  alert alert-info" style="height: 325px;  align-items: center;">
                             
                             @foreach (var activity in _globalActivities)
                             {
                                 if (!_activitiesInProject.Contains(activity) && !_deleteActivities.Contains(activity))
                                 {
-                                    <button type="button" class="btn btn-outline-dark wordBreak" @onclick=@(() => { _activitiesInProject.Add(activity); })>@activity</button>
+                                    <button type="button" class="btn btn-info wordBreak text-center m-1" @onclick=@(() => { _activitiesInProject.Add(activity); })>@activity</button>
                                 }
                             }
                             
