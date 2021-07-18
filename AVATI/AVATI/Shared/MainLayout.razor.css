@@ -119,8 +119,9 @@
     margin-left: 35%;
 }
 /* On smaller screens, where height is less than 550px, change the style of the sidenav (less padding and a smaller font size) + replacement of "Logout"-Button (otherwise it would be out of the screen)*/
-@media screen and (max-height: 550px) {
+@media screen and (max-height: 700px) {
     .sidebar {padding-top: 15px;}
     .sidebar a {font-size: 18px;}
     #aboutCollapsed {margin-left: 20%}
+    #logoCollapsed {margin-left: 33%}
 } 
