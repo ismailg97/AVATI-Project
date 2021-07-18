@@ -572,15 +572,9 @@ else
     private bool _booleanProj = false;
     private bool _booleanStatus = false;
     private bool _relevantWorkExperience = false;
-    private bool _openExplain;
 
     private Dictionary<int, List<ProjectActivity>> _projectWithGroupedActivities;
-    
 
-    private string _toPrint = "Die Relevante Berufserfahrung wird wie folgt berechnet: " +
-    "Ergebnis = <Aktuelles Jahr> - <Jahre Berufserfahrung> - 0,5 x <Jahre als Wissenschaftliche/r Mitarbeiterin> " + 
-                              " - <0,3 x Jahre als Studentische Hilfskraft>";
-    
     private double YearsofProfessionalExperience { get; set; }      //2
     private double YearsAsAScientist { get; set; }                  //3
     private double YearsAsAStudentAssistant { get; set; }           //4
