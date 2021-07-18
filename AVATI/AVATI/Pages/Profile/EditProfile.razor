@@ -91,19 +91,7 @@
                         </div>
                         <div class="col-6">
                             <div class="card-title small font-weight-light lead text-left">Status:</div>
-                            <MudSwitch @bind-Checked="@Emp.IsActive" Color="MudBlazor.Color.Success"/>
-                            @if (Emp.IsActive)
-                            {
-                                <button type="button" class="btn btn-success" id="employeeStatus" @onclick=@(() => { HandleStatusChangeClick(); })>
-                                    Aktiv
-                                </button>
-                            }
-                            else
-                            {
-                                <button type="button" class="btn btn-danger" id="employeeStatus" @onclick=@(() => { HandleStatusChangeClick(); })>
-                                    Inaktiv
-                                </button>
-                            }
+                            <MudSwitch @bind-Checked="@Emp.IsActive" Color="MudBlazor.Color.Success" @onclick="() => { _booleanStatus = true;}"/>
                         </div>
 
                     </div>
@@ -435,11 +423,11 @@
             }
 
             }
-        }
-        else
-        {
-            <small style="color: #818181;">[Keine Sprachen zugewiesen]</small>
-        }
+            else
+            {
+                <small style="color: #818181;">[Keine Sprachen zugewiesen]</small>
+            }
+        
 
 
     </div>
@@ -511,8 +499,8 @@ else
                     <!-- HTML to write -->
                 </div>
                 <div class="modal-footer" >
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => {_booleanStatus = !_booleanStatus; StateHasChanged(); }"><MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="() => {Emp.IsActive = !Emp.IsActive; StateHasChanged();_booleanStatus = !_booleanStatus;}"><MudIcon Icon="@Icons.Filled.Save"/> Bestätigen</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => {Emp.IsActive = !Emp.IsActive; _booleanStatus = !_booleanStatus; StateHasChanged(); }"><MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="() => {_booleanStatus = !_booleanStatus;}"><MudIcon Icon="@Icons.Filled.Save"/> Bestätigen</button>
                 </div>
 
             </div>

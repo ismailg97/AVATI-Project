@@ -357,11 +357,13 @@
 
     private void EditProjectActivity()
     {
-        var editActivity = Employee.ProjectActivities.Find(x => x.ProjectActivityID == _projectActivity.ProjectActivityID);
+        var editActivity = Employee.ProjectActivities.Find(x => x.ProjectID == _projectActivity.ProjectID 
+                                                           && x.EmployeeID == _projectActivity.EmployeeID 
+                                                           && x.Description == _projectActivity.Description);
         
         if(editActivity != null)
         {
-            Console.WriteLine();
+            Console.WriteLine("---||" + editActivity.Description + "||---");
             editActivity.HardSkills = new List<string>(_projectActivity.HardSkills);
             editActivity.SoftSkills = new List<string>(_projectActivity.SoftSkills);
         }
@@ -387,7 +389,9 @@
     private void DeleteProjectActivity()
     {
         //_projectActivityService.DeleteProjectActivityToEmployee(_projectActivity.ProjectActivityID);
-        var projectActivity = Employee.ProjectActivities.Find(x => x.ProjectActivityID == _projectActivity.ProjectActivityID);
+        var projectActivity = Employee.ProjectActivities.Find(x => x.ProjectID == _projectActivity.ProjectID 
+                                                                   && x.EmployeeID == _projectActivity.EmployeeID 
+                                                                   && x.Description == _projectActivity.Description);
         if(projectActivity != null)
             projectActivity.Description = null;
         SetProjectActivities();
