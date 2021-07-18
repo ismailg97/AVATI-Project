@@ -1,8 +1,10 @@
 ﻿@using MudBlazor.Extensions
 
-<button type="button" class="@("btn " + Type.ToDescriptionString() + " " + GiveSmall())"
+<button type="button" class="@("btn " + Type.ToDescriptionString() + " " + GiveSmall() + " " + @Class)"
         @onmouseover="() => { _showX = true; }" @onmouseout="() => { _showX = false; }"
-        @onclick=@OnClick style="@Style + ">
+        @onclick=@OnClick style="@Style"
+        @oncontextmenu="@OnContextMenu"
+        @oncontextmenu:preventDefault="true">
     @if (IsSmall)
     {
         <a style="margin-left: -2px; margin-right: -2px;">
@@ -16,11 +18,11 @@
             {
                 <a>
                     <MudIcon Size="Size.Small" Icon="@Icons.Filled.Close"
-                             Style="display: inline; margin-left: -4px; margin-right: -10.9px; visibility: hidden;"/></a>
+                             Style="display: inline; margin-left: -4px; margin-right: -11.0px; visibility: hidden;"/></a>
                 <a>@Text</a>
                 <a>
                     <MudIcon Size="Size.Small" Icon="@Icons.Filled.Close"
-                             Style="display: inline; margin-left: -10.9px; margin-right: -4px; visibility: hidden;"/></a>
+                             Style="display: inline; margin-left: -11.0px; margin-right: -4px; visibility: hidden;"/></a>
             }
         </a>
     }
@@ -64,9 +66,15 @@
     
     [Parameter]
     public bool IsDisabled { get; set; }
+    
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnContextMenu { get; set; }
 
     [Parameter]
     public string Style { get; set; }
+    
+    [Parameter]
+    public string Class { get; set; }
 
     private bool _showX;
 

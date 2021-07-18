@@ -142,37 +142,30 @@
                         {
                             @if (hardskillTuple.Item1 == hardskill)
                             {
+                                var param = hardskill.Description + " | " + hardskillTuple.Item2;
                                 if (hardskillTuple.Item2 == 1)
                                 {
-                                    <button style="margin-left: 7px;" type="button" class="btn btn-outline-success btn-sm" 
-                                            @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" 
-                                            @oncontextmenu="() => HandleHardSkillClick(hardskill)" @oncontextmenu:preventDefault="true">
-                                        <a class="showRemove">@hardskill.Description | 1 </a> <a class="remove"><span class="oi oi-x"></span></a>
-                                    </button>
+                                    <DeleteButton Type="TypeButton.OutlineSuccess" Text="@param" IsSmall="true" 
+                                                  OnClick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" Class="mr-2"
+                                                  OnContextMenu="() => HandleHardSkillClick(hardskill)"/>
                                 }
                                 if (hardskillTuple.Item2 == 2)
                                 {
-                                    <button style="margin-left: 7px;" type="button" class="btn btn-outline-primary btn-sm"  
-                                            @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" 
-                                            @oncontextmenu="() => HandleHardSkillClick(hardskill)" @oncontextmenu:preventDefault="true">
-                                        <a class="showRemove">@hardskill.Description | 2 </a> <a class="remove"><span class="oi oi-x"></span></a>
-                                    </button>
+                                    <DeleteButton Type="TypeButton.OutlinePrimary" Text="@param" IsSmall="true" 
+                                                  OnClick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" Class="mr-2"
+                                                  OnContextMenu="() => HandleHardSkillClick(hardskill)"/>
                                 }
                                 if (hardskillTuple.Item2 == 3)
                                 {
-                                    <button style="margin-left: 7px;" type="button" class="btn btn-outline-secondary btn-sm"  
-                                            @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" 
-                                            @oncontextmenu="() => HandleHardSkillClick(hardskill)" @oncontextmenu:preventDefault="true">
-                                        <a class="showRemove">@hardskill.Description | 3 </a> <a class="remove"><span class="oi oi-x"></span></a>
-                                    </button>
+                                    <DeleteButton Type="TypeButton.OutlineSecondary" Text="@param" IsSmall="true" 
+                                                  OnClick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" Class="mr-2"
+                                                  OnContextMenu="() => HandleHardSkillClick(hardskill)"/>
                                 }
                                 if (hardskillTuple.Item2 == 4)
                                 {
-                                    <button style="margin-left: 7px;" type="button" class="btn btn-outline-dark btn-sm"  
-                                            @onclick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" 
-                                            @oncontextmenu="() => HandleHardSkillClick(hardskill)" @oncontextmenu:preventDefault="true">
-                                        <a class="showRemove">@hardskill.Description | 4 </a> <a class="remove"><span class="oi oi-x"></span></a>
-                                    </button>
+                                    <DeleteButton Type="TypeButton.OutlineDark" Text="@param" IsSmall="true" 
+                                                  OnClick="() => { Emp.Hardskills.Remove(hardskill);Emp.HardSkillLevel.Remove(hardskillTuple); StateHasChanged(); }" Class="mr-2"
+                                                  OnContextMenu="() => HandleHardSkillClick(hardskill)"/>
                                 }
                             }
                         }
@@ -225,14 +218,8 @@
         @if(Emp.Softskills.Any()) {
             @foreach (var softskilll in Emp.Softskills)
             {
-                <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Softskills.Remove(softskilll); StateHasChanged();})>
-                    <a>
-                        <a class="showRemove"> @softskilll </a>
-                        <a class="remove">
-                            <span class="oi oi-x"></span>
-                        </a>
-                    </a>
-                </button>
+                <DeleteButton Type="TypeButton.OutlineSuccess" Text="@softskilll" IsSmall="true" 
+                              OnClick="@(() => { Emp.Softskills.Remove(softskilll); StateHasChanged();})" Class="mr-2"/>
             }
         }
         else
@@ -259,14 +246,9 @@
         {
             @foreach (var empRoles in Emp.Roles)
             {
-                <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Roles.Remove(empRoles); })>
-                    <a>
-                        <a class="showRemove"> @empRoles </a>
-                        <a class="remove">
-                            <span class="oi oi-x"></span>
-                        </a>
-                    </a>
-                </button>
+                <DeleteButton Type="TypeButton.OutlineSuccess" Text="@empRoles" IsSmall="true" 
+                              OnClick="@(() => { Emp.Roles.Remove(empRoles); })" Class="mr-2"/>
+                
             }
         }
         else
@@ -294,14 +276,8 @@
         {
             @foreach (var empField in Emp.Field)
             {
-                <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { Emp.Field.Remove(empField); })>
-                    <a>
-                        <a class="showRemove"> @empField</a>
-                        <a class="remove">
-                            <span class="oi oi-x"></span>
-                        </a>
-                    </a>
-                </button>
+                <DeleteButton Type="TypeButton.OutlineSuccess" Text="@empField" IsSmall="true" 
+                              OnClick="@(() => { Emp.Field.Remove(empField); })" Class="mr-2"/>
             }
         }
         else
@@ -341,83 +317,42 @@
             {
                 if (Emp.Language.Any())
                 {
+                    var param = language.Item1 + " | " + language.Item2;
                     if (language.Item2 == LanguageLevel.A1)
                     {
-                        <button type="button" class="btn btn-outline-success btn-sm mr-2"  
-                                @onclick="() => { Emp.Language.Remove(language); }"
-                                @oncontextmenu="() => HandleLanguageClick(language.Item1)" @oncontextmenu:preventDefault="true">
-                            <a>
-                                <a class="showRemove"> @language.Item1 | @language.Item2 </a>
-                                <a class="remove">
-                                    <span class="oi oi-x"></span>
-                                </a>
-                            </a>
-                        </button>
+                        <DeleteButton Type="TypeButton.OutlineSuccess" Text="@param" IsSmall="true" 
+                                      OnClick="() => { Emp.Language.Remove(language); }" Class="mr-2"
+                                      OnContextMenu="() => HandleLanguageClick(language.Item1)"/>
                     }
                     if (language.Item2 == LanguageLevel.A2)
                     {
-                        <button type="button" class="btn btn-outline-primary btn-sm mr-2" 
-                                @onclick="() => { Emp.Language.Remove(language); }"
-                                @oncontextmenu="() => HandleLanguageClick(language.Item1)" @oncontextmenu:preventDefault="true">
-                            <a>
-                                <a class="showRemove"> @language.Item1 | @language.Item2 </a>
-                                <a class="remove">
-                                    <span class="oi oi-x"></span>
-                                </a>
-                            </a>
-                        </button>
+                        <DeleteButton Type="TypeButton.OutlinePrimary" Text="@param" IsSmall="true" 
+                                      OnClick="() => { Emp.Language.Remove(language); }" Class="mr-2"
+                                      OnContextMenu="() => HandleLanguageClick(language.Item1)"/>
                     }
                     @if (language.Item2 == LanguageLevel.B1)
                     {
-                        <button type="button" class="btn btn-outline-secondary btn-sm mr-2"  
-                                @onclick="() => { Emp.Language.Remove(language); }"
-                                @oncontextmenu="() => HandleLanguageClick(language.Item1)" @oncontextmenu:preventDefault="true">
-                            <a>
-                                <a class="showRemove"> @language.Item1 | @language.Item2 </a>
-                                <a class="remove">
-                                    <span class="oi oi-x"></span>
-                                </a>
-                            </a>
-                        </button>
+                        <DeleteButton Type="TypeButton.OutlineSecondary" Text="@param" IsSmall="true" 
+                                      OnClick="() => { Emp.Language.Remove(language); }" Class="mr-2"
+                                      OnContextMenu="() => HandleLanguageClick(language.Item1)"/>
                     }
                     @if (language.Item2 == LanguageLevel.B2)
                     {
-                        <button type="button" class="btn btn-outline-dark btn-sm mr-2"  
-                                @onclick="() => { Emp.Language.Remove(language); }"
-                                @oncontextmenu="() => HandleLanguageClick(language.Item1)" @oncontextmenu:preventDefault="true">
-                            <a>
-                                <a class="showRemove"> @language.Item1 | @language.Item2 </a>
-                                <a class="remove">
-                                    <span class="oi oi-x"></span>
-                                </a>
-                            </a>
-                        </button>
+                        <DeleteButton Type="TypeButton.OutlineDark" Text="@param" IsSmall="true" 
+                                      OnClick="() => { Emp.Language.Remove(language); }" Class="mr-2"
+                                      OnContextMenu="() => HandleLanguageClick(language.Item1)"/>
                     }
                     @if (language.Item2 == LanguageLevel.C1)
                     {
-                        <button type="button" class="btn btn-outline-info btn-sm mr-2"  
-                                @onclick="() => { Emp.Language.Remove(language); }"
-                                @oncontextmenu="() => HandleLanguageClick(language.Item1)" @oncontextmenu:preventDefault="true">
-                            <a>
-                                <a class="showRemove"> @language.Item1 | @language.Item2 </a>
-                                <a class="remove">
-                                    <span class="oi oi-x"></span>
-                                </a>
-                            </a>
-                        </button>
+                        <DeleteButton Type="TypeButton.OutlineInfo" Text="@param" IsSmall="true" 
+                                      OnClick="() => { Emp.Language.Remove(language); }" Class="mr-2"
+                                      OnContextMenu="() => HandleLanguageClick(language.Item1)"/>
                     }
                     @if (language.Item2 == LanguageLevel.C2)
                     {
-                        <button type="button" class="btn btn-outline-warning btn-sm mr-2"  
-                                @onclick="() => { Emp.Language.Remove(language); }"
-                                @oncontextmenu="() => HandleLanguageClick(language.Item1)" @oncontextmenu:preventDefault="true">
-                            <a>
-                                <a class="showRemove"> @language.Item1 | @language.Item2 </a>
-                                <a class="remove">
-                                    <span class="oi oi-x"></span>
-                                </a>
-                            </a>
-                        </button>
+                        <DeleteButton Type="TypeButton.OutlineWarning" Text="@param" IsSmall="true" 
+                                      OnClick="() => { Emp.Language.Remove(language); }" Class="mr-2"
+                                      OnContextMenu="() => HandleLanguageClick(language.Item1)"/>
                     }
 
                 }

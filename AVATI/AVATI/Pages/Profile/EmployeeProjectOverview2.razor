@@ -190,15 +190,15 @@
                                 {
                                     if (Employee.Softskills.Contains(softskill))
                                     {
-                                        <button style="margin-bottom: 5px !important;" type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.SoftSkills.Remove(softskill); })>
-                                            <a class="showRemove">@softskill</a> <a class="remove"><span class="oi oi-x"></span></a>
-                                        </button>
+                                        <DeleteButton Type="TypeButton.Info" Text="@softskill" IsSmall="true" 
+                                                      Style="margin-bottom: 2px !important;"
+                                                      OnClick="@(() => { _projectActivity.SoftSkills.Remove(softskill); })" Class="mr-2"/>
                                     }
                                     else
                                     {
-                                        <button style="margin-bottom: 5px !important;" type="button" class="btn btn-outline-danger btn-sm mr-2" @onclick=@(() => { _projectActivity.SoftSkills.Remove(softskill); })>
-                                            <a class="showRemove">@softskill</a> <a class="remove"><span class="oi oi-x"></span></a>
-                                        </button>
+                                        <DeleteButton Type="TypeButton.Danger" Text="@softskill" IsSmall="true" 
+                                                      Style="margin-bottom: 2px !important;"
+                                                      OnClick="@(() => { _projectActivity.SoftSkills.Remove(softskill); })" Class="mr-2"/>
                                     }
                                 }
                                 
@@ -230,15 +230,15 @@
                                 {
                                     if (Employee.Hardskills.Exists(x => x.Description == hardskill))
                                     {
-                                        <button type="button" style="margin-bottom: 5px !important;" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.HardSkills.Remove(hardskill); })>
-                                            <a class="showRemove">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a>
-                                        </button>
+                                        <DeleteButton Type="TypeButton.Success" Text="@hardskill" IsSmall="true" 
+                                                      Style="margin-bottom: 2px !important;"
+                                                      OnClick="@(() => { _projectActivity.HardSkills.Remove(hardskill); })" Class="mr-2"/>
                                     }
                                     else
                                     {
-                                        <button type="button" class="btn btn-outline-danger btn-sm mr-2" @onclick=@(() => { _projectActivity.HardSkills.Remove(hardskill); })>
-                                            <a class="showRemove">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a>
-                                        </button>
+                                        <DeleteButton Type="TypeButton.Danger" Text="@hardskill" IsSmall="true" 
+                                                      Style="margin-bottom: 2px !important;"
+                                                      OnClick="@(() => { _projectActivity.HardSkills.Remove(hardskill); })" Class="mr-2"/>
                                     }
                                 }
                             }
