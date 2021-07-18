@@ -44,37 +44,14 @@
     </NotAuthorized>
 </AuthorizeView>
 
-@if (_booleanSignedIn)
-{
-    <form action="cookie" method="post">
-        <input type="text" name="name"/>
-        <input type="text" name="empType"/>
-        <input type="submit"/>
-    </form>
-}
+
 
 @code {
-    private bool _booleanLoginCheck = false;
-    LoginClass Log = new LoginClass();
+    
+    
     public int Id { get; set; }
-    public string empType { get; set; }
-    private bool _booleanSignedIn { get; set; }
-    //private bool _booleanRegister = false;
-
-    private void Register()
-    {
-        Id = _login.LogIn(Log.Username, Log.Password);
-        if (Id == -1)
-        {
-            _booleanLoginCheck = true;
-        }
-        else
-        {
-            empType = _login.Login_EmpType(Id);
-
-            _navManager.NavigateTo("/profile/" + Id);
-        }
-    }
+ 
+  
 
     private void BacktoLogin()
     {

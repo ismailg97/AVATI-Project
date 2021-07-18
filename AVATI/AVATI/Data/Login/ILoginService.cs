@@ -26,8 +26,18 @@
         /// <returns></returns>
         public bool CreateLogIn(string username, string password);
 
+        /// <summary>
+        /// Checks if passed username is already in Use
+        /// </summary>
+        /// <param name="username">Specified Username</param>
+        /// <returns>true, if username is unused</returns>
         bool CheckUsernameAvailable(string username);
 
+        /// <summary>
+        /// Deletes Login Entry with passed Username from Database
+        /// </summary>
+        /// <param name="username">Specified Username</param>
+        /// <returns>true, if Login Entry was deleted succesfully</returns>
         bool DeleteLogin(string username);
     }
 }
