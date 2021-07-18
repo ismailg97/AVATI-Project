@@ -20,27 +20,22 @@
     <NotAuthorized Context="authContext">
 
         <form action="cookie/Registration" method="post">
-            <div class="container col-md-3">
-                <div class="row">
-                    <div class="card">
-                        <div class="box">
-                            <h1>Registrierung</h1>
-                            <input name="username" type="text" class="form-control" id="Username"/>
-                            <input class="form-control" name="password" type="password"/>
-                            <input style="background-color: white; color: black" class="form-control" name="passwordCheck" type="password"/>
-                            <p style="color:white;">Benutzername ist schon vergeben oder Passwörter stimmen nicht überein.</p>
-                            <div class="form-group">
-                                <input type="submit" value="Registrieren">
-                                <input type="button" @onclick="() => { BacktoLogin();}" value="Zurück zum Login"/>
-                            </div>
-                        </div>
+            <div class="row justify-content-center">
+                <div class="box">
+                    <h1>Registrierung</h1>
+                    <input name="username" type="text" class="form-control" id="Username"/>
+                    <input class="form-control" name="password" type="password"/>
+                    <input style="background-color: white; color: black" class="form-control" name="passwordCheck" type="password"/>
+                    <p style="color:white;">Benutzername ist schon vergeben oder Passwörter stimmen nicht überein.</p>
+                    <div class="form-group">
+                        <input type="submit" value="Registrieren">
+                        <input type="button" @onclick="() => { BacktoLogin(); }" value="Zurück zum Login"/>
                     </div>
                 </div>
-
-                <style type="text/css">
+            </div>
+            <style type="text/css">
                 body{ background-image: url("https://images.pexels.com/photos/2246476/pexels-photo-2246476.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")  !important; }
             </style>
-            </div>
         </form>
     </NotAuthorized>
 </AuthorizeView>
