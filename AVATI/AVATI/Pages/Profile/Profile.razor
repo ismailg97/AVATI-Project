@@ -5,7 +5,7 @@
 @using Microsoft.AspNetCore.Http
 @inject NavigationManager _navManager
 @inject IEmployeeService _employee
-@inject IProjectActivityService _projctActivityService
+@inject IProjectActivityService _projectActivityService
 @inject IProjectService _projectService
 @inject AuthenticationStateProvider _authenticationStateProvider
 @inject NavigationManager _navigationManager
@@ -254,7 +254,7 @@
             Id = Int16.Parse(context ?? throw new InvalidOperationException());
         }
     //var value= HttpRequest.Cookies["key"].Value;
-        _projectWithGroupedActivities = _projctActivityService.GetActivitiesWithProjectsGrouped(Id);
+        _projectWithGroupedActivities = _projectActivityService.GetActivitiesWithProjectsGrouped(Id);
         _authenticationStateProvider.GetAuthenticationStateAsync();
         Emp = _employee.GetEmployeeProfile(Id);
     }
