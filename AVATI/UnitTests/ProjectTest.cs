@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AVATI.Data;
 using AVATI.Data.ValidationAttributes;
+using Bunit.Extensions;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
@@ -15,6 +16,7 @@ namespace UnitTests
     {
         public string connection;
         public ProjectService ProjectService;
+        public ProjectActivityService2 ActivityService2;
         
         [SetUp]
         public void Setup()
@@ -24,6 +26,7 @@ namespace UnitTests
             var name = (string) jObject["ConnectionStrings"]["TEST-Database"];
             connection = name;
             ProjectService = new ProjectService(connection);
+            ActivityService2 = new ProjectActivityService2(connection);
         }
 
         public static IEnumerable<TestCaseData> GetDateTests()
@@ -38,7 +41,7 @@ namespace UnitTests
             testCaseData.Add(new TestCaseData(DateTime.Now.AddDays(0), DateTime.Now.AddDays(0), true));
             return testCaseData.AsEnumerable();
         }
-
+        
         public static IEnumerable<TestCaseData> CreateDummyProjects()
         {
             var testCaseData = new List<TestCaseData>();
@@ -89,6 +92,28 @@ namespace UnitTests
             return testCaseData.AsEnumerable();
         }
 
+        public static IEnumerable<TestCaseData> CreateDummyActivitiets()
+        {
+            var testCaseData = new List<TestCaseData>();
+            testCaseData.Add(new TestCaseData("Just a smol biggie nooo biggie","Hier ist ein neuer String"));
+            testCaseData.Add(new TestCaseData("du bringst mich noch auf die Palme!", "wow"));
+            testCaseData.Add(new TestCaseData("12345678912345678134567891234567891234567891234567897654327892345675467523445623589279457834695783469587276278356", "oki"));
+            testCaseData.Add(new TestCaseData("why?", "wow"));
+            testCaseData.Add(new TestCaseData("wow", "ok"));
+            return testCaseData.AsEnumerable();
+        }
+
+        [TestCaseSource("CreateDummyActivitiets")]
+        public void TestValidProjectactivityDescription(string input, string old)
+        {
+            ActivityService2.AddGlobalProjectActivity(old);
+            Assert.IsTrue(ActivityService2.AlreadyExistsGlobalActivity(old));
+            ActivityService2.UpdateGlobalProjectActivity(old, input);
+            Assert.IsTrue(ActivityService2.AlreadyExistsGlobalActivity(input));
+            ActivityService2.DeleteGlobalProjectActivity(input);
+            Assert.IsFalse(ActivityService2.AlreadyExistsGlobalActivity(input));
+            Assert.IsNotNull(ActivityService2.GetAllGlobalProjectActivities());
+        }
 
         [TestCaseSource("GetDateTests")]
         public void ProjectDateTest(DateTime beginning, DateTime end, bool isValid)
