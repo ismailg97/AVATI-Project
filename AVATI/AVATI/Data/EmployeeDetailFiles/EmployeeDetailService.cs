@@ -53,7 +53,6 @@ namespace AVATI.Data.EmployeeDetailFiles
                 {
                     pro = proposalId, emp = employeeId, hour = employeeDetail.Hours
                 });
-            Console.WriteLine("Rows affected: " + rows + " Discount: " + employeeDetail.Discount);
             foreach (var soft in employeeDetail.Softskills)
             {
                 if (db.Query<string>(
@@ -342,12 +341,6 @@ namespace AVATI.Data.EmployeeDetailFiles
             }
 
             temp.EmployeeId = employeeId;
-            foreach (var projectact in temp.ProjectActivities)
-            {
-                Console.WriteLine("ProjectActivityID: " + projectact.ProjectActivityID + " Description: " 
-                              + projectact.Description + " ProjectID: " + projectact.ProjectID + " EmployeeID: " + projectact.EmployeeID);
-            }
-
             return temp;
         }
 
