@@ -52,6 +52,17 @@
                       <input class="form-control col-7" type="text" id="softskill" @bind="Description"/>
                     </div>
                     <div class="modal-footer">
+                      <div>
+                        @if (!_isChecked)
+                        {
+                          <a style="color: #818181;">Suche aus</a>
+                        }
+                        else
+                        {
+                          <a>Suche an</a>
+                        }
+                        <MudCheckBox @bind-Checked="@_isChecked"/>
+                      </div>
                       <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">
                         <MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen
                       </button>
@@ -81,6 +92,8 @@
   private int _whatToShow;
 
   private bool _showError;
+
+  private bool _isChecked;
 
   protected override void OnParametersSet()
   {
@@ -123,17 +136,27 @@
     {
       case BasicDataType.SoftSkill:
         _basicDataService.CreateSoftSkill(Description);
-        Abstract.UpdateSoftskills(Description);
+        if (_isChecked)
+          Abstract.UpdateSoftskills(Description);
+        else
+          Abstract.UpdateSoftskills();
         break;
       case BasicDataType.Field:
         _basicDataService.CreateField(Description);
-        Abstract.UpdateFields(Description);
+        if (_isChecked)
+          Abstract.UpdateFields(Description);
+        else
+          Abstract.UpdateFields();
         break;
       default:
         _basicDataService.CreateRole(Description);
-        Abstract.UpdateRoles(Description);
+        if (_isChecked)
+          Abstract.UpdateRoles(Description);
+        else
+          Abstract.UpdateRoles();
         break;
     }
+    _isChecked = false;
     Description = "";
     Showing();
   //_navigationManager.NavigateTo(_navigationManager.Uri, true);
