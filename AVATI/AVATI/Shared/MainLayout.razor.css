@@ -65,10 +65,10 @@
     font-size: 1.3rem;
 }
 #aboutOpen {
-    margin-left: 500px;
+    margin-left: 25%;
 }
 #aboutCollapsed {
-    margin-left: 700px;
+    margin-left: 25%;
 }
 .nav-item ::deep a.active {
     background-color: rgba(255,255,255,0.2);
@@ -112,10 +112,10 @@
     height: 70px;
 }
 #logoCollapsed {
-    margin-left: 575px;
+    margin-left: 25%;
 }
 #logoOpen {
-    margin-left: 535px;
+    margin-left: 25%;
 }
 /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
 @media screen and (max-height: 450px) {

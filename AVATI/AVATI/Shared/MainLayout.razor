@@ -85,7 +85,6 @@
             <button class="openButton" @onclick="OpenNav">
                 <span class="oi oi-menu"></span>
             </button>
-            <a class="brand" id="brandCollapsed" href="">AVATI</a>
             <img class="logo" id="logoCollapsed" src="XITASO_Logo.png" alt="Xitaso Logo">
             <form id="aboutCollapsed" action="cookie/Logout" method="post">
                 <input class="accordion-button" value="Logout" style="background-color: #1c1f23;
@@ -107,9 +106,7 @@
         }
         else
         {
-            <a class="brand" id="brandOpen" href="">AVATI</a>
-            <img class="logo" id="logoOpen" src="XITASO_Logo.png" alt="Xitaso Logo">
-
+            <img class="logo" id="logoCollapsed" src="XITASO_Logo.png" alt="Xitaso Logo">
             <form id="aboutOpen" action="cookie/Logout" method="post">
                 <input class="accordion-button" value="Logout" style="
                                                 background-color: #1c1f23;
@@ -119,13 +116,14 @@
                                                color: #fefefe;
                                                font-size: 20px;
                                                text-decoration: none;
-                                               text-align: center;
-                                               cursor: pointer;
+                                              
+                                               
                                                border: none;
                                                 height:40px;
                                                width: 100px;"
                        type="submit"/>
             </form>
+            
         }
     </div>
     <div class="content px-4" style="@MainMargin">
