@@ -230,17 +230,6 @@ namespace AVATI.Data
                 }
             }
             
-            
-            //db.Query("DELETE FROM Employee_Hardskill WHERE EmployeeID = @ID", new {ID = emp.EmployeeID});
-            //if (emp.HardSkillLevel.Any())
-            //{
-            //    foreach (var hardskill in emp.HardSkillLevel)
-            //    {
-            //db.Query("INSERT INTO Employee_Hardskill VALUES (@ID, @DESC, @LEVEL)",
-            //            new {ID = emp.EmployeeID, DESC = hardskill.Item1.Description, LEVEL = hardskill.Item2});
-            //    }
-            //}
-
             db.Query("DELETE FROM Employee_Language WHERE EmployeeID = @ID", new {ID = emp.EmployeeID});
             if (emp.Language.Any())
             {
@@ -281,15 +270,7 @@ namespace AVATI.Data
                 } 
             }
             
-            //db.Query("DELETE FROM Employee_Softskill WHERE EmployeeID = @ID", new {ID = emp.EmployeeID});
-            //if (emp.Softskills.Any())
-            //{
-            //    foreach (var softskill in emp.Softskills)
-            //    {
-            //        db.Query("INSERT INTO Employee_Softskill VALUES (@ID, @SOFTSKILL)",
-            //            new {ID = emp.EmployeeID, SOFTSKILL = softskill});
-            //    }
-            //}
+            
             //-----------ProjectActivities-----------
             var oldActivities = _projectActivityService.GetProjectActivitiesOfEmployee(emp.EmployeeID);
             var newActivities = new List<ProjectActivity>(emp.ProjectActivities);
