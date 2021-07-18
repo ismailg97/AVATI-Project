@@ -99,7 +99,7 @@ namespace AVATI.Data
         {
             using DbConnection db = GetConnection();
             
-            if (username.Length > 70 || username is null or "")
+            if ( username is null or "" || username.Length > 70 )
             {
                 return false;
             }
@@ -107,7 +107,7 @@ namespace AVATI.Data
             if (db.Query<string>("Select Username From Login Where Username=@user ", new
             {
                 user = username
-            }) != null)
+            }).FirstOrDefault() != null)
             {
                 return false;
             }
@@ -118,6 +118,14 @@ namespace AVATI.Data
         public bool DeleteLogin(string username)
         {
             using DbConnection db = GetConnection();
+            
+            
+            if (username.Length > 70 || username is null or "")
+            {
+                return false;
+            }
+            
+            
             if (!CheckUsernameAvailable(username))
             {
               db.Query("Delete from Login Where Username=@user", new
