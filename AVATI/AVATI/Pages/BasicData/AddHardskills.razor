@@ -131,7 +131,7 @@
               <MudIcon Icon="@Icons.Filled.InfoOutline" Style="color: #5a6066; display: inline;" @onclick="() => { _openExplain = !_openExplain;}"/>
                       <a style="position: relative;">
                           <MudPopover Open="@_openExplain" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 400px; height: auto;">
-                            <MudText Style="font-size: 14px;">Sie können Hardskills aus anderen 
+                            <MudText Style="font-size: 14px;">Sie können <a class="theStyle" style="color: white; background: #5bc0de;">Hardskills</a> aus anderen 
                               Kategorien ebenfalls in diese Kategorie hinzufügen; der Hardskill ist dann mehrfach kategorisiert</MudText>
                                       <MudButton Style="font-size: 14px;" OnClick="() => { _openExplain = false;}" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
                               </MudPopover>
@@ -142,7 +142,7 @@
               bool exists = CheckedExists();
               if (_showCat && SubHardskills.Any())
               {
-                <input id="Filter" class="form-control" type="text" placeholder="Filter nach Hardskill..."
+                <input id="Filter" class="form-control" type="text" placeholder="Suche nach Hardskill..."
                        style="margin-top: 15px;"
                        @bind="_filter"
                        @bind:event="oninput">
@@ -156,7 +156,8 @@
                         <div class="alert alert-info">
                           @foreach (var description in SubHardskills[hardskillcat].Where(e => IsVisible(e)))
                           {
-                            <button type="button" class="btn btn-info btn-sm" @onclick="() => HardskillList(description)">
+                            <button type="button" 
+                                    class=@(IsInList(description) ? "btn btn-primary btn-sm": "btn btn-info btn-sm") @onclick="() => HardskillList(description)">
                                 <a>@description</a>
                               </button>
                           }
@@ -187,6 +188,20 @@
           </div>
         </div>
         <div class="modal-footer">
+          @if (ShowCreateCat)
+          {
+            <div>
+              @if (!_isChecked)
+              {
+                <a style="color: #818181;">Suche aus</a>
+              }
+              else
+              {
+                <a>Suche an</a>
+              }
+              <MudCheckBox @bind-Checked="@_isChecked"/>
+            </div>
+          }
           <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">
             <span class="oi oi-circle-x" aria-hidden="true"></span> Abbrechen
           </button>
@@ -254,6 +269,8 @@
   private List<string> _toDeleteSkills;
 
   private List<string> _hardskills;
+
+  private bool _isChecked;
   
   private bool _showErrorCategory;
   private bool _showErrorSkill;
@@ -448,7 +465,13 @@
       _show = !_show;
       Subcat.Clear();
       await Abstract.UpdateHardskills();
-      await Abstract.UpdateCategorys(cat.Description);
+      if(_isChecked)
+        await Abstract.UpdateCategorys(cat.Description);
+      else
+      {
+        await Abstract.UpdateCategorys();
+      }
+      _isChecked = false;
     }
     else
     {

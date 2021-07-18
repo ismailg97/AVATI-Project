@@ -16,14 +16,10 @@
 
 .tTitle {
     width: 350px;
-    white-space: normal;
-    word-break: break-word;
 }
 
 .tActivity {
     width: 250px;
-    white-space: normal;
-    word-break: break-word;
 }
 
 .tHardskills {
@@ -39,7 +35,7 @@
 }
 
 .tDelte {
-    width: 20px;
+    width: 60px;
 }
 
 .tWrite {

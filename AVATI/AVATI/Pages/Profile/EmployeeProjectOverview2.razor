@@ -26,11 +26,8 @@
 </div>
 
 <div class="form-group row col-6">
-    <label for="FilterField" class="col-sm-1 col-form-label ml-n5">
-        <MudIcon Icon="@Icons.Filled.Search" style="color: black;" />
-    </label>
     <div class="col-sm-11 ml-n5">
-        <input id="FilterField" class="form-control mt-sm-1" type="text" placeholder="Filter nach Projekttiteln..."
+        <input id="FilterField" class="form-control mt-sm-1" type="text" placeholder="Suche nach Projekttiteln..."
                @bind="Filter"
                @bind:event="oninput">
     </div>

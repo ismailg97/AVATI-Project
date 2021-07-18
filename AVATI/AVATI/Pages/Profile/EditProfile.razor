@@ -127,7 +127,7 @@
             <MudPopover Open="@_isOpenHardskill" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 300px; height: auto;" OffsetX="true">
                 <div>
                     <MudText Style="font-size: 14px;">Wenn Sie auf einem 
-                        <a style="color: #5cb85c; border-color: #5cb85c;">Hardskill</a> einen Rechtsklick betätigen, können Sie das Level ändern</MudText>
+                        <a style="color: #5cb85c;">Hardskill</a> einen Rechtsklick betätigen, können Sie das Level ändern</MudText>
                     <MudButton Style="font-size: 14px;" OnClick="() => { _isOpenHardskill = false;}" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
                 </div>
             </MudPopover>
@@ -329,7 +329,7 @@
         <a style="position: relative;">
             <MudPopover Open="@_isOpenLanguage" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 300px; height: auto;">
                 <MudText Style="font-size: 14px;">Wenn Sie auf eine 
-                    <a style="color: #0275d8; border-color: #0275d8;">Sprache</a> 
+                    <a style="color: #0275d8;">Sprache</a> 
                     einen Rechtsklick betätigen, können Sie das Level ändern</MudText>
                 <MudButton Style="font-size: 14px;" OnClick="() => { _isOpenLanguage = false; }" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
             </MudPopover>
@@ -520,23 +520,24 @@ else
                     <button type="button" class="close" data-dismiss="modal" @onclick="() => {_relevantWorkExperience = !_relevantWorkExperience; StateHasChanged();}">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label class="form-label small">Jahre Berufserfahrung:</label>
-                        <input class="form-control col-3"
-                               @bind="@YearsofProfessionalExperience" step="0.1" min="0" type="number"/>
+                    <div class="form group" style="margin-left: 18px">
+                        <div class="form-group row">
+                            <input class="form-control col-3"
+                                   @bind="@YearsofProfessionalExperience" step="0.1" min="0" type="number"/>
+                            <label class="form-label" style="margin-left: 8px;">Jahre an Berufserfahrung</label>
+                        </div>
+                        <div class="form-group row">
+                            <input class="form-control col-3"
+                                   @bind="@YearsAsAScientist" step="0.1" min="0" type="number"/>
+                            <label class="form-label" style="margin-left: 8px;">Jahre als studentische Hilfskraft</label>
+                        </div>
+    
+                        <div class="form-group row">
+                            <input class="form-control col-3"
+                                   @bind="@YearsAsAStudentAssistant" step="0.1" min="0" type="number"/>
+                            <label class="form-label" style="margin-left: 8px;">Jahre als wissentschaftlicher Mitarbeiter</label>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label small">Jahre als Studentische Hilfskraft:</label>
-                        <input class="form-control col-3"
-                               @bind="@YearsAsAScientist" step="0.1" min="0" type="number"/>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label small">Jahre Wissentschaftlicher Mitarbeiter:</label>
-                        <input class="form-control col-3" 
-                               @bind="@YearsAsAStudentAssistant" step="0.1" min="0" type="number"/>
-                    </div>
-                    <hr/>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => { _relevantWorkExperience = !_relevantWorkExperience; StateHasChanged(); }"><MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen</button>

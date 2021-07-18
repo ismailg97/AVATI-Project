@@ -73,21 +73,25 @@
                         }
                         </div>
                     <hr class="mx-2"/>
-                    <label class="font-weight-bold ">Zu entfernende Tätigkeiten: </label>
-                    <div class="list-group col overflow-auto text-center  alert alert-danger" style="height: 325px;  align-items: center;">
-                        @foreach (var activity in _deleteActivities)
-                        {
-                            if (!_projectActivityService.AlreadyExistsGlobalActivity(activity))
+                    @if (_deleteActivities.Any())
+                    {
+                        <label class="font-weight-bold ">Zu entfernende Tätigkeiten: </label>
+                        <div class="list-group col overflow-auto text-center  alert alert-danger" style="height: 325px;  align-items: center;">
+                            @foreach (var activity in _deleteActivities)
                             {
-                                <button type="button" class="btn btn-secondary wordBreak text-center m-1"  @onclick=@(() => { _deleteActivities.Remove(activity); _activitiesInProject.Add(activity); })>@activity</button>
+                                if (!_projectActivityService.AlreadyExistsGlobalActivity(activity))
+                                {
+                                    <button type="button" class="btn btn-secondary wordBreak text-center m-1"  @onclick=@(() => { _deleteActivities.Remove(activity); _activitiesInProject.Add(activity); })>@activity</button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-info wordBreak text-center m-1" @onclick=@(() => { _deleteActivities.Remove(activity); _activitiesInProject.Add(activity); })>@activity</button>
+                                }
                             }
-                            else
-                            {
-                                <button type="button" class="btn btn-info wordBreak text-center m-1" @onclick=@(() => { _deleteActivities.Remove(activity); _activitiesInProject.Add(activity); })>@activity</button>
-                            }
-                        }
-                    </div>
-                    <hr class="mx-2"/> 
+                        </div>
+                        <hr class="mx-2"/> 
+                    }
+                    
                     @if (_globalActivities.Any())
                     {
                         <label class="font-weight-bold">Globale Tätigkeiten zum Hinzufügen:</label>
