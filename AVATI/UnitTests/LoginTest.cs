@@ -2,6 +2,7 @@
 using System.IO;
 using AVATI.Data;
 using AVATI.Data.EmployeeDetailFiles;
+using DocumentFormat.OpenXml.Bibliography;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
@@ -22,6 +23,27 @@ namespace UnitTests
                 name;
         }
 
+
+        [TestCase("Test123","123", true)]
+        [TestCase("Test234"," 123", true)]
+        [TestCase("Nichtdrin", "123", false)]
+        [TestCase("","", false)]
+
+        [Test]
+        public void LoginCheckTest(string username, string password, bool isValid)
+        {
+            var loginService = new LoginService(Connection);
+            if (isValid)
+            {
+                loginService.CreateLogIn(username, password);
+                Assert.IsTrue(loginService.LogIn(username, password) == -2);
+            }
+            else
+            {
+                Assert.IsFalse(loginService.LogIn(username, password) >= 0);
+            }
+        }
+        
         
         [TestCase("BitteFunktionier", true)]
         [TestCase("BitteFunktionierNicht", false)]
@@ -30,9 +52,6 @@ namespace UnitTests
         [Test]
         public void CheckUsernameAvailableTest(string username, bool isValid)
         {
-            
-            
-            
             var loginService = new LoginService(Connection);
             
             if (isValid)
@@ -73,6 +92,33 @@ namespace UnitTests
             }
             
             
+        }
+
+        
+        
+        [TestCase("EtePetete", "geheim", true )]
+        [TestCase("", "geheim", false )]
+        [TestCase("Test22", "", false )]
+        [TestCase("Test23", "123456", false )]
+        [TestCase("Something", "1234", true )]
+        [TestCase("asdfjaoiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii" +
+                  "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",  "asdfjaoiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii" +
+            "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii", false)]
+        
+        [Test]
+        public void DeleteLoginTest(string username, string password, bool isValid)
+        {
+            var loginService = new LoginService(Connection);
+            if (isValid)
+            {
+                loginService.CreateLogIn(username, password);
+                Assert.IsTrue(loginService.DeleteLogin(username));
+            }
+            else
+            {
+            
+                Assert.IsFalse(loginService.DeleteLogin(username));
+            }
         }
         
         
