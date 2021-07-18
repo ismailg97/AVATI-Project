@@ -129,6 +129,17 @@ else
     private bool _showError;
     private bool _openExplain;
 
+    private async Task UpdatingAll()
+    {
+        var taskCategory =  _hardskillService.GetHardskillCategory(Description);
+        _subcat = (await taskCategory).Subcat;
+        _showRename = false;
+        var taskJustH = _hardskillService.ContainsJustHardskills(Description);
+        _containsJustHardskills = await taskJustH;
+        var taskJustC = _hardskillService.ContainsAnyHardskills(Description);
+        _containsJustCategorys = !await taskJustC;
+    }
+
     protected override void OnInitialized()
     {
         _whatToShow = -1;
@@ -137,18 +148,12 @@ else
         _loadPagefinished = false;
     }
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         _rename = Description;
         _showSubCategorys = true;
         _showSubHardskills = false;
-        var taskCategory =  _hardskillService.GetHardskillCategory(Description);
-        _subcat = (await taskCategory).Subcat;
-        _showRename = false;
-        var taskJustH = _hardskillService.ContainsJustHardskills(Description);
-        _containsJustHardskills = await taskJustH;
-        var taskJustC = _hardskillService.ContainsAnyHardskills(Description);
-        _containsJustCategorys = !await taskJustC;
+        await UpdatingAll();
         _loadPagefinished = true;
     }
 
@@ -249,12 +254,7 @@ else
     
     public async Task Loading()
     {
-        var taskCategory = _hardskillService.GetHardskillCategory(Description);
-        _subcat = (await taskCategory)?.Subcat;
-        var taskJustH = _hardskillService.ContainsJustHardskills(Description);
-        _containsJustHardskills = await taskJustH;
-        var taskJustC = _hardskillService.ContainsAnyHardskills(Description);
-        _containsJustCategorys = !await taskJustC;
+        await UpdatingAll();
         StateHasChanged();
     }
 }
