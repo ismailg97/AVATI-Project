@@ -67,7 +67,7 @@ namespace AVATI.Data
         }
         
         [HttpPost("Registration")]
-        public async Task<ActionResult> Registration([FromForm] string username, [FromForm] string password, [FromForm] string passwordCheck)
+        public ActionResult Registration([FromForm] string username, [FromForm] string password, [FromForm] string passwordCheck)
         {
             if (password != passwordCheck)
             {
