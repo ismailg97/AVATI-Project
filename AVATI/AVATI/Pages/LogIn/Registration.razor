@@ -2,12 +2,13 @@
 @using AVATI.Data
 @using Blazorise
 
-@layout Emptylayout
+@inject ILoginService _login
+@inject NavigationManager _navManager
 
 @inherits LayoutComponentBase
 
-@inject ILoginService _login
-@inject NavigationManager _navManager
+@layout Emptylayout
+
 
 <AuthorizeView>
     <Authorized>
@@ -16,78 +17,41 @@
             _navManager.NavigateTo("/profile");
         }
     </Authorized>
-    <NotAuthorized Context="authContext">
-
-        <form action="cookie/Registration" method="post">
-            <div class="container col-md-3">
-                <div class="row">
-                    <div class="card">
-                        <div class="box">
-                            <h1>Registrierung</h1>
-                            <div class="input-group-prepend">
-                                <i class="fa fa-user"></i>
-                                <label>Nutzername</label>
-                                <input name="username" class="form-control" id="username"/>
+      <NotAuthorized Context="authContext">
+    
+            <form action="cookie/Registration" method="post">
+                <div class="row justify-content-center">
+                    <div class="box">
+                                <h1>Registrierung</h1>
+                                <input name="username" type="text" class="form-control" id="Username" required placeholder="Nutzername"/>
+                                <input class="form-control" name="password" type="password" required placeholder="Passwort"/>
+                                <input class="form-control" name="passwordCheck" type="password" placeholder="Passwort wiederholen" required/>
+                                <div class="form-group">
+                                    <input type="submit" value="Registrieren" >
+                                    <input type="button" @onclick="() => { BacktoLogin();}" value="Zurück zum Login"/>
+                                </div>
                             </div>
-                            <div class="input-group-prepend">
-                                <i class="fa fa-lock"></i>
-                                <label>Passwort</label>
-                                <input class="form-control" name="password" type="password"/>
-                            </div>
-                            <div class="input-group-prepend">
-                                <i class="fa fa-lock"></i>
-                                <label>Passwort wiederholen</label>
-                                <input class="form-control" name="password" type="password"/>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <input type="submit" value="Registrieren" class="btn btn-primary btn-block">
-                        </div>
-                    </div>
                 </div>
-            </div>
-        </form>
-
-        <style type="text/css">
-            body{ background-image: url("https://images.pexels.com/photos/2246476/pexels-photo-2246476.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")  !important; }
-        </style>
-    </NotAuthorized>
+    
+                    <style type="text/css">
+                    body{ background-image: url("https://images.pexels.com/photos/2246476/pexels-photo-2246476.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940%22")  !important; }
+                </style>
+            </form>
+        </NotAuthorized>
 </AuthorizeView>
 
 
-@if (_booleanSignedIn)
-{
-    <form action="cookie" method="post">
-        <input type="text" name="name"/>
-        <input type="text" name="empType"/>
-        <input type="submit"/>
-    </form>
-}
-
 
 @code {
-    private bool _booleanLoginCheck = false;
-    LoginClass Log = new LoginClass();
+    
+    
     public int Id { get; set; }
-    public string empType { get; set; }
-    private bool _booleanSignedIn { get; set; }
-    //private bool _booleanRegister = false;
+ 
+  
 
-    private void Register()
+    private void BacktoLogin()
     {
-        Id = _login.LogIn(Log.Username, Log.Password);
-        if (Id == -1)
-        {
-            _booleanLoginCheck = true;
-        }
-        else
-        {
-            empType = _login.Login_EmpType(Id);
-
-            _navManager.NavigateTo("/profile/" + Id);
-        }
+        _navManager.NavigateTo("/");
     }
-
-
 
 }

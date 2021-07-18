@@ -21,11 +21,9 @@
         <aside>
 
             <form action="cookie/Login" method="post">
-
-                <div class="container col-md-3">
-                    <div class="row">
-                        <div class="card">
-                            <div class="box">
+                
+                    <div class="row justify-content-center">
+                        <div class="box">
                                 <h1>Login</h1>
                                 <p style="color: white" > Geben Sie Ihre Anmeldedaten erneut ein!</p>
                                 <p><text style="color: white">Falscher Nutzername oder Kennwort eingegeben!</text></p>
@@ -42,9 +40,6 @@
                                 <input type="button" value="Registrierung" @onclick="() => { Register(); }"/>
                             </div>
                         </div>
-                    </div>
-                </div>
-
                 <style type="text/css">
             body{ background-image: url("https://images.pexels.com/photos/2246476/pexels-photo-2246476.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")  !important; }
         </style>
@@ -67,7 +62,7 @@
 
 
 @code {
-    private bool _booleanLoginCheck = false;
+    
     LoginClass Log = new LoginClass();
     public int Id { get; set; }
     public string empType { get; set; }

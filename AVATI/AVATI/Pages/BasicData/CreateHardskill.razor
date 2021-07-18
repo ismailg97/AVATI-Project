@@ -36,9 +36,8 @@
                        {
                          foreach (var uppercat in UpperCat)
                          {
-                           <a style="margin-left: 5px; margin-top: 5px; color: white !important;" class="btn btn-primary btn-sm" type="button" @onclick="() => UpperCatList(uppercat)">
-                             <a class="showRemove">@uppercat</a> <a class="remove"><span class="oi oi-x"></span></a>
-                           </a>
+                           <DeleteButton Text="@uppercat" IsSmall="@true" OnClick="() => UpperCatList(uppercat)"
+                                         Style="margin-bottom: 5px; margin-left: 5px;"/>
                          }
                        }
                        else
@@ -58,7 +57,7 @@
 
                           @foreach (var cat in _allCategorys.Where(IsVisible))
                           {
-                            <button style="margin-bottom: 3px;" type="button" class="btn btn-info btn-sm" @onclick="() => UpperCatList(cat)">
+                            <button type="button" class="btn btn-info btn-sm" @onclick="() => UpperCatList(cat)">
                               <a>@cat</a>
                             </button>
                           }

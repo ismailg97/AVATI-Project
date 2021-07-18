@@ -72,7 +72,7 @@ namespace UnitTests
         [TestCase("  bilD ung", false)]
         [TestCase("Bild-ung", true)]
         [TestCase("Gesundheit/Soziales/Pflege", false)]
-        [TestCase("Gesundheit  /  Soziales  /Pflege ", false)]
+        [TestCase("Gesundheit / Soziales  /Pflege ", false)]
         [TestCase("Gesundheit Soziales Pflege", true)]
         [TestCase("Gesundheit//Soziales//Pflege", true)]
         [TestCase("Maschinen- und Anlagenbau", false)]

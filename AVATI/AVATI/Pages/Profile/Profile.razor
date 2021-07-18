@@ -13,204 +13,206 @@
 @inject IHttpContextAccessor _httpContextAccessor
 
 <AuthorizeView>
-    <NotAuthorized>
+<NotAuthorized>
 
-    </NotAuthorized>
-    <Authorized>
-        
-        <h3 class="text-center">@Emp.FirstName @Emp.LastName</h3>
-        <hr/>
-        <div class="container backdrop emp-profile">
-            <div class="row">
-                <div class="col-md-4">
-                    <div style="margin-top: -5%; border-radius: 80%" class="profile-img">
-                        @if (Emp.Image == null)
+</NotAuthorized>
+<Authorized>
+
+    <h3 class="text-center">@Emp.FirstName @Emp.LastName</h3>
+    <hr/>
+    <div class="container backdrop emp-profile">
+        <div class="row">
+            <div class="col-md-4">
+                <div style="margin-top: -5%; border-radius: 80%" class="profile-img">
+                    @if (Emp.Image == null)
+                    {
+                        <img class="rounded" src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" style="margin-left: -45px" width="300" height="200" alt=""/>
+                    }
+                    else
+                    {
+                        <img class="rounded" src="@Emp.Image" style="margin-left: -45px" width="300" height="200" alt=""/>
+                    }
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="rounded-3 profile-head">
+                    <div style="margin-left: 12px" class="form-group text-left">
+
+
+                        <!------ RC-Level ---------->
+                        <p class="profile-rating">RateCard : <span>@Emp.Rc</span></p>
+
+                        <!------ Employment Time ---------->
+                        <p style="color: #000;margin-top: -7px">Beschäftigt seit: @Emp.EmploymentTime.ToShortDateString()</p>
+
+                        <p style="color: #000;margin-top: -7px">Relevante Berufserfahrung: @(Emp.RelevantWorkExperience) Jahre</p>
+
+                    </div>
+                </div>
+            </div>
+            <!------ Edit Profile Button ---------->
+
+            <button type="button" class="btn btn-info" style="height: 40px;" @onclick="() => { NavToUpdate(); }">
+                <MudIcon Icon="@Icons.Filled.Brush"/>
+                Profil bearbeiten
+            </button>
+
+        </div>
+
+        <!------ Skills ---------->
+        <div class="container col">
+
+            <div class="form-group row">
+                <!------ Hard Skills ---------->
+                <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider col-12"></div>
+                <div class="form-group col m-2 ">
+                    <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollHardSkill(); })"><MudIcon Icon="@Icons.Filled.ViewList"/> Hard Skills</button>
+                    <div class="card-text @(_booleanHardSkill ? "" : "collapse")">
+                        <table class="table table-striped">
+                            <tr>
+                                <th class="thead-dark">Beschreibung</th>
+                                <th class="thead-dark">Level</th>
+                            </tr>
+                            @foreach (var hardskill in Emp.HardSkillLevel)
+                            {
+                                <tr>
+                                    <td>@hardskill.Item1.Description</td>
+                                    <td>@hardskill.Item2</td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+                <!------ Soft Skills ---------->
+                <div class="form-group col m-2 ">
+                    <button type="button" class="form-group btn btn-outline-secondary text-left" @onclick="(() => { CollSoftSkill(); })"><MudIcon Icon="@Icons.Filled.ViewList"/> Soft Skills</button>
+                    <div class="card-text @(_booleanSoftSkill ? "" : "collapse")">
+                        <table class="table table-striped">
+                            @foreach (var softskill in Emp.Softskills)
+                            {
+                                <tr>
+                                    <td>@softskill</td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <!------ Rollen ---------->
+                <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider col-12"></div>
+                <div class="form-group col m-2 ">
+                    <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollRole(); })"><MudIcon Icon="@Icons.Filled.ViewList"/> Rollen</button>
+                    <div class="card-text @(_booleanRole ? "" : "collapse")">
+                        <ul class="list-group mb-3 text-left">
+                            <table class="table table-striped">
+                                @foreach (var rolle in Emp.Roles)
+                                {
+                                    <tr>
+                                        <td>@rolle</td>
+                                    </tr>
+                                }
+                            </table>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-group col m-2">
+                    <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollField(); })"><MudIcon Icon="@Icons.Filled.ViewList"/> Branchenwissen</button>
+                    <div class="card-text @(_booleanField ? "" : "collapse")">
+                        <ul class="list-group text-left">
+                            @if (Emp.Field.Any())
+                            {
+                                <table class="table align-middle">
+                                    @foreach (var elem in Emp.Field)
+                                    {
+                                        <tr>
+                                            <td>@elem</td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider col-12"></div>
+                <div class="form-group col m-2">
+                    <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollLang(); })"><MudIcon Icon="@Icons.Filled.ViewList"/> Sprachen</button>
+                    <div class="card-text @(_booleanLang ? "" : "collapse")">
+                        @if (Emp.Language.Any())
                         {
-                            <img class="rounded" src="https://www.geniale-tipps.de/images/t/whatsapp-profilbild-grau.jpg" style="margin-left: -45px" width="300" height="200" alt=""/>
+                            <table class="table align-middle">
+                                <tr>
+                                    <th class="text-left">Sprache</th>
+                                    <th class="text-center">Sprachniveau</th>
+                                </tr>
+                                @foreach (var lang in Emp.Language)
+                                {
+                                    <tr>
+                                        <td class="text-left">@lang.Item1</td>
+                                        <td class="text-center">@lang.Item2</td>
+                                    </tr>
+                                }
+                            </table>
                         }
                         else
                         {
-                            <img class="rounded" src="@Emp.Image" style="margin-left: -45px" width="300" height="200" alt=""/>
+                            <p>Scheint nichts hier zu sein.</p>
                         }
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="rounded-3 profile-head">
-                        <div style="margin-left: 12px" class="form-group text-left">
 
+                <!------ Projects ---------->
+                <div class="form-group col m-2">
+                    <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollProj(); })"><MudIcon Icon="@Icons.Filled.ViewList"/> Projekte</button>
+                    <div class="card-text @(_booleanProj ? "" : "collapse")">
+                        <table class="table align-middle">
 
-                            <!------ RC-Level ---------->
-                            <p class="profile-rating">RateCard : <span>@Emp.Rc</span></p>
-
-                            <!------ Employment Time ---------->
-                            <p style="color: #000;margin-top: -7px">Beschäftigt seit: @Emp.EmploymentTime.ToShortDateString()</p>
-
-                            <p style="color: #000;margin-top: -7px">Relevante Berufserfahrung: @(Emp.RelevantWorkExperience) Jahre</p>
-
-                        </div>
-                    </div>
-                </div>
-                <!------ Edit Profile Button ---------->
-                <button type="button" class="btn btn-info" style="height: 40px;" @onclick="() => { NavToUpdate(); }">
-                    <MudIcon Icon="@Icons.Filled.Brush"/> 
-                    Profil bearbeiten
-                </button>
-            </div>
-
-            <!------ Skills ---------->
-            <div class="container col">
-
-                <div class="form-group row">
-                    <!------ Hard Skills ---------->
-                    <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider col-12"></div>
-                    <div class="form-group col m-2 ">
-                        <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollHardSkill(); })"><MudIcon Icon="@Icons.Filled.ViewList"/> Hard Skills</button>
-                        <div class="card-text @(_booleanHardSkill ? "" : "collapse")">
-                            <table class="table table-striped">
-                                <tr>
-                                    <th class="thead-dark">Beschreibung</th>
-                                    <th class="thead-dark">Level</th>
-                                </tr>
-                                @foreach (var hardskill in Emp.HardSkillLevel)
-                                {
-                                    <tr>
-                                        <td>@hardskill.Item1.Description</td>
-                                        <td>@hardskill.Item2</td>
-                                    </tr>
-                                }
-                            </table>
-                        </div>
-                    </div>
-                    <!------ Soft Skills ---------->
-                    <div class="form-group col m-2 ">
-                        <button type="button" class="form-group btn btn-outline-secondary text-left" @onclick="(() => { CollSoftSkill(); })"><MudIcon Icon="@Icons.Filled.ViewList"/> Soft Skills</button>
-                        <div class="card-text @(_booleanSoftSkill ? "" : "collapse")">
-                            <table class="table table-striped">
-                                @foreach (var softskill in Emp.Softskills)
-                                {
-                                    <tr>
-                                        <td>@softskill</td>
-                                    </tr>
-                                }
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-group row">
-                    <!------ Rollen ---------->
-                    <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider col-12"></div>
-                    <div class="form-group col m-2 ">
-                        <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollRole(); })"><MudIcon Icon="@Icons.Filled.ViewList"/> Rollen</button>
-                        <div class="card-text @(_booleanRole ? "" : "collapse")">
-                            <ul class="list-group mb-3 text-left">
-                                <table class="table table-striped">
-                                    @foreach (var rolle in Emp.Roles)
-                                    {
-                                        <tr>
-                                            <td>@rolle</td>
-                                        </tr>
-                                    }
-                                </table>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="form-group col m-2">
-                        <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollField(); })"><MudIcon Icon="@Icons.Filled.ViewList"/> Branchenwissen</button>
-                        <div class="card-text @(_booleanField ? "" : "collapse")">
-                            <ul class="list-group text-left">
-                                @if (Emp.Field.Any())
-                                {
-                                    <table class="table align-middle">
-                                        @foreach (var elem in Emp.Field)
-                                        {
-                                            <tr>
-                                                <td>@elem</td>
-                                            </tr>
-                                        }
-                                    </table>
-                                }
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-group row">
-                    <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider col-12"></div>
-                    <div class="form-group col m-2">
-                        <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollLang(); })"><MudIcon Icon="@Icons.Filled.ViewList"/> Sprachen</button>
-                        <div class="card-text @(_booleanLang ? "" : "collapse")">
-                            @if (Emp.Language.Any())
+                            @if (!_projectWithGroupedActivities.Any())
                             {
-                                <table class="table align-middle">
-                                    <tr>
-                                        <th class="text-left">Sprache</th>
-                                        <th class="text-center">Sprachniveau</th>
-                                    </tr>
-                                    @foreach (var lang in Emp.Language)
-                                    {
-                                        <tr>
-                                            <td class="text-left">@lang.Item1</td>
-                                            <td class="text-center">@lang.Item2</td>
-                                        </tr>
-                                    }
-                                </table>
+                                <tr>
+                                    <td class="text-left">[Sie sind noch keinem Projekt zugewiesen]</td>
+                                </tr>
                             }
                             else
                             {
-                                <p>Scheint nichts hier zu sein.</p>
+                                <tr>
+                                    <th class="text-left">Projekt</th>
+                                    <th class="text-left">Projekttätigkeit</th>
+                                </tr>
+                                foreach (var projectId in _projectWithGroupedActivities.Keys)
+                                {
+                                    var projecttitle = _projectService.GetProject(projectId).Projecttitel;
+                                    <tr>
+                                        <td>@projecttitle</td>
+                                        <td>
+                                            <ul>
+                                                @if (!_projectWithGroupedActivities[projectId].Any())
+                                                {
+                                                    <a>[Sie haben sich noch keiner Tätigkeit zugewiesen]</a>
+                                                }
+                                                else
+                                                {
+                                                    foreach (var activity in _projectWithGroupedActivities[projectId])
+                                                    {
+                                                        <li>@activity.Description |</li>
+                                                    }
+                                                }
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                }
                             }
-                        </div>
-                    </div>
-
-                    <!------ Projects ---------->
-                    <div class="form-group col m-2">
-                        <button type="button" class="btn btn-outline-secondary text-left form-group" @onclick="(() => { CollProj(); })"><MudIcon Icon="@Icons.Filled.ViewList"/> Projekte</button>
-                        <div class="card-text @(_booleanProj ? "" : "collapse")">
-                            <table class="table align-middle">
-
-                                @if (!_projectWithGroupedActivities.Any())
-                                {
-                                    <tr>
-                                        <td class="text-left">[Sie sind noch keinem Projekt zugewiesen]</td>
-                                    </tr>
-                                }
-                                else
-                                {
-                                    <tr>
-                                        <th class="text-left">Projekt</th>
-                                        <th class="text-left">Projekttätigkeit</th>
-                                    </tr>
-                                    foreach (var projectId in _projectWithGroupedActivities.Keys)
-                                    {
-                                        var projecttitle = _projectService.GetProject(projectId).Projecttitel;
-                                        <tr>
-                                            <td>@projecttitle</td>
-                                            <td>
-                                                <ul>
-                                                    @if (!_projectWithGroupedActivities[projectId].Any())
-                                                    {
-                                                        <a>[Sie haben sich noch keiner Tätigkeit zugewiesen]</a>
-                                                    }
-                                                    else
-                                                    {
-                                                        foreach (var activity in _projectWithGroupedActivities[projectId])
-                                                        {
-                                                            <li>@activity.Description</li>
-                                                        }
-                                                    }
-                                                </ul>
-                                            </td>
-                                        </tr>
-                                    }
-                                }
-                            </table>
-                        </div>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-    </Authorized>
+    </div>
+</Authorized>
 </AuthorizeView>
 
 @code {
