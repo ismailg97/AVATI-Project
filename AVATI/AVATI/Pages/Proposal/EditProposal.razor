@@ -7,7 +7,7 @@
 @inject IHardskillService _hardskill
 
 
-<AuthorizeView Roles="SalesStaff">
+<AuthorizeView Roles="SalesStaff, Administrator">
     <NotAuthorized>
         @if (true)
         {

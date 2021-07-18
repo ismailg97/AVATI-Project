@@ -26,7 +26,7 @@
 @inject IEmployeeService _employeeService
 
 
-<AuthorizeView Roles="SalesStaff">
+<AuthorizeView Roles="SalesStaff, Administrator">
     <NotAuthorized>
         @if(true){_navManager.NavigateTo("/profile");}
     </NotAuthorized>

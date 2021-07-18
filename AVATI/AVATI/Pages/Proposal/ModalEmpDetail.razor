@@ -14,7 +14,7 @@
 @inject IProjectService _project
 @inject NavigationManager _navigationManager
 
-<AuthorizeView Roles="SalesStaff">
+<AuthorizeView Roles="SalesStaff, Administrator">
 <NotAuthorized>
     @if (true)
     {
