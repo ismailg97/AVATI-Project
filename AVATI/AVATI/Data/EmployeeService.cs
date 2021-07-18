@@ -131,15 +131,12 @@ namespace AVATI.Data
                 {
                      Firstname = emp.FirstName, Lastname= emp.LastName, img = emp.Image ,
                     RWE = emp.RelevantWorkExperience, EmpTime = emp.EmploymentTime, EmpType = emp.EmpType.ToString(), Rc = emp.Rc,
-                    IA = emp.IsActive
+                    IA = true
                 });
 
             var id = db.QuerySingle<int>(
-                "Select EmployeeID From Employee WHERE Firstname = @Firstname AND Lastname = @Lastname", new
-                {
-                    Firstname = emp.FirstName, LastName = emp.LastName
-                });
-            
+                "Select MAX(EmployeeID) From Employee");
+
             foreach (var field in emp.Field)
             {
                 db.Query("INSERT INTO Employee_Field VALUES (@ID, @fields)", new {ID = id, fields = field});

@@ -120,7 +120,7 @@ namespace AVATI.Data
             using DbConnection db = GetConnection();
             
             
-            if (username.Length > 70 || username is null or "")
+            if (username is null or ""|| username.Length > 70 )
             {
                 return false;
             }
