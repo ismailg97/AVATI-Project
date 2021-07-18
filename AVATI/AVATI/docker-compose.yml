@@ -10,10 +10,10 @@ services:
      - "1433:1433"
 
   web:
-    image: 496ea36777ad
+    image: ec07bbfa63b2
     restart: always
     ports:
       - "8080:80"
-    command: sh -c './wait-for db:1433 -- npm start'
+    command: sh -c './wait-for db:1433 --timeout=10 -- npm start'
     depends_on:
       - "db"
