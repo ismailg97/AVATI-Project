@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   web:
-    image: sha256:d73e64598f1c9328630b1bae546018488568e75dbc67b4ecccd52444b0cebc17
+    image: sha256:2fea1ce721495664c633468ec7039be488baa69d82220529516afc7d11bd71c7
     ports:
     - "8080:80"
   db:
