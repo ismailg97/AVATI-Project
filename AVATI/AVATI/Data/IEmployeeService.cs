@@ -43,7 +43,15 @@ namespace AVATI.Data
         /// <param name="status">boolean value</param>
         /// <returns></returns>
         public bool EditStatus(int employeeId, bool status);
+
         
+        /// <summary>
+        /// Gets Employees current Employee Status
+        /// </summary>
+        /// <param name="employeeId">Identifier Employee</param>
+        /// <returns>status</returns>
+        public bool GetStatus(int employeeId);
+
 
 
     }

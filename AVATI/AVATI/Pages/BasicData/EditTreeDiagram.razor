@@ -22,6 +22,17 @@
 
                     <ContextMenuTrigger MenuId="@Description">
                         <a class="cat" type="button" @onclick="() => ShowingUnder()">@Description</a>
+                        <MudIcon Icon="@Icons.Filled.InfoOutline" Style="color: #5a6066; display: inline;" @onclick="() => { _openExplain = !_openExplain;}"/>
+                                  <a style="position: relative; border: none !important;">
+                                      <MudPopover Open="@_openExplain" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 400px; height: auto;">
+                                          <MudText Style="font-size: 14px;"> Wenn Sie hier einen Rechtsklick auf einer 
+                                              <a style="background-color: #7a212e; color: white; border: none !important;">Kategorie</a> bzw. auf einem 
+                                              <a style="background-color: #c2364b; color: white; border: none !important;">Hardskill</a> 
+                                              betätigen, so öffnet sich ein Menü
+                                          </MudText>
+                                                  <MudButton Style="font-size: 14px;" OnClick="() => { _openExplain = false;}" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
+                                          </MudPopover>
+                                  </a>
                     </ContextMenuTrigger>
                 }
                 else
@@ -116,6 +127,7 @@ else
     private int _whatToShow;
 
     private bool _showError;
+    private bool _openExplain;
 
     protected override void OnInitialized()
     {

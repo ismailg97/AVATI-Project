@@ -15,6 +15,14 @@
                 <input class="form-control col-4 inline" type="text" id="softskill" @bind="_newCategory"/>
                 <button type="button" class="check inline" @onclick="CreateCategory">&#10003;</button>
                 <button type="button" class="stop inline" @onclick="ShowingNew">&#10005;</button>
+                <MudIcon Icon="@Icons.Filled.InfoOutline" Style="color: #5a6066; display: inline;" @onclick="() => { _openExplain = !_openExplain;}"/>
+                          <a style="position: relative; border: none !important;">
+                              <MudPopover Open="@_openExplain" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 400px; height: auto;">
+                                  <MudText Style="font-size: 14px;">Wenn Sie hier eine <a style="background-color: #0275d8; color: white; border: none !important;">Kategorie</a> bzw. ein
+                                      <a style="background-color: #5cb85c; color: white; border: none !important;">Hardskill</a> auswählen, so wird diese in die erstellte Kategorie untergliedert</MudText>
+                                          <MudButton Style="font-size: 14px;" OnClick="() => { _openExplain = false;}" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
+                                  </MudPopover>
+                          </a>
                 <a style="position: relative; border: none !important;">
                     <MudPopover Open="@_showCreateError" Class="alert alert-danger text-center" Style="width: 380px; height: auto; color: darkred; font-weight: 650; font-size: 14px; background-color: #f8d7da">
                         @if (_whatToShowCreate == 0)
@@ -141,7 +149,8 @@ else
                     <MudIcon Icon="@Icons.Filled.InfoOutline" Style="color: #5a6066; display: inline;" @onclick="() => { _openExplain = !_openExplain;}"/>
                                           <a style="position: relative; border: none !important;">
                                               <MudPopover Open="@_openExplain" Class="px-4 pt-4" Direction="Direction.Top" Style="width: 400px; height: auto;">
-                                                <MudText Style="font-size: 14px;">Wenn Sie eine Unterkategorie auswählen (blau makiert)</MudText>
+                                                  <MudText Style="font-size: 14px;">Wenn Sie hier eine <a style="background-color: #0275d8; color: white; border: none !important;">Kategorie</a> bzw. ein
+                                                      <a style="background-color: #5cb85c; color: white; border: none !important;">Hardskill</a> auswählen, so wird diese in die erstellte Kategorie untergliedert</MudText>
                                                           <MudButton Style="font-size: 14px;" OnClick="() => { _openExplain = false;}" Class="ml-auto mr-n3 mb-1" Color="MudBlazor.Color.Error">Close</MudButton>
                                                   </MudPopover>
                                           </a>
@@ -166,9 +175,14 @@ else
                         {
 
                             <li>
-                                <button class="@(IsInList(category) ? "btn btn-success" : "btn btn-outline-success")" type="button" @onclick="() => AddList(category)">
-                                    <a style="border: none !important;" class="@(IsInList(category) ? "showRemove" : "")">@category</a> <a class="remove"><span class="oi oi-x"></span></a>
-                                </button>
+                                @if (IsInList(category))
+                                {
+                                    <DeleteButton Text="@category" Type="TypeButton.Primary" OnClick="() => AddList(category)"/>
+                                }
+                                else
+                                {
+                                    <DeleteButton Text="@category" Type="TypeButton.OutlinePrimary" OnClick="() => AddList(category)" IsDisabled="@true"/>
+                                }
                             </li>
                         }
 
@@ -176,9 +190,14 @@ else
                         {
 
                             <li>
-                                <button class="@(IsInList(hardskill) ? "btn btn-primary" : "btn btn-outline-primary")" type="button" @onclick="() => AddList(hardskill)">
-                                    <a style="border: none !important;" class="@(IsInList(hardskill) ? "showRemove" : "")">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a>
-                                </button>
+                                @if (IsInList(hardskill))
+                                {
+                                    <DeleteButton Text="@hardskill" Type="TypeButton.Success" OnClick="() => AddList(hardskill)"/>
+                                }
+                                else
+                                {
+                                    <DeleteButton Text="@hardskill" Type="TypeButton.OutlineSuccess" OnClick="() => AddList(hardskill)" IsDisabled="@true"/>
+                                }
                             </li>
                         }
                     </ul>

@@ -115,6 +115,16 @@ namespace AVATI.Data
         public int CreateEmployeeProfile(Employee emp, string username)
         {
             using DbConnection db = GetConnection();
+            
+            if (emp.FirstName.Length > 70 || emp.FirstName is null or "")
+            {
+                return -1;
+            }
+            if (emp.LastName.Length > 70 || emp.LastName is null or "")
+            {
+                return -1;
+            }
+
             db.Query(
                 "INSERT INTO Employee VALUES ( @Firstname ,@Lastname ,@RWE, @EmpTime,@Rc,@EmpType, @IA, @img)",
                 new
@@ -168,6 +178,15 @@ namespace AVATI.Data
         public bool EditEmployeeProfile(Employee emp)
         {
             using DbConnection db = GetConnection();
+            
+            if (emp.FirstName.Length > 70 || emp.FirstName is null or "")
+            {
+                return false;
+            }
+            if (emp.LastName.Length > 70 || emp.LastName is null or "")
+            {
+                return false;
+            }
             
             db.Query(
                 "UPDATE Employee SET Firstname= @Firstname ,Lastname = @Lastname , Image = @img , WorkExperience = @RWE, EmploymentTime = @EmpTime,RCLevel = @RC, IsActive = @IA WHERE EmployeeID = @ID",
@@ -397,7 +416,7 @@ namespace AVATI.Data
             return defaultImage;
         }
 
-        public bool? GetSatus(int employeeId)
+        public bool GetStatus(int employeeId)
         {
             using DbConnection db = GetConnection();
             var status = db.Query<byte>("select IsActive from Employee where EmployeeId = @ID", new {ID = employeeId})

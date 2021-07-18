@@ -6,11 +6,7 @@
   &lt;Assembly Path="C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\5.0.0\ref\net5.0\Microsoft.Extensions.Configuration.Abstractions.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d7d992cf_002Daa43_002D47fe_002Dbe3c_002D979a8b521565/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="WipeProjects" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.ProjectTest.WipeProjects&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.ProposalTest.CreateRandomProposals&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::CE663AE0-D23E-4F0E-A4B5-F3E038E95F3D::net5.0::UnitTests.ProposalTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+  &lt;Project Location="C:\Users\ismai\RiderProjects\tutorium-f-team-12\AVATI\UnitTests" Presentation="&amp;lt;UnitTests&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	
 	
