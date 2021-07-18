@@ -293,10 +293,17 @@ namespace AVATI.Data
             //-----------ProjectActivities-----------
             var oldActivities = _projectActivityService.GetProjectActivitiesOfEmployee(emp.EmployeeID);
             var newActivities = new List<ProjectActivity>(emp.ProjectActivities);
-            
+            var empHardskills = new List<string>();
+
+            foreach (var hardskill in emp.HardSkillLevel)
+            { 
+                if(!empHardskills.Exists(x => x == hardskill.Item1.Description))
+                    empHardskills.Add(hardskill.Item1.Description);
+            }
+
             foreach (var oldActivity in oldActivities)
             {
-                var newActivity = newActivities.Find(x => x.ProjectActivityID == oldActivity.ProjectActivityID);
+                var newActivity = emp.ProjectActivities.Find(x => x.ProjectActivityID == oldActivity.ProjectActivityID);
                 if (newActivity == null)
                 {
                     continue;
@@ -304,7 +311,9 @@ namespace AVATI.Data
 
                 if (oldActivity.Description != null && newActivity.Description == oldActivity.Description)
                 {
-                    _projectActivityService.UpdateSkillsToActivity(newActivity.ProjectActivityID, newActivity.HardSkills, newActivity.SoftSkills);
+                    var updateHardSkills = newActivity.HardSkills.FindAll(x => empHardskills.Contains(x));
+                    var updateSoftSkills = newActivity.SoftSkills.FindAll(x => emp.Softskills.Contains(x));
+                    _projectActivityService.UpdateSkillsToActivity(newActivity.ProjectActivityID, updateHardSkills, updateSoftSkills);
                 } 
                 else if (oldActivity.Description != null && newActivity.Description == null)
                 {
@@ -317,6 +326,8 @@ namespace AVATI.Data
             foreach (var activity in newActivities)
             {
                 if (activity.Description == null) continue;
+                activity.HardSkills = activity.HardSkills.FindAll(x => empHardskills.Contains(x));
+                activity.SoftSkills = activity.SoftSkills.FindAll(x => emp.Softskills.Contains(x));;
                 _projectActivityService.SetProjectActivityToEmployee(activity);
             }
             //--------------------------------------------
