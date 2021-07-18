@@ -56,13 +56,14 @@ namespace UnitTests
             
             if (isValid)
             {
+                loginService.DeleteLogin(username);
                 Assert.IsTrue(loginService.CheckUsernameAvailable(username));
             }
             else
             {
                 loginService.CreateLogIn(username, "1234");
-                
                 Assert.IsFalse(loginService.CheckUsernameAvailable(username));
+                loginService.DeleteLogin(username);
             }
             
         }

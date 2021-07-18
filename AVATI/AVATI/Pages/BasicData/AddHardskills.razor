@@ -4,8 +4,8 @@
 
 @inject IHardskillService _hardskillService
 
-<div class="modal @(_show ? "fade show" : "" )" id="myModal" style=" display: @(_show ? "block" : "none"); width: 700px; position: center;"> 
-  <div class="modal-dialog modal-dialog-scrollable">
+<div class="modal @(_show ? "fade show" : "" )" id="myModal" style=" display: @(_show ? "block" : "none"); position: center;vertical-align:middle;"> 
+  <div class="modal-dialog modal-dialog-scrollable justify-content-center">
     <div class="modal-content">
       @if (_finishedLoadPage)
       {

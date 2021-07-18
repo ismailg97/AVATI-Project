@@ -22,9 +22,7 @@
         }
     </NotAuthorized>
     <Authorized >
-
-
-
+        
         @if (_show)
         {
             <div class="modal fade show d-block" id="myModal">
@@ -38,22 +36,22 @@
                         </div>
                         <div class="modal-body" style="min-width: 100%">
                             <label class="font-weight-bold">Branchen im Projekt:</label>
-                            <div class="list-group col overflow-auto text-center border-dark" style="height: 250px">
+                            <div class="list-group col overflow-auto text-center alert alert-success" style="height: 250px;  align-items: center;">
                                 @foreach (var field in _fieldsChosen)
                                 {
-                                    <a class="btn btn-outline-dark" id="fieldButton" type="button" @onclick=@(() => { _fieldsChosen.Remove(field); })>
+                                    <a class="btn btn-success m-1" id="fieldButton" type="button" style="width: 98%; color: white;" @onclick=@(() => { _fieldsChosen.Remove(field); })>
                                         <a class="showRemove">@field</a> <a class="remove"><span class="oi oi-x"></span></a>
                                     </a>
                                 }
                             </div>
                             <hr class="mx-2"/> <!--line divider -->
                             <label class="font-weight-bold ">Branchen zur Auswahl stehend:</label>
-                            <div class="list-group col overflow-auto border-dark" style="height: 250px">
+                            <div class="list-group col overflow-auto alert alert-info" style="height: 250px;  align-items: center;">
                                 @foreach (var field in _allFields)
                                 {
                                     if (!_fieldsChosen.Contains(field))
                                     {
-                                        <button type="button" class="btn btn-outline-dark" @onclick=@(() => { _fieldsChosen.Add(field); })>@field</button>
+                                        <button type="button" class="btn btn-info m-1" style="width: 98%; color: white;" @onclick=@(() => { _fieldsChosen.Add(field); })>@field</button>
                                     }
                                 }
                             </div>

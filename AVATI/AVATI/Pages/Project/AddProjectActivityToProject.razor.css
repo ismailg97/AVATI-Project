@@ -11,20 +11,20 @@
 
 .global {
     font-weight: bold;
-    background: #0275d8;
-    border-color: #0275d8;
-    box-shadow: #0275d8;
-    border-left: #0275d8;
-    border-right: #0275d8;
+    background: #5bc0de;
+    border-color: #5bc0de;
+    box-shadow: #5bc0de;
+    border-left: #5bc0de;
+    border-right: #5bc0de;
 }
 
 .local {
     font-weight: bold;
-    background: #5cb85c;
-    border-color: #5cb85c;
-    box-shadow: #5cb85c;
-    border-left: #5cb85c;
-    border-right: #5cb85c;
+    background: #9b838b;
+    border-color: #9b838b;
+    box-shadow: #9b838b;
+    border-left: #9b838b;
+    border-right: #9b838b;
 }
 
 .stop {
