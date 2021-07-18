@@ -4,8 +4,8 @@
     border-bottom: 1px solid #d6d5d5;
     height: 3.57rem;
     display: flex;
-    align-items: center;
     position: fixed;
+    align-items: center;
     width: 100%;
     transition: 0.5s;
     z-index: +1;
@@ -65,10 +65,10 @@
     font-size: 1.3rem;
 }
 #aboutOpen {
-    margin-left: 25%;
+    margin-left: 27%;
 }
 #aboutCollapsed {
-    margin-left: 25%;
+    margin-left: 35%;
 }
 .nav-item ::deep a.active {
     background-color: rgba(255,255,255,0.2);
@@ -105,6 +105,7 @@
     color: white;
     padding: 10px 10px;
     border: none;
+    margin-top: 10px;
     margin-left: 0;
 }
 .logo {
@@ -112,13 +113,14 @@
     height: 70px;
 }
 #logoCollapsed {
-    margin-left: 25%;
+    margin-left: 40%;
 }
 #logoOpen {
-    margin-left: 25%;
+    margin-left: 35%;
 }
-/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
-@media screen and (max-height: 450px) {
+/* On smaller screens, where height is less than 550px, change the style of the sidenav (less padding and a smaller font size) + replacement of "Logout"-Button (otherwise it would be out of the screen)*/
+@media screen and (max-height: 550px) {
     .sidebar {padding-top: 15px;}
     .sidebar a {font-size: 18px;}
+    #aboutCollapsed {margin-left: 20%}
 } 
