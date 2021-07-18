@@ -1,7 +1,7 @@
 ﻿@page "/profile/create/{username}"
 @using AVATI.Data
 @using Blazorise
-@using DocumentFormat.OpenXml.InkML
+
 
 
 @using Microsoft.AspNetCore.Http
@@ -72,8 +72,7 @@
                         <!------ Employment Time ---------->
                         <div class="col-6">
                             <div class="card-title small font-weight-light lead text-left">Beschäftigungszeit</div>
-                            <!--<InputDate type="date" class="form-control" @bind-value="@Emp.EmploymentTime" placeholder="@Emp.EmploymentTime" required/>-->
-                            <InputDate class="form-control col" @bind-Value="@Emp.EmploymentTime" placeholder="@DateTime.UtcNow"/>
+                            <InputDate class="form-control col" @bind-Value="@Emp.EmploymentTime" placeholder="@DateTime.UtcNow" required/>
                         </div>
                     </div>
                     <div style="margin-top: 20px" class="row">
@@ -92,7 +91,7 @@
                         </div>
                         <div class="col-6">
                             <div class="card-title small font-weight-light lead text-left">Mitarbeitertyp</div>
-                            <select class="form-control" @bind="@empType">
+                            <select class="form-control" @bind="@EmpType">
                                 <option selected>Mitarbeiter</option>
                                 <option>Vertriebsmitarbeiter</option>
                                 <option>Administrator</option>
@@ -540,7 +539,7 @@ else
     LanguageLevelSelectionCreateProfile _languageLevel;
 
     [Parameter]
-    public string username { get; set; }
+    public string Username { get; set; }
 
     public string Input { get; set; }
     public bool Clicked { get; set; } = false;
@@ -551,21 +550,18 @@ else
     public List<string> ProjList = new List<string>();
     public Project Proj = new Project();
     public LoginClass Log = new LoginClass();
+    private string EmpType { get; set; }
     private bool _isOpenHardskill = false;
     private bool _isOpenLanguage = false;
-    private string empType { get; set; }
-
-
     private bool _booleanHardSkill = false;
     private bool _pageIsLoaded = false;
     private bool _booleanProj = false;
     private bool _relevantWorkExperience = false;
-    private bool _openExplain;
 
 
-    private string _toPrint = "Die Relevante Berufserfahrung wird wie folgt berechnet: " +
+    /*private string _toPrint = "Die Relevante Berufserfahrung wird wie folgt berechnet: " +
                               "Ergebnis = <Aktuelles Jahr> - <Jahre Berufserfahrung> - 0,5 x <Jahre als Wissenschaftliche/r Mitarbeiterin> " +
-                              " - <0,3 x Jahre als Studentische Hilfskraft>";
+                              " - <0,3 x Jahre als Studentische Hilfskraft>"; */
 
     private double YearsofProfessionalExperience { get; set; } //2
     private double YearsAsAScientist { get; set; } //3
@@ -591,16 +587,10 @@ else
     }
 
 
-    public void NavigatoToEditProject()
-    {
-        _navManager.NavigateTo("/employeeProject/");
-    }
-
-
     public void CreateProfiles()
     {
-        SetEmpType(empType);
-        int Id = _employee.CreateEmployeeProfile(Emp, username);
+        SetEmpType(EmpType);
+        _employee.CreateEmployeeProfile(Emp, Username);
         _navManager.NavigateTo("/");
     }
 
@@ -608,6 +598,12 @@ else
     public void CollProj()
     {
         _booleanProj = !_booleanProj;
+    }
+
+
+    public void CollHardSkill()
+    {
+        _booleanHardSkill = !_booleanHardSkill;
     }
 
 
@@ -622,14 +618,10 @@ else
         _languageLevel.Showing(Emp, language);
     }
 
-    public void Update()
-    {
-        StateHasChanged();
-    }
 
-    public void CollHardSkill()
+    public void ShowPopRelevantWorkExperiece()
     {
-        _booleanHardSkill = !_booleanHardSkill;
+        _relevantWorkExperience = !_relevantWorkExperience;
     }
 
 
@@ -645,7 +637,7 @@ else
 
     public void NavigateToLogin()
     {
-        _loginService.DeleteLogin(username);
+        _loginService.DeleteLogin(Username);
         _navManager.NavigateTo("/");
     }
 
@@ -657,10 +649,11 @@ else
     }
 
 
-    public void ShowPopRelevantWorkExperiece()
+    public void Update()
     {
-        _relevantWorkExperience = !_relevantWorkExperience;
+        StateHasChanged();
     }
+
 
     public void Calculate()
     {

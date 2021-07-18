@@ -70,8 +70,7 @@
                         <!------ Employment Time ---------->
                         <div class="col-6">
                             <div class="card-title small font-weight-light lead text-left">Beschäftigungszeit</div>
-                            <!--<InputDate type="date" class="form-control" @bind-value="@Emp.EmploymentTime" placeholder="@Emp.EmploymentTime" required/>-->
-                            <InputDate class="form-control col" @bind-Value="@Emp.EmploymentTime"/>
+                            <InputDate class="form-control col" @bind-Value="@Emp.EmploymentTime" required/>
                         </div>
                     </div>
                     <div style="margin-top: 20px" class="row">
@@ -254,7 +253,7 @@
 
     <div style="margin-top: 50px; border-width: medium; color: black" class="dropdown-divider">Skills</div>
 
-    <!------ Rollen ---------->
+    <!------ Roles ---------->
     <div class="form-group">
         <label class="mr-3 mt-2"><b>Rollen:</b> </label>
         @if (Emp.Roles.Any())
@@ -575,7 +574,7 @@ else
     private bool _openExplain;
 
     private Dictionary<int, List<ProjectActivity>> _projectWithGroupedActivities;
-    //private bool _booleanName;
+    
 
     private string _toPrint = "Die Relevante Berufserfahrung wird wie folgt berechnet: " +
     "Ergebnis = <Aktuelles Jahr> - <Jahre Berufserfahrung> - 0,5 x <Jahre als Wissenschaftliche/r Mitarbeiterin> " + 
