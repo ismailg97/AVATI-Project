@@ -10,8 +10,6 @@
     transition: 0.5s;
     z-index: +1;
 }
-
-
 .sidebar {
     height: 100%;
     position: fixed; 
@@ -118,10 +116,21 @@
 #logoOpen {
     margin-left: 35%;
 }
-/* On smaller screens, where height is less than 550px, change the style of the sidenav (less padding and a smaller font size) + replacement of "Logout"-Button (otherwise it would be out of the screen)*/
-@media screen and (max-height: 700px) {
+/* On smaller screens, where height is less than 800px and width less than 1400px, change the style of the sidenav (less padding and a smaller font size) 
+and replacement of "Logout"-Button (otherwise it would be out of the screen)*/
+@media screen and (max-width: 1400px) {
     .sidebar {padding-top: 15px;}
     .sidebar a {font-size: 18px;}
     #aboutCollapsed {margin-left: 20%}
+    #aboutOpen {margin-left: 16%}
     #logoCollapsed {margin-left: 33%}
+    #logoOpen {margin-left: 25%}
 } 
+@media screen and (max-height: 800px) {
+    .sidebar {padding-top: 15px;}
+    .sidebar a {font-size: 18px;}
+    #aboutCollapsed {margin-left: 20%}
+    #aboutOpen {margin-left: 16%}
+    #logoCollapsed {margin-left: 33%}
+    #logoOpen {margin-left: 25%}
+}
