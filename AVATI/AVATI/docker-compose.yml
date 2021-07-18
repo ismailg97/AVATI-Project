@@ -1,12 +1,24 @@
 version: "3.9"
 
 services:
-  web:
-    image: sha256:2fea1ce721495664c633468ec7039be488baa69d82220529516afc7d11bd71c7
-    ports:
-    - "8080:80"
   db:
     image: zunaron/default_hub:finalDB
-    ports: 
-    - "1433:1433"
+    environment:
+        SA_PASSWORD: "Your_password123"
+        ACCEPT_EULA: "Y"
+    ports:
+     - "1433:1433"
+
+  web:
+    image: 7541f12cc8f4
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - "db"
+   
+ 
+ 
+  
+ 
     
