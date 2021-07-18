@@ -87,10 +87,7 @@ namespace AVATI.Data
                 return Redirect("/Registration/Fail");
             }
             
-            if (!regexItem.IsMatch(password))
-            {
-                return Redirect("/Registration/Fail");
-            }
+            
             
             _loginService.CreateLogIn(username, password);
             return Redirect("/profile/create/" + username);
