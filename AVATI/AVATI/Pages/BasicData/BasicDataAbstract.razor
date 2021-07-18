@@ -64,7 +64,7 @@
             <div class="form-group col-6">
                 <input id="FilterSoftskill" class="form-group form-control" type="text" placeholder="Suche nach Softskillbezeichnung..."
                        @bind="Filter[0]"
-                       @bind:event="oninput">
+                       @bind:event="oninput" style="margin-bottom: -20px;">
             </div>
         </div>
         if (_softskills.Any(x => IsVisible(x, 0)))
@@ -151,19 +151,12 @@
     {
         <div class="form-group row">
             <div class="form-group col-6">
-                <input id="FilterHardskill" class="form-group form-control" type="text" placeholder="Suche nach Hardskillbezeichnung..."
+                <input id="FilterHardskill" class="form-group form-control" type="text" placeholder="Suche nach Hardskill oder Kategorie"
                        @bind="Filter[1]"
-                       @bind:event="oninput">
+                       @bind:event="oninput" style="margin-bottom: -20px;">
             </div>
         </div>
-
-
-        <div class="form-group row">
-            <div class="form-group col-6">
-                <input id="FilterHardskillCategorys" class="form-group form-control" type="text" placeholder="Suche nach Hardskillkategoriebezeichnung..."
-                       @bind="Filter[5]" @bind:event="oninput">
-            </div>
-        </div>
+        
         @if (_hardskills != null && _hardskills.Any(x => IsVisible(x, 1)))
         {
             <tr>
@@ -177,9 +170,6 @@
             foreach (string hardskill in _hardskills)
             {
                 if (!IsVisible(hardskill, 1))
-                    continue;
-
-                if (!InCategory(hardskill))
                     continue;
 
                 if (!_showUpper.ContainsKey(hardskill))
@@ -264,7 +254,7 @@
             <div class="form-group col-6">
                 <input id="FilterCategory" class="form-group form-control" type="text" placeholder="Suche nach Hardskillkategoriebezeichnung..."
                        @bind="Filter[2]"
-                       @bind:event="oninput">
+                       @bind:event="oninput" style="margin-bottom: -20px;">
             </div>
         </div>
         @if (_allRoots != null && _allRoots.Any(x => IsVisible(x, 2)))
@@ -381,7 +371,7 @@
         <div class="form-group col-6">
             <input id="FilterField" class="form-group form-control" type="text" placeholder="Suche nach Branchenbezeichnung..."
                    @bind="Filter[3]"
-                   @bind:event="oninput">
+                   @bind:event="oninput" style="margin-bottom: -20px;">
         </div>
     </div>
     <table class="table mb-5">
@@ -450,7 +440,7 @@
         <div class="form-group col-6">
             <input id="FilterRole" class="form-group form-control" type="text" placeholder="Suche nach Rollenbezeichnung..."
                    @bind="Filter[4]"
-                   @bind:event="oninput">
+                   @bind:event="oninput" style="margin-bottom: -20px;">
         </div>
     </div>
     <table class="table mb-5">
@@ -516,7 +506,7 @@
 
     //0: Filter for Softskill, 1: Filter for Hardskill, 2: Filter for Hardskillcategory
     //3: Filter for Field, 4: Filter for Role, 5: Filter for Hardskillcategorys at Hardskills
-    private string[] Filter { get; set; } = new string[6];
+    private string[] Filter { get; set; } = new string[5];
 
     //0: Show for Softskill, 1: Show for Hardskill, 2: Show for Hardskillcategory
     //3: Show for Field, 4: Show for Role
@@ -670,24 +660,19 @@
 
     private bool IsVisible(string description, int index)
     {
-        return string.IsNullOrEmpty(Filter[index]) || description.Contains(Filter[index], StringComparison.OrdinalIgnoreCase);
+        return string.IsNullOrEmpty(Filter[index]) || description.Contains(Filter[index], StringComparison.OrdinalIgnoreCase) 
+               || InCategory(description);
     }
 
     private bool InCategory(string hardskill)
     {
-        if (string.IsNullOrEmpty(Filter[5]))
-        {
-            return true;
-        }
-
         foreach (var category in _allCategorys.Keys)
         {
-            if (category.Contains(Filter[5], StringComparison.OrdinalIgnoreCase) && _allCategorys[category].Contains(hardskill))
+            if (category.Contains(Filter[1], StringComparison.OrdinalIgnoreCase) && _allCategorys[category].Contains(hardskill))
             {
                 return true;
             }
         }
-
         return false;
     }
 
