@@ -175,7 +175,7 @@
                             </div>
                             <div class="modal-footer justify-content-between">
                                 <div>
-                                    <button class="btn btn-secondary" type="button" @onclick=@(CreateDocument)>Dokument <span class="ml-1 oi oi-document"></span></button>
+                                    <button class="btn btn-secondary" type="button" @onclick=@(CreateEmployeeDocument)>Dokument <span class="ml-1 oi oi-document"></span></button>
                                     <label class="col-form-label ml-2 font-weight-bold">Rabatt (in %): </label>
                                     <InputNumber min="0" max="100" class="form-control-md col-lg-2 col-sm-2 col-md-2" @bind-Value="EmployeeDetailView.Discount"/>
                                     <label class="col-form-label ml-2 font-weight-bold"> Std.: </label>
@@ -336,7 +336,7 @@
             return projectTable;
     }
     
-    public async Task CreateDocument()
+    public async Task CreateEmployeeDocument()
     {
         const string empTemplatePath = "wwwroot\\templates\\AvatiWorkerDoc.docx";
         var emp = _employeeService.GetEmployeeProfile(EmpId);

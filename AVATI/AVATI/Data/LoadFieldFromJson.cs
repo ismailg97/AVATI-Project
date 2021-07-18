@@ -13,7 +13,7 @@ namespace AVATI.Data
         public List<string> LoadFielFromJsonFile()
         {
             JSonStructure.Rootclass jsoncontainer =
-                JsonSerializer.Deserialize<JSonStructure.Rootclass>(File.ReadAllText("Data\\datenbasis.json"));
+                JsonSerializer.Deserialize<JSonStructure.Rootclass>(File.ReadAllText("Data/datenbasis.json"));
             
             foreach(var field in jsoncontainer.fields)
             {

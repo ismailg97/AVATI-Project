@@ -17,7 +17,7 @@ namespace AVATI.Data
         public JSonStructure.Rootclass ImportJsonFile()
         {
             JSonStructure.Rootclass jSonContainer =
-                JsonSerializer.Deserialize<JSonStructure.Rootclass>(File.ReadAllText("Data\\datenbasis.json"));
+                JsonSerializer.Deserialize<JSonStructure.Rootclass>(File.ReadAllText("Data/datenbasis.json"));
             
             
             return jSonContainer;
