@@ -57,14 +57,12 @@ namespace AVATI.Data
             var projectId = db.QuerySingle<int>("SELECT max(ProjectID) FROM Project");
             foreach (var emp in project.Employees)
             {
-                Console.WriteLine(emp.FirstName);
                 db.Execute("INSERT INTO ProjectActivity_Project_Employee VALUES(@ProID, @EmplId, NULL)",
                     new {ProID = projectId, EmplId = emp.EmployeeID});
             }
 
             foreach (var field in project.Fields)
             {
-                Console.WriteLine(field);
                 db.Execute("INSERT INTO Project_Field VALUES(@pro, @f)", new {f = field, pro = projectId});
             }
 
@@ -73,16 +71,11 @@ namespace AVATI.Data
 
         public bool UpdateProject(Project project)
         {
-            foreach (var emp in project.Employees)
-            {
-                Console.WriteLine(emp.FirstName);
-            }
             using IDbConnection db = GetConnection();
             var result = db.Query<Project>("SELECT * FROM Project WHERE ProjectId = @propId",
                 new {propId = project.ProjectID});
             if (result.FirstOrDefault() == null)
             {
-                Console.WriteLine("we have a problem");
                 return false;
             }
 
@@ -162,7 +155,6 @@ namespace AVATI.Data
                 new {propId = projectId});
             if (result.FirstOrDefault() == null)
             {
-                Console.WriteLine("we have a problem");
                 return false;
             }
 
@@ -180,7 +172,6 @@ namespace AVATI.Data
 
         public Project GetProject(int projectId)
         {
-            Console.WriteLine("----ProjectID: " + projectId + " --------");
             Project temp;
             using IDbConnection db = GetConnection();
             temp = new Project();
