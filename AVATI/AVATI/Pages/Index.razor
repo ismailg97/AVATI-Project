@@ -1,25 +1,16 @@
-﻿
-@page "/index"
-
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Authorization.Infrastructure
+﻿@page "/index"
 
 <AuthorizeView Roles="SalesStaff, Employee, Administrator">
     <Authorized>
 
 <div class="row justify-content-center mb-2">
-    
     <h1>Hallo Nutzer mit ID @context.User.Claims.First().Value</h1>
 </div>
-        
     </Authorized>
     <NotAuthorized>
        Bitte zuerst anmelden! 
     </NotAuthorized>
 </AuthorizeView>
-
-
- 
 
 @code
 {

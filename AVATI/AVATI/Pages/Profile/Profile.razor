@@ -1,11 +1,9 @@
 ﻿@page "/profile"
 @using AVATI.Data
-@using Azure.Core
-@using DocumentFormat.OpenXml.Spreadsheet
 @using Microsoft.AspNetCore.Http
 @inject NavigationManager _navManager
 @inject IEmployeeService _employee
-@inject IProjectActivityService _projctActivityService
+@inject IProjectActivityService _projectActivityService
 @inject IProjectService _projectService
 @inject AuthenticationStateProvider _authenticationStateProvider
 @inject NavigationManager _navigationManager
@@ -52,7 +50,7 @@
             </div>
             <!------ Edit Profile Button ---------->
 
-            <button type="button" class="btn btn-info" style="height: 40px;" @onclick="() => { NavToUpdate(); }">
+            <button type="button" class="btn btn-info" style="height: 45px;" @onclick="() => { NavToUpdate(); }">
                 <MudIcon Icon="@Icons.Filled.Brush"/>
                 Profil bearbeiten
             </button>
@@ -254,7 +252,7 @@
             Id = Int16.Parse(context ?? throw new InvalidOperationException());
         }
     //var value= HttpRequest.Cookies["key"].Value;
-        _projectWithGroupedActivities = _projctActivityService.GetActivitiesWithProjectsGrouped(Id);
+        _projectWithGroupedActivities = _projectActivityService.GetActivitiesWithProjectsGrouped(Id);
         _authenticationStateProvider.GetAuthenticationStateAsync();
         Emp = _employee.GetEmployeeProfile(Id);
     }
