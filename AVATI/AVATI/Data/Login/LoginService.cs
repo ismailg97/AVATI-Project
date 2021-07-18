@@ -52,7 +52,6 @@ namespace AVATI.Data
                 new {usern = username, passw = password}).ToList();
             if (id.FirstOrDefault() == username)
             {
-                Console.WriteLine("test");
                 return -2;
             }
             int Id = db.Query<int>("SELECT EmployeeID FROM Login WHERE Username = @usern AND Password=@passw ",

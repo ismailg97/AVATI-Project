@@ -437,7 +437,6 @@ namespace UnitTests
                 var skillOrCat = await testHardskillService.GetHardskillOrCategory(subCat);
                 if (skillOrCat.IsHardskill && newCategory.Subcat.Contains(subCat) == false)
                 {
-                    Console.WriteLine(skillOrCat);
                     Assert.IsFalse(skillOrCat.Uppercat.Contains(newCategory.Description));
                     Assert.IsFalse(editHardskills.Subcat.Contains(subCat));
                     continue;

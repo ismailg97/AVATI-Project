@@ -106,7 +106,6 @@ namespace Tests
             Random rand = new Random();
             foreach (var el in elements.Take(20))
             {
-                Console.WriteLine("Result" + el.Text);
                 if (rand.Next(30) == 3)
                 {
                     Thread.Sleep(1000);
@@ -117,7 +116,6 @@ namespace Tests
             elements = _driver.FindElements(By.Id("categoriesToAdd"));
             foreach (var el in elements.Take(5))
             {
-                Console.WriteLine("Result" + el.Text);
                 if (rand.Next(3) == 2)
                 {
                     Thread.Sleep(1000);
@@ -128,7 +126,6 @@ namespace Tests
             elements = _driver.FindElements(By.Id("softskillsToAdd"));
             foreach (var el in elements.Take(5))
             {
-                Console.WriteLine("Result" + el.Text);
                 if (rand.Next(2) == 1)
                 {
                     Thread.Sleep(1000);

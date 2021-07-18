@@ -221,12 +221,6 @@ namespace AVATI.Data
             {
                 EmployeeListToReturn.Add(EmployeeList.Find(e => e.EmployeeID == service.EmployeeId));
             }
-
-            foreach (var emp in EmployeeListToReturn)
-            {
-                Console.WriteLine(emp.Roles.First());
-            }
-
             return EmployeeListToReturn;
         }
     }
