@@ -378,7 +378,7 @@ else
                     <button type="button" class="close" data-dismiss="modal" @onclick="() => {_booleanStatus = !_booleanStatus; StateHasChanged();}">&times;</button>
                 </div>
                 <div class="modal-body">
-                    @if (Emp.IsActive)
+                    @if (!Emp.IsActive)
                     {
                         <text>Sind Sie sicher, dass sie den Status des <br> Mitarbeiters <span class="font-weight-bolder"> @Emp.FirstName @Emp.LastName </span> von Aktiv auf Inaktiv setzen wollen?</text>
                     }
