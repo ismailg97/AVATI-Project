@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Bibliography;
@@ -77,7 +78,7 @@ namespace AVATI.Data
             {
                 return Redirect("/Registration/Fail");
             }
-
+            
             _loginService.CreateLogIn(username, password);
             return Redirect("/profile/create/" + username);
             

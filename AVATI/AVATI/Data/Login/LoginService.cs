@@ -10,14 +10,24 @@ namespace AVATI.Data
     public class LoginService : ILoginService
     {
         private readonly IConfiguration _configuration;
+        public string _connection;
         
         public LoginService(IConfiguration configuration)
         {
             _configuration = configuration;
         }
         
+        public LoginService(string connect)
+        {
+            _connection = connect;
+        }
+        
         public DbConnection GetConnection()
         {
+            if (_connection != null)
+            {
+                return new SqlConnection(_connection);
+            }
             return new SqlConnection
                 (_configuration.GetConnectionString("AVATI-Database"));
         }
@@ -60,16 +70,40 @@ namespace AVATI.Data
         public bool CreateLogIn( string username, string password)
         {
             using DbConnection db = GetConnection();
-            db.Query("INSERT INTO Login VALUES (NULL, @user, @pass)", new
+
+            if (username.Length > 70 || username is null or "")
             {
-                 user = username, pass = password
-            });
-            return true;
+                return false;
+            }
+            if (password.Length > 70 || password is null or "")
+            {
+                return false;
+            }
+            
+            if (CheckUsernameAvailable(username))
+            {
+               db.Query("INSERT INTO Login VALUES (NULL, @user, @pass)", new
+                               {
+                                   user = username, pass = password
+                               });
+                               return true; 
+            }
+
+            return false;
+
+
+            
         }
 
         public bool CheckUsernameAvailable(string username)
         {
             using DbConnection db = GetConnection();
+            
+            if (username.Length > 70 || username is null or "")
+            {
+                return false;
+            }
+            
             if (db.Query<string>("Select Username From Login Where Username=@user ", new
             {
                 user = username
@@ -84,11 +118,17 @@ namespace AVATI.Data
         public bool DeleteLogin(string username)
         {
             using DbConnection db = GetConnection();
-            db.Query("Delete from Login Where Username=@user", new
+            if (!CheckUsernameAvailable(username))
             {
-                user = username
-            });
-            return true;
+              db.Query("Delete from Login Where Username=@user", new
+                          {
+                              user = username
+                          });  
+              return true;
+            }
+
+            return false;
+
         }
     }
 }

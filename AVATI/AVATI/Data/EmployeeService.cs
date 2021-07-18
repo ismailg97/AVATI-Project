@@ -115,6 +115,16 @@ namespace AVATI.Data
         public int CreateEmployeeProfile(Employee emp, string username)
         {
             using DbConnection db = GetConnection();
+            
+            if (emp.FirstName.Length > 70 || emp.FirstName is null or "")
+            {
+                return -1;
+            }
+            if (emp.LastName.Length > 70 || emp.LastName is null or "")
+            {
+                return -1;
+            }
+
             db.Query(
                 "INSERT INTO Employee VALUES ( @Firstname ,@Lastname ,@RWE, @EmpTime,@Rc,@EmpType, @IA, @img)",
                 new

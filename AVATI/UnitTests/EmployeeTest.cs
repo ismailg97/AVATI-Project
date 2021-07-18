@@ -148,6 +148,17 @@ namespace UnitTests
             }
         
         }
+
+        [TestCase()]
+        
+        [Test]
+        public void CreateEmployeeProfile()
+        {
+            var logService = new LoginService(Connection);
+            var empService = new EmployeeService(Connection);
+            
+
+        }
         
         
         [TestCase(
@@ -159,7 +170,7 @@ namespace UnitTests
         [TestCase(
             "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPPPPPPPPPPPSLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOCKkkkkkkkk",
             false)]
-        public async Task TestDbManipulation(string firstname, bool isValid)
+        public void TestDbManipulation(string firstname, bool isValid)
         {
             var empService =
                 new EmployeeService(
