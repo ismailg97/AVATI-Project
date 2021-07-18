@@ -51,24 +51,8 @@
 
 
 
-@if (_booleanSignedIn)
-{
-    <form action="cookie" method="post">
-        <input type="text" name="name"/>
-        <input type="text" name="empType"/>
-        <input type="submit"/>
-    </form>
-}
-
-
 @code {
     
-    LoginClass Log = new LoginClass();
-    public int Id { get; set; }
-    public string empType { get; set; }
-    private bool _booleanSignedIn { get; set; }
-    //private bool _booleanRegister = false;
-
     private void Register()
     {
         _navManager.NavigateTo("Registration");

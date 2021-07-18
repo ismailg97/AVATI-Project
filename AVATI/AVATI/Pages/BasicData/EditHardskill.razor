@@ -49,7 +49,7 @@
                      </div>
                      <h6>Auswahl an Oberkategorien:</h6>
                      <hr/>
-                     <input id="Filter" class="form-control" type="text" placeholder="Filter nach Oberkategorie..."
+                     <input id="Filter" class="form-control" type="text" placeholder="Suche nach Oberkategorie..."
                             style="margin-top: 15px;"
                             @bind="_filter"
                             @bind:event="oninput">
@@ -70,14 +70,25 @@
                        <small style="color: #818181; margin-top: 15px !important;">[Keine Oberkategorie gefunden]</small>
                      }
                    </div>
-                     <div class="modal-footer">
-                       <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">
-                         <MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen
-                       </button>
-                       <button type="button" class="btn btn-success" @onclick="Update">
-                        <MudIcon Icon="@Icons.Filled.Save"/> Speichern
-                       </button>
+                   <div class="modal-footer">
+                     <div>
+                       @if (!_isChecked)
+                       {
+                         <a style="color: #818181;">Suche aus</a>
+                       }
+                       else
+                       {
+                         <a>Suche an</a>
+                       }
+                       <MudCheckBox @bind-Checked="@_isChecked"/>
                      </div>
+                     <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">
+                       <MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen
+                     </button>
+                     <button type="button" class="btn btn-success" @onclick="Update">
+                       <MudIcon Icon="@Icons.Filled.Save"/> Speichern
+                     </button>
+                   </div>
                  </div>
                </div>
           </div>
@@ -105,6 +116,8 @@
   private bool _showError;
 
   private string _filter;
+
+  private bool _isChecked;
 
   protected override async Task OnInitializedAsync()
   {
@@ -161,8 +174,12 @@
     
     await _hardskillService.UpdateHardskill(NewHardskill, OldHardskill);
     Showing();
-    await Abstract.UpdateHardskills(NewHardskill.Description);
+    if (_isChecked)
+      await Abstract.UpdateHardskills(NewHardskill.Description);
+    else
+      await Abstract.UpdateHardskills();
     await Abstract.UpdateCategorys();
+    _isChecked = false;
   }
   
   private void UpperCatList(string description)

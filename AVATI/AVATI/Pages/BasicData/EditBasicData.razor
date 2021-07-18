@@ -56,6 +56,17 @@
                       <input class="form-control col-7" type="text" id="softskill" @bind="NewDescription"/>
                     </div>
                     <div class="modal-footer">
+                      <div>
+                        @if (!_isChecked)
+                        {
+                          <a style="color: #818181;">Suche aus</a>
+                        }
+                        else
+                        {
+                          <a>Suche an</a>
+                        }
+                        <MudCheckBox @bind-Checked="@_isChecked"/>
+                      </div>
                       <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="Showing">
                         <MudIcon Icon="@Icons.Filled.Cancel"/> Abbrechen
                       </button>
@@ -88,6 +99,8 @@
   private int _whatToShow;
   
   private bool _showError;
+
+  private bool _isChecked;
 
   protected override void OnParametersSet()
   {
@@ -125,22 +138,32 @@
       ShowErrorMessage(2);
       return;
     }
-    
-    switch (Type)
+
+    if (Type == BasicDataType.SoftSkill)
     {
-      case BasicDataType.SoftSkill:
-        _basicDataService.UpdateSoftSkill(NewDescription, OldDescription);
+      _basicDataService.UpdateSoftSkill(NewDescription, OldDescription);
+      if(_isChecked)
         Abstract.UpdateSoftskills(NewDescription);
-        break;
-      case BasicDataType.Field:
-        _basicDataService.UpdateField(NewDescription, OldDescription);
-        Abstract.UpdateFields(NewDescription);
-        break;
-      default:
-        _basicDataService.UpdateRole(NewDescription, OldDescription);
-        Abstract.UpdateRoles(NewDescription);
-        break;
+      else
+        Abstract.UpdateSoftskills();
     }
+    else if (Type == BasicDataType.Field)
+    {
+      _basicDataService.UpdateField(NewDescription, OldDescription);
+      if(_isChecked)
+        Abstract.UpdateFields(NewDescription);
+      else
+        Abstract.UpdateFields();
+    }
+    else
+    {
+      _basicDataService.UpdateRole(NewDescription, OldDescription);
+      if(_isChecked)
+        Abstract.UpdateRoles(NewDescription);
+      else
+        Abstract.UpdateRoles();
+      }
+    _isChecked = false;
     Showing();
     //_navigationManager.NavigateTo(_navigationManager.Uri, true);
   }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Bibliography;
 using Microsoft.AspNetCore.Authentication;
@@ -75,6 +77,17 @@ namespace AVATI.Data
             }
 
             if (!_loginService.CheckUsernameAvailable(username))
+            {
+                return Redirect("/Registration/Fail");
+            }
+            var regexItem = new Regex("^[a-zA-Z]*$");
+            
+            if (!regexItem.IsMatch(username))
+            {
+                return Redirect("/Registration/Fail");
+            }
+            
+            if (!regexItem.IsMatch(password))
             {
                 return Redirect("/Registration/Fail");
             }

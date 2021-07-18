@@ -1,6 +1,7 @@
 ﻿@page "/BasicDataAbstract"
 @using AVATI.Data
 @using Blazorise
+@using Bunit.Extensions
 @using Microsoft.AspNetCore.Http
 
 @inject IBasicDataService _basicDataService
@@ -18,10 +19,11 @@
 <Authorized Context="authContext">
 
 
-<h1>
-    <b>Basisdaten</b> <small>Hier können Sie Basisdaten hinzugefügen, editieren und löschen</small>
-</h1>
-<hr/>
+<h2>
+    <b>Basisdatenübersicht</b> 
+</h2>
+<a style="color: #818181;">Hier können Sie Basisdaten hinzugefügen, editieren und löschen</a>
+<hr style="margin-bottom: -30px;"/>
 
 <EditBasicData @ref="_editBasicData" OldDescription="@Description" Type="@Type" Abstract="@this"/>
 <DeleteConfirmation @ref="_deleteConfirmation" Description="@Description" Type="@Type" Abstract="@this"/>
@@ -41,7 +43,7 @@
             <b>Softskills</b>
         </h4>
         <div class="btn-group float-right mr-4">
-            <button id="BlendinoutSoftskill" style="display: inline;" class="@(_show[0] ? "btn btn-default" : "btn btn-default")" @onclick="() => Showing(0)">
+            <button id="BlendinoutSoftskill" style="display: inline;" class="@(_show[0] ? "btn nice" : "btn nice")" @onclick="() => Showing(0)">
                 @if (_show[0])
                 {
                     <a><MudIcon Icon="@Icons.Filled.ExpandLess"/> Ausblenden</a>
@@ -62,7 +64,7 @@
     {
         <div class="form-group row">
             <div class="form-group col-6">
-                <input id="FilterSoftskill" class="form-group form-control" type="text" placeholder="Suche nach Softskillbezeichnung..."
+                <input id="FilterSoftskill" class="form-group form-control" type="text" placeholder="Suche nach Softskill..."
                        @bind="Filter[0]"
                        @bind:event="oninput" style="margin-bottom: -20px;">
             </div>
@@ -118,7 +120,7 @@
             <b>Hardskills</b>
         </h4>
         <div class="btn-group float-right mr-4">
-            <button id="BlendinoutHardskill" style="display: inline;" class="@(_show[1] ? "btn btn-default" : "btn btn-default")" @onclick="() => Showing(1)">
+            <button id="BlendinoutHardskill" style="display: inline;" class="@(_show[1] ? "btn nice" : "btn nice")" @onclick="() => Showing(1)">
                 @if (_show[1])
                 {
                     <a><MudIcon Icon="@Icons.Filled.ExpandLess"/> Ausblenden</a>
@@ -219,7 +221,7 @@
             <b>Hardskillkategorien</b>
         </h4>
         <div class="btn-group float-right mr-4">
-            <button style="display: inline;" class="@(_show[2] ? "btn btn-default" : "btn btn-default")" @onclick="() => Showing(2)">
+            <button style="display: inline;" class="@(_show[2] ? "btn nice" : "btn nice")" @onclick="() => Showing(2)">
                 @if (_show[2])
                 {
                     <a><MudIcon Icon="@Icons.Filled.ExpandLess"/> Ausblenden</a>
@@ -252,7 +254,7 @@
     {
         <div class="form-group row">
             <div class="form-group col-6">
-                <input id="FilterCategory" class="form-group form-control" type="text" placeholder="Suche nach Hardskillkategoriebezeichnung..."
+                <input id="FilterCategory" class="form-group form-control" type="text" placeholder="Suche nach Hardskillkategorie..."
                        @bind="Filter[2]"
                        @bind:event="oninput" style="margin-bottom: -20px;">
             </div>
@@ -350,7 +352,7 @@
     <b>Branchen</b>
     <div class="btn-group float-right">
 
-        <button style="display: inline;" class="@(_show[3] ? "btn btn-default" : "btn btn-default")" @onclick="() => Showing(3)">
+        <button style="display: inline;" class="@(_show[3] ? "btn nice" : "btn nice")" @onclick="() => Showing(3)">
             @if (_show[3])
             {
                 <a><MudIcon Icon="@Icons.Filled.ExpandLess"/> Ausblenden</a>
@@ -369,7 +371,7 @@
 {
     <div class="form-group row">
         <div class="form-group col-6">
-            <input id="FilterField" class="form-group form-control" type="text" placeholder="Suche nach Branchenbezeichnung..."
+            <input id="FilterField" class="form-group form-control" type="text" placeholder="Suche nach Branche..."
                    @bind="Filter[3]"
                    @bind:event="oninput" style="margin-bottom: -20px;">
         </div>
@@ -419,7 +421,7 @@
     <b>Rollen</b>
     <div class="btn-group float-right">
 
-        <button style="display: inline;" class="@(_show[4] ? "btn btn-default" : "btn btn-default")" @onclick="() => Showing(4)">
+        <button style="display: inline;" class="@(_show[4] ? "btn nice" : "btn nice")" @onclick="() => Showing(4)">
             @if (_show[4])
             {
                 <a><MudIcon Icon="@Icons.Filled.ExpandLess"/> Ausblenden</a>
@@ -438,7 +440,7 @@
 {
     <div class="form-group row">
         <div class="form-group col-6">
-            <input id="FilterRole" class="form-group form-control" type="text" placeholder="Suche nach Rollenbezeichnung..."
+            <input id="FilterRole" class="form-group form-control" type="text" placeholder="Suche nach Rollen..."
                    @bind="Filter[4]"
                    @bind:event="oninput" style="margin-bottom: -20px;">
         </div>
@@ -660,8 +662,9 @@
 
     private bool IsVisible(string description, int index)
     {
-        return string.IsNullOrEmpty(Filter[index]) || description.Contains(Filter[index], StringComparison.OrdinalIgnoreCase) 
-               || InCategory(description);
+        var result = string.IsNullOrEmpty(Filter[index]) || description.Contains(Filter[index], StringComparison.OrdinalIgnoreCase);
+        if(index != 1) return result;
+        return result || InCategory(description);
     }
 
     private bool InCategory(string hardskill)

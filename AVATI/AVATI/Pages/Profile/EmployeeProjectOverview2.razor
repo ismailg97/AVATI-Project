@@ -26,11 +26,8 @@
 </div>
 
 <div class="form-group row col-6">
-    <label for="FilterField" class="col-sm-1 col-form-label ml-n5">
-        <MudIcon Icon="@Icons.Filled.Search" style="color: black;" />
-    </label>
     <div class="col-sm-11 ml-n5">
-        <input id="FilterField" class="form-control mt-sm-1" type="text" placeholder="Filter nach Projekttiteln..."
+        <input id="FilterField" class="form-control mt-sm-1" type="text" placeholder="Suche nach Projekttiteln..."
                @bind="Filter"
                @bind:event="oninput">
     </div>
@@ -193,13 +190,13 @@
                                 {
                                     if (Employee.Softskills.Contains(softskill))
                                     {
-                                        <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.SoftSkills.Remove(softskill); })>
+                                        <button style="margin-bottom: 5px !important;" type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.SoftSkills.Remove(softskill); })>
                                             <a class="showRemove">@softskill</a> <a class="remove"><span class="oi oi-x"></span></a>
                                         </button>
                                     }
                                     else
                                     {
-                                        <button type="button" class="btn btn-outline-danger btn-sm mr-2" @onclick=@(() => { _projectActivity.SoftSkills.Remove(softskill); })>
+                                        <button style="margin-bottom: 5px !important;" type="button" class="btn btn-outline-danger btn-sm mr-2" @onclick=@(() => { _projectActivity.SoftSkills.Remove(softskill); })>
                                             <a class="showRemove">@softskill</a> <a class="remove"><span class="oi oi-x"></span></a>
                                         </button>
                                     }
@@ -233,7 +230,7 @@
                                 {
                                     if (Employee.Hardskills.Exists(x => x.Description == hardskill))
                                     {
-                                        <button type="button" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.HardSkills.Remove(hardskill); })>
+                                        <button type="button" style="margin-bottom: 5px !important;" class="btn btn-outline-success btn-sm mr-2" @onclick=@(() => { _projectActivity.HardSkills.Remove(hardskill); })>
                                             <a class="showRemove">@hardskill</a> <a class="remove"><span class="oi oi-x"></span></a>
                                         </button>
                                     }

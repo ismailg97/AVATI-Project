@@ -40,10 +40,14 @@
 
 @if (_isLoaded)
 {
-    <button class="btn btn-success float-right mr-2" id="createNew" @onclick=@(() => { ShowEdit(0); })>Neues Angebot</button>
+    <h2>
+        <b>Angebotsübersicht</b> 
+    </h2>
+    <a style="color: #818181;">Hier können Sie Angebote hinzugefügen, editieren und löschen und ebenfalls Projekte erzeugen</a>
+    <hr/>
+    <button class="btn btn-success float-right mr-2" id="createNew" @onclick=@(() => { ShowEdit(0); })>Neues Angebot <MudIcon Icon="@Icons.Filled.Add"/></button>
     <div class="form-group row">
-        <label for="sucheprop" class="col-form-label mr-2 font-weight-bold">Suche:</label>
-        <input type="search" class="col-5 form-control" id="sucheProp" @bind-value="_filterSearch" placeholder="Angebotstitel..." @bind-value:event="oninput"/>
+        <input type="search" class="col-5 form-control" id="sucheProp" @bind-value="_filterSearch" placeholder="Suche nach Angebotstitel..." @bind-value:event="oninput"/>
     </div>
     <hr/>
     <div class="row @((_proposals.FindAll((e => e.ProposalTitle.Contains(_filterSearch, StringComparison.OrdinalIgnoreCase))).Count < 3) ? "justify-content-center" : "")">
