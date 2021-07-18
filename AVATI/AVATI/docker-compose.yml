@@ -4,16 +4,17 @@ services:
   db:
     image: zunaron/default_hub:finalDB
     environment:
-        SA_PASSWORD: "Your_password123"
+        SA_PASSWORD: "AVATIPassword1"
         ACCEPT_EULA: "Y"
     ports:
      - "1433:1433"
 
   web:
-    image: 7541f12cc8f4
+    image: 496ea36777ad
     restart: always
     ports:
       - "8080:80"
+    command: sh -c './wait-for db:1433 -- npm start'
     depends_on:
       - "db"
    
