@@ -7,9 +7,7 @@ using AVATI.Data;
 using AVATI.Data.EmployeeDetailFiles;
 using AVATI.Pages.Project;
 using BlazorDownloadFile;
-
 using Microsoft.AspNetCore.Authentication.Cookies;
-
 using MudBlazor.Services;
 
 namespace AVATI
@@ -53,8 +51,6 @@ namespace AVATI
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
             services.AddMudServices();
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,7 +67,7 @@ namespace AVATI
                 app.UseHsts();
             }
 
-            //app.UseHttpsRedirection(); generates Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware[3] Failed to determine the https port for redirect. Warning in Docker
+            //app.UseHttpsRedirection(); generates "Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware[3] Failed to determine the https port for redirect" Warning in Docker
            
             app.UseStaticFiles();
             

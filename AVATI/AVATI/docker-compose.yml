@@ -17,9 +17,3 @@ services:
     command: sh -c './wait-for db:1433 -- npm start'
     depends_on:
       - "db"
-   
- 
- 
-  
- 
-    

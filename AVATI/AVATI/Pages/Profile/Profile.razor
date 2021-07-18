@@ -1,7 +1,5 @@
 ﻿@page "/profile"
 @using AVATI.Data
-@using Azure.Core
-@using DocumentFormat.OpenXml.Spreadsheet
 @using Microsoft.AspNetCore.Http
 @inject NavigationManager _navManager
 @inject IEmployeeService _employee
@@ -52,7 +50,7 @@
             </div>
             <!------ Edit Profile Button ---------->
 
-            <button type="button" class="btn btn-info" style="height: 40px;" @onclick="() => { NavToUpdate(); }">
+            <button type="button" class="btn btn-info" style="height: 45px;" @onclick="() => { NavToUpdate(); }">
                 <MudIcon Icon="@Icons.Filled.Brush"/>
                 Profil bearbeiten
             </button>
